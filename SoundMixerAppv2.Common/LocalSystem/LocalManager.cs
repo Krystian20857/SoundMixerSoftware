@@ -135,8 +135,7 @@ namespace SoundMixerAppv2.Common.LocalSystem
         }
         
         #endregion
-        
-        
+
         #region Private Methods
 
         /// <summary>

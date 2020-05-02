@@ -11,15 +11,16 @@ namespace SoundMixerAppv2.Common.Logging
     /// </summary>
     public static class LoggerUtils
     {
-
         #region Public Static Methods
+
         /// <summary>
-        /// Setup logger.
+        /// Setting up logger.
         /// </summary>
+        /// <param name="logsFolder">Folder path where logs will be stored</param>
         public static void SetupLogger(string logsFolder)
         {
             var config = new NLog.Config.LoggingConfiguration();
-            var logFile = new NLog.Targets.FileTarget("logfile")                                    //logs will be saved at %AppData%/{AppName}/logs/
+            var logFile = new FileTarget("logfile")                                                 //logs will be saved at %AppData%/{AppName}/logs/
             {                                                                                             //logs are archived event day to %AppData%/{AppName}/logs/
                 FileName = Path.Combine(logsFolder, "latest.log"),                                        //max archived logs files = 30
                 KeepFileOpen = false,
@@ -29,12 +30,12 @@ namespace SoundMixerAppv2.Common.Logging
                 MaxArchiveFiles = 30,
             };
 
-            var consoleLog = new NLog.Targets.ConsoleTarget()
+            var consoleLog = new ConsoleTarget()
             {
                 AutoFlush = false,
             };
 
-            var eventLog = new NLog.Targets.EventLogTarget()
+            var eventLog = new EventLogTarget()
             {
                 Source = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location),
             };
@@ -43,8 +44,7 @@ namespace SoundMixerAppv2.Common.Logging
             config.AddRule(LogLevel.Trace, LogLevel.Fatal, consoleLog);
             config.AddRule(LogLevel.Error, LogLevel.Fatal, eventLog);                  //only fatals and errors will be appear in eventlog
 
-            NLog.LogManager.Configuration = config;
-            
+            LogManager.Configuration = config;
         }
 
         #endregion

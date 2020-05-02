@@ -34,8 +34,10 @@
     <ItemGroup>
       <Compile Include="Config\IConfig.cs" />
       <Compile Include="Config\IConfigStruct.cs" />
-      <Compile Include="Config\ProfileManager.cs" />
-      <Compile Include="Config\YamlConfig.cs" />
+      <Compile Include="Config\IProfileManager.cs" />
+      <Compile Include="Config\Yaml\SerializationHelper.cs" />
+      <Compile Include="Config\Yaml\YamlProfileManager.cs" />
+      <Compile Include="Config\Yaml\YamlConfig.cs" />
       <Compile Include="Extension\ICollectionExtension.cs" />
       <Compile Include="LocalSystem\LocalContainerAttribute.cs" />
       <Compile Include="LocalSystem\LocalManager.cs" />
@@ -43,6 +45,7 @@
       <Compile Include="LocalSystem\PropertyAttribute.cs" />
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Property\IProperties.cs" />
+      <Compile Include="Utils\ObjectUtils.cs" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.CSharp" />

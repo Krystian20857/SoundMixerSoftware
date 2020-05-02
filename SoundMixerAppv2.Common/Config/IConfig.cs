@@ -4,7 +4,7 @@
     /// Represents base config structure.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IConfig<T>
+    public interface IConfig<T> where T : IConfigStruct<T>
     {
         /// <summary>
         /// Properties that holds loaded config.
