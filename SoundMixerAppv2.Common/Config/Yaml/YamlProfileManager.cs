@@ -12,6 +12,9 @@ namespace SoundMixerAppv2.Common.Config.Yaml
     {
         #region Logger
         
+        /// <summary>
+        /// Use for logging in current class.
+        /// </summary>
         private static Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
@@ -33,6 +36,10 @@ namespace SoundMixerAppv2.Common.Config.Yaml
         
         #region Constructor
 
+        /// <summary>
+        /// Creates <see cref="YamlProfileManager{T}"/> instance and Loads all profiles.
+        /// </summary>
+        /// <param name="profileFolder"></param>
         public YamlProfileManager(string profileFolder)
         {
             _profileFolder = profileFolder;
@@ -45,7 +52,7 @@ namespace SoundMixerAppv2.Common.Config.Yaml
         
         #endregion
         
-        #region Public Methods
+        #region Implemented Methods
         
         public void Load(Guid uuid)
         {

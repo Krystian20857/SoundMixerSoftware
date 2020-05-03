@@ -13,6 +13,9 @@ namespace SoundMixerAppv2.Common.Config.Yaml
     {
         #region Logger
 
+        /// <summary>
+        /// Use for logging in current class.
+        /// </summary>
         private static Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
@@ -25,11 +28,29 @@ namespace SoundMixerAppv2.Common.Config.Yaml
         
         #region Private Fields
 
+        /// <summary>
+        /// Absolute config file path.
+        /// </summary>
         private readonly string _configPath;
+        /// <summary>
+        /// SerializationHelper use for creating Serializer and Deserializer for current instance.
+        /// </summary>
         private readonly SerializationHelper _serializationHelper = new SerializationHelper();
+        /// <summary>
+        /// YAML Serializer.
+        /// </summary>
         private readonly ISerializer _serializer;
+        /// <summary>
+        /// YAML Deserializer.
+        /// </summary>
         private readonly IDeserializer _deserializer;
+        /// <summary>
+        /// Store SampleConfig from Config.
+        /// </summary>
         private T _sampleConfig;
+        /// <summary>
+        /// Types to ignore while merging objects.
+        /// </summary>
         private List<Type> _ignoredTypes = new List<Type>();
 
         #endregion
@@ -55,7 +76,7 @@ namespace SoundMixerAppv2.Common.Config.Yaml
         
         #endregion
         
-        #region Public Methods
+        #region Implemented Methods
         
         public void LoadConfig()
         {

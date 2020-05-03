@@ -7,6 +7,9 @@ namespace SoundMixerAppv2.Common.Config.Yaml
     {
         #region Logger
 
+        /// <summary>
+        /// Use for logging in current class.
+        /// </summary>
         private static Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
@@ -14,11 +17,11 @@ namespace SoundMixerAppv2.Common.Config.Yaml
         #region Public Properties
         
         /// <summary>
-        /// Serializer.
+        /// YAML serializer.
         /// </summary>
         public ISerializer Serializer { get; private set; }
         /// <summary>
-        /// Deserializer.
+        /// YAML deserializer.
         /// </summary>
         public IDeserializer Deserializer { get; private set; }
 
@@ -26,13 +29,22 @@ namespace SoundMixerAppv2.Common.Config.Yaml
 
         #region Private Fields
         
+        /// <summary>
+        /// Serializer builder use for creating base Serializer.
+        /// </summary>
         private readonly SerializerBuilder _serializerBuilder = new SerializerBuilder();
+        /// <summary>
+        /// Deserializer builder use for creating base Deserializer
+        /// </summary>
         private readonly DeserializerBuilder _deserializerBuilder = new DeserializerBuilder();
         
         #endregion
         
         #region Constructor
 
+        /// <summary>
+        /// Creates instance of <see cref="SerializationHelper"/>. After instance creating builds <see cref="Serializer"/> and <see cref="Deserializer"/> using <see cref="Build"/> Method
+        /// </summary>
         public SerializationHelper()
         {
             Build();

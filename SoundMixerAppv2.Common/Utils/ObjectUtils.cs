@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace SoundMixerAppv2.Common.Utils
 {
+    /// <summary>
+    /// Contains useful methods while working with objects and classes.
+    /// </summary>
     public static class ObjectUtils
     {
         /// <summary>

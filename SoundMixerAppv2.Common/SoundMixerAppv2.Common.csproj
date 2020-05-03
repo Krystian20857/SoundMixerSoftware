@@ -32,6 +32,12 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Include="Communication\DataConverter.cs" />
+      <Compile Include="Communication\DataReceivedEventArgs.cs" />
+      <Compile Include="Communication\Serial\SerialDataReceivedArgs.cs" />
+      <Compile Include="Communication\Serial\DeviceStateChangeArgs.cs" />
+      <Compile Include="Communication\Serial\SerialConfig.cs" />
+      <Compile Include="Communication\Serial\SerialConnection.cs" />
       <Compile Include="Config\IConfig.cs" />
       <Compile Include="Config\IConfigStruct.cs" />
       <Compile Include="Config\IProfileManager.cs" />
@@ -46,9 +52,11 @@
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Property\IProperties.cs" />
       <Compile Include="Utils\ObjectUtils.cs" />
+      <Compile Include="Utils\StructUtils.cs" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.CSharp" />
+      <Reference Include="mscorlib" />
       <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
         <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
         <Private>True</Private>
@@ -61,6 +69,10 @@
       <Reference Include="System.Runtime.Serialization" />
       <Reference Include="System.ServiceModel" />
       <Reference Include="System.Transactions" />
+      <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+        <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
       <Reference Include="System.Xml" />
       <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e">
         <HintPath>..\packages\YamlDotNet.8.1.1\lib\net45\YamlDotNet.dll</HintPath>

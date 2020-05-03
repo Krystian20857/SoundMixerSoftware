@@ -17,7 +17,7 @@ namespace SoundMixerAppv2.Common.LocalSystem
     {
         #region Logger
         /// <summary>
-        /// Current class logger.
+        /// Use for logging in current class.
         /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
