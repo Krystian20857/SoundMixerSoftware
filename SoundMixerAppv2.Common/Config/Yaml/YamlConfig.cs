@@ -65,7 +65,7 @@ namespace SoundMixerAppv2.Common.Config.Yaml
         {
             _configPath = configPath;
             
-            _sampleConfig = Config.GetSampleConfig();
+            _sampleConfig = Config.SampleConfig;
             _ignoredTypes.Add(typeof(T));
                 
             _serializer = _serializationHelper.Serializer;

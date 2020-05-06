@@ -55,6 +55,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -71,6 +72,10 @@
     <ProjectReference Include="..\SoundMixerAppv2.Common\SoundMixerAppv2.Common.csproj">
       <Project>{2040554a-678b-4e8e-a915-dd4710fb7105}</Project>
       <Name>SoundMixerAppv2.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundMixerAppv2.Win32\SoundMixerAppv2.Win32.csproj">
+      <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
+      <Name>SoundMixerAppv2.Win32</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using NLog;
+using SoundMixerAppv2.Common.Utils;
 
 namespace SoundMixerAppv2.Common.Communication.Serial
 {
@@ -33,15 +34,15 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         /// <summary>
         /// Fires when devices has connected.
         /// </summary>
-        public event EventHandler<DeviceStateChangeArgs> OnDeviceConnected;
+        public event EventHandler<DeviceStateChangeArgs> DeviceConnected;
         /// <summary>
         /// Fires when devices has disconnected.
         /// </summary>
-        public event EventHandler<DeviceStateChangeArgs> OnDeviceDisconnected;
+        public event EventHandler<DeviceStateChangeArgs> DeviceDisconnected;
         /// <summary>
         /// Fires when new data arrives.
         /// </summary>
-        public event EventHandler<SerialDataReceivedArgs> OnDataReceived;
+        public event EventHandler<SerialDataReceivedArgs> DataReceived;
 
         #endregion
         
@@ -70,13 +71,15 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         /// <returns>Device connection state.</returns>
         public bool Connect(string comport)
         {
+            if (!SerialPort.GetPortNames().Contains(comport))
+                return false;
             if (_connectedDevices.ContainsKey(comport))
             {
                 var device = _connectedDevices[comport];
                 if (!device.IsOpen)
                     device.Open();
                 if (device.IsOpen)
-                    OnDeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                    DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
                 return device.IsOpen;
             }
             else
@@ -88,7 +91,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
                 device.Open();
                 if (device.IsOpen)
                 {
-                    OnDeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                    DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
                     Logger.Info($"Device connected: {comport}");
                 }
 
@@ -99,7 +102,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         /// <summary>
         /// Disconnect serial device.
         /// </summary>
-        /// <param name="comport">Serial device location</param>
+        /// <param name="comport">Serial device location.</param>
         /// <returns>Returns true when device disconnects.</returns>
         public bool Disconnect(string comport)
         {
@@ -110,12 +113,45 @@ namespace SoundMixerAppv2.Common.Communication.Serial
                 device.Close();
             if (!device.IsOpen)
             {
-                OnDeviceDisconnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                DeviceDisconnected?.Invoke(this, new DeviceStateChangeArgs(comport));
                 Logger.Info($"Device disconnected: {comport}");
             }
             return true;
         }
-        
+
+        /// <summary>
+        /// Send struct by serial connection
+        /// </summary>
+        /// <param name="comport">Serial device location.</param>
+        /// <param name="structure">Data to send.</param>
+        /// <typeparam name="T">Type of struct.</typeparam>
+        public void SendData<T>(string comport, T structure) where T : struct
+        {
+            var data = StructUtils.StructToBytes<T>(structure);
+            SendBytes(comport, data);
+        }
+
+        /// <summary>
+        /// Send bytes array using serial.
+        /// </summary>
+        /// <param name="comport">Serial port location.</param>
+        /// <param name="bytes">Byte array.</param>
+        public void SendBytes(string comport, byte[] bytes)
+        {
+            if (_connectedDevices.ContainsKey(comport))
+            {
+                var device = _connectedDevices[comport];
+                if (device.IsOpen)
+                {
+                    device.Write(bytes, 0, bytes.Length);
+                }
+                else
+                    Logger.Warn($"Device: {comport} is not connected");
+            }
+            else
+                Logger.Warn($"Device: {comport} is not connected");
+        }
+
         #endregion
         
         #region Private Methods
@@ -126,7 +162,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
             var data = new byte[serialPort.BytesToRead];
             serialPort.Read(data, 0, data.Length);
             var eventArgs = new SerialDataReceivedArgs(data, serialPort.PortName);
-            OnDataReceived?.Invoke(this, eventArgs);
+            DataReceived?.Invoke(this, eventArgs);
         }
         
         #endregion
@@ -140,7 +176,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         {
             foreach (var entry in _connectedDevices)
             {
-                OnDeviceDisconnected?.Invoke(this, new DeviceStateChangeArgs(entry.Value.PortName));
+                Disconnect(entry.Key);
                 entry.Value.Dispose();
             }
             GC.SuppressFinalize(this);

@@ -56,11 +56,11 @@ namespace SoundMixerAppv2.Common.Communication
         /// <summary>
         /// Event fires hen data has been processed.
         /// </summary>
-        public event EventHandler<DataReceivedEventArgs> OnDataReceived;
+        public event EventHandler<DataReceivedEventArgs> DataReceived;
         /// <summary>
         /// Event fires when size of collected data is different than 
         /// </summary>
-        public event EventHandler<EventArgs> OnSizeError;
+        public event EventHandler<EventArgs> SizeError;
         
         #endregion
         
@@ -121,7 +121,7 @@ namespace SoundMixerAppv2.Common.Communication
 
                     if (_buffer.Count != size)
                     {
-                        OnSizeError?.Invoke(this, new EventArgs());
+                        SizeError?.Invoke(this, new EventArgs());
                         if (ClearOnError)
                         {
                             _buffer.Clear();
@@ -135,7 +135,7 @@ namespace SoundMixerAppv2.Common.Communication
                         Command = command,
                         Data = genericType.Invoke(null, new object[] {_buffer.ToArray()})
                     };
-                    OnDataReceived?.Invoke(this, dataEventArgs);
+                    DataReceived?.Invoke(this, dataEventArgs);
                     _buffer.Clear();
                 }
                 else

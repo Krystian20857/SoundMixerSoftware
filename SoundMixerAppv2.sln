@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerAppv2", "SoundMix
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerAppv2.Common", "SoundMixerAppv2.Common\SoundMixerAppv2.Common.csproj", "{2040554A-678B-4E8E-A915-DD4710FB7105}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerAppv2.Win32", "SoundMixerAppv2.Win32\SoundMixerAppv2.Win32.csproj", "{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2040554A-678B-4E8E-A915-DD4710FB7105}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2040554A-678B-4E8E-A915-DD4710FB7105}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2040554A-678B-4E8E-A915-DD4710FB7105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -44,5 +44,11 @@ namespace SoundMixerAppv2.LocalSystem
         /// </summary>
         [Path("latestlog", false, FileAttributes.Normal)]
         public static readonly string LatestLog = Path.Combine(LogsFolder, "latest.log");
+        /// <summary>
+        /// Cache folder.
+        /// key: "latestlog"
+        /// </summary>
+        [Path("cache", true, FileAttributes.Directory)]
+        public static readonly string Cache = Path.Combine(AppData, "cache");
     }
 }
