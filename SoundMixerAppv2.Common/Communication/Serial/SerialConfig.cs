@@ -32,7 +32,11 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         /// Optional serial port name.
         /// </summary>
         public string PortName { get; set; }
-        
+        /// <summary>
+        /// Defines timeout time :0.
+        /// </summary>
+        public int Timeout { get; set; }
+
         #endregion
 
         #region Constructor
@@ -42,24 +46,27 @@ namespace SoundMixerAppv2.Common.Communication.Serial
             
         }
 
-        public SerialConfig(int baudRate, int dataBits, StopBits stopBits, Parity parity, Encoding encoding)
+        public SerialConfig(int baudRate, int dataBits, StopBits stopBits, Parity parity, Encoding encoding, int timeout)
         {
             BaudRate = baudRate;
             DataBits = dataBits;
             StopBits = stopBits;
             Parity = parity;
             Encoding = encoding;
+            Timeout = timeout;
         }
 
-        public SerialConfig(int baudRate, int dataBits, Parity parity, Encoding encoding, string portName)
+        public SerialConfig(int baudRate, int dataBits, StopBits stopBits, Parity parity, Encoding encoding, string portName, int timeout)
         {
             BaudRate = baudRate;
             DataBits = dataBits;
+            StopBits = stopBits;
             Parity = parity;
             Encoding = encoding;
             PortName = portName;
+            Timeout = timeout;
         }
-        
+
         #endregion
         
         #region Public Static Methods

@@ -31,8 +31,9 @@ namespace SoundMixerAppv2.Win32.Win32
             SCANCODE = 0x0008,
             UNICODE = 0x0004
         }
-        
-        public enum INPUT_TYPE : uint {
+
+        public enum INPUT_TYPE : uint
+        {
             INPUT_MOUSE = 0,
             INPUT_KEYBOARD = 1,
             INPUT_HARDWARE = 2
@@ -1077,6 +1078,181 @@ namespace SoundMixerAppv2.Win32.Win32
             NONAME = 0,
             PA1 = 0,
             OEM_CLEAR = 0,
+        }
+
+        /// <summary>
+        /// Flags controlling what is included in the device information set built by SetupDiGetClassDevs
+        /// </summary>
+        [Flags]
+        public enum DIGCF : int
+        {
+            DIGCF_DEFAULT = 0x00000001, // only valid with DIGCF_DEVICEINTERFACE
+            DIGCF_PRESENT = 0x00000002,
+            DIGCF_ALLCLASSES = 0x00000004,
+            DIGCF_PROFILE = 0x00000008,
+            DIGCF_DEVICEINTERFACE = 0x00000010,
+        }
+
+        /// <summary>
+        /// Flags for SetupDiGetDeviceRegistryProperty().
+        /// </summary>
+        public enum SPDRP : uint
+        {
+            SPDRP_DEVICEDESC = 0x00000000, // DeviceDesc (R/W)
+            SPDRP_HARDWAREID = 0x00000001, // HardwareID (R/W)
+            SPDRP_COMPATIBLEIDS = 0x00000002, // CompatibleIDs (R/W)
+            SPDRP_UNUSED0 = 0x00000003, // unused
+            SPDRP_SERVICE = 0x00000004, // Service (R/W)
+            SPDRP_UNUSED1 = 0x00000005, // unused
+            SPDRP_UNUSED2 = 0x00000006, // unused
+            SPDRP_CLASS = 0x00000007, // Class (R--tied to ClassGUID)
+            SPDRP_CLASSGUID = 0x00000008, // ClassGUID (R/W)
+            SPDRP_DRIVER = 0x00000009, // Driver (R/W)
+            SPDRP_CONFIGFLAGS = 0x0000000A, // ConfigFlags (R/W)
+            SPDRP_MFG = 0x0000000B, // Mfg (R/W)
+            SPDRP_FRIENDLYNAME = 0x0000000C, // FriendlyName (R/W)
+            SPDRP_LOCATION_INFORMATION = 0x0000000D, // LocationInformation (R/W)
+            SPDRP_PHYSICAL_DEVICE_OBJECT_NAME = 0x0000000E, // PhysicalDeviceObjectName (R)
+            SPDRP_CAPABILITIES = 0x0000000F, // Capabilities (R)
+            SPDRP_UI_NUMBER = 0x00000010, // UiNumber (R)
+            SPDRP_UPPERFILTERS = 0x00000011, // UpperFilters (R/W)
+            SPDRP_LOWERFILTERS = 0x00000012, // LowerFilters (R/W)
+            SPDRP_BUSTYPEGUID = 0x00000013, // BusTypeGUID (R)
+            SPDRP_LEGACYBUSTYPE = 0x00000014, // LegacyBusType (R)
+            SPDRP_BUSNUMBER = 0x00000015, // BusNumber (R)
+            SPDRP_ENUMERATOR_NAME = 0x00000016, // Enumerator Name (R)
+            SPDRP_SECURITY = 0x00000017, // Security (R/W, binary form)
+            SPDRP_SECURITY_SDS = 0x00000018, // Security (W, SDS form)
+            SPDRP_DEVTYPE = 0x00000019, // Device Type (R/W)
+            SPDRP_EXCLUSIVE = 0x0000001A, // Device is exclusive-access (R/W)
+            SPDRP_CHARACTERISTICS = 0x0000001B, // Device Characteristics (R/W)
+            SPDRP_ADDRESS = 0x0000001C, // Device Address (R)
+            SPDRP_UI_NUMBER_DESC_FORMAT = 0X0000001D, // UiNumberDescFormat (R/W)
+            SPDRP_DEVICE_POWER_DATA = 0x0000001E, // Device Power Data (R)
+            SPDRP_REMOVAL_POLICY = 0x0000001F, // Removal Policy (R)
+            SPDRP_REMOVAL_POLICY_HW_DEFAULT = 0x00000020, // Hardware Removal Policy (R)
+            SPDRP_REMOVAL_POLICY_OVERRIDE = 0x00000021, // Removal Policy Override (RW)
+            SPDRP_INSTALL_STATE = 0x00000022, // Device Install State (R)
+            SPDRP_LOCATION_PATHS = 0x00000023, // Device Location Paths (R)
+            SPDRP_BASE_CONTAINERID = 0x00000024 // Base ContainerID (R)
+        }
+
+        public enum WinErrors : long
+        {
+            ERROR_SUCCESS = 0,
+            ERROR_INVALID_FUNCTION = 1,
+            ERROR_FILE_NOT_FOUND = 2,
+            ERROR_PATH_NOT_FOUND = 3,
+            ERROR_TOO_MANY_OPEN_FILES = 4,
+            ERROR_ACCESS_DENIED = 5,
+            ERROR_INVALID_HANDLE = 6,
+            ERROR_ARENA_TRASHED = 7,
+            ERROR_NOT_ENOUGH_MEMORY = 8,
+            ERROR_INVALID_BLOCK = 9,
+            ERROR_BAD_ENVIRONMENT = 10,
+            ERROR_BAD_FORMAT = 11,
+            ERROR_INVALID_ACCESS = 12,
+            ERROR_INVALID_DATA = 13,
+            ERROR_OUTOFMEMORY = 14,
+            ERROR_INSUFFICIENT_BUFFER = 122,
+            ERROR_MORE_DATA = 234,
+            ERROR_NO_MORE_ITEMS = 259,
+            ERROR_SERVICE_SPECIFIC_ERROR = 1066,
+            ERROR_INVALID_USER_BUFFER = 1784
+        }
+
+        /// <summary>
+        /// Access rights for registry key objects.
+        /// </summary>
+        public enum REGKEYSECURITY : UInt32
+        {
+            /// <summary>
+            /// Combines the STANDARD_RIGHTS_REQUIRED, KEY_QUERY_VALUE, KEY_SET_VALUE, KEY_CREATE_SUB_KEY, KEY_ENUMERATE_SUB_KEYS, KEY_NOTIFY, and KEY_CREATE_LINK access rights.
+            /// </summary>
+            KEY_ALL_ACCESS = 0xF003F,
+
+            /// <summary>
+            /// Reserved for system use.
+            /// </summary>
+            KEY_CREATE_LINK = 0x0020,
+
+            /// <summary>
+            /// Required to create a subkey of a registry key.
+            /// </summary>
+            KEY_CREATE_SUB_KEY = 0x0004,
+
+            /// <summary>
+            /// Required to enumerate the subkeys of a registry key.
+            /// </summary>
+            KEY_ENUMERATE_SUB_KEYS = 0x0008,
+
+            /// <summary>
+            /// Equivalent to KEY_READ.
+            /// </summary>
+            KEY_EXECUTE = 0x20019,
+
+            /// <summary>
+            /// Required to request change notifications for a registry key or for subkeys of a registry key.
+            /// </summary>
+            KEY_NOTIFY = 0x0010,
+
+            /// <summary>
+            /// Required to query the values of a registry key.
+            /// </summary>
+            KEY_QUERY_VALUE = 0x0001,
+
+            /// <summary>
+            /// Combines the STANDARD_RIGHTS_READ, KEY_QUERY_VALUE, KEY_ENUMERATE_SUB_KEYS, and KEY_NOTIFY values.
+            /// </summary>
+            KEY_READ = 0x20019,
+
+            /// <summary>
+            /// Required to create, delete, or set a registry value.
+            /// </summary>
+            KEY_SET_VALUE = 0x0002,
+
+            /// <summary>
+            /// Indicates that an application on 64-bit Windows should operate on the 32-bit registry view. For more information, see Accessing an Alternate Registry View. This flag must be combined using the OR operator with the other flags in this table that either query or access registry values. Windows 2000:  This flag is not supported.
+            /// </summary>
+            KEY_WOW64_32KEY = 0x0200,
+
+            /// <summary>
+            /// Indicates that an application on 64-bit Windows should operate on the 64-bit registry view. For more information, see Accessing an Alternate Registry View. This flag must be combined using the OR operator with the other flags in this table that either query or access registry values. Windows 2000:  This flag is not supported.
+            /// </summary>
+            KEY_WOW64_64KEY = 0x0100,
+
+            /// <summary>
+            /// Combines the STANDARD_RIGHTS_WRITE, KEY_SET_VALUE, and KEY_CREATE_SUB_KEY access rights.
+            /// </summary>
+            KEY_WRITE = 0x20006
+        }
+
+        /// <summary>
+        /// Values specifying the scope of a device property change
+        /// </summary>
+        public enum DICS_FLAG : int
+        {
+            /// <summary>
+            /// make change in all hardware profiles
+            /// </summary>
+            DICS_FLAG_GLOBAL = 0x00000001,
+
+            /// <summary>
+            /// make change in specified profile only
+            /// </summary>
+            DICS_FLAG_CONFIGSPECIFIC = 0x00000002,
+
+            /// <summary>
+            /// 1 or more hardware profile-specific
+            /// </summary>
+            DICS_FLAG_CONFIGGENERAL = 0x00000004,
+        }
+
+        public enum DIREG : int
+        {
+            DIREG_DEV = 0x00000001,
+            DIREG_DRV = 0x00000002,
+            DIREG_BOTH = 0x00000004,
         }
     }
 }

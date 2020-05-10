@@ -52,6 +52,33 @@ namespace SoundMixerAppv2.Win32.Win32
             internal short wParamL;
             internal short wParamH;
         }
+        
+        [StructLayout(LayoutKind.Sequential)]
+        public struct DEV_BROADCAST_DEVICEINTERFACE
+        {
+            public int dbcc_size;
+            public int dbcc_devicetype;
+            public int dbcc_reserved;
+            [MarshalAs(UnmanagedType.Struct, SizeConst = 16)]
+            public Guid dbcc_classguid;
+            public char dbcc_name;
+        }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct DEV_BROADCAST_HDR {
+            public uint dbch_Size;
+            public uint dbch_DeviceType;
+            public uint dbch_Reserved;
+        }
+        
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SP_DEVINFO_DATA
+        {
+            public uint cbSize;
+            public Guid ClassGuid;
+            public uint DevInst;
+            public IntPtr Reserved;
+        }
+        
     }
 }

@@ -4,14 +4,13 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}</ProjectGuid>
+        <ProjectGuid>{566025E9-C111-4969-AB14-CDE8780D3818}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>SoundMixerAppv2.Win32</RootNamespace>
-        <AssemblyName>SoundMixerAppv2.Win32</AssemblyName>
+        <RootNamespace>SoundMixerAppv2.UI</RootNamespace>
+        <AssemblyName>SoundMixerAppv2.UI</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,36 +32,13 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-      <Compile Include="USBLib\EventArgs.cs" />
-      <Compile Include="USBLib\USBDescriptor.cs" />
-      <Compile Include="USBLib\USBDevice.cs" />
-      <Compile Include="Utils\KeyHelper.cs" />
-      <Compile Include="Win32\NativeClasses.cs" />
-      <Compile Include="Win32\NativeEnums.cs" />
-      <Compile Include="Win32\NativeMethods.cs" />
-      <Compile Include="Win32\NativeStructs.cs" />
-      <Compile Include="Wrapper\IconExtractor.cs" />
-      <Compile Include="Wrapper\MediaControl.cs" />
+      <Reference Include="System.Windows.Forms" />
     </ItemGroup>
     <ItemGroup>
-      <Reference Include="Microsoft.CSharp" />
-      <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-        <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
-        <Private>True</Private>
-      </Reference>
-      <Reference Include="System" />
-      <Reference Include="System.Configuration" />
-      <Reference Include="System.Core" />
-      <Reference Include="System.Data" />
-      <Reference Include="System.Drawing" />
-      <Reference Include="System.IO.Compression" />
-      <Reference Include="System.Runtime.Serialization" />
-      <Reference Include="System.ServiceModel" />
-      <Reference Include="System.Transactions" />
-      <Reference Include="System.Xml" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="packages.config" />
+      <ProjectReference Include="..\SoundMixerAppv2.Win32\SoundMixerAppv2.Win32.csproj">
+        <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
+        <Name>SoundMixerAppv2.Win32</Name>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

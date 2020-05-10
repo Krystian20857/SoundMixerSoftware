@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using NLog;
 using SoundMixerAppv2.Common.Utils;
 
@@ -26,7 +27,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         /// Contains current connected devices.
         /// </summary>
         public IReadOnlyList<string> ConnectedDevices => _connectedDevices.Keys.ToList().AsReadOnly();
-
+        
         #endregion
         
         #region Events
@@ -36,7 +37,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
         /// </summary>
         public event EventHandler<DeviceStateChangeArgs> DeviceConnected;
         /// <summary>
-        /// Fires when devices has disconnected.
+        /// Fires when device not responding for specified time 
         /// </summary>
         public event EventHandler<DeviceStateChangeArgs> DeviceDisconnected;
         /// <summary>
@@ -154,7 +155,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
 
         #endregion
         
-        #region Private Methods
+        #region Private Methods+
         
         private void DeviceOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -164,7 +165,7 @@ namespace SoundMixerAppv2.Common.Communication.Serial
             var eventArgs = new SerialDataReceivedArgs(data, serialPort.PortName);
             DataReceived?.Invoke(this, eventArgs);
         }
-        
+
         #endregion
         
         #region Dispose
