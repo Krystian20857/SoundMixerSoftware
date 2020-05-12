@@ -8,7 +8,7 @@
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>SoundMixerAppv2.Common</RootNamespace>
-        <AssemblyName>SoundMixerAppv2.Common</AssemblyName>
+        <AssemblyName>SoundMixerSoftware.Common</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
@@ -32,6 +32,8 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Include="AudioLib\DeviceEnumerator.cs" />
+      <Compile Include="AudioLib\SessionEnumerator.cs" />
       <Compile Include="Cache\ICache.cs" />
       <Compile Include="Cache\IconCache.cs" />
       <Compile Include="Cache\NativeCache.cs" />
@@ -84,6 +86,10 @@
         <Private>True</Private>
       </Reference>
       <Reference Include="mscorlib" />
+      <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
       <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
         <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
         <Private>True</Private>
@@ -112,6 +118,7 @@
         <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
         <Private>True</Private>
       </Reference>
+      <Reference Include="System.Runtime.Caching" />
       <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
         <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0-preview.3.20214.6\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
         <Private>True</Private>
@@ -119,10 +126,7 @@
       <Reference Include="System.Runtime.Serialization" />
       <Reference Include="System.ServiceModel" />
       <Reference Include="System.Transactions" />
-      <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-        <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-        <Private>True</Private>
-      </Reference>
+      <Reference Include="System.Windows.Forms" />
       <Reference Include="System.Xml" />
       <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e">
         <HintPath>..\packages\YamlDotNet.8.1.1\lib\net45\YamlDotNet.dll</HintPath>

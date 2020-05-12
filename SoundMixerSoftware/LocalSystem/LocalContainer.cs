@@ -50,5 +50,11 @@ namespace SoundMixerAppv2.LocalSystem
         /// </summary>
         [Path("cache", true, FileAttributes.Directory)]
         public static readonly string Cache = Path.Combine(AppData, "cache");
+        /// <summary>
+        /// Icon cache folder.
+        /// key: "iconcache"
+        /// </summary>
+        [Path("iconcache", true, FileAttributes.Directory)]
+        public static readonly string IconCache = Path.Combine(Cache, "iconcache");
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -9,6 +11,9 @@ using System.Windows.Forms;
 using System.Xml;
 using NLog;
 using NLog.LayoutRenderers;
+using NLog.Targets;
+using SoundMixerAppv2.Common.AudioLib;
+using SoundMixerAppv2.Common.Cache;
 using SoundMixerAppv2.Common.Communication;
 using SoundMixerAppv2.Common.Communication.Serial;
 using SoundMixerAppv2.Common.Config;
@@ -19,6 +24,7 @@ using SoundMixerAppv2.LocalSystem;
 using SoundMixerAppv2.Win32.USBLib;
 using SoundMixerAppv2.Win32.Win32;
 using SoundMixerAppv2.Win32.Wrapper;
+using DataReceivedEventArgs = SoundMixerAppv2.Common.Communication.DataReceivedEventArgs;
 
 namespace SoundMixerAppv2
 {
@@ -42,14 +48,11 @@ namespace SoundMixerAppv2
         private static SerialConnection connection;
         private static bool _micmute = false;
         private static bool _speakermute = false;
-        public static USBDevice _usbDevice = new USBDevice(NativeClasses.GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL);
+        public static USBDevice _usbDevice = new USBDevice(NativeClasses.GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL ,0X468F, 0X895D);
         //public static USBDevice _usbDevice = new USBDevice();
         [STAThread]
         public static void Main(string[] args)
         {
-            _usbDevice.VID = 0x468F;
-            _usbDevice.PID = 0x895D;
-            
             LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
             LocalManager.ResolveLocal();
             
@@ -101,7 +104,7 @@ namespace SoundMixerAppv2
             Console.WriteLine($"Device Arrived: {e.DeviceProperties.COMPort}");
         }
 
-        private static string COMPORT = "COM10";  
+        private static string COMPORT = "COM7";  
 
         private static void ConverterOnDataReceived(object sender, DataReceivedEventArgs e)
         {
@@ -142,6 +145,8 @@ namespace SoundMixerAppv2
                 DeviceResponse response = e.Data;
                 Console.WriteLine($"Device name: {response.name}"); 
                 Console.WriteLine($"Device uuid: {BitConverter.ToString(response.uuid)}");
+                Console.WriteLine($"Device slider count: {response.slider_count}");
+                Console.WriteLine($"Device button count: {response.button_count}");
             }
         }
 
@@ -198,7 +203,9 @@ namespace SoundMixerAppv2
         {
             [MarshalAs(UnmanagedType.U1)] public byte command;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string name;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]public byte[] uuid;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] uuid;
+            public byte slider_count;
+            public byte button_count;
         }
 
         private class NativeWindowHandler : NativeWindow
@@ -206,14 +213,14 @@ namespace SoundMixerAppv2
             public NativeWindowHandler()
             {
                 CreateHandle(new CreateParams());
-                Program._usbDevice.RegisterDeviceChange(this.Handle);
+                _usbDevice.RegisterDeviceChange(this.Handle);
                 Application.Run();
             }
             
             [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
             protected override void WndProc(ref Message m)
             {
-                Program._usbDevice.ProcessMessage((uint) m.Msg, m.WParam, m.LParam);
+                _usbDevice.ProcessMessage((uint) m.Msg, m.WParam, m.LParam);
                 base.WndProc(ref m);
             }
         }
