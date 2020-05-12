@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>SoundMixerSoftware.Win32</RootNamespace>
+        <AssemblyName>SoundMixerSoftware.Win32</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Include="USBLib\EventArgs.cs" />
+      <Compile Include="USBLib\USBDescriptor.cs" />
+      <Compile Include="USBLib\USBDevice.cs" />
+      <Compile Include="Utils\KeyHelper.cs" />
+      <Compile Include="Win32\NativeClasses.cs" />
+      <Compile Include="Win32\NativeEnums.cs" />
+      <Compile Include="Win32\NativeMethods.cs" />
+      <Compile Include="Win32\NativeStructs.cs" />
+      <Compile Include="Wrapper\IconExtractor.cs" />
+      <Compile Include="Wrapper\MediaControl.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="Microsoft.CSharp" />
+      <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+        <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
+      <Reference Include="System" />
+      <Reference Include="System.Configuration" />
+      <Reference Include="System.Core" />
+      <Reference Include="System.Data" />
+      <Reference Include="System.Drawing" />
+      <Reference Include="System.IO.Compression" />
+      <Reference Include="System.Runtime.Serialization" />
+      <Reference Include="System.ServiceModel" />
+      <Reference Include="System.Transactions" />
+      <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
