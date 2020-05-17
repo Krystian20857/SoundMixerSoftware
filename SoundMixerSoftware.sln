@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware", "SoundMixerSoftware\SoundMixerSoftware.csproj", "{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Helpers", "SoundMixerSoftware.Helpers\SoundMixerSoftware.Helpers.csproj", "{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Common", "SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj", "{2040554A-678B-4E8E-A915-DD4710FB7105}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Win32", "SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj", "{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware", "SoundMixerSoftware\SoundMixerSoftware.csproj", "{CC96B767-3C3B-4F25-B878-59FA9F0B9876}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

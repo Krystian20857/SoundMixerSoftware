@@ -23,9 +23,6 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         private MMDevice _device;
 
-        private Dictionary<AudioSessionControl, AudioSessionState> _lastStates =
-            new Dictionary<AudioSessionControl, AudioSessionState>();
-
         #endregion
 
         #region Public Properties
@@ -44,10 +41,12 @@ namespace SoundMixerSoftware.Common.AudioLib
             get => _device;
         }
 
+        /*
         /// <summary>
         /// Event Session Event Client.
         /// </summary>
         public AudioSessionEventClient EventClient { get; private set; }
+        */
 
         /// <summary>
         /// Gets processes associated with audio sessions 
@@ -68,16 +67,38 @@ namespace SoundMixerSoftware.Common.AudioLib
         #endregion
 
         #region Events
-
         /// <summary>
         /// Fires when new session has created.
         /// </summary>
-        public event Action<MMDevice, AudioSessionControl> SessionCreated;
-
+        public event EventHandler<AudioSessionControl> SessionCreated;
         /// <summary>
-        /// Fires when session has disconnected
+        /// Fires when volume or muting state changed.
         /// </summary>
-        public event Action<MMDevice, AudioSessionControl> SessionDisconnected;
+        public event EventHandler<VolumeChangedArgs> VolumeChanged;
+        /// <summary>
+        /// Fires when display name changed.
+        /// </summary>
+        public event EventHandler<string> DisplayNameChanged;
+        /// <summary>
+        /// Fires when icon path changed.
+        /// </summary>
+        public event EventHandler<string> IconPathChanged;
+        /// <summary>
+        /// Fires when channel volume changed
+        /// </summary>
+        public event EventHandler<ChannelVolumeChangedArgs> ChannelVolumeChanged;
+        /// <summary>
+        /// Fires when grouping parameter change.
+        /// </summary>
+        public event EventHandler<Guid> GroupingParamChanged;
+        /// <summary>
+        /// Fires when session state changed.
+        /// </summary>
+        public event EventHandler<AudioSessionState> StateChanged;
+        /// <summary>
+        /// Fires when session disconnected.
+        /// </summary>
+        public event EventHandler<AudioSessionDisconnectReason> SessionDisconnected;
 
         #endregion
 
@@ -95,6 +116,10 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         #region Public Methods
 
+        /// <summary>
+        /// Set current handling device.
+        /// </summary>
+        /// <param name="device"></param>
         public void SetDevice(MMDevice device)
         {
             _device = device;
@@ -103,18 +128,26 @@ namespace SoundMixerSoftware.Common.AudioLib
             for (var n = 0; n < sessions.Count; n++)
             {
                 var session = sessions[n];
-                EventClient = new AudioSessionEventClient(session);
-                EventClient.StateChanged += OnStateChanged;
-                session.RegisterEventClient(EventClient);
+                RegisterEvents(session);
             }
         }
 
+        /// <summary>
+        /// Get audio session from process name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public IEnumerable<(Process process, AudioSessionControl session)> GetByProcessName(string name)
         {
             return AudioProcesses.Where((x) =>
                 x.process.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
+        /// <summary>
+        /// Get audio session by process id
+        /// </summary>
+        /// <param name="pid">process id</param>
+        /// <returns></returns>
         public AudioSessionControl GetByProcessId(int pid)
         {
             for (var n = 0; n < AudioSessions.Count; n++)
@@ -123,34 +156,34 @@ namespace SoundMixerSoftware.Common.AudioLib
             return null;
         }
 
-        #endregion
+        public bool ProcessNameExists(string processName)
+        {
+            return AudioProcesses.Any(x =>
+                x.process.ProcessName.Equals(processName, StringComparison.InvariantCultureIgnoreCase));
+        }
 
+        #endregion
+        
         #region Private Methods
+ 
+        private void RegisterEvents(AudioSessionControl session)
+        {
+            var eventClient = new AudioSessionEventClient(session);
+            eventClient.SessionDisconnected += (sender, args) =>SessionDisconnected.Invoke(sender, args);
+            eventClient.StateChanged += (sender, args) => StateChanged?.Invoke(sender, args);
+            eventClient.VolumeChanged += (sender, args) => VolumeChanged?.Invoke(sender, args);
+            eventClient.ChannelVolumeChanged += (sender, args) => ChannelVolumeChanged?.Invoke(sender, args);
+            eventClient.DisplayNameChanged += (sender, args) => DisplayNameChanged?.Invoke(sender, args);
+            eventClient.GroupingParamChanged += (sender, args) => GroupingParamChanged?.Invoke(sender, args);
+            eventClient.IconPathChanged += (sender, args) => IconPathChanged?.Invoke(sender, args);
+            session.RegisterEventClient(eventClient);
+        }
 
         private void OnSessionCreated(object sender, IAudioSessionControl newsession)
         {
             var session = new AudioSessionControl(newsession);
-            session.RegisterEventClient(EventClient);
+            RegisterEvents(session);
             SessionCreated?.Invoke(_device, session);
-        }
-
-        private void OnStateChanged(AudioSessionControl audioSession, AudioSessionState state)
-        {
-            if (_lastStates.ContainsKey(audioSession))
-            {
-                if (state != _lastStates[audioSession] && state == AudioSessionState.AudioSessionStateExpired)
-                {
-                    _lastStates[audioSession] = state;
-                    SessionDisconnected?.Invoke(_device, audioSession);
-                }
-
-            }
-            else
-            {
-                _lastStates.Add(audioSession, state);
-                if(state == AudioSessionState.AudioSessionStateInactive)
-                    SessionDisconnected?.Invoke(_device, audioSession);
-            }
         }
         #endregion
     }

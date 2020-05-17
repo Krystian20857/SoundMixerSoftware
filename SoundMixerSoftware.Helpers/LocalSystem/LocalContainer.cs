@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using SoundMixerSoftware.Common.LocalSystem;
 
-namespace SoundMixerSoftware.LocalSystem
+namespace SoundMixerSoftware.Helpers.LocalSystem
 {
     [LocalContainer]
     public static class LocalContainer

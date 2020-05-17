@@ -1,0 +1,29 @@
+﻿<Window x:Class="SoundMixerSoftware.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:controls="clr-namespace:MaterialDesignExtensions.Controls;assembly=MaterialDesignExtensions"
+        xmlns:models="clr-namespace:SoundMixerSoftware.Models"
+        xmlns:cal="http://www.caliburnproject.org"
+        mc:Ignorable="d"
+        Title="MainView" Height="450" Width="800">
+    <Grid>
+        <TabControl x:Name="Tabs" SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=Tabs, Mode=OneWay}" TabStripPlacement="Left">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="2, 5" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Margin="3, 0" Kind="{Binding Path=Icon}"/>
+                        <TextBlock Text="{Binding Path=Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                <ContentControl cal:View.Model="{Binding}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </Grid>
+</Window>

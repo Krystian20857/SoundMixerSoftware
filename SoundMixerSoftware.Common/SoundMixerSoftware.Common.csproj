@@ -34,9 +34,10 @@
     <ItemGroup>
       <Compile Include="AudioLib\AudioSessionEventClient.cs" />
       <Compile Include="AudioLib\DeviceEnumerator.cs" />
+      <Compile Include="AudioLib\EventArgs.cs" />
       <Compile Include="AudioLib\SessionEnumerator.cs" />
       <Compile Include="AudioLib\SliderLib\IVirtualSlider.cs" />
-      <Compile Include="AudioLib\SliderLib\DeviceVirtualSlider.cs" />
+      <Compile Include="AudioLib\SliderLib\DeviceSlider.cs" />
       <Compile Include="AudioLib\SliderLib\SessionSlider.cs" />
       <Compile Include="AudioLib\SliderLib\SliderType.cs" />
       <Compile Include="Cache\ICache.cs" />

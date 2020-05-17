@@ -9,6 +9,12 @@ namespace SoundMixerSoftware.Common.AudioLib
 {
     public class DeviceEnumerator : IDisposable, IMMNotificationClient
     {
+        #region CONST
+
+        public static readonly Guid VolumeUUID = new Guid("DBD9BCEE-06FB-44E5-9842-53C9A309782A");
+        
+        #endregion
+        
         #region Logger
 
         /// <summary>
@@ -25,8 +31,6 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         private MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
         
-        private Dictionary<Guid, MMDevice> _devices = new Dictionary<Guid, MMDevice>();
-
         #endregion
 
         #region Public Properties
@@ -52,7 +56,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Gets default multimedia input device.
         /// </summary>
         public MMDevice DefaultInput => _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-
+        
         #endregion
 
         #region Events
@@ -60,27 +64,27 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <summary>
         /// Fires when device state changed.
         /// </summary>
-        public event Action<MMDevice, DeviceState> DeviceStateChanged;
+        public event EventHandler<DeviceStateChangedArgs> DeviceStateChanged;
         /// <summary>
         /// Fires when new audio device has connected.
         /// </summary>
-        public event Action<MMDevice> DeviceAdded;
+        public event EventHandler DeviceAdded;
         /// <summary>
         /// Fires when audio device has removed.
         /// </summary>
-        public event Action<MMDevice> DeviceRemoved;
+        public event EventHandler DeviceRemoved;
         /// <summary>
         /// Fires when Default device has changed.
         /// </summary>
-        public event Action<MMDevice, DataFlow, Role> DefaultDeviceChange;
+        public event EventHandler<DefaultDeviceChangedArgs> DefaultDeviceChange;
         /// <summary>
         /// Fires when device property has changed.
         /// </summary>
-        public event Action<MMDevice, PropertyKey> PropertyValueChanged;
+        public event EventHandler<PropertyChangedArgs> PropertyValueChanged;
         /// <summary>
         /// Fires when device volume has changed.
         /// </summary>
-        public event Action<MMDevice, float, bool> DeviceVolumeChanged;
+        public event EventHandler<VolumeChangedArgs> DeviceVolumeChanged;
 
         #endregion
 
@@ -115,25 +119,13 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         private void RegisterEvents(MMDevice device)
         {
-            var uuid = Guid.NewGuid();
-            while(_devices.ContainsKey(uuid))
-                uuid = Guid.NewGuid();
-            device.AudioEndpointVolume.NotificationGuid = uuid;
-            device.AudioEndpointVolume.OnVolumeNotification += VolumeNotification; 
-        }
-
-        private void RemoveDevice(Guid uuid)
-        {
-            if (!_devices.ContainsKey(uuid)) return;
-            var device = _devices[uuid];
-            device.AudioEndpointVolume.OnVolumeNotification -= VolumeNotification;
-            _devices.Remove(uuid);
-        }
-
-        private void VolumeNotification(AudioVolumeNotificationData data)
-        {
-            var device = _devices[data.Guid];
-            DeviceVolumeChanged?.Invoke(device, data.MasterVolume, data.Muted);
+            device.AudioEndpointVolume.NotificationGuid = VolumeUUID;
+            var deviceID = string.Copy(device.ID);
+            device.AudioEndpointVolume.OnVolumeNotification += data =>
+            {
+                var devicec = _deviceEnumerator.GetDevice(deviceID);
+                DeviceVolumeChanged?.Invoke(devicec, new VolumeChangedArgs(data.MasterVolume, data.Muted, data.Guid == VolumeUUID));
+            };
         }
 
         #endregion
@@ -142,29 +134,30 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-            DeviceStateChanged?.Invoke(_deviceEnumerator.GetDevice(deviceId), newState);
+            DeviceStateChanged?.Invoke(_deviceEnumerator.GetDevice(deviceId), new DeviceStateChangedArgs(newState));
         }
 
         public void OnDeviceAdded(string pwstrDeviceId)
         {
             var device = _deviceEnumerator.GetDevice(pwstrDeviceId);
             RegisterEvents(device);
-            DeviceAdded?.Invoke(device);
+            DeviceAdded?.Invoke(device, new EventArgs());
         }
 
         public void OnDeviceRemoved(string deviceId)
         {
-            DeviceRemoved?.Invoke(_deviceEnumerator.GetDevice(deviceId));
+            var device = _deviceEnumerator.GetDevice(deviceId);
+            DeviceRemoved?.Invoke(device, new EventArgs());
         }
 
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            DefaultDeviceChange?.Invoke(_deviceEnumerator.GetDevice(defaultDeviceId), flow, role);
+            DefaultDeviceChange?.Invoke(_deviceEnumerator.GetDevice(defaultDeviceId), new DefaultDeviceChangedArgs(flow, role));
         }
 
         public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key)
         {
-            PropertyValueChanged?.Invoke(_deviceEnumerator.GetDevice(pwstrDeviceId), key);
+            PropertyValueChanged?.Invoke(_deviceEnumerator.GetDevice(pwstrDeviceId), new PropertyChangedArgs(key));
         }
 
         #endregion
@@ -181,4 +174,6 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         #endregion
     }
+    
+    
 }

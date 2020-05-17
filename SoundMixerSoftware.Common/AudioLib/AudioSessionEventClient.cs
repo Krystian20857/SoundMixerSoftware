@@ -1,5 +1,6 @@
-﻿using System;
-using NAudio.CoreAudioApi;
+﻿﻿using System;
+ using System.ComponentModel;
+ using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 
 namespace SoundMixerSoftware.Common.AudioLib
@@ -20,31 +21,31 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <summary>
         /// Fires when volume or muting state changed.
         /// </summary>
-        public event Action<AudioSessionControl, float, bool> VolumeChanged;
+        public event EventHandler<VolumeChangedArgs> VolumeChanged;
         /// <summary>
         /// Fires when display name changed.
         /// </summary>
-        public event Action<AudioSessionControl, string> DisplayNameChanged;
+        public event EventHandler<string> DisplayNameChanged;
         /// <summary>
         /// Fires when icon path changed.
         /// </summary>
-        public event Action<AudioSessionControl, string> IconPathChanged;
+        public event EventHandler<string> IconPathChanged;
         /// <summary>
         /// Fires when channel volume changed
         /// </summary>
-        public event Action<AudioSessionControl, uint, IntPtr, uint> ChannelVolumeChanged;
+        public event EventHandler<ChannelVolumeChangedArgs> ChannelVolumeChanged;
         /// <summary>
         /// Fires when grouping parameter change.
         /// </summary>
-        public event Action<AudioSessionControl, Guid> GroupingParamChanged;
+        public event EventHandler<Guid> GroupingParamChanged;
         /// <summary>
         /// Fires when session state changed.
         /// </summary>
-        public event Action<AudioSessionControl, AudioSessionState> StateChanged;
+        public event EventHandler<AudioSessionState> StateChanged;
         /// <summary>
         /// Fires when session disconnected.
         /// </summary>
-        public event Action<AudioSessionControl, AudioSessionDisconnectReason> SessionDisconnected;
+        public event EventHandler<AudioSessionDisconnectReason> SessionDisconnected;
         
         #endregion
         
@@ -65,7 +66,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         
         public void OnVolumeChanged(float volume, bool isMuted)
         {
-            VolumeChanged?.Invoke(_session, volume, isMuted);
+            VolumeChanged?.Invoke(_session, new VolumeChangedArgs(volume, isMuted, false));
         }
 
         public void OnDisplayNameChanged(string displayName)
@@ -80,7 +81,7 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void OnChannelVolumeChanged(uint channelCount, IntPtr newVolumes, uint channelIndex)
         {
-            ChannelVolumeChanged?.Invoke(_session, channelCount, newVolumes, channelCount);
+            ChannelVolumeChanged?.Invoke(_session, new ChannelVolumeChangedArgs(channelCount, newVolumes, channelIndex));
         }
 
         public void OnGroupingParamChanged(ref Guid groupingId)

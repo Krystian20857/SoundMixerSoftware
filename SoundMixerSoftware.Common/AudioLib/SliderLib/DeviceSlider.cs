@@ -5,14 +5,14 @@ using NAudio.CoreAudioApi;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
-    public class DeviceVirtualSlider : IVirtualSlider
+    public class DeviceSlider : IVirtualSlider
     {
 
         #region Private Fields
 
         private readonly AudioEndpointVolume _endpoint;
 
-        private float _lastVolume = float.NaN;
+        private float _lastVolume = 0;
         private bool _lastMute = false;
 
         private Task _refreshTask;
@@ -31,10 +31,12 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         #region Constructor
 
-        public DeviceVirtualSlider(MMDevice device)
+        public DeviceSlider(MMDevice device)
         {
             _endpoint = device.AudioEndpointVolume;
             SliderType = device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER;
+            _lastVolume = _endpoint.MasterVolumeLevelScalar;
+            _lastMute = _endpoint.Mute;
             StartRefreshTask(10, _token.Token);
         }
 
@@ -57,6 +59,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
                     if (_lastMute != IsMute)
                     {
                         _endpoint.Mute = IsMute;
+                        _lastMute = IsMute;
                     }
                     await Task.Delay(interval, token);
                 }
