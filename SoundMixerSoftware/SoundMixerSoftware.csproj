@@ -97,14 +97,34 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Include="Bootstrapper.cs" />
+        <Compile Include="Models\ButtonModel.cs" />
+        <Compile Include="Models\DeviceModel.cs" />
         <Compile Include="Models\ITabModel.cs" />
+        <Compile Include="Models\ProfileModel.cs" />
+        <Compile Include="Models\SliderModel.cs" />
+        <Compile Include="ViewModels\ButtonsViewModel.cs" />
+        <Compile Include="ViewModels\DevicesViewModel.cs" />
         <Compile Include="ViewModels\MainViewModel.cs" />
         <Compile Include="ViewModels\ManagerViewModel.cs" />
+        <Compile Include="ViewModels\SettingsViewModel.cs" />
+        <Compile Include="ViewModels\SlidersViewModel.cs" />
+        <Compile Include="Views\ButtonsView.xaml.cs">
+          <DependentUpon>ButtonsView.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Views\DevicesView.xaml.cs">
+          <DependentUpon>DevicesView.xaml</DependentUpon>
+        </Compile>
         <Compile Include="Views\MainView.xaml.cs">
           <DependentUpon>MainView.xaml</DependentUpon>
         </Compile>
         <Compile Include="Views\ManagerView.xaml.cs">
           <DependentUpon>ManagerView.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Views\SettingsView.xaml.cs">
+          <DependentUpon>SettingsView.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Views\SlidersView.xaml.cs">
+          <DependentUpon>SlidersView.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
@@ -126,8 +146,12 @@
         <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
+      <Page Include="Views\ButtonsView.xaml" />
+      <Page Include="Views\DevicesView.xaml" />
       <Page Include="Views\MainView.xaml" />
       <Page Include="Views\ManagerView.xaml" />
+      <Page Include="Views\SettingsView.xaml" />
+      <Page Include="Views\SlidersView.xaml" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">

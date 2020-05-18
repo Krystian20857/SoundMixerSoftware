@@ -44,6 +44,12 @@ namespace SoundMixerSoftware.ViewModels
         public MainViewModel()
         {
             Tabs.Add(new ManagerViewModel());
+            Tabs.Add(new SlidersViewModel());
+            Tabs.Add(new ButtonsViewModel());
+            Tabs.Add(new DevicesViewModel());
+            Tabs.Add(new SettingsViewModel());
+
+            SelectedTab = Tabs[0];
         }
         
         #endregion

@@ -4,8 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
+        <DockPanel LastChildFill="False">
+            <ListView DockPanel.Dock="Top" x:Name="Profiles" HorizontalContentAlignment="Stretch">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Height="75" LastChildFill="False">
+                            <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+                                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="{Binding ProfileName}" />
+                                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Foreground="DarkGray" Text="{Binding AttachedDevices}" />
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Margin="5,2" ToolTip="Copy" Content="{materialDesign:PackIcon ContentCopy}" />
+                                <Button Margin="5,2" ToolTip="Edit" Content="{materialDesign:PackIcon Pencil}" />
+                                <Button Margin="5,2" ToolTip="Remove" Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" Width="150" ToolTip="Add Profile" Content="Add Profile" />
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </UserControl>
