@@ -1,19 +1,34 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using System.Linq;
+using System.Windows;
+using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
+using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.ViewModels
 {
+    /// <summary>
+    /// View model of Devices tab in main window.
+    /// </summary>
     public class DevicesViewModel : ITabModel
     {
         #region Private Properties
         
+        private IWindowManager _windowManager =  new WindowManager();
+        
         private BindableCollection<DeviceModel> _devices = new BindableCollection<DeviceModel>();
+        private BindableCollection<USBID> _USBIds = new BindableCollection<USBID>();
         
         #endregion
         
         #region Public Properties
 
+        /// <summary>
+        /// Collection of device models.
+        /// </summary>
         public BindableCollection<DeviceModel> Devices
         {
             get => _devices;
@@ -22,7 +37,7 @@ namespace SoundMixerSoftware.ViewModels
                 _devices = value;
             }
         }
-        
+
         #endregion
         
         #region Implemented Properties
@@ -39,15 +54,47 @@ namespace SoundMixerSoftware.ViewModels
             Name = "Devices";
             Icon = PackIconKind.CodeBraces;
             
-            Devices.Add(new DeviceModel()
+            DeviceHandlerGlobal.DeviceHandler.DeviceConnected += DeviceHandlerOnDeviceConnected;
+            DeviceHandlerGlobal.DeviceHandler.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
+        }
+
+        /// <summary>
+        /// Occurs when new device has succesfully cnnected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
+        {
+            Execute.OnUIThread(() =>
             {
-                Name="My Sound Mixer",
-                Buttons = "5",
-                ComPort= "Com5",
-                Pid = "0x0453",
-                Vid = "0x6325",
-                Sliders="6"
+                Devices.Remove(Devices.First(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase)));
             });
+        }
+
+        /// <summary>
+        /// Occurs when device has disconnected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
+        {
+            Execute.OnUIThread(() =>
+            {
+                Devices.Add(DeviceModel.CreateModel(e.Device, e.DeviceResponse));
+            });
+        }
+
+        #endregion
+        
+        #region Private Events
+
+        /// <summary>
+        /// Occurs when Device Manager button has clicked. 
+        /// </summary>
+        public void ManagerClick()
+        {
+            var usbManager = new UsbManagerViewModel();
+            _windowManager.ShowDialog(usbManager);
         }
         
         #endregion

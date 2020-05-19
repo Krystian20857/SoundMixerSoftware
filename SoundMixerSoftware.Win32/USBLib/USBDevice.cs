@@ -40,14 +40,8 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// Gets connected devices.
         /// </summary>
         public IReadOnlyList<DeviceProperties> ConnectedDevices => _connectedDevices.AsReadOnly();
-        /// <summary>
-        /// Gets and Sets vendor ID.
-        /// </summary>
-        public uint VID { get; set; }
-        /// <summary>
-        /// Gets and Sets product ID.
-        /// </summary>
-        public uint PID { get; set; }
+
+        public List<USBID> VidPid { get; set; } = new List<USBID>();
 
         #endregion
         
@@ -81,23 +75,19 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <param name="deviceGuid">device class</param>
         /// <param name="vid">vendor id</param>
         /// <param name="pid">product id</param>
-        public USBDevice(Guid deviceGuid, uint vid, uint pid)
+        public USBDevice(Guid deviceGuid, IEnumerable<USBID> ids)
         {
             _deviceGuid = deviceGuid;
-            VID = vid;
-            PID = pid;
+            VidPid.AddRange(ids);
             CheckDevices();
         }
 
         /// <summary>
         /// Create instance with specified vendor id and product id.
         /// </summary>
-        /// <param name="vid"></param>
-        /// <param name="pid"></param>
-        public USBDevice(uint vid, uint pid)
+        public USBDevice(IEnumerable<USBID> ids)
         {
-            VID = vid;
-            PID = pid;
+            VidPid.AddRange(ids);
             CheckDevices();
         }
         
@@ -142,10 +132,8 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <returns></returns>
         public bool CheckDevices()
         {
-            if (VID == 0 && PID == 0)
-                return false;
-            _connectedDevices = USBDescriptor.GetDescriptors(VID, PID).ToList();
-            return true;
+            _connectedDevices = USBDescriptor.GetDescriptors(VidPid).ToList();
+            return VidPid.Count > 0;
         }
 
         /// <summary>
@@ -174,23 +162,17 @@ namespace SoundMixerSoftware.Win32.USBLib
                 case NativeClasses.DBTEVENT.DBT_DEVICEARRIVAL:
                     var deviceTypeArrive = (uint)Marshal.ReadInt32(lParam, 4);
                     var connectedDevice = default(DeviceProperties);
-                    if (VID != 0 && PID != 0)
-                    {
-                        _connectedDevices = USBDescriptor.GetDescriptors(VID, PID).ToList();
+                    _connectedDevices = USBDescriptor.GetDescriptors(VidPid).ToList();
                         connectedDevice = _connectedDevices.Except(devices).FirstOrDefault();
-                    }
                     DeviceArrive?.Invoke(this, new DeviceStateArgs(deviceTypeArrive, connectedDevice));
                     break;
                 case NativeClasses.DBTEVENT.DBT_DEVICEREMOVECOMPLETE:
                     var deviceTypeRemove = (uint)Marshal.ReadInt32(lParam, 4);
                     var disconnectedDevice = default(DeviceProperties);
-                    if (VID != 0 && PID != 0)
-                    {
-                        _connectedDevices = USBDescriptor.GetDescriptors(VID, PID).ToList();
+                    _connectedDevices = USBDescriptor.GetDescriptors(VidPid).ToList();
                         disconnectedDevice = _connectedDevices.Any()
                                 ? devices.Except(_connectedDevices).First()
                                 : devices.FirstOrDefault();
-                    }
                     DeviceRemove?.Invoke(this, new DeviceStateArgs(deviceTypeRemove, disconnectedDevice));
                     break;
             }

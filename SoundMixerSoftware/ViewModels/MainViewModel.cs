@@ -1,11 +1,12 @@
 ﻿using Caliburn.Micro;
-using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Models;
-using SoundMixerSoftware.Views;
 using Screen = Caliburn.Micro.Screen;
 
 namespace SoundMixerSoftware.ViewModels
 {
+    /// <summary>
+    /// View model of main window
+    /// </summary>
     public class MainViewModel : Screen
     {
         #region Private Fields
@@ -17,6 +18,9 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
+        /// <summary>
+        /// Collection of tabs.
+        /// </summary>
         public BindableCollection<ITabModel> Tabs
         {
             get => _tabs;
@@ -27,6 +31,9 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
+        /// <summary>
+        /// Currently selected tab.
+        /// </summary>
         public ITabModel SelectedTab
         {
             get => _selectedTab;

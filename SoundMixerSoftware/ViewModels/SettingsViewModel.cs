@@ -3,6 +3,9 @@ using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels
 {
+    /// <summary>
+    /// Settings tab view model.
+    /// </summary>
     public class SettingsViewModel : ITabModel
     {
         #region Implemented Properties

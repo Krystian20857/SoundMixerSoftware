@@ -36,6 +36,7 @@
       <Compile Include="USBLib\EventArgs.cs" />
       <Compile Include="USBLib\USBDescriptor.cs" />
       <Compile Include="USBLib\USBDevice.cs" />
+      <Compile Include="USBLib\USBID.cs" />
       <Compile Include="Utils\KeyHelper.cs" />
       <Compile Include="Win32\NativeClasses.cs" />
       <Compile Include="Win32\NativeEnums.cs" />
@@ -43,6 +44,7 @@
       <Compile Include="Win32\NativeStructs.cs" />
       <Compile Include="Wrapper\IconExtractor.cs" />
       <Compile Include="Wrapper\MediaControl.cs" />
+      <Compile Include="Wrapper\NativeWindowWrapper.cs" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.CSharp" />
@@ -59,6 +61,7 @@
       <Reference Include="System.Runtime.Serialization" />
       <Reference Include="System.ServiceModel" />
       <Reference Include="System.Transactions" />
+      <Reference Include="System.Windows.Forms" />
       <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>

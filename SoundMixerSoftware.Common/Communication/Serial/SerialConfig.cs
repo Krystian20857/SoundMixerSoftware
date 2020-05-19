@@ -23,10 +23,6 @@ namespace SoundMixerSoftware.Common.Communication.Serial
         /// </summary>
         public Parity Parity { get; set; }
         /// <summary>
-        /// Defines default encoding.
-        /// </summary>
-        public Encoding Encoding { get; set; }
-        /// <summary>
         /// Optional serial port name.
         /// </summary>
         public string PortName { get; set; }
@@ -50,7 +46,6 @@ namespace SoundMixerSoftware.Common.Communication.Serial
             DataBits = dataBits;
             StopBits = stopBits;
             Parity = parity;
-            Encoding = encoding;
             Timeout = timeout;
         }
 
@@ -60,7 +55,6 @@ namespace SoundMixerSoftware.Common.Communication.Serial
             DataBits = dataBits;
             StopBits = stopBits;
             Parity = parity;
-            Encoding = encoding;
             PortName = portName;
             Timeout = timeout;
         }
@@ -77,7 +71,6 @@ namespace SoundMixerSoftware.Common.Communication.Serial
                 DataBits = config.DataBits,
                 StopBits = config.StopBits,
                 Parity = config.Parity,
-                Encoding = config.Encoding,
             };
             if (!string.IsNullOrWhiteSpace(config.PortName))
                 serialPort.PortName = config.PortName;

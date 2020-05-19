@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SoundMixerSoftware.Win32.Win32
 {
@@ -45,5 +46,11 @@ namespace SoundMixerSoftware.Win32.Win32
         
         [DllImport("setupapi.dll", SetLastError = true)]
         public static extern bool SetupDiDestroyDeviceInfoList(IntPtr DeviceInfoSet);
+        
+        [DllImport("gdi32.dll", SetLastError = true)]
+        public static extern bool DeleteObject(IntPtr hObject);
+        
+        [DllImport("kernel32.dll", SetLastError=true)]
+        public static extern bool QueryFullProcessImageName([In]IntPtr hProcess, [In]int dwFlags, [Out]StringBuilder lpExeName, ref int lpdwSize);
     }
 }

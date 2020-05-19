@@ -63,6 +63,10 @@
           <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.3\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
           <Private>True</Private>
         </Reference>
+        <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
           <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
           <Private>True</Private>
@@ -71,10 +75,12 @@
         <Reference Include="System.Configuration" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Drawing" />
         <Reference Include="System.IO.Compression" />
         <Reference Include="System.Runtime.Serialization" />
         <Reference Include="System.ServiceModel" />
         <Reference Include="System.Transactions" />
+        <Reference Include="System.Windows.Forms" />
         <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
           <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
           <Private>True</Private>
@@ -97,17 +103,22 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Include="Bootstrapper.cs" />
+        <Compile Include="Models\AudioDeviceModel.cs" />
         <Compile Include="Models\ButtonModel.cs" />
         <Compile Include="Models\DeviceModel.cs" />
         <Compile Include="Models\ITabModel.cs" />
         <Compile Include="Models\ProfileModel.cs" />
+        <Compile Include="Models\SessionModel.cs" />
         <Compile Include="Models\SliderModel.cs" />
+        <Compile Include="Properties\Annotations.cs" />
         <Compile Include="ViewModels\ButtonsViewModel.cs" />
         <Compile Include="ViewModels\DevicesViewModel.cs" />
         <Compile Include="ViewModels\MainViewModel.cs" />
         <Compile Include="ViewModels\ManagerViewModel.cs" />
+        <Compile Include="ViewModels\SessionAddViewModel.cs" />
         <Compile Include="ViewModels\SettingsViewModel.cs" />
         <Compile Include="ViewModels\SlidersViewModel.cs" />
+        <Compile Include="ViewModels\UsbManagerViewModel.cs" />
         <Compile Include="Views\ButtonsView.xaml.cs">
           <DependentUpon>ButtonsView.xaml</DependentUpon>
         </Compile>
@@ -120,11 +131,17 @@
         <Compile Include="Views\ManagerView.xaml.cs">
           <DependentUpon>ManagerView.xaml</DependentUpon>
         </Compile>
+        <Compile Include="Views\SessionAddView.xaml.cs">
+          <DependentUpon>SessionAddView.xaml</DependentUpon>
+        </Compile>
         <Compile Include="Views\SettingsView.xaml.cs">
           <DependentUpon>SettingsView.xaml</DependentUpon>
         </Compile>
         <Compile Include="Views\SlidersView.xaml.cs">
           <DependentUpon>SlidersView.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Views\UsbManagerView.xaml.cs">
+          <DependentUpon>UsbManagerView.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
@@ -150,8 +167,10 @@
       <Page Include="Views\DevicesView.xaml" />
       <Page Include="Views\MainView.xaml" />
       <Page Include="Views\ManagerView.xaml" />
+      <Page Include="Views\SessionAddView.xaml" />
       <Page Include="Views\SettingsView.xaml" />
       <Page Include="Views\SlidersView.xaml" />
+      <Page Include="Views\UsbManagerView.xaml" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">
@@ -161,6 +180,10 @@
       <ProjectReference Include="..\SoundMixerSoftware.Helpers\SoundMixerSoftware.Helpers.csproj">
         <Project>{3ef28ff9-c3a7-4abf-b2d0-84b9e6d187b1}</Project>
         <Name>SoundMixerSoftware.Helpers</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj">
+        <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
+        <Name>SoundMixerSoftware.Win32</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

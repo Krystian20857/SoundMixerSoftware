@@ -16,22 +16,20 @@ namespace SoundMixerSoftware.Common.Utils
         /// <param name="dest">Destination object.</param>
         /// <typeparam name="T">Type of object</typeparam>
         /// <returns>Returns true when any changes where made.</returns>
-        public static bool MergeObjects<T>(T source, T dest, List<Type> ignoredTypes)
+        public static bool MergeObjects<T>(T source, T dest)
         {
             var modified = false;
             var type = typeof(T);
             foreach (var property in type.GetProperties())
             {
                 var propertyType = property.PropertyType;
-                if(ignoredTypes.Contains(propertyType))
-                    continue;
-                
+
                 var propertyValue = property.GetValue(source);
                 var propertyName = property.Name;
                 var destPropertyValue = property.GetValue(dest);
                 
                 if(propertyType == typeof(Type))
-                    MergeObjects((T)propertyValue, (T)type.GetProperty(propertyName).GetValue(dest), ignoredTypes);
+                    MergeObjects((T)propertyValue, (T)type.GetProperty(propertyName).GetValue(dest));
                 else if(HasEmptyConstructor(propertyType) || propertyType.IsValueType)
                 {
                     if(destPropertyValue != null)

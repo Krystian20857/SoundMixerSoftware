@@ -55,7 +55,12 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <summary>
         /// Gets default multimedia input device.
         /// </summary>
-        public MMDevice DefaultInput => _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        public MMDevice DefaultInput => _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
+
+        /// <summary>
+        /// Gets all devices.
+        /// </summary>
+        public IEnumerable<MMDevice> AllDevices => OutputDevices.Concat(InputDevices);
         
         #endregion
 
@@ -96,7 +101,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         public DeviceEnumerator()
         {
             _deviceEnumerator.RegisterEndpointNotificationCallback(this);
-            foreach (var device in OutputDevices.Concat(InputDevices))
+            foreach (var device in AllDevices)
                 RegisterEvents(device);
         }
 
@@ -112,6 +117,13 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <returns></returns>
         public MMDevice GetDefaultEndpoint(DataFlow flow, Role role) =>
             _deviceEnumerator.GetDefaultAudioEndpoint(flow, role);
+
+        /// <summary>
+        /// Get MMDevice by string id.
+        /// </summary>
+        /// <param name="id">Device id</param>
+        /// <returns>MMDevice</returns>
+        public MMDevice GetDeviceById(string id) => _deviceEnumerator.GetDevice(id);
 
         #endregion
         

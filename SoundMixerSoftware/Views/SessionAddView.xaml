@@ -1,0 +1,81 @@
+﻿<Window x:Class="SoundMixerSoftware.Views.SessionAddView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+        xmlns:cal="http://www.caliburnproject.org"
+        mc:Ignorable="d"
+        Title="SessionAddView" Height="500" Width="700">
+    <Window.Resources>
+        <Style x:Key="ListViewItems" TargetType="{x:Type ListView}">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="ToolTip" Value="{Binding Path=Name}" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <DockPanel Margin="4" LastChildFill="False">
+                            <Border DockPanel.Dock="Top" CornerRadius="3" BorderThickness="2" BorderBrush="DarkGray">
+                                <Image Height="30" Width="30" Source="{Binding Path=Image}" />
+                            </Border>
+                            <TextBlock TextAlignment="Center" DockPanel.Dock="Top" MaxWidth="50" Text="{Binding Path=Name}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="False">
+                    <Setter Property="SelectedItem" Value="null"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Default Devices">
+            <ListView x:Name="DefaultDevices"
+                      Style="{StaticResource ListViewItems}"
+                      SelectedItem="{Binding Path=SelectedDefaultDevice, Mode=TwoWay}"
+                      cal:Message.Attach="[Event SelectionChanged] = [Action DefaultDevicesSelectionChanged()]">
+                
+            </ListView>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Devices">
+            <ListView x:Name="Devices"
+                      Style="{StaticResource ListViewItems}"
+                      SelectedItem="{Binding Path=SelectedDevice, Mode=TwoWay}"
+                      cal:Message.Attach="[Event SelectionChanged] = [Action DevicesSelectionChanged()]">
+                
+            </ListView>
+        </GroupBox>
+        <GroupBox Grid.Row="2" Header="Sessions">
+            <ListView x:Name="Sessions"
+                      Style="{StaticResource ListViewItems}"
+                      SelectedItem="{Binding Path=SelectedApp, Mode=TwoWay}"
+                      cal:Message.Attach="[Event SelectionChanged] = [Action SessionsSelectionChanged()]">
+                
+            </ListView>
+        </GroupBox>
+        <StackPanel Grid.Row="3" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+            <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" cal:Message.Attach="[Click] = [AddClick()]" Width="150" Content="Add Session" ToolTip="Add Session" />
+        </StackPanel>
+    </Grid>
+</Window>

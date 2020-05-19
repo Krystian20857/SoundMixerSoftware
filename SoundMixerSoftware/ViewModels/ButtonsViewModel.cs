@@ -4,6 +4,9 @@ using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels
 {
+    /// <summary>
+    /// View model of buttons item in main window.
+    /// </summary>
     public class ButtonsViewModel : ITabModel
     {
         #region Private Fields
@@ -14,6 +17,9 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Propeties
 
+        /// <summary>
+        /// Collection of ListView models.
+        /// </summary>
         public BindableCollection<ButtonModel> Buttons
         {
             get => _buttons;

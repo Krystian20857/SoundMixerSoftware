@@ -47,10 +47,6 @@ namespace SoundMixerSoftware.Common.Config.Yaml
         /// Store SampleConfig from Config.
         /// </summary>
         private T _sampleConfig;
-        /// <summary>
-        /// Types to ignore while merging objects.
-        /// </summary>
-        private List<Type> _ignoredTypes = new List<Type>();
 
         #endregion
         
@@ -65,8 +61,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             _configPath = configPath;
             
             _sampleConfig = Config.SampleConfig;
-            _ignoredTypes.Add(typeof(T));
-                
+
             _serializer = _serializationHelper.Serializer;
             _deserializer = _serializationHelper.Deserializer;
                 
@@ -82,7 +77,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             if (File.Exists(_configPath))
             {
                 Config = _deserializer.Deserialize<T>(ReadYAML(_configPath));
-                if (ObjectUtils.MergeObjects(_sampleConfig, Config, _ignoredTypes))
+                if (ObjectUtils.MergeObjects(_sampleConfig, Config))
                 {
                     SaveConfig();
                     Logger.Info($"Updated config: {_configPath}");
@@ -95,7 +90,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
 
         public void SaveConfig()
         {
-            WriteYAML(_configPath, _serializer.Serialize(_sampleConfig));
+            WriteYAML(_configPath, _serializer.Serialize(Config));
             Logger.Info($"Saved config: {_configPath}");
         }
 

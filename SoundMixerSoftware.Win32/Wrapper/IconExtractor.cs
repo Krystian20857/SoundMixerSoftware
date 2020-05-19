@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using SoundMixerSoftware.Win32.Win32;
 
 namespace SoundMixerSoftware.Win32.Wrapper
@@ -52,9 +53,28 @@ namespace SoundMixerSoftware.Win32.Wrapper
         public static void ExtractToFile(string file, int index, bool largeIcon, string fileToExtract)
         {
             ExtractIcon(file, index, largeIcon)?.ToBitmap().Save(fileToExtract);
-            /*Creating Sharp Edged
-            using (var iconStream  = new FileStream(fileToExtract + ".ico", FileMode.Create))
-                ExtractIcon(file, index, largeIcon)?.Save(iconStream);*/
+        }
+
+        /// <summary>
+        /// Extract icon using FormatIconPath.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static Icon ExtractFromIndex(string path)
+        {
+            var data = FormatIconPath(path);
+            return ExtractIcon(data.Path, data.Index, true);
+        }
+        
+        /// <summary>
+        /// Format icon string to path and index.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static (string Path, int Index) FormatIconPath(string path)
+        {
+            var data = path.Split(',');
+            return (data[0], int.Parse(data[1]));
         }
     }
     

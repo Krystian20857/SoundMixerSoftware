@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using NLog;
@@ -28,6 +29,17 @@ namespace SoundMixerSoftware.Win32.USBLib
         #endregion
         
         #region Public Static Methods
+
+        /// <summary>
+        /// Get USB devices descriptors. 
+        /// </summary>
+        /// <param name="vid"></param>
+        /// <param name="pid"></param>
+        /// <returns></returns>
+        public static IEnumerable<DeviceProperties> GetDescriptors(IEnumerable<USBID> vidpid)
+        {
+            return vidpid.SelectMany(entry => GetDescriptors(entry.Vid, entry.Pid));
+        }
 
         /// <summary>
         /// Get USB devices descriptors.
@@ -69,6 +81,8 @@ namespace SoundMixerSoftware.Win32.USBLib
                                     if (hardwareID.StartsWith(hardwareIDFormat))
                                     {
                                         var devproperties = new DeviceProperties();
+                                        devproperties.Vid = vid;
+                                        devproperties.Pid = pid;
                                         if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
                                             (int) NativeEnums.SPDRP.SPDRP_FRIENDLYNAME, out regType, bufferPtr,
@@ -230,7 +244,15 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// When device class in serial when <<see cref="COMPort"> is not null.
         /// </summary>
         public string COMPort { get; set; }
-        
+        /// <summary>
+        /// Vendor id of device.
+        /// </summary>
+        public uint Vid { get; set; }
+        /// <summary>
+        /// Product id of device.
+        /// </summary>
+        public uint Pid { get; set; }
+
         /// <summary>
         /// Short device properties as string.
         /// </summary>
@@ -243,7 +265,7 @@ namespace SoundMixerSoftware.Win32.USBLib
                 stringBuilder.Append(property.Name);
                 stringBuilder.Append(" = ");
                 stringBuilder.Append(property.GetValue(this));
-                stringBuilder.Append("\t");
+                stringBuilder.Append("\t\n");
             }
             return stringBuilder.ToString();
         }

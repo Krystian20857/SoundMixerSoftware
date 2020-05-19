@@ -5,43 +5,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:cv="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <DockPanel LastChildFill="False">
-            <ScrollViewer DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="Devices">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
-                                <DockPanel Height="75" LastChildFill="False">
-                                    <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
-                                        <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Text="{Binding Path=Name}" />
-                                        <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignBody2TextBlock}">
-                                            <Run Text="ComPort: " />
-                                            <Run Text="{Binding Path=ComPort}" Foreground="DarkGray" />
-                                            <Run Text="   Sliders: " />
-                                            <Run Text="{Binding Path=Sliders}" Foreground="DarkGray" />
-                                            <Run Text="   Buttons: " />
-                                            <Run Text="{Binding Path=Buttons}" Foreground="DarkGray" />
-                                        </TextBlock>
-                                        <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignBody2TextBlock}">
-                                            <Run Text="VID: " />
-                                            <Run Text="{Binding Path=Vid}" Foreground="DarkGray" />
-                                            <Run Text="   PID: " />
-                                            <Run Text="{Binding Path=Pid}" Foreground="DarkGray" />
-                                        </TextBlock>
-                                    </StackPanel>
-                                    <Button DockPanel.Dock="Right" Margin="5" Content="{materialDesign:PackIcon CheckBold}" />
-                                </DockPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" Width="150" ToolTip="Add Device" Content="Add Device"/>
-            </StackPanel>
-        </DockPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="Devices">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+                            <DockPanel Height="75" LastChildFill="False">
+                                <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+                                    <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Text="{Binding Path=Name}" />
+                                    <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                        <Run Text="ComPort: " />
+                                        <Run Text="{Binding Path=ComPort}" Foreground="DarkGray" />
+                                        <Run Text="   Sliders: " />
+                                        <Run Text="{Binding Path=Sliders}" Foreground="DarkGray" />
+                                        <Run Text="   Buttons: " />
+                                        <Run Text="{Binding Path=Buttons}" Foreground="DarkGray" />
+                                    </TextBlock>
+                                    <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                        <Run Text="VID: " />
+                                        <Run Text="{Binding Path=Vid}" Foreground="DarkGray" />
+                                        <Run Text="   PID: " />
+                                        <Run Text="{Binding Path=Pid}" Foreground="DarkGray" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button DockPanel.Dock="Right" Margin="5" Content="{materialDesign:PackIcon CheckBold}" />
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <StackPanel Grid.Row="1" DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" cal:Message.Attach="[Event Click] = [Action ManagerClick()]" Width="150" ToolTip="USB Manager" Content="USB Manager" />
+        </StackPanel>
     </Grid>
 </UserControl>

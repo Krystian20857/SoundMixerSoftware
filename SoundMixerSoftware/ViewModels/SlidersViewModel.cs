@@ -1,35 +1,33 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Xaml;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Models;
-using XamlReader = System.Windows.Markup.XamlReader;
 
 namespace SoundMixerSoftware.ViewModels
 {
-    public class SlidersViewModel : ITabModel
+    /// <summary>
+    /// Device model of Sliders Tab.
+    /// </summary>
+    public class SlidersViewModel : PropertyChangedBase, ITabModel
     {
         #region Private Fields
         
         private BindableCollection<SliderModel> _sliders = new BindableCollection<SliderModel>();
+        private IWindowManager _windowManager = new WindowManager();
         
         #endregion
         
         #region Public Properties
 
+        /// <summary>
+        /// All available sliders.
+        /// </summary>
         public BindableCollection<SliderModel> Sliders
         {
             get => _sliders;
             set
             {
                 _sliders = value;
+                NotifyOfPropertyChange(() => Sliders);
             }
         }
         
@@ -49,30 +47,39 @@ namespace SoundMixerSoftware.ViewModels
         {
             Name = "Sliders";
             Icon = PackIconKind.VolumeSource;
-            
-            for(var n = 0; n < 2; n++)
-            Sliders.Add(new SliderModel()
-            {
-                Volume = 55,
-                Applications = new BindableCollection<AppModel>(CreateSliderModel())
-            });
         }
 
-        private IEnumerable<AppModel> CreateSliderModel()
+        #endregion
+        
+        #region Private Events
+
+        /// <summary>
+        /// Occurs when Add Button has clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        public void AddClick(object sender)
         {
-            var directory = @"E:\other\icons\24x24 icon pack\png\24x24";
-            var files = Directory.GetFiles(directory);
-            for (var n = 0; n < files.Length; n++)
-            {
-                var file = files[n];
-                yield return new AppModel
-                {
-                    App = Path.GetFileName(file),
-                    Image = new BitmapImage(new Uri(file))
-                };
-                if (n == 15)
-                    yield break;
-            }
+            _windowManager.ShowDialog(new SessionAddViewModel());
+        }
+
+        /// <summary>
+        /// Occurs when Remove Button has Clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        public void RemoveClick(object sender)
+        {
+            var model = sender as SliderModel;
+            model.Applications.Remove(model.SelectedApp);
+        }
+
+        /// <summary>
+        /// Occurs when Mute Button has Clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        public void MuteClick(object sender)
+        {
+            var model = sender as SliderModel;
+            model.Mute = !model.Mute;
         }
         
         #endregion

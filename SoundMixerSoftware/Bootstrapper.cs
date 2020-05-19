@@ -28,7 +28,7 @@ namespace SoundMixerSoftware
         #region Private Fields
         
         private readonly SimpleContainer _container = new SimpleContainer();
-        
+
         #endregion
         
         #region Public Fields
@@ -54,8 +54,16 @@ namespace SoundMixerSoftware
         {
             _container.Singleton<IWindowManager, WindowManager>();
             _container.Singleton<IEventAggregator, EventAggregator>();
+            
             _container.PerRequest<ManagerViewModel>();
-            _container.Singleton<MainViewModel>();
+            _container.PerRequest<SettingsViewModel>();
+            _container.PerRequest<DevicesViewModel>();
+            _container.PerRequest<SlidersViewModel>();
+            _container.PerRequest<ButtonsViewModel>();
+            
+            _container.PerRequest<SessionAddViewModel>();
+            
+            _container.PerRequest<MainViewModel>();
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
