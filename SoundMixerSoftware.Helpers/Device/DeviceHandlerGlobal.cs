@@ -12,7 +12,7 @@ namespace SoundMixerSoftware.Models
 
         #region Private Static Fields
 
-        private static List<(DeviceProperties properties, DeviceIdResponse device)> _connectedDevices = new List<(DeviceProperties properties, DeviceIdResponse device)>();
+        private static Dictionary<string, DeviceConnectedEventArgs> _connectedDevices = new Dictionary<string, DeviceConnectedEventArgs>();
 
         #endregion
         
@@ -22,10 +22,11 @@ namespace SoundMixerSoftware.Models
         /// Global Device Handler.
         /// </summary>
         public static DeviceHandler DeviceHandler { get; }
+
         /// <summary>
         /// Currently connected devices.
         /// </summary>
-        public static IReadOnlyList<(DeviceProperties properties, DeviceIdResponse device)> ConnectedDevice => _connectedDevices.AsReadOnly();
+        public static IReadOnlyDictionary<string, DeviceConnectedEventArgs> ConnectedDevice => _connectedDevices;
 
         #endregion
         
@@ -44,13 +45,12 @@ namespace SoundMixerSoftware.Models
 
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
-            _connectedDevices.Add((e.Device, e.DeviceResponse));
+            _connectedDevices.Add(e.Device.COMPort, e);
         }
         
         private static void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
         {
-            var toRemove = _connectedDevices.FirstOrDefault(x => x.properties.COMPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
-            _connectedDevices.Remove(toRemove);
+            _connectedDevices.Remove(e.DeviceProperties.COMPort);
         }
         
         #endregion

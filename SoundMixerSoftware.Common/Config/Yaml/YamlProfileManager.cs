@@ -83,6 +83,12 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             return true;
         }
 
+        public void Remove(Guid uuid)
+        {
+            Profiles.Remove(uuid);
+            File.Delete(MakeProfileFile(uuid));
+        }
+
         public void LoadAll()
         {
             foreach (var profile in GetProfiles())

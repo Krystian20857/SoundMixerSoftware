@@ -50,10 +50,6 @@
           <HintPath>..\packages\MaterialDesignColors.1.2.5\lib\net45\MaterialDesignColors.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="MaterialDesignExtensions, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\MaterialDesignExtensions.3.1.0\lib\net45\MaterialDesignExtensions.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
         <Reference Include="MaterialDesignThemes.Wpf, Version=3.1.2.1465, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\packages\MaterialDesignThemes.3.1.2\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
           <Private>True</Private>
@@ -115,6 +111,7 @@
         <Compile Include="ViewModels\DevicesViewModel.cs" />
         <Compile Include="ViewModels\MainViewModel.cs" />
         <Compile Include="ViewModels\ManagerViewModel.cs" />
+        <Compile Include="ViewModels\ProfileAddViewModel.cs" />
         <Compile Include="ViewModels\SessionAddViewModel.cs" />
         <Compile Include="ViewModels\SettingsViewModel.cs" />
         <Compile Include="ViewModels\SlidersViewModel.cs" />
@@ -130,6 +127,9 @@
         </Compile>
         <Compile Include="Views\ManagerView.xaml.cs">
           <DependentUpon>ManagerView.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Views\ProfileAddView.xaml.cs">
+          <DependentUpon>ProfileAddView.xaml</DependentUpon>
         </Compile>
         <Compile Include="Views\SessionAddView.xaml.cs">
           <DependentUpon>SessionAddView.xaml</DependentUpon>
@@ -167,6 +167,7 @@
       <Page Include="Views\DevicesView.xaml" />
       <Page Include="Views\MainView.xaml" />
       <Page Include="Views\ManagerView.xaml" />
+      <Page Include="Views\ProfileAddView.xaml" />
       <Page Include="Views\SessionAddView.xaml" />
       <Page Include="Views\SettingsView.xaml" />
       <Page Include="Views\SlidersView.xaml" />

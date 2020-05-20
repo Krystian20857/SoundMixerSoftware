@@ -6,9 +6,18 @@
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cal="http://www.caliburnproject.org"
-             xmlns:cv="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
+             xmlns:converters="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <x:Array Type="{x:Type sys:Enum}" x:Key="MuteIcons">
+            <materialDesign:PackIconKind>VolumeHigh</materialDesign:PackIconKind>
+            <materialDesign:PackIconKind>VolumeMute</materialDesign:PackIconKind>
+        </x:Array>
+        <converters:IconConverter x:Key="IconConverter"/>
+        <converters:BoolInvertConverter x:Key="BoolInvertConverter"/>
+    </UserControl.Resources>
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="Sliders" HorizontalContentAlignment="Stretch">
@@ -44,15 +53,24 @@
                                                 Maximum="100"
                                                 Value="{Binding Path=Volume, Mode=TwoWay}"
                                                 Width="300" 
-                                                IsEnabled="{Binding Path=Mute, Converter={cv:BoolInvertConverter}}"/>
+                                                IsEnabled="{Binding Path=Mute, Converter={StaticResource BoolInvertConverter}}"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Vertical" HorizontalAlignment="Center">
                                     <!-- Buttons -->
                                     <StackPanel Orientation="Horizontal">
-                                        <Button cal:Message.Attach="[Click] = [Action AddClick($this)]" Margin="5,2" Content="{materialDesign:PackIcon PencilPlus}" ToolTip="Add" />
-                                        <Button cal:Message.Attach="[Click] = [Action RemoveClick($this)]" Margin="5,2" Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}" ToolTip="Remove" />
-                                        <Button cal:Message.Attach="[Click] = [Action MuteClick($this)]" Margin="5,2" Content="{Binding Path=Mute, Converter={cv:MuteIconConverter}}" ToolTip="Mute" />
+                                        <Button cal:Message.Attach="[Click] = [Action AddClick($this)]"
+                                                Margin="5,2" Content="{materialDesign:PackIcon PencilPlus}"
+                                                ToolTip="Add" />
+                                        <Button cal:Message.Attach="[Click] = [Action RemoveClick($this)]"
+                                                Margin="5,2"
+                                                Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}"
+                                                ToolTip="Remove" />
+                                        <Button cal:Message.Attach="[Click] = [Action MuteClick($this)]"
+                                                Margin="5,2"
+                                                Content="{Binding Path=Mute, Converter={StaticResource IconConverter}, ConverterParameter={StaticResource MuteIcons}}"
+                                                ToolTip="Mute"
+                                                />
                                     </StackPanel>
                                     <!-- Volume Label -->
                                     <TextBlock Margin="5" Style="{StaticResource MaterialDesignHeadline5TextBlock}" HorizontalAlignment="Center">

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Windows.Forms.VisualStyles;
+using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Models;
 
@@ -47,6 +48,12 @@ namespace SoundMixerSoftware.ViewModels
         {
             Name = "Sliders";
             Icon = PackIconKind.VolumeSource;
+            for(var n = 0; n < 5; n++)
+            Sliders.Add(new SliderModel
+            {
+                Volume = 55,
+                Mute = true,
+            });
         }
 
         #endregion

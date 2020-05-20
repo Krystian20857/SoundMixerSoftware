@@ -25,6 +25,12 @@ namespace SoundMixerSoftware.Common.Config
         /// </summary>
         /// <returns>guid of created profile</returns>>
         bool Save(Guid uuid);
+
+        /// <summary>
+        /// Remove specified profile.
+        /// </summary>
+        /// <param name="uuid"></param>
+        void Remove(Guid uuid);
         /// <summary>
         /// Loads all profiles to <see cref="Profiles"/>.
         /// </summary>

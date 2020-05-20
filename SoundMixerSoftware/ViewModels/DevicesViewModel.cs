@@ -20,8 +20,7 @@ namespace SoundMixerSoftware.ViewModels
         private IWindowManager _windowManager =  new WindowManager();
         
         private BindableCollection<DeviceModel> _devices = new BindableCollection<DeviceModel>();
-        private BindableCollection<USBID> _USBIds = new BindableCollection<USBID>();
-        
+
         #endregion
         
         #region Public Properties

@@ -9,18 +9,18 @@ namespace SoundMixerSoftware.Helpers.Converters
     /// Inverts bool: ! operator.
     /// </summary>
     [ValueConversion(typeof(bool), typeof(bool))]
-    public class BoolInvertConverter : ConverterMarkupExtension<BoolInvertConverter>
+    public class BoolInvertConverter : BaseConverter, IValueConverter
     {
         #region Overriden Methods
         
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if(targetType != typeof(bool))
                 throw new InvalidOperationException("type must be bool.");
             return !(bool) value;
         }
 
-        public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

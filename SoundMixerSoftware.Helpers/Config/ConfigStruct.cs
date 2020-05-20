@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text;
 using SoundMixerSoftware.Common.Communication.Serial;
@@ -27,6 +28,7 @@ namespace SoundMixerSoftware.Helpers.Config
                 Timeout = 30000
             },
             Terminator = 0xFF,
+            ProfilesOrder = new List<Guid>()
         };
         
         #endregion
@@ -43,6 +45,8 @@ namespace SoundMixerSoftware.Helpers.Config
         public List<USBID> UsbIDs { get; set; }
         public SerialConfig SerialConfig { get; set; }
         public byte Terminator { get; set; }
+        public Guid SelectedProfile { get; set; }
+        public List<Guid> ProfilesOrder { get; set; }
 
         #endregion
         

@@ -5,14 +5,14 @@ using System.Windows.Data;
 namespace SoundMixerSoftware.Helpers.Converters
 {
     [ValueConversion(typeof(uint), typeof(string))]
-    public class HexConverter : ConverterMarkupExtension<HexConverter>
+    public class HexConverter : BaseConverter, IValueConverter
     {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return "0x" + ((uint) value).ToString("X2");
         }
 
-        public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var hex = value.ToString();
             if (hex.StartsWith("0x"))

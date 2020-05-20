@@ -6,8 +6,17 @@
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:converters="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <x:Array Type="{x:Type sys:Enum}" x:Key="SelectedIcons">
+            <materialDesign:PackIconKind>Check</materialDesign:PackIconKind>
+            <materialDesign:PackIconKind>Close</materialDesign:PackIconKind>
+        </x:Array>
+        <converters:IconConverter x:Key="IconConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -17,15 +26,24 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Margin="2" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="5">
-                        <DockPanel Height="75" LastChildFill="False">
+                        <DockPanel Margin="5" Height="75" LastChildFill="False">
                             <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
                                 <TextBlock Margin="2" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="{Binding ProfileName}" />
-                                <TextBlock Margin="2" Style="{StaticResource MaterialDesignBody2TextBlock}" Foreground="DarkGray" Text="{Binding AttachedDevices}" />
+                                <TextBlock Style="{StaticResource MaterialDesignSubtitle2TextBlock}">
+                                    <Run Text="Sliders: "/>
+                                    <Run Text="{Binding Path=SliderCount}" Foreground="DarkGray"/>
+                                    <Run Text="   Buttons: "/>
+                                    <Run Text="{Binding Path=ButtonCount}" Foreground="DarkGray"/>
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Foreground="DarkGray" Text="{Binding Path=Guid}"/>
                             </StackPanel>
                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button cal:Message.Attach="[Click] = [Action CopyClick($this)]" Margin="5,2" ToolTip="Copy" Content="{materialDesign:PackIcon ContentCopy}" />
-                                <Button cal:Message.Attach="[Click] = [Action EditClick($this)]" Margin="5,2" ToolTip="Edit" Content="{materialDesign:PackIcon Pencil}" />
-                                <Button cal:Message.Attach="[Click] = [Action RemoveClick($this)]" Margin="5,2" ToolTip="Remove" Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}" />
+                                <Button cal:Message.Attach="[Click] = [Action SelectClick($this)]"
+                                        Margin="5,0" ToolTip="Select"
+                                        Content="{Binding Path=Selected, Converter={StaticResource IconConverter}, ConverterParameter={StaticResource SelectedIcons}}"
+                                        />
+                                <Button cal:Message.Attach="[Click] = [Action EditClick($this)]" Margin="5,0" ToolTip="Edit" Content="{materialDesign:PackIcon Pencil}" />
+                                <Button cal:Message.Attach="[Click] = [Action RemoveClick($this)]" Margin="5,0" ToolTip="Remove" Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}" />
                             </StackPanel>
                         </DockPanel>
                     </Border>

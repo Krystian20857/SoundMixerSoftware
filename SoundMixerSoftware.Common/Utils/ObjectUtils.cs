@@ -32,8 +32,8 @@ namespace SoundMixerSoftware.Common.Utils
                     MergeObjects((T)propertyValue, (T)type.GetProperty(propertyName).GetValue(dest));
                 else if(HasEmptyConstructor(propertyType) || propertyType.IsValueType)
                 {
-                    if(destPropertyValue != null)
-                        if (destPropertyValue.Equals(Activator.CreateInstance(propertyType)))
+                    if(propertyValue != null)
+                        if (destPropertyValue == null)
                         {
                             property.SetValue(dest, propertyValue);
                             modified = true;

@@ -38,15 +38,17 @@
   <ItemGroup>
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\ConfigStruct.cs" />
+    <Compile Include="Converters\BaseConverter.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
-    <Compile Include="Converters\ConverterMarkupExtension.cs" />
     <Compile Include="Converters\HexConverter.cs" />
-    <Compile Include="Converters\MuteIconConverter.cs" />
+    <Compile Include="Converters\IconConverter.cs" />
     <Compile Include="Device\ConnectionStructs.cs" />
     <Compile Include="Device\DeviceHandler.cs" />
     <Compile Include="Device\DeviceHandlerGlobal.cs" />
     <Compile Include="Device\EventArgs.cs" />
     <Compile Include="LocalSystem\LocalContainer.cs" />
+    <Compile Include="Profile\ProfileHandler.cs" />
+    <Compile Include="Profile\ProfileStruct.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.2.5.1465, Culture=neutral, PublicKeyToken=null">
@@ -94,9 +96,6 @@
       <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
       <Name>SoundMixerSoftware.Win32</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Profile" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets')" />

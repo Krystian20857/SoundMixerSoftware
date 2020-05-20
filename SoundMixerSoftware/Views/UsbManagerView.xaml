@@ -9,6 +9,9 @@
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
         Title="UsbManagerView" Height="250" Width="400">
+    <Window.Resources>
+        <converters:HexConverter x:Key="HexConverter"/>
+    </Window.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" Margin="10" Orientation="Vertical">
             <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="5">
@@ -18,9 +21,9 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock>
                                     <Run Text="VID:" />
-                                    <Run Text="{Binding Path=Vid, Converter={converters:HexConverter}}" />
+                                    <Run Text="{Binding Path=Vid, Converter={StaticResource HexConverter}}" />
                                     <Run Text="    PID:" />
-                                    <Run Text="{Binding Path=Pid, Converter={converters:HexConverter}}" />
+                                    <Run Text="{Binding Path=Pid, Converter={StaticResource HexConverter}}" />
                                 </TextBlock>
                             </StackPanel>
                         </DataTemplate>
@@ -28,13 +31,33 @@
                 </ListView>
             </Border>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <TextBox Margin="5" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding Path=Vid,Converter={converters:HexConverter}, Mode = TwoWay}" materialDesign:HintAssist.Hint="VID(Hex)" Width="100" />
-                <TextBox Margin="5" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding Path=Pid,Converter={converters:HexConverter}, Mode = TwoWay}" materialDesign:HintAssist.Hint="PID(Hex)" Width="100" />
+                <TextBox Margin="5"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Text="{Binding Path=Vid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
+                         materialDesign:HintAssist.Hint="VID(Hex)"
+                         Width="100" />
+                <TextBox Margin="5"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Text="{Binding Path=Pid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
+                         materialDesign:HintAssist.Hint="PID(Hex)"
+                         Width="100" />
             </StackPanel>
-            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" cal:Message.Attach="[Event Click] = [Action Save()]" Margin="5,0" Width="100" Content="Save" />
-                <Button Style="{StaticResource MaterialDesignFlatButton}" cal:Message.Attach="[Event Click] = [Action Remove()]" Margin="5,0" Width="100" Content="Remove" />
-                <Button Style="{StaticResource MaterialDesignFlatButton}" cal:Message.Attach="[Event Click] = [Action Cancel()]" Margin="5,0" Width="100" Content="Cancel" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        cal:Message.Attach="[Event Click] = [Action Save()]"
+                        Margin="5,0"
+                        Width="100"
+                        Content="Save" />
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        cal:Message.Attach="[Event Click] = [Action Remove()]"
+                        Margin="5,0"
+                        Width="100"
+                        Content="Remove" />
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        cal:Message.Attach="[Event Click] = [Action Cancel()]"
+                        Margin="5,0"
+                        Width="100"
+                        Content="Cancel" />
             </StackPanel>
         </StackPanel>
     </Grid>
