@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Caliburn.Micro;
 using SoundMixerSoftware.Common.AudioLib;
@@ -8,6 +9,8 @@ using System.Windows;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.ViewModels
@@ -21,10 +24,11 @@ namespace SoundMixerSoftware.ViewModels
 
         private readonly SessionEnumerator _sessionEnumerator;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
+        private int _sliderIndex;
 
         private BindableCollection<SessionModel> _sessions = new BindableCollection<SessionModel>();
-        private BindableCollection<AudioDeviceModel> _defaultDevices = new BindableCollection<AudioDeviceModel>();
-        private BindableCollection<AudioDeviceModel> _devices = new BindableCollection<AudioDeviceModel>();
+        private BindableCollection<SessionModel> _defaultDevices = new BindableCollection<SessionModel>();
+        private BindableCollection<SessionModel> _devices = new BindableCollection<SessionModel>();
 
         #endregion
 
@@ -42,7 +46,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Default devices connection.
         /// </summary>
-        public BindableCollection<AudioDeviceModel> DefaultDevices
+        public BindableCollection<SessionModel> DefaultDevices
         {
             get => _defaultDevices;
             set => _defaultDevices = value;
@@ -51,7 +55,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Device collection
         /// </summary>
-        public BindableCollection<AudioDeviceModel> Devices
+        public BindableCollection<SessionModel> Devices
         {
             get => _devices;
             set => _devices = value;
@@ -60,40 +64,33 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Currently Selected Audio Session
         /// </summary>
-        public SessionModel SelectedApp { get; set; }
-        /// <summary>
-        /// Currently Selected Default Audio Device
-        /// </summary>
-        public AudioDeviceModel SelectedDefaultDevice { get; set; }
-        /// <summary>
-        /// Currently Selected Audio Device
-        /// </summary>
-        public AudioDeviceModel SelectedDevice { get; set; }
-
+        public SessionModel SelectedSession { get; set; } = new SessionModel();
+        
         #endregion
 
         #region Constructor
 
-        public SessionAddViewModel()
+        public SessionAddViewModel(int sliderIndex)
         {
+            _sliderIndex = sliderIndex;
             _sessionEnumerator = new SessionEnumerator(_deviceEnumerator.DefaultOutput);
-
             CreateDefault();
 
             foreach (var device in _deviceEnumerator.AllDevices)
             {
-                Devices.Add(new AudioDeviceModel
+                Devices.Add(new SessionModel
                 {
                     Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
                     Name = device.FriendlyName,
-                    Id = device.ID,
+                    ID = device.ID,
+                    SessionMode = SessionMode.Device,
+                    DataFlow = device.DataFlow
                 });
             }
 
             foreach (var session in _sessionEnumerator.AudioProcesses)
             {
-                var process = session.process;
-                AddSession(process);
+                AddSession(session.session);
             }
 
             _sessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
@@ -116,13 +113,12 @@ namespace SoundMixerSoftware.ViewModels
             if (e != AudioSessionState.AudioSessionStateExpired)
                 return;
             var sessionControl = sender as AudioSessionControl;
-            Sessions.Remove(Sessions.First(x => x.ProcessID == sessionControl.GetProcessID));
+            Sessions.Remove(Sessions.First(x => x.ID.Equals(sessionControl.GetSessionIdentifier, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         private void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)
         {
-            var process = Process.GetProcessById((int) e.GetProcessID);
-            AddSession(process);
+            AddSession(e);
         }
 
         #endregion
@@ -137,16 +133,22 @@ namespace SoundMixerSoftware.ViewModels
             Execute.OnUIThread(() =>
             {
                 DefaultDevices.Clear();
-                DefaultDevices.Add(new AudioDeviceModel
+                DefaultDevices.Add(new SessionModel
                 {
                     Image = IconExtractor.ExtractFromIndex(_deviceEnumerator.DefaultOutput.IconPath).ToImageSource(),
-                    Name = _deviceEnumerator.DefaultOutput.FriendlyName
+                    Name = _deviceEnumerator.DefaultOutput.FriendlyName,
+                    SessionMode = SessionMode.DefaultOutputDevice,
+                    ID = _deviceEnumerator.DefaultOutput.ID,
+                    DataFlow = DataFlow.Render
                 });
 
-                DefaultDevices.Add(new AudioDeviceModel
+                DefaultDevices.Add(new SessionModel
                 {
                     Image = IconExtractor.ExtractFromIndex(_deviceEnumerator.DefaultInput.IconPath).ToImageSource(),
-                    Name = _deviceEnumerator.DefaultInput.FriendlyName
+                    Name = _deviceEnumerator.DefaultInput.FriendlyName,
+                    SessionMode = SessionMode.DefaultInputDevice,
+                    ID = _deviceEnumerator.DefaultInput.ID,
+                    DataFlow = DataFlow.Capture
                 });
             });
         }
@@ -155,35 +157,18 @@ namespace SoundMixerSoftware.ViewModels
         /// Add audio session to Sessions tab.
         /// </summary>
         /// <param name="process"></param>
-        private void AddSession(Process process)
+        private void AddSession(AudioSessionControl session)
         {
             Execute.OnUIThread(() =>
             {
+                var process = Process.GetProcessById((int) session.GetProcessID);
                 Sessions.Add(new SessionModel()
                 {
                     Name = process.ProcessName,
                     Image = process.GetIcon().ToImageSource(),
-                    ProcessID = process.Id
+                    ID = session.GetSessionIdentifier,
                 });
             });
-        }
-        
-        public void DefaultDevicesSelectionChanged()
-        {
-            SelectedApp = null;
-            SelectedDevice = null;
-        }
-
-        public void DevicesSelectionChanged()
-        {
-            SelectedApp = null;
-            SelectedDefaultDevice = null;
-        }
-
-        public void SessionsSelectionChanged()
-        {
-            SelectedDevice = null;
-            SelectedDefaultDevice = null;
         }
 
         /// <summary>
@@ -191,6 +176,29 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void AddClick()
         {
+            var profile = ProfileHandler.SelectedProfile;
+
+            if(profile.Sliders == null)
+                profile.Sliders = new List<SliderStruct>();
+            if(profile.Sliders.Count <= _sliderIndex)
+                profile.Sliders.Add(new SliderStruct());
+
+            var slider = profile.Sliders[_sliderIndex];
+            if (slider.Applications.All(x => x.ID != SelectedSession.ID))
+            {
+                slider.Index = _sliderIndex;
+                var session = new Session
+                {
+                    SessionMode = SelectedSession.SessionMode,
+                    DataFlow = SelectedSession.DataFlow,
+                    Name = SelectedSession.Name,
+                    ID = SelectedSession.ID
+                };
+                SessionHandler.AddSlider(_sliderIndex,session);
+                slider.Applications.Add(session);
+                ProfileHandler.ProfileManager.SaveAll();
+            }
+
             TryClose();
         }
 

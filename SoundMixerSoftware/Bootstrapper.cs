@@ -5,6 +5,8 @@ using Caliburn.Micro;
 using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
+using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using LogManager = NLog.LogManager;
@@ -69,6 +71,7 @@ namespace SoundMixerSoftware
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             DisplayRootViewFor<MainViewModel>();
+
         }
     }
 }

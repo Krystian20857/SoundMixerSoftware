@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -182,6 +183,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void Dispose()
         {
             _deviceEnumerator?.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         #endregion

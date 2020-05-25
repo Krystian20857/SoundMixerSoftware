@@ -57,6 +57,7 @@ namespace SoundMixerSoftware.ViewModels
             else
             {
                 model.Guid = ProfileHandler.ProfileManager.Create(profile);
+                ProfileHandler.OnProfileChanged(model.Guid);
                 CreatedProfile = model;
             }
 

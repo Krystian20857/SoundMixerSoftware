@@ -114,9 +114,13 @@ namespace SoundMixerSoftware.Common.Communication
             {
                 if (data[n] == Terminator)
                 {
+                    if(_buffer.Count == 0)
+                        continue;
                     var command = _buffer.Peek();
-                    if(!_typeRegistry.ContainsKey(command))
+                    if (!_typeRegistry.ContainsKey(command))
+                    {
                         return;
+                    }
                     var (type, size) = _typeRegistry[command];
 
                     if (_buffer.Count != size)

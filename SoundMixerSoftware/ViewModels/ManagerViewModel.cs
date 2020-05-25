@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
@@ -57,10 +59,12 @@ namespace SoundMixerSoftware.ViewModels
         {
             Name = "Profiles";
             Icon = PackIconKind.AccountBoxMultipleOutline;
+            var profilesToRemove = new List<Guid>();
             foreach (var uuid in ConfigHandler.ConfigStruct.ProfilesOrder)
             {
                 if (!ProfileHandler.ProfileManager.Profiles.ContainsKey(uuid))
                 {
+                    profilesToRemove.Add(uuid);
                     Logger.Warn($"Profile with ID: {uuid} has not been found.");
                     continue;
                 }
@@ -74,6 +78,11 @@ namespace SoundMixerSoftware.ViewModels
                 }
                 Profiles.Add(model);
             }
+
+            foreach (var profile in profilesToRemove)
+                ConfigHandler.ConfigStruct.ProfilesOrder.Remove(profile);
+            ConfigHandler.SaveConfig();
+
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
         }
 

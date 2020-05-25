@@ -13,9 +13,12 @@ namespace SoundMixerSoftware.Helpers.Profile
         #endregion
         
         #region Public Static Properties
-        
-        public static readonly IProfileManager<ProfileStruct> ProfileManager = new YamlProfileManager<ProfileStruct>(LocalContainer.Profiles);
-        
+
+        public static IProfileManager<ProfileStruct> ProfileManager { get; } = new YamlProfileManager<ProfileStruct>(LocalContainer.Profiles);
+
+        public static ProfileStruct SelectedProfile { get; set; }
+        public static Guid SelectedGuid { get; set; }
+
         #endregion
         
         #region Static Events
@@ -24,6 +27,8 @@ namespace SoundMixerSoftware.Helpers.Profile
         
         private static void OnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
+            SelectedGuid = e.Uuid;
+            SelectedProfile = ProfileManager.Profiles[e.Uuid];
             ConfigHandler.ConfigStruct.SelectedProfile = e.Uuid;
             ConfigHandler.SaveConfig();
         }
@@ -44,6 +49,7 @@ namespace SoundMixerSoftware.Helpers.Profile
 
         public static void OnProfileChanged(Guid uuid)
         {
+            SelectedGuid = uuid;
             ProfileChanged?.Invoke(null, new ProfileChangedEventArgs(uuid));
         }
 

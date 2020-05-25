@@ -70,6 +70,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             while (Profiles.ContainsKey(uuid))
                 uuid = Guid.NewGuid();
             WriteProfile(uuid, profile);
+            Profiles.Add(uuid, profile);
             Logger.Info($"Created profile: {uuid}");
             return uuid;
         }

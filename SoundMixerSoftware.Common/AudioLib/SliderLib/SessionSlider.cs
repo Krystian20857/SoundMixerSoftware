@@ -1,5 +1,6 @@
 ﻿using System;
 using NAudio.CoreAudioApi;
+using NAudio.MediaFoundation;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
@@ -7,33 +8,32 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
     {
         #region Private Fields
 
-        private readonly AudioSessionControl _session;
-        
         #endregion
         
         #region Implemented Properties
 
         public float Volume
         {
-            get => _session.SimpleAudioVolume.Volume;
-            set => _session.SimpleAudioVolume.Volume = value;
+            get => SessionControl.SimpleAudioVolume.Volume;
+            set => SessionControl.SimpleAudioVolume.Volume = value;
         }
         public bool IsMute
         {
-            get => _session.SimpleAudioVolume.Mute;
-            set => _session.SimpleAudioVolume.Mute = value;
+            get => SessionControl.SimpleAudioVolume.Mute;
+            set => SessionControl.SimpleAudioVolume.Mute = value;
         }
 
         public bool IsMasterVolume => false;
         public SliderType SliderType => SliderType.SESSION;
-        
+        public AudioSessionControl SessionControl { get; }
+
         #endregion
         
         #region Constructor
 
         public SessionSlider(AudioSessionControl session)
         {
-            _session = session;
+            SessionControl = session;
         }
         
         #endregion

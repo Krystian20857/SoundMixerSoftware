@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using NAudio.CoreAudioApi;
+﻿using NAudio.CoreAudioApi;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
@@ -10,22 +7,30 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         #region Private Fields
 
-        private readonly AudioEndpointVolume _endpoint;
-
-        private float _lastVolume = 0;
-        private bool _lastMute = false;
-
-        private Task _refreshTask;
-        private readonly CancellationTokenSource _token = new CancellationTokenSource();
+        private readonly MMDevice _device;
 
         #endregion
 
         #region Public Properties
 
-        public float Volume { get; set; } = float.NaN;
-        public bool IsMute { get; set; } = false;
+        public float Volume
+        {
+            get
+            {
+                return _device.AudioEndpointVolume.MasterVolumeLevelScalar;
+            }
+            set
+            {
+                if (value >= 0 && value <= 1)
+                    _device.AudioEndpointVolume.MasterVolumeLevelScalar = value;
+            }
+        }
+        public bool IsMute { get; set; }
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
+        public bool IsDefaultInput { get; }
+        public bool IsDefaultOutput { get; }
+        public string DeviceID => _device.ID;
 
         #endregion
 
@@ -33,38 +38,19 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public DeviceSlider(MMDevice device)
         {
-            _endpoint = device.AudioEndpointVolume;
+            _device = device;
             SliderType = device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER;
-            _lastVolume = _endpoint.MasterVolumeLevelScalar;
-            _lastMute = _endpoint.Mute;
-            StartRefreshTask(10, _token.Token);
+        }
+        
+        public DeviceSlider(MMDevice device, bool isDefaultInput, bool isDefaultOutput): this(device)
+        {
+            IsDefaultInput = isDefaultInput;
+            IsDefaultOutput = isDefaultOutput;
         }
 
         #endregion
 
         #region Private Methods
-
-        private void StartRefreshTask(int interval, CancellationToken token)
-        {
-            _refreshTask = Task.Run(async () =>
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    if (_lastVolume != Volume)
-                    {
-                        _endpoint.MasterVolumeLevelScalar = Volume;
-                        _lastVolume = Volume;
-                    }
-
-                    if (_lastMute != IsMute)
-                    {
-                        _endpoint.Mute = IsMute;
-                        _lastMute = IsMute;
-                    }
-                    await Task.Delay(interval, token);
-                }
-            }, token);
-        }
 
         #endregion
 
@@ -72,7 +58,6 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public void Dispose()
         {
-            _token.Cancel();
         }
 
         #endregion

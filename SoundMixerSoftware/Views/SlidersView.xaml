@@ -40,7 +40,7 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Padding="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="3">
-                                                    <Image Source="{Binding Path=Image}" ToolTip="{Binding Path=App}" />
+                                                    <Image Source="{Binding Path=Image}" ToolTip="{Binding Path=Name}" />
                                                 </Border>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>

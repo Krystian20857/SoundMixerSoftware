@@ -36,6 +36,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioSessions\SessionHandler.cs" />
+    <Compile Include="AudioSessions\SessionMode.cs" />
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\ConfigStruct.cs" />
     <Compile Include="Converters\BaseConverter.cs" />
@@ -49,6 +51,7 @@
     <Compile Include="LocalSystem\LocalContainer.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />
     <Compile Include="Profile\ProfileStruct.cs" />
+    <Compile Include="Utils\ExtractedIcons.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.2.5.1465, Culture=neutral, PublicKeyToken=null">

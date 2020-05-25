@@ -1,4 +1,6 @@
 ﻿using System.Windows.Media;
+using NAudio.CoreAudioApi;
+using SoundMixerSoftware.Helpers.AudioSessions;
 
 namespace SoundMixerSoftware.Models
 {
@@ -18,6 +20,14 @@ namespace SoundMixerSoftware.Models
         /// <summary>
         /// Process Id of session.
         /// </summary>
-        public int ProcessID { get; set; }
+        public string ID { get; set; }
+        /// <summary>
+        /// Represents mode of session.
+        /// </summary>
+        public SessionMode SessionMode { get; set; }
+
+        public DataFlow DataFlow { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

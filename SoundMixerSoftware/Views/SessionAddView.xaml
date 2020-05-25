@@ -53,24 +53,21 @@
         <GroupBox Grid.Row="0" Header="Default Devices">
             <ListView x:Name="DefaultDevices"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedDefaultDevice, Mode=TwoWay}"
-                      cal:Message.Attach="[Event SelectionChanged] = [Action DefaultDevicesSelectionChanged()]">
-                
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
+                        
             </ListView>
         </GroupBox>
         <GroupBox Grid.Row="1" Header="Devices">
             <ListView x:Name="Devices"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedDevice, Mode=TwoWay}"
-                      cal:Message.Attach="[Event SelectionChanged] = [Action DevicesSelectionChanged()]">
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
                 
             </ListView>
         </GroupBox>
         <GroupBox Grid.Row="2" Header="Sessions">
             <ListView x:Name="Sessions"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedApp, Mode=TwoWay}"
-                      cal:Message.Attach="[Event SelectionChanged] = [Action SessionsSelectionChanged()]">
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
                 
             </ListView>
         </GroupBox>

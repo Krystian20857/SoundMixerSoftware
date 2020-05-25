@@ -139,8 +139,19 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <returns></returns>
         public IEnumerable<(Process process, AudioSessionControl session)> GetByProcessName(string name)
         {
-            return AudioProcesses.Where((x) =>
-                x.process.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            return AudioProcesses.Where((x) => x.process.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public AudioSessionControl GetById(string sessionId)
+        {
+            for (var n = 0; n < AudioSessions.Count; n++)
+            {
+                var session = AudioSessions[n];
+                if (session.GetSessionIdentifier.Equals(sessionId, StringComparison.InvariantCultureIgnoreCase))
+                    return session;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -169,7 +180,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         private void RegisterEvents(AudioSessionControl session)
         {
             var eventClient = new AudioSessionEventClient(session);
-            eventClient.SessionDisconnected += (sender, args) =>SessionDisconnected.Invoke(sender, args);
+            eventClient.SessionDisconnected += (sender, args) =>SessionDisconnected?.Invoke(sender, args);
             eventClient.StateChanged += (sender, args) => StateChanged?.Invoke(sender, args);
             eventClient.VolumeChanged += (sender, args) => VolumeChanged?.Invoke(sender, args);
             eventClient.ChannelVolumeChanged += (sender, args) => ChannelVolumeChanged?.Invoke(sender, args);
