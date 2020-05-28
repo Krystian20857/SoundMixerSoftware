@@ -36,6 +36,7 @@
       <Compile Include="AudioLib\DeviceEnumerator.cs" />
       <Compile Include="AudioLib\EventArgs.cs" />
       <Compile Include="AudioLib\SessionEnumerator.cs" />
+      <Compile Include="AudioLib\SliderLib\DefaultDeviceSlider.cs" />
       <Compile Include="AudioLib\SliderLib\IVirtualSlider.cs" />
       <Compile Include="AudioLib\SliderLib\DeviceSlider.cs" />
       <Compile Include="AudioLib\SliderLib\SessionSlider.cs" />
@@ -64,6 +65,7 @@
       <Compile Include="LocalSystem\PropertyAttribute.cs" />
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Property\IProperties.cs" />
+      <Compile Include="Utils\ArrayUtils.cs" />
       <Compile Include="Utils\ObjectUtils.cs" />
       <Compile Include="Utils\StructUtils.cs" />
     </ItemGroup>

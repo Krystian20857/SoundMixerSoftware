@@ -37,7 +37,10 @@
                                         <Run Text="{Binding Path=Pid}" Foreground="DarkGray" />
                                     </TextBlock>
                                 </StackPanel>
-                                <Button DockPanel.Dock="Right" Margin="5" Content="{materialDesign:PackIcon CheckBold}" />
+                                <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                    <Button cal:Message.Attach="[Click] = [CheckClick($this)]" Margin="5" Width="50" Content="{materialDesign:PackIcon CheckBold}" />
+                                    <TextBlock Margin="5,0" Foreground="DarkGray" Text="{Binding Path=UUID}"></TextBlock>
+                                </StackPanel>
                             </DockPanel>
                         </Border>
                     </DataTemplate>

@@ -75,6 +75,8 @@ namespace SoundMixerSoftware.Models
                         Logger.Warn("Slider receive index mismatch.");
                         return;
                     }
+
+                    var value = sliderStruct.value;
                     SessionHandler.SetVolume(index, sliderStruct.value / 100.0F, false);
                     break;
             }

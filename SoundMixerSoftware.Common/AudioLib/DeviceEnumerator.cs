@@ -5,6 +5,7 @@ using System.Linq;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
+using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -133,12 +134,13 @@ namespace SoundMixerSoftware.Common.AudioLib
         private void RegisterEvents(MMDevice device)
         {
             device.AudioEndpointVolume.NotificationGuid = VolumeUUID;
-            var deviceID = string.Copy(device.ID);
-            device.AudioEndpointVolume.OnVolumeNotification += data =>
-            {
-                var devicec = _deviceEnumerator.GetDevice(deviceID);
-                DeviceVolumeChanged?.Invoke(devicec, new VolumeChangedArgs(data.MasterVolume, data.Muted, data.Guid == VolumeUUID));
-            };
+            var volumeHandler = new VolumeHandler(device);
+            volumeHandler.VolumeChanged += VolumeHandlerOnVolumeChanged;
+        }
+
+        private void VolumeHandlerOnVolumeChanged(object sender, VolumeChangedArgs e)
+        {
+            DeviceVolumeChanged?.Invoke(sender, e);
         }
 
         #endregion
@@ -163,13 +165,19 @@ namespace SoundMixerSoftware.Common.AudioLib
             DeviceRemoved?.Invoke(device, new EventArgs());
         }
 
+        private string lastDefaultDevice = string.Empty;
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            DefaultDeviceChange?.Invoke(_deviceEnumerator.GetDevice(defaultDeviceId), new DefaultDeviceChangedArgs(flow, role));
+            if (defaultDeviceId != lastDefaultDevice)
+            {
+                lastDefaultDevice = defaultDeviceId;
+                DefaultDeviceChange?.Invoke(_deviceEnumerator.GetDevice(defaultDeviceId), new DefaultDeviceChangedArgs(flow, role));
+            }
         }
 
         public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key)
         {
+            Debug.WriteLine($"Property changed: {key.propertyId}");
             PropertyValueChanged?.Invoke(_deviceEnumerator.GetDevice(pwstrDeviceId), new PropertyChangedArgs(key));
         }
 
@@ -189,5 +197,22 @@ namespace SoundMixerSoftware.Common.AudioLib
         #endregion
     }
     
-    
+    public class VolumeHandler
+    {
+        public event EventHandler<VolumeChangedArgs> VolumeChanged;
+
+        public MMDevice Device { get; }
+
+        public VolumeHandler(MMDevice device)
+        {
+            Device = device;
+            device.AudioEndpointVolume.NotificationGuid = DeviceEnumerator.VolumeUUID;
+            device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolumeOnOnVolumeNotification;
+        }
+
+        private void AudioEndpointVolumeOnOnVolumeNotification(AudioVolumeNotificationData data)
+        {
+            VolumeChanged?.Invoke(Device, new VolumeChangedArgs(data.MasterVolume, data.Muted, data.Guid == DeviceEnumerator.VolumeUUID));
+        }
+    }
 }

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Controls;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.AudioLib;
@@ -60,7 +61,7 @@ namespace SoundMixerSoftware.ViewModels
             Icon = PackIconKind.VolumeSource;
 
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
-            
+
             if(ProfileHandler.SelectedProfile == null)
                 return;
             
@@ -68,11 +69,15 @@ namespace SoundMixerSoftware.ViewModels
         }
 
         #endregion
-        
+
         #region Private Events
 
         private void UpdateProfile()
         {
+            SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
+            SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
+            SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
+
             Sliders.Clear();
             for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
                 Sliders.Add(new SliderModel
@@ -88,19 +93,22 @@ namespace SoundMixerSoftware.ViewModels
 
         private void SessionHandlerOnSessionDisconnected(object sender, SliderAddedArgs e)
         {
-            Execute.OnUIThread(() =>
+
+            var apps = Sliders[e.Index].Applications;
+            for (var n = 0; n < apps.Count; n++)
             {
-                var apps = Sliders[e.Index].Applications;
-                for (var n = 0; n < apps.Count; n++)
+                var app = apps[n];
+                if (app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var app = apps[n];
-                    if (app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
+                    var n1 = n;
+                    Execute.OnUIThread(() =>
                     {
-                        apps.RemoveAt(n);
+                        apps.RemoveAt(n1);
                         apps.Add(TranslateModel(e));
-                    }
+                    });
                 }
-            });
+            }
+
         }
 
         private void SessionHandlerOnSessionActive(object sender, SessionActiveArgs e)
@@ -160,9 +168,7 @@ namespace SoundMixerSoftware.ViewModels
                 }
                 else if (session.SessionMode == SessionMode.Session)
                 {
-                    var pid = SessionHandler.SessionEnumerator.AudioProcesses.
-                        First(x => 
-                            x.process.ProcessName.Equals(session.Name, StringComparison.InvariantCultureIgnoreCase)).process.Id;
+                    var pid = (int)SessionHandler.SessionEnumerator.GetById(session.ID).GetProcessID;
                     var process = Process.GetProcessById(pid);
                     model.Image = System.Drawing.Icon.ExtractAssociatedIcon(process.GetFileName()).ToImageSource();
                     model.Name = process.ProcessName;
@@ -185,28 +191,6 @@ namespace SoundMixerSoftware.ViewModels
             }
 
             return model;
-        }
-
-        private void RemoveModel(int index, SliderAddedArgs e)
-        {
-            var session = e.Session;
-            var apps = Sliders[e.Index].Applications;
-            if (session.SessionMode == SessionMode.Device)
-            {
-                apps.Remove(apps.First(x => x.ID == session.ID));
-            }
-            else if (session.SessionMode == SessionMode.Session)
-            {
-                apps.Remove(apps.First(x => x.Name.Equals(session.Name, StringComparison.InvariantCultureIgnoreCase)));
-            }
-            else if (session.SessionMode == SessionMode.DefaultInputDevice)
-            {
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DefaultInputDevice));
-            }
-            else if (session.SessionMode == SessionMode.DefaultOutputDevice)
-            {
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DefaultOutputDevice));
-            }
         }
 
         /// <summary>
@@ -246,7 +230,7 @@ namespace SoundMixerSoftware.ViewModels
                 apps.Remove(apps.First(x=> x.ID == session.ID));
             else if (session.SessionMode == SessionMode.DefaultInputDevice)
                 apps.Remove(apps.First(x => x.SessionMode == SessionMode.DefaultInputDevice));
-            else if (session.SessionMode == SessionMode.DefaultInputDevice)
+            else if (session.SessionMode == SessionMode.DefaultOutputDevice)
                 apps.Remove(apps.First(x => x.SessionMode == SessionMode.DefaultOutputDevice));
             ProfileHandler.ProfileManager.Save(ProfileHandler.SelectedGuid);
             model.Applications.Remove(session);

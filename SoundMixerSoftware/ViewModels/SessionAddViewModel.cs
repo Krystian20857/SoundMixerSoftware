@@ -159,9 +159,11 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="process"></param>
         private void AddSession(AudioSessionControl session)
         {
+            if (Process.GetProcesses().All(x => x.Id != (int) session.GetProcessID))
+                return;
+            var process = Process.GetProcessById((int) session.GetProcessID);
             Execute.OnUIThread(() =>
             {
-                var process = Process.GetProcessById((int) session.GetProcessID);
                 Sessions.Add(new SessionModel()
                 {
                     Name = process.ProcessName,

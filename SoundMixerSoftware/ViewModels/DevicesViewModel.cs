@@ -95,7 +95,12 @@ namespace SoundMixerSoftware.ViewModels
             var usbManager = new UsbManagerViewModel();
             _windowManager.ShowDialog(usbManager);
         }
-        
+
+        public void CheckClick(object sender)
+        {
+            var devicemodel = sender as DeviceModel;
+            DeviceNotifier.TestLights(devicemodel.ComPort);
+        }
         #endregion
     }
 }

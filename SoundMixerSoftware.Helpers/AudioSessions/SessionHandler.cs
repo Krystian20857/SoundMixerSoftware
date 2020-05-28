@@ -34,7 +34,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static event EventHandler<SliderAddedArgs> SessionRemoved;
         public static event EventHandler<SliderAddedArgs> SessionDisconnected;
         public static event EventHandler<VolumeChangedArgs> VolumeChange; 
-        public static event EventHandler<MuteChangedArgs> MuteChanged; 
+        public static event EventHandler<MuteChangedArgs> MuteChanged;
+        public static event EventHandler<EventArgs> UpdateDevice;
 
         #endregion
 
@@ -43,53 +44,53 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         static SessionHandler()
         {
             SessionAdded += OnSessionAdded;
-            ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
             SessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
-            SessionEnumerator.StateChanged += SessionEnumeratorOnStateChanged;
+            SessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
+
+            DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
         }
 
-        #endregion
-        
-
-        #region Private Events
-
-        private static void SessionEnumeratorOnStateChanged(object sender, AudioSessionState e)
+        private static void SessionEnumeratorOnSessionExited(object sender, string e)
         {
             var sessionControl = sender as AudioSessionControl;
-            if (e == AudioSessionState.AudioSessionStateInactive)
+            for (var n = 0; n < Sliders.Count; n++)
             {
-                for (var n = 0; n < Sliders.Count; n++)
+                var sliders = Sliders[n];
+                for (var x = 0; x < sliders.Count; x++)
                 {
-                    var sliders = Sliders[n];
-                    for (var x = 0; x < sliders.Count; x++)
+                    var slidertmp = sliders[x];
+                    if (!(slidertmp is SessionSlider slider)) continue;
+                    if (slider.SessionID == sessionControl.GetSessionIdentifier)
                     {
-                        var slidertmp = sliders[x];
-                        if (!(slidertmp is SessionSlider slider)) continue;
-                        if (slider.SessionControl == sessionControl)
+                        var name = ProfileHandler.SelectedProfile.Sliders[n].Applications[x].Name;
+                        sliders.RemoveAt(x);
+                        SessionDisconnected?.Invoke(null, new SliderAddedArgs(slider, new Session
                         {
-                            var name = ProfileHandler.SelectedProfile.Sliders[n].Applications[x].Name;
-                            sliders.RemoveAt(x);
-                            SessionDisconnected?.Invoke(null, new SliderAddedArgs(slider, new Session
-                            {
-                                ID = sessionControl.GetSessionIdentifier,
-                                Name = name,
-                                SessionMode = SessionMode.Session
-                            }, n, false));
-                        }
+                            ID = sessionControl.GetSessionIdentifier,
+                            Name = name,
+                            SessionMode = SessionMode.Session
+                        }, n, false));
+                        RequestedSliders[n].Add(sessionControl.GetSessionIdentifier);
                     }
                 }
             }
         }
+
+        #endregion
         
+        #region Private Events
+        
+        private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
+        {
+            var device = sender as MMDevice;
+            Debug.WriteLine($"Default device: {device.FriendlyName}");
+            SessionEnumerator.SetDevice(device);
+        }
+
         private static void OnSessionAdded(object sender, SliderAddedArgs e)
         {
             if(!e.IsActive)
                 RequestedSliders[e.Index].Add(e.Session.ID);
-        }
-        
-        private static void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
-        {
-            CreateSliders();
         }
 
         private static void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)
@@ -175,9 +176,9 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     }
                     break;
                 case SessionMode.Session:
-                    var audioSession = SessionEnumerator.GetByProcessName(session.Name);
-                    if(audioSession.Any())
-                        slider = new SessionSlider(audioSession.First().session);
+                    var audioSession = SessionEnumerator.GetById(session.ID);
+                    if(audioSession != null)
+                        slider = new SessionSlider(audioSession);
                     else
                     {
                         SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, false));
@@ -185,10 +186,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     }
                     break;
                 case SessionMode.DefaultInputDevice:
-                    slider = new DeviceSlider(DeviceEnumerator.DefaultInput, true, false);
+                    slider = new DefaultDeviceSlider(false);
                     break;
                 case SessionMode.DefaultOutputDevice:
-                    slider = new DeviceSlider(DeviceEnumerator.DefaultOutput, true, false);
+                    slider =  new DefaultDeviceSlider(true);
                     break;
             }
             Sliders[index].Add(slider);
@@ -231,7 +232,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 {
                     var slider = sliders[n];
                     if(slider is SessionSlider sessionSlider)
-                        if(sessionSlider.SessionControl.GetSessionIdentifier == session.ID)
+                        if(sessionSlider.SessionID == session.ID)
                             sliders.RemoveAt(n);
                 }
             }
@@ -240,8 +241,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 for (var n = 0; n < sliders.Count; n++)
                 {
                     var slider = sliders[n];
-                    if(slider is DeviceSlider sessionSlider)
-                        if(sessionSlider.IsDefaultInput)
+                    if(slider is DefaultDeviceSlider sessionSlider)
+                        if(!sessionSlider.IsDefaultOutput)
                             sliders.RemoveAt(n);
                 }
             }
@@ -250,7 +251,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 for (var n = 0; n < sliders.Count; n++)
                 {
                     var slider = sliders[n];
-                    if(slider is DeviceSlider sessionSlider)
+                    if(slider is DefaultDeviceSlider sessionSlider)
                         if(sessionSlider.IsDefaultOutput)
                             sliders.RemoveAt(n);
                 }

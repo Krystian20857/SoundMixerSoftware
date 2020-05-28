@@ -1,36 +1,27 @@
-﻿using NAudio.CoreAudioApi;
+﻿using System.Timers;
+using NAudio.CoreAudioApi;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
     public class DeviceSlider : IVirtualSlider
     {
-
         #region Private Fields
 
         private readonly MMDevice _device;
-
+        private readonly Timer _update;
+        
+        private float _lastVolume;
+        private bool _lastMute;
+        
         #endregion
 
         #region Public Properties
 
-        public float Volume
-        {
-            get
-            {
-                return _device.AudioEndpointVolume.MasterVolumeLevelScalar;
-            }
-            set
-            {
-                if (value >= 0 && value <= 1)
-                    _device.AudioEndpointVolume.MasterVolumeLevelScalar = value;
-            }
-        }
+        public float Volume { get; set; }
         public bool IsMute { get; set; }
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
-        public bool IsDefaultInput { get; }
-        public bool IsDefaultOutput { get; }
-        public string DeviceID => _device.ID;
+        public string DeviceID { get; }
 
         #endregion
 
@@ -40,17 +31,38 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         {
             _device = device;
             SliderType = device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER;
+
+            _lastVolume = _device.AudioEndpointVolume.MasterVolumeLevelScalar;
+            Volume = _lastVolume;
+
+            _lastMute = _device.AudioEndpointVolume.Mute;
+            IsMute = _lastMute;
+            
+            _update = new Timer();
+            _update.Elapsed += UpdateOnElapsed;
+            _update.Interval = 10;
+            _update.AutoReset = true;
+            _update.Start();
         }
-        
-        public DeviceSlider(MMDevice device, bool isDefaultInput, bool isDefaultOutput): this(device)
+
+        private void UpdateOnElapsed(object sender, ElapsedEventArgs e)
         {
-            IsDefaultInput = isDefaultInput;
-            IsDefaultOutput = isDefaultOutput;
+            if (Volume != _lastVolume)
+            {
+                _lastVolume = Volume;
+                _device.AudioEndpointVolume.MasterVolumeLevelScalar = _lastVolume;
+            }
+
+            if (IsMute != _lastMute)
+            {
+                _lastMute = IsMute;
+                _device.AudioEndpointVolume.Mute = _lastMute;
+            }
         }
 
         #endregion
 
-        #region Private Methods
+        #region Private Events
 
         #endregion
 
@@ -58,6 +70,8 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public void Dispose()
         {
+            _update.Dispose();
+            _device.Dispose();
         }
 
         #endregion

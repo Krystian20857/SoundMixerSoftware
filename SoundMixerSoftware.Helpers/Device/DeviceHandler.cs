@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using NAudio.MediaFoundation;
 using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Helpers.Config;
@@ -121,6 +122,28 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         /// <param name="command"></param>
         public void UnRegisterType(byte command) => _dataConverter.UnregisterType(command);
+
+        /// <summary>
+        /// SendBytes from serial connection.
+        /// </summary>
+        /// <param name="comport"></param>
+        /// <param name="data"></param>
+        public void SendData(string comport, byte[] data)
+        {
+            _serialConnection.SendBytes(comport, data);
+            _serialConnection.SendBytes(comport, new []{ConfigHandler.ConfigStruct.Terminator});
+        }
+
+        /// <summary>
+        /// SendData from serial connection.
+        /// </summary>
+        /// <param name="comport"></param>
+        /// <param name="data"></param>
+        public void SendData<T>(string comport, T data) where T : struct
+        {
+            _serialConnection.SendData(comport, data);
+            _serialConnection.SendBytes(comport, new []{ConfigHandler.ConfigStruct.Terminator});
+        }
 
         #endregion
         

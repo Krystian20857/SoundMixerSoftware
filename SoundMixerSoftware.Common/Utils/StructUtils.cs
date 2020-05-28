@@ -36,7 +36,7 @@ namespace SoundMixerSoftware.Common.Utils
             var result = new byte[size];
             Marshal.StructureToPtr(structure, ptr, true);
             Marshal.Copy(ptr, result, 0, size);
-            Marshal.AllocHGlobal(ptr);
+            Marshal.FreeHGlobal(ptr);
             return result;
         } 
     }

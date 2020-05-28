@@ -1,4 +1,5 @@
-﻿﻿using SoundMixerSoftware.Helpers;
+﻿﻿using SoundMixerSoftware.Common.Utils;
+ using SoundMixerSoftware.Helpers;
  using SoundMixerSoftware.Win32.USBLib;
 
  namespace SoundMixerSoftware.Models
@@ -9,31 +10,39 @@
     public class DeviceModel
     {
         #region Public Properties
+
         /// <summary>
         /// Device Friendly name.
         /// </summary>
         public string Name { get; set; }
+
         /// <summary>
         /// Device ComPort.
         /// </summary>
         public string ComPort { get; set; }
+
         /// <summary>
         /// Device Vendor Id.
         /// </summary>
         public string Vid { get; set; }
+
         /// <summary>
         /// Device product Id.
         /// </summary>
         public string Pid { get; set; }
+
         /// <summary>
         /// Device count of sliders.
         /// </summary>
         public string Sliders { get; set; }
+
         /// <summary>
         /// Device count of buttons
         /// </summary>
         public string Buttons { get; set; }
-        
+
+        public string UUID { get; set; }
+
         #endregion
         
         #region Public Static Methods
@@ -53,7 +62,8 @@
                 Name = response.name,
                 Pid = "0x" + properties.Pid.ToString("X2"),
                 Vid = "0x" + properties.Vid.ToString("X2"),
-                Sliders = response.slider_count.ToString()
+                Sliders = response.slider_count.ToString(),
+                UUID = ArrayUtils.ConvertToString(response.uuid)
             };
         }
         

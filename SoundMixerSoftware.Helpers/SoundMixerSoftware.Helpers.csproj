@@ -47,6 +47,7 @@
     <Compile Include="Device\ConnectionStructs.cs" />
     <Compile Include="Device\DeviceHandler.cs" />
     <Compile Include="Device\DeviceHandlerGlobal.cs" />
+    <Compile Include="Device\DeviceNotifier.cs" />
     <Compile Include="Device\EventArgs.cs" />
     <Compile Include="LocalSystem\LocalContainer.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />

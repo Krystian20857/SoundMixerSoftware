@@ -30,7 +30,14 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <summary>
         /// Gets audio sessions.
         /// </summary>
-        public SessionCollection AudioSessions => _device.AudioSessionManager.Sessions;
+        public SessionCollection AudioSessions
+        {
+            get
+            {
+                _device.AudioSessionManager.RefreshSessions();
+                return _device.AudioSessionManager.Sessions;
+            }
+        }
 
         /// <summary>
         /// Gets and sets currently operating device.
@@ -55,9 +62,10 @@ namespace SoundMixerSoftware.Common.AudioLib
         {
             get
             {
+                var sessions = AudioSessions;
                 for (var n = 0; n < AudioSessions.Count; n++)
                 {
-                    var session = AudioSessions[n];
+                    var session = sessions[n];
                     if (!session.IsSystemSoundsSession)
                         yield return (Process.GetProcessById((int) session.GetProcessID), session);
                 }
@@ -99,6 +107,8 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Fires when session disconnected.
         /// </summary>
         public event EventHandler<AudioSessionDisconnectReason> SessionDisconnected;
+
+        public event EventHandler<string> SessionExited;
 
         #endregion
 
@@ -144,9 +154,10 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public AudioSessionControl GetById(string sessionId)
         {
+            var sessions = AudioSessions;
             for (var n = 0; n < AudioSessions.Count; n++)
             {
-                var session = AudioSessions[n];
+                var session = sessions[n];
                 if (session.GetSessionIdentifier.Equals(sessionId, StringComparison.InvariantCultureIgnoreCase))
                     return session;
             }
@@ -187,6 +198,11 @@ namespace SoundMixerSoftware.Common.AudioLib
             eventClient.DisplayNameChanged += (sender, args) => DisplayNameChanged?.Invoke(sender, args);
             eventClient.GroupingParamChanged += (sender, args) => GroupingParamChanged?.Invoke(sender, args);
             eventClient.IconPathChanged += (sender, args) => IconPathChanged?.Invoke(sender, args);
+            var exitHandler = new ExitHandler(session.GetProcessID, session.GetSessionIdentifier);
+            exitHandler.SessionExited += (exitSender, s) =>
+            {
+                SessionExited?.Invoke(session, s);
+            };
             session.RegisterEventClient(eventClient);
         }
 
@@ -199,4 +215,26 @@ namespace SoundMixerSoftware.Common.AudioLib
         #endregion
     }
 
+    public class ExitHandler
+    {
+        private readonly string _id;
+        private readonly Process _process;
+        public event EventHandler<string> SessionExited;
+        
+        public ExitHandler(uint pid, string id)
+        {
+            if(pid == 0)
+                return;
+            _id = id;
+            _process = Process.GetProcessById((int)pid);
+            _process.EnableRaisingEvents = true;
+            _process.Exited += ProcessOnExited;
+        }
+
+        private void ProcessOnExited(object sender, EventArgs e)
+        {
+            SessionExited?.Invoke(this, _id);
+        }
+    }
+    
 }

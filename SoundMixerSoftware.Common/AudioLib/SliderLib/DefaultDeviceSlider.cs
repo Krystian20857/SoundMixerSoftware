@@ -1,44 +1,43 @@
-﻿using System.Timers;
+﻿using System.Diagnostics;
+using System.Timers;
 using NAudio.CoreAudioApi;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
-    public class SessionSlider : IVirtualSlider
+    public class DefaultDeviceSlider : IVirtualSlider
     {
         #region Private Fields
-
-        private readonly SimpleAudioVolume _simpleVolume;
+        
         private readonly Timer _update;
+        private readonly MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
+        private readonly DataFlow _dataFlow;
         
         private float _lastVolume;
         private bool _lastMute;
-        
+
         #endregion
 
         #region Public Properties
 
         public float Volume { get; set; }
         public bool IsMute { get; set; }
-
-        public bool IsMasterVolume => false;
+        public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
-        
-        public string SessionID { get; }
+        public bool IsDefaultOutput { get; }
+        public string DeviceID { get; }
 
         #endregion
 
         #region Constructor
 
-        public SessionSlider(AudioSessionControl sessionControl)
+        public DefaultDeviceSlider(bool isDefaultOutput)
         {
-            SessionID = sessionControl.GetSessionIdentifier;
-            _simpleVolume = sessionControl.SimpleAudioVolume;
-            SliderType = SliderType.SESSION;
-
-            _lastVolume = _simpleVolume.Volume;
+            IsDefaultOutput = isDefaultOutput;
+            _dataFlow = isDefaultOutput ? DataFlow.Render : DataFlow.Capture;
+            SliderType = isDefaultOutput ? SliderType.MASTER_RENDER : SliderType.MASTER_CAPTURE;
+            
             Volume = _lastVolume;
-
-            _lastMute = _simpleVolume.Mute;
+            
             IsMute = _lastMute;
             
             _update = new Timer();
@@ -50,16 +49,15 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         private void UpdateOnElapsed(object sender, ElapsedEventArgs e)
         {
-            if (Volume != _lastVolume)
+            if (Volume != _lastVolume || IsMute != _lastMute)
             {
+                var device = _deviceEnumerator.GetDefaultAudioEndpoint(_dataFlow, Role.Multimedia);
+                
                 _lastVolume = Volume;
-                _simpleVolume.Volume = _lastVolume;
-            }
-
-            if (IsMute != _lastMute)
-            {
                 _lastMute = IsMute;
-                _simpleVolume.Mute = _lastMute;
+                
+                device.AudioEndpointVolume.MasterVolumeLevelScalar = _lastVolume;
+                device.AudioEndpointVolume.Mute = _lastMute;
             }
         }
 

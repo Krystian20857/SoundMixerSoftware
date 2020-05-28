@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Media;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
 namespace SoundMixerSoftware.Models
 {
@@ -19,6 +20,9 @@ namespace SoundMixerSoftware.Models
 
         private bool _mute;
         private int _volume;
+        private bool _lastMute;
+
+        private bool change = false;
         
         #endregion
         
@@ -33,6 +37,12 @@ namespace SoundMixerSoftware.Models
             set
             {
                 _volume = value;
+                if (change)
+                {
+                    SessionHandler.SetVolume(Index, (float)Math.Round(_volume / 100.0F,2), true);
+                    change = true;
+                }
+                change = true;
                 OnPropertyChanged(nameof(Volume));
             }
         }
@@ -46,6 +56,12 @@ namespace SoundMixerSoftware.Models
             set
             {
                 _mute = value;
+                if (change)
+                {
+                    SessionHandler.SetMute(Index, _mute, true);
+                    change = true;
+                }
+
                 OnPropertyChanged(nameof(Mute));
             }
         }
@@ -71,16 +87,35 @@ namespace SoundMixerSoftware.Models
         public SliderModel()
         {
             SessionHandler.SessionEnumerator.VolumeChanged += SessionEnumeratorOnVolumeChanged;
+            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
         }
 
-        private bool change = true;
-        private void SessionEnumeratorOnVolumeChanged(object sender, Common.AudioLib.VolumeChangedArgs e)
+        private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
+        {
+            Execute.OnUIThread(() =>
+            {
+                var device = sender as MMDevice;
+                if (Applications.Any(x => x.ID == device.ID ||
+                                          (x.SessionMode == SessionMode.DefaultInputDevice && device.ID == SessionHandler.DeviceEnumerator.DefaultInput.ID) ||
+                                          (x.SessionMode == SessionMode.DefaultOutputDevice && device.ID == SessionHandler.DeviceEnumerator.DefaultOutput.ID)))
+                {
+                    change = false;
+                    var volume = (int) Math.Floor(e.Volume * 100.0F);
+                    Volume = volume;
+                    Mute = e.Mute;
+                }
+            });
+        }
+
+        private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
         {
             var sessionControl = sender as AudioSessionControl;
             if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
             {
-                Volume = (int) Math.Floor(sessionControl.SimpleAudioVolume.Volume * 100.0F);
                 change = false;
+                var volume = (int) Math.Floor(e.Volume * 100.0F);
+                Volume = volume;
+                Mute = e.Mute;
             }
         }
 
@@ -92,16 +127,9 @@ namespace SoundMixerSoftware.Models
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (change)
-            {
-                SessionHandler.SetVolume(Index, _volume / 100.0F, true);
-                SessionHandler.SetMute(Index, _mute, true);
-            }
-
-            change = true;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         #endregion
     }
 }
