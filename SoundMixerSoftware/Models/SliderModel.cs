@@ -20,9 +20,7 @@ namespace SoundMixerSoftware.Models
 
         private bool _mute;
         private int _volume;
-        private bool _lastMute;
-
-        private bool change = false;
+        private bool change;
         
         #endregion
         

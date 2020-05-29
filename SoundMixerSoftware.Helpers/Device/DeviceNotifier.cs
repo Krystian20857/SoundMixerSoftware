@@ -15,8 +15,16 @@ namespace SoundMixerSoftware.Helpers.Device
         
         #endregion
 
+        #region MyRegion
+        
+        #endregion
+
         #region Public Static Methods
 
+        /// <summary>
+        /// Lights devices buttons.
+        /// </summary>
+        /// <param name="comport"></param>
         public static void TestLights(string comport)
         {
             var testTask = Task.Run(async () =>
@@ -27,20 +35,30 @@ namespace SoundMixerSoftware.Helpers.Device
                     var buttons = result.DeviceResponse.button_count;
                     for (byte n = 0; n < buttons; n++)
                     {
-                        var structure = new LedStruct
-                        {
-                            command = 0x01,
-                            led = n,
-                            state = 0x01
-                        };
-                        deviceHandler.SendData(comport, structure);
+                        LightButton(comport, n, true);
                         await Task.Delay(500);
-                        structure.state = 0x00;
-                        deviceHandler.SendData(comport, structure);
+                        LightButton(comport, n, false);
                         await Task.Delay(500);
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// Set illumination state of specified button.
+        /// </summary>
+        /// <param name="comport">serial port of device</param>
+        /// <param name="button">button index</param>
+        /// <param name="state">led state</param>
+        public static void LightButton(string comport, byte button, bool state)
+        {
+            var structure = new LedStruct()
+            {
+                command = 0x01,
+                led = button,
+                state = (byte) (state ? 0x01 : 0x00)
+            };
+            DeviceHandlerGlobal.DeviceHandler.SendData(comport, structure);
         }
 
         #endregion

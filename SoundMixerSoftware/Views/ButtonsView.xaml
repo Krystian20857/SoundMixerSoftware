@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -18,7 +19,7 @@
                                     <TextBlock Margin="5,0" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="{Binding Path=Name}" />
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Margin="5,0" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Text="Function" />
-                                        <ComboBox ItemsSource="{Binding Path=Function, Mode=OneWay}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" />
+                                        <ComboBox cal:Message.Attach="[SelectionChanged] = [FunctionChanged($dataContext)]" ItemsSource="{Binding Path=Function, Mode=OneWay}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <Button DockPanel.Dock="Right" Margin="5" Content="{materialDesign:PackIcon LightbulbOutline}" ToolTip="Icon" />

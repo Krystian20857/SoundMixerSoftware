@@ -38,6 +38,8 @@
   <ItemGroup>
     <Compile Include="AudioSessions\SessionHandler.cs" />
     <Compile Include="AudioSessions\SessionMode.cs" />
+    <Compile Include="Buttons\ButtonFunction.cs" />
+    <Compile Include="Buttons\ButtonHandler.cs" />
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\ConfigStruct.cs" />
     <Compile Include="Converters\BaseConverter.cs" />

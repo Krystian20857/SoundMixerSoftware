@@ -67,11 +67,10 @@ namespace SoundMixerSoftware
             
             _container.PerRequest<MainViewModel>();
         }
-
+        
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             DisplayRootViewFor<MainViewModel>();
-
         }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using NLog;
-using SoundMixerSoftware.Helpers;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Device;
+using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.USBLib;
+using ButtonStruct = SoundMixerSoftware.Helpers.ButtonStruct;
 using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
+using SliderStruct = SoundMixerSoftware.Helpers.SliderStruct;
 
 namespace SoundMixerSoftware.Models
 {
@@ -69,15 +72,29 @@ namespace SoundMixerSoftware.Models
             {
                 case 0x01:
                     SliderStruct sliderStruct = e.Data;
-                    var index = sliderStruct.slider;
-                    if (index >= SessionHandler.Sliders.Count)
+                    var sliderIndex = sliderStruct.slider;
+                    if (sliderIndex >= SessionHandler.Sliders.Count)
                     {
                         Logger.Warn("Slider receive index mismatch.");
                         return;
                     }
 
                     var value = sliderStruct.value;
-                    SessionHandler.SetVolume(index, sliderStruct.value / 100.0F, false);
+                    SessionHandler.SetVolume(sliderIndex, sliderStruct.value / 100.0F, false);
+                    break;
+                case 0x02:
+                    ButtonStruct buttonStruct = e.Data;
+                    var buttonIndex = buttonStruct.button;
+                    var profile = ProfileHandler.SelectedProfile;
+                    if (buttonIndex >= profile.ButtonCount)
+                    {
+                        Logger.Warn("Button receive index mismatch.");
+                        return;
+                    }
+
+                    var button = profile.Buttons[buttonIndex];
+                    if (buttonStruct.state == 0x00)
+                        ButtonHandler.HandleButton(button.Function);
                     break;
             }
         }
@@ -89,6 +106,7 @@ namespace SoundMixerSoftware.Models
         private static void RegisterTypes()
         {
             DeviceHandler.RegisterType(0x01, typeof(SliderStruct));
+            DeviceHandler.RegisterType(0x02, typeof(ButtonStruct));
         }
         
         #endregion

@@ -32,6 +32,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Helps with audio devices enumeration.
         /// </summary>
         private MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
+        private string _lastDefaultDevice = string.Empty;
         
         #endregion
 
@@ -164,13 +165,12 @@ namespace SoundMixerSoftware.Common.AudioLib
             var device = _deviceEnumerator.GetDevice(deviceId);
             DeviceRemoved?.Invoke(device, new EventArgs());
         }
-
-        private string lastDefaultDevice = string.Empty;
+        
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            if (defaultDeviceId != lastDefaultDevice)
+            if (defaultDeviceId != _lastDefaultDevice)
             {
-                lastDefaultDevice = defaultDeviceId;
+                _lastDefaultDevice = defaultDeviceId;
                 DefaultDeviceChange?.Invoke(_deviceEnumerator.GetDevice(defaultDeviceId), new DefaultDeviceChangedArgs(flow, role));
             }
         }

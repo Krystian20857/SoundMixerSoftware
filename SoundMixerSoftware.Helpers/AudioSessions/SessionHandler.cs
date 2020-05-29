@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using SoundMixerSoftware.Common.AudioLib;
@@ -138,7 +139,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
             MuteChanged?.Invoke(null, new MuteChangedArgs(mute, selfInvoke, index));
         }
-        
+
         public static void CreateSliders()
         {
             Sliders.Clear();
@@ -148,6 +149,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 Sliders.Add(new List<IVirtualSlider>());
                 RequestedSliders.Add(new List<string>());
             }
+
             foreach (var sliderStruct in ProfileHandler.SelectedProfile.Sliders)
             {
                 foreach (var session in sliderStruct.Applications)
@@ -156,7 +158,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 }
             }
         }
-        
+
         public static bool AddSlider(int index, Session session)
         {
             if (Sliders.Count <= index)

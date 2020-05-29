@@ -66,6 +66,7 @@
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Property\IProperties.cs" />
       <Compile Include="Utils\ArrayUtils.cs" />
+      <Compile Include="Utils\EnumNameConverter.cs" />
       <Compile Include="Utils\ObjectUtils.cs" />
       <Compile Include="Utils\StructUtils.cs" />
     </ItemGroup>

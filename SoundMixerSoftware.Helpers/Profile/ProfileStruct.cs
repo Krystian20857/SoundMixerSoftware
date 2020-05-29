@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.Config.Yaml;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Buttons;
 
 namespace SoundMixerSoftware.Helpers.Profile
 {
@@ -31,7 +32,7 @@ namespace SoundMixerSoftware.Helpers.Profile
     
     public class ButtonStruct
     {
-        public string Function { get; set; }
+        public ButtonFunction Function { get; set; }
         public int Index { get; set; }
     }
 }
