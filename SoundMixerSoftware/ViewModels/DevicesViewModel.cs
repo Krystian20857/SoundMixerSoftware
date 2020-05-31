@@ -17,6 +17,9 @@ namespace SoundMixerSoftware.ViewModels
     {
         #region Private Properties
         
+        /// <summary>
+        /// Use in window handling.
+        /// </summary>
         private IWindowManager _windowManager =  new WindowManager();
         
         private BindableCollection<DeviceModel> _devices = new BindableCollection<DeviceModel>();
@@ -64,6 +67,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="e"></param>
         private void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
         {
+            //This type of action need to be handled in main thread.
             Execute.OnUIThread(() =>
             {
                 Devices.Remove(Devices.First(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase)));
@@ -77,6 +81,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="e"></param>
         private void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
+            //This type of action need to be handled in main thread.
             Execute.OnUIThread(() =>
             {
                 Devices.Add(DeviceModel.CreateModel(e.Device, e.DeviceResponse));
@@ -96,6 +101,10 @@ namespace SoundMixerSoftware.ViewModels
             _windowManager.ShowDialog(usbManager);
         }
 
+        /// <summary>
+        /// Occurs when check button has clicked.
+        /// </summary>
+        /// <param name="sender"></param>
         public void CheckClick(object sender)
         {
             var devicemodel = sender as DeviceModel;

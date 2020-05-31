@@ -22,7 +22,7 @@
                                         <ComboBox cal:Message.Attach="[SelectionChanged] = [FunctionChanged($dataContext)]" ItemsSource="{Binding Path=Function, Mode=OneWay}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" />
                                     </StackPanel>
                                 </StackPanel>
-                                <Button DockPanel.Dock="Right" Margin="5" Content="{materialDesign:PackIcon LightbulbOutline}" ToolTip="Icon" />
+                                <Button cal:Message.Attach="[Click] = [ButtonCheck($dataContext)]" DockPanel.Dock="Right" Margin="5" Content="{materialDesign:PackIcon LightbulbOutline}" ToolTip="Icon" />
                             </DockPanel>
                         </Border>
                     </DataTemplate>

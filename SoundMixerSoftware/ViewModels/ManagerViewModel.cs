@@ -55,6 +55,9 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Constructor
         
+        /// <summary>
+        /// Create instance of profile manager.
+        /// </summary>
         public ManagerViewModel()
         {
             Name = "Profiles";
@@ -90,6 +93,11 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Private Events
 
+        /// <summary>
+        /// Occurs when profile has changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
             foreach (var profile in Profiles)
@@ -150,10 +158,6 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
         
-        #endregion
-        
-        #region Private Methods
-        //...
         #endregion
     }
 }

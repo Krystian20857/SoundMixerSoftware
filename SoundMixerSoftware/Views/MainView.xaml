@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        Title="MainView" Height="450" Width="800">
+        Title="Sound Mixer Software" Height="450" Width="800" Icon="{StaticResource SpeakerIcon}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>

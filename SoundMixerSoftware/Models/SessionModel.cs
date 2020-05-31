@@ -25,9 +25,13 @@ namespace SoundMixerSoftware.Models
         /// Represents mode of session.
         /// </summary>
         public SessionMode SessionMode { get; set; }
-
+        /// <summary>
+        /// Session DataFlow
+        /// </summary>
         public DataFlow DataFlow { get; set; }
-
+        /// <summary>
+        /// Is Active.
+        /// </summary>
         public bool IsActive { get; set; }
     }
 }

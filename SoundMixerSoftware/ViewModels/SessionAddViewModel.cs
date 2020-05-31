@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Caliburn.Micro;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Models;
 using System.Linq;
-using System.Windows;
 using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
@@ -24,7 +21,7 @@ namespace SoundMixerSoftware.ViewModels
 
         private readonly SessionEnumerator _sessionEnumerator;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
-        private int _sliderIndex;
+        private readonly int _sliderIndex;
 
         private BindableCollection<SessionModel> _sessions = new BindableCollection<SessionModel>();
         private BindableCollection<SessionModel> _defaultDevices = new BindableCollection<SessionModel>();
@@ -70,6 +67,10 @@ namespace SoundMixerSoftware.ViewModels
 
         #region Constructor
 
+        /// <summary>
+        /// Create session add view-model.
+        /// </summary>
+        /// <param name="sliderIndex"></param>
         public SessionAddViewModel(int sliderIndex)
         {
             _sliderIndex = sliderIndex;
@@ -88,13 +89,16 @@ namespace SoundMixerSoftware.ViewModels
                 });
             }
 
-            foreach (var session in _sessionEnumerator.AudioProcesses)
+            var sessions = _sessionEnumerator.AudioSessions;
+            for (var n = 0; n < sessions.Count; n++)
             {
-                AddSession(session.session);
+                var session = sessions[n];
+                if(!session.IsSystemSoundsSession)
+                    AddSession(session);
             }
 
             _sessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
-            _sessionEnumerator.StateChanged += SessionEnumeratorOnStateChanged;
+            _sessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
 
             _deviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
         }
@@ -103,22 +107,28 @@ namespace SoundMixerSoftware.ViewModels
 
         #region Private Events
         
+        /// <summary>
+        /// Occurs when default audio device has changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
         {
             CreateDefault();
         }
         
-        private void SessionEnumeratorOnStateChanged(object sender, AudioSessionState e)
+        private void SessionEnumeratorOnSessionExited(object sender, string e)
         {
-            if (e != AudioSessionState.AudioSessionStateExpired)
-                return;
-            var sessionControl = sender as AudioSessionControl;
-            Sessions.Remove(Sessions.First(x => x.ID.Equals(sessionControl.GetSessionIdentifier, StringComparison.InvariantCultureIgnoreCase)));
+            var audioSession = sender as AudioSessionControl;
+            Sessions.Where(x => x.ID == audioSession.GetSessionIdentifier).ToList().ForEach(y =>
+            {
+                Sessions.Remove(y);
+            });
         }
 
         private void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)
         {
-            AddSession(e);
+            Execute.OnUIThread(() => { AddSession(e); });
         }
 
         #endregion
@@ -162,17 +172,16 @@ namespace SoundMixerSoftware.ViewModels
             if (Process.GetProcesses().All(x => x.Id != (int) session.GetProcessID))
                 return;
             var process = Process.GetProcessById((int) session.GetProcessID);
-            Execute.OnUIThread(() =>
-            {
+
+
                 Sessions.Add(new SessionModel()
                 {
                     Name = process.ProcessName,
                     Image = process.GetIcon().ToImageSource(),
                     ID = session.GetSessionIdentifier,
                 });
-            });
         }
-
+        
         /// <summary>
         /// Occurs when Add Button has clicked.
         /// </summary>

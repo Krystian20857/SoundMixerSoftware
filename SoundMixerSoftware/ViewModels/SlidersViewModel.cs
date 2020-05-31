@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Windows.Controls;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Common.AudioLib;
-using SoundMixerSoftware.Common.AudioLib.SliderLib;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;

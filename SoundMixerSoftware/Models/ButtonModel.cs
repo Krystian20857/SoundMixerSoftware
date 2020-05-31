@@ -19,5 +19,9 @@ namespace SoundMixerSoftware.Models
         /// Button Function.
         /// </summary>
         public string SelectedItem { get; set; }
+        /// <summary>
+        /// Index of current button.
+        /// </summary>
+        public int Index { get; set; }
     }
 }

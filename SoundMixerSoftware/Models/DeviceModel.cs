@@ -40,7 +40,9 @@
         /// Device count of buttons
         /// </summary>
         public string Buttons { get; set; }
-
+        /// <summary>
+        /// UUID of current device
+        /// </summary>
         public string UUID { get; set; }
 
         #endregion

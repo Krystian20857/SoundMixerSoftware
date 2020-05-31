@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        Title="SessionAddView" Height="500" Width="700">
+        Title="Session Add" Height="500" Width="700" Icon="{StaticResource SpeakerIcon}">
     <Window.Resources>
         <Style x:Key="ListViewItems" TargetType="{x:Type ListView}">
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>

@@ -5,6 +5,7 @@ using System.Linq;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
+using SoundMixerSoftware.Common.Utils;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -62,10 +63,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         {
             get
             {
-                var sessions = AudioSessions;
                 for (var n = 0; n < AudioSessions.Count; n++)
                 {
-                    var session = sessions[n];
+                    var session = AudioSessions[n];
                     if (!session.IsSystemSoundsSession)
                         yield return (Process.GetProcessById((int) session.GetProcessID), session);
                 }
@@ -107,7 +107,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Fires when session disconnected.
         /// </summary>
         public event EventHandler<AudioSessionDisconnectReason> SessionDisconnected;
-
+        /// <summary>
+        /// Occurs when session process quits
+        /// </summary>
         public event EventHandler<string> SessionExited;
 
         #endregion
@@ -134,10 +136,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         {
             _device = device;
             _device.AudioSessionManager.OnSessionCreated += OnSessionCreated;
-            var sessions = AudioSessions;
-            for (var n = 0; n < sessions.Count; n++)
+            for (var n = 0; n < AudioSessions.Count; n++)
             {
-                var session = sessions[n];
+                var session = AudioSessions[n];
                 RegisterEvents(session);
             }
         }
@@ -149,15 +150,19 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <returns></returns>
         public IEnumerable<(Process process, AudioSessionControl session)> GetByProcessName(string name)
         {
-            return AudioProcesses.Where((x) => x.process.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            return AudioProcesses.Where(x => x.process.ProcessName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public AudioSessionControl GetById(string sessionId)
         {
-            var sessions = AudioSessions;
             for (var n = 0; n < AudioSessions.Count; n++)
             {
-                var session = sessions[n];
+                var session = AudioSessions[n];
+                if (!ProcessUtils.IsAlive((int) session.GetProcessID))
+                {
+                    session.Dispose();
+                    continue;
+                }
                 if (session.GetSessionIdentifier.Equals(sessionId, StringComparison.InvariantCultureIgnoreCase))
                     return session;
             }
@@ -198,12 +203,13 @@ namespace SoundMixerSoftware.Common.AudioLib
             eventClient.DisplayNameChanged += (sender, args) => DisplayNameChanged?.Invoke(sender, args);
             eventClient.GroupingParamChanged += (sender, args) => GroupingParamChanged?.Invoke(sender, args);
             eventClient.IconPathChanged += (sender, args) => IconPathChanged?.Invoke(sender, args);
-            var exitHandler = new ExitHandler(session.GetProcessID, session.GetSessionIdentifier);
-            exitHandler.SessionExited += (exitSender, s) =>
-            {
-                SessionExited?.Invoke(session, s);
-            };
             session.RegisterEventClient(eventClient);
+            var exitHandler = new ExitHandler(session.GetProcessID, session.GetSessionIdentifier);
+            exitHandler.SessionExited += (exitSender, id) =>
+            {
+                _device.AudioSessionManager.RefreshSessions();
+                SessionExited?.Invoke(session, id);
+            };
         }
 
         private void OnSessionCreated(object sender, IAudioSessionControl newsession)

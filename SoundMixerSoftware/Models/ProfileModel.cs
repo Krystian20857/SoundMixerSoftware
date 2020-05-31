@@ -54,6 +54,10 @@ namespace SoundMixerSoftware.Models
         
         #region Public Methods
 
+        /// <summary>
+        /// Check if profile is initialized.
+        /// </summary>
+        /// <returns></returns>
         public bool IsInitialized() => Guid != Guid.Empty;
         
         /// <summary>

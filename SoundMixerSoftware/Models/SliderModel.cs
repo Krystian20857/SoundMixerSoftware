@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
+using NLog;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using LogManager = NLog.LogManager;
 using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
 namespace SoundMixerSoftware.Models
@@ -16,10 +17,19 @@ namespace SoundMixerSoftware.Models
     /// </summary>
     public class SliderModel : INotifyPropertyChanged
     {
+        #region Logger
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Fields
 
         private bool _mute;
         private int _volume;
+        /// <summary>
+        /// When true volume changed can happen.
+        /// </summary>
         private bool change;
         
         #endregion
@@ -82,14 +92,23 @@ namespace SoundMixerSoftware.Models
         
         #region Constructor
 
+        /// <summary>
+        /// Create slider model instance and subscribe events.
+        /// </summary>
         public SliderModel()
         {
             SessionHandler.SessionEnumerator.VolumeChanged += SessionEnumeratorOnVolumeChanged;
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
         }
 
+        /// <summary>
+        /// On device volume change.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
         {
+            //Device invocation can only happen in main thread(ui thread) otherwise exception occurs.
             Execute.OnUIThread(() =>
             {
                 var device = sender as MMDevice;
@@ -105,6 +124,11 @@ namespace SoundMixerSoftware.Models
             });
         }
 
+        /// <summary>
+        /// On session volume change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
         {
             var sessionControl = sender as AudioSessionControl;
@@ -116,6 +140,10 @@ namespace SoundMixerSoftware.Models
                 Mute = e.Mute;
             }
         }
+
+        #endregion
+        
+        #region Private Methods
 
         #endregion
         

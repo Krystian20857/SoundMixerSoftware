@@ -1,13 +1,9 @@
-﻿using System;
-using System.CodeDom;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Windows;
+﻿using System.Threading.Tasks;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Buttons;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
 
@@ -64,23 +60,55 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Private Events
         
+        /// <summary>
+        /// When profile changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
             CreateButtons();
         }
 
+        /// <summary>
+        /// Occurs when function of button has changed.
+        /// </summary>
+        /// <param name="sender"></param>
         public void FunctionChanged(object sender)
         {
             if (!(sender is ButtonModel model)) return;
             var function = EnumNameConverter.GetValue<ButtonFunction>(model.SelectedItem);
-            ProfileHandler.SelectedProfile.Buttons[Buttons.IndexOf(model)].Function = function;
+            ProfileHandler.SelectedProfile.Buttons[model.Index].Function = function;
             ProfileHandler.ProfileManager.Save(ProfileHandler.SelectedGuid);
         }
-        
+
+        /// <summary>
+        /// Occurs when check button has clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        public void ButtonCheck(object sender)
+        {
+            if (!(sender is ButtonModel model)) return;
+            var index = model.Index;
+            foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
+            {
+                var blinkTask = Task.Run(async () =>
+                {
+                    DeviceNotifier.LightButton(device.Key, (byte) index, true);
+                    await Task.Delay(500);
+                    DeviceNotifier.LightButton(device.Key, (byte) index, false);
+                    await Task.Delay(500);
+                });
+            }
+        }
+
         #endregion
         
         #region Private Methods
 
+        /// <summary>
+        /// Creates buttons.
+        /// </summary>
         private void CreateButtons()
         {
             var enumValueNames = EnumNameConverter.GetNames(typeof(ButtonFunction));
@@ -93,6 +121,7 @@ namespace SoundMixerSoftware.ViewModels
                 {
                     Name = $"Button {n + 1}",
                     Function = new BindableCollection<string>(enumValueNames),
+                    Index = n
                 };
                 if (buttons.Count <= n)
                 {

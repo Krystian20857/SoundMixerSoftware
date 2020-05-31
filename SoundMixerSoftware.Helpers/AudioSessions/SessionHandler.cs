@@ -84,7 +84,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
         {
             var device = sender as MMDevice;
-            Debug.WriteLine($"Default device: {device.FriendlyName}");
             SessionEnumerator.SetDevice(device);
         }
 

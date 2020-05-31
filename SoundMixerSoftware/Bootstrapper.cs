@@ -1,14 +1,14 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using Caliburn.Micro;
+using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Helpers.LocalSystem;
+using SoundMixerSoftware.ViewModels;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware
@@ -24,7 +24,10 @@ namespace SoundMixerSoftware
         
         #endregion
         
-        #region Public Static Fields
+        #region Public Static Properties
+
+        public static TaskbarIcon TaskbarIcon { get; set; }
+
         #endregion
         
         #region Private Fields
@@ -43,7 +46,8 @@ namespace SoundMixerSoftware
         { 
             LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
             LocalManager.ResolveLocal();
-            Initialize();   
+
+            Initialize();
         }
 
         protected override object GetInstance(Type service, string key) => _container.GetInstance(service, key);
@@ -65,12 +69,22 @@ namespace SoundMixerSoftware
             
             _container.PerRequest<SessionAddViewModel>();
             
-            _container.PerRequest<MainViewModel>();
+            _container.Singleton<MainViewModel>();
+            _container.Singleton<TaskbarIconViewModel>();
         }
         
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
+            TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
             DisplayRootViewFor<MainViewModel>();
+            Logger.Info("Main view started.");
+        }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            TaskbarIcon.Dispose();
+            Logger.Info("App shutdown.");
+            base.OnExit(sender, e);
         }
     }
 }

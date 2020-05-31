@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.Diagnostics;
+using System.Windows;
+using Caliburn.Micro;
 using SoundMixerSoftware.Models;
 using Screen = Caliburn.Micro.Screen;
 
@@ -13,6 +15,8 @@ namespace SoundMixerSoftware.ViewModels
         
         private BindableCollection<ITabModel> _tabs = new BindableCollection<ITabModel>();
         private ITabModel _selectedTab;
+
+        private IWindowManager _windowManager = new WindowManager();
         
         #endregion
         
@@ -48,6 +52,9 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Constructor
         
+        /// <summary>
+        /// Main window constructor
+        /// </summary>
         public MainViewModel()
         {
             Tabs.Add(new ManagerViewModel());
@@ -59,6 +66,10 @@ namespace SoundMixerSoftware.ViewModels
             SelectedTab = Tabs[0];
         }
         
+        #endregion
+        
+        #region Private Events
+
         #endregion
     }
 }
