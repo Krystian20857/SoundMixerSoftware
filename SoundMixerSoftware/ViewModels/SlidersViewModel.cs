@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
+using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
@@ -73,6 +74,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
+            SessionHandler.ClearAll -= SessionHandlerOnClearAll;
 
             Sliders.Clear();
             for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
@@ -84,7 +86,17 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionAdded += SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive += SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected += SessionHandlerOnSessionDisconnected;
+            SessionHandler.ClearAll += SessionHandlerOnClearAll;
             SessionHandler.CreateSliders();
+        }
+
+        private void SessionHandlerOnClearAll(object sender, EventArgs e)
+        {
+            Execute.OnUIThread(() =>
+            {
+                Sliders.Clear();
+                SessionHandler.CreateSliders();
+            });
         }
 
         private void SessionHandlerOnSessionDisconnected(object sender, SliderAddedArgs e)
@@ -116,17 +128,17 @@ namespace SoundMixerSoftware.ViewModels
                 {
                     var app = apps[n];
                     if (!app.IsActive && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
+                        continue;
+                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
+                    apps.RemoveAt(n);
+                    apps.Add(new SessionModel
                     {
-                        apps.RemoveAt(n);
-                        apps.Add(new SessionModel
-                        {
-                            ID = e.Session.ID,
-                            Image = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int)e.SessionControl.GetProcessID).GetFileName()).ToImageSource(),
-                            IsActive = true,
-                            Name = e.Session.Name,
-                            SessionMode = SessionMode.Session
-                        });
-                    }
+                        ID = e.Session.ID,
+                        Image = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int) e.SessionControl.GetProcessID).GetFileName()).ToImageSource(),
+                        IsActive = true,
+                        Name = $"{e.Session.Name} - {device.FriendlyName}",
+                        SessionMode = SessionMode.Session
+                    });
                 }
             });
         }
@@ -166,8 +178,9 @@ namespace SoundMixerSoftware.ViewModels
                 {
                     var pid = (int)SessionHandler.SessionEnumerator.GetById(session.ID).GetProcessID;
                     var process = Process.GetProcessById(pid);
+                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
                     model.Image = System.Drawing.Icon.ExtractAssociatedIcon(process.GetFileName()).ToImageSource();
-                    model.Name = process.ProcessName;
+                    model.Name = $"{process.ProcessName} - {device.FriendlyName}";
                 }
                 else if (session.SessionMode == SessionMode.DefaultInputDevice)
                 {
@@ -182,8 +195,9 @@ namespace SoundMixerSoftware.ViewModels
             }
             else
             {
+                var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
                 model.Image = ExtractedIcons.FailedIcon.ToImageSource();
-                model.Name = $"{session.Name}(Not Active)";
+                model.Name = $"{session.Name} - {device.FriendlyName}(Not Active)";
             }
 
             return model;

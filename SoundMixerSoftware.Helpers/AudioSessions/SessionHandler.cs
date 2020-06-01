@@ -32,11 +32,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         public static event EventHandler<SliderAddedArgs> SessionAdded;
         public static event EventHandler<SessionActiveArgs> SessionActive;
-        public static event EventHandler<SliderAddedArgs> SessionRemoved;
         public static event EventHandler<SliderAddedArgs> SessionDisconnected;
         public static event EventHandler<VolumeChangedArgs> VolumeChange; 
         public static event EventHandler<MuteChangedArgs> MuteChanged;
-        public static event EventHandler<EventArgs> UpdateDevice;
+        public static event EventHandler<EventArgs> ClearAll;
 
         #endregion
 
