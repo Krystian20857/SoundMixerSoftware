@@ -69,31 +69,39 @@ namespace SoundMixerSoftware.Common.Communication.Serial
         /// <returns>Device connection state.</returns>
         public bool Connect(string comport)
         {
-            if (!SerialPort.GetPortNames().Contains(comport))
-                return false;
-            if (_connectedDevices.ContainsKey(comport))
+            try
             {
-                var device = _connectedDevices[comport];
-                if (!device.IsOpen)
-                    device.Open();
-                if (device.IsOpen)
-                    DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
-                return device.IsOpen;
-            }
-            else
-            {
-                var device = SerialConfig.SetupSerialPort(_serialConfig);
-                device.PortName = comport;
-                device.DataReceived += DeviceOnDataReceived;
-                _connectedDevices.Add(comport, device);
-                device.Open();
-                if (device.IsOpen)
+                if (!SerialPort.GetPortNames().Contains(comport))
+                    return false;
+                if (_connectedDevices.ContainsKey(comport))
                 {
-                    DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
-                    Logger.Info($"Device connected: {comport}");
+                    var device = _connectedDevices[comport];
+                    if (!device.IsOpen)
+                        device.Open();
+                    if (device.IsOpen)
+                        DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                    return device.IsOpen;
                 }
+                else
+                {
+                    var device = SerialConfig.SetupSerialPort(_serialConfig);
+                    device.PortName = comport;
+                    device.DataReceived += DeviceOnDataReceived;
+                    _connectedDevices.Add(comport, device);
+                    device.Open();
+                    if (device.IsOpen)
+                    {
+                        DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                        Logger.Info($"Device connected: {comport}");
+                    }
 
-                return device.IsOpen;
+                    return device.IsOpen;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return false;
             }
         }
 

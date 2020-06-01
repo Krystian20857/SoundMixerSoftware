@@ -72,7 +72,7 @@ namespace SoundMixerSoftware
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();
         }
-        
+
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;

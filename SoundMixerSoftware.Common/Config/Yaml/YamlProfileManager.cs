@@ -60,7 +60,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             else
             {
                 Profiles.Add(uuid, ReadProfile(uuid));
-                Logger.Info($"Loaded profile{uuid}");
+                Logger.Info($"Loaded profile: {uuid}");
             }
         }
 

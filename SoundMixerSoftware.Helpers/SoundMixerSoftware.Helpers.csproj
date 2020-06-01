@@ -52,6 +52,9 @@
     <Compile Include="Device\DeviceNotifier.cs" />
     <Compile Include="Device\EventArgs.cs" />
     <Compile Include="LocalSystem\LocalContainer.cs" />
+    <Compile Include="NotifyWrapper\DeviceNotification.cs" />
+    <Compile Include="NotifyWrapper\DeviceNotificationState.cs" />
+    <Compile Include="NotifyWrapper\INotification.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />
     <Compile Include="Profile\ProfileStruct.cs" />
     <Compile Include="Utils\ExtractedIcons.cs" />
@@ -72,6 +75,10 @@
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Notifications.Wpf, Version=0.1.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Notifications.Wpf.Updated.0.1.1\lib\net461\Notifications.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework" />

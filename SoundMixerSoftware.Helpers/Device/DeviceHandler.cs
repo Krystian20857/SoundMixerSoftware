@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using NAudio.MediaFoundation;
 using SoundMixerSoftware.Common.Communication;
@@ -41,6 +42,10 @@ namespace SoundMixerSoftware.Helpers.Device
         /// Native Window Wrapper used for receiving messages.
         /// </summary>
         private NativeWindowWrapper _windowWrapper = new NativeWindowWrapper();
+        /// <summary>
+        /// Contains detected devices flag on application startup
+        /// </summary>
+        private List<byte> _flagsOnStartup = new List<byte>();
 
         #endregion
         
@@ -166,7 +171,7 @@ namespace SoundMixerSoftware.Helpers.Device
             {
                 var comPort = device.COMPort;
                 _serialConnection.Connect(comPort);
-                _serialConnection.SendData(comPort,CreateDeviceRequest(device));
+                _serialConnection.SendData(comPort,CreateDeviceRequest(device, true));
                 _serialConnection.SendBytes(comPort, new byte[]{0xFF});
             }
         }
@@ -176,7 +181,7 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         /// <param name="properties"></param>
         /// <returns></returns>
-        private DeviceIdRequest CreateDeviceRequest(DeviceProperties properties)
+        private DeviceIdRequest CreateDeviceRequest(DeviceProperties properties, bool isOnStartup)
         {
             var request = new DeviceIdRequest {command = 0x02};
             byte flag = 0x01;
@@ -184,6 +189,8 @@ namespace SoundMixerSoftware.Helpers.Device
                 flag++;
             request.flag = flag;
             _requestFlags.Add(flag, properties);
+            if(isOnStartup)
+                _flagsOnStartup.Add(flag);
             return request;
         }
         
@@ -207,7 +214,7 @@ namespace SoundMixerSoftware.Helpers.Device
                 return;
             }
             var properties = _requestProperties[e.COMPort];
-            _serialConnection.SendData(e.COMPort,CreateDeviceRequest(properties));
+            _serialConnection.SendData(e.COMPort,CreateDeviceRequest(properties, false));
             _requestProperties.Remove(e.COMPort);
             _serialConnection.SendBytes(e.COMPort, new byte[]{0xFF});
         }
@@ -226,11 +233,15 @@ namespace SoundMixerSoftware.Helpers.Device
             if (e.Command == 0x03)
             {
                 DeviceIdResponse response = e.Data;
-                if (_requestFlags.ContainsKey(response.flag))
+                var flag = response.flag;
+                if (_requestFlags.ContainsKey(flag))
                 {
-                    var devproperties = _requestFlags[response.flag];
+                    var devproperties = _requestFlags[flag];
                     _requestFlags.Remove(response.flag);
-                    DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(devproperties, response));
+                    var startup = _flagsOnStartup.Contains(flag);
+                    DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(devproperties, response, startup));
+                    if (startup)
+                        _flagsOnStartup.Remove(flag);
                 }
                 else
                 {

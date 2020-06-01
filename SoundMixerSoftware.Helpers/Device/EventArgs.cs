@@ -13,11 +13,16 @@ namespace SoundMixerSoftware.Helpers.Device
         /// Device id.
         /// </summary>
         public DeviceIdResponse DeviceResponse { get; set; }
+        /// <summary>
+        /// True if device has detected on application startup.
+        /// </summary>
+        public bool DetectedOnStartup { get; set; }
 
-        public DeviceConnectedEventArgs(DeviceProperties device, DeviceIdResponse deviceResponse)
+        public DeviceConnectedEventArgs(DeviceProperties device, DeviceIdResponse deviceResponse, bool detectedOnStartup)
         {
             Device = device;
             DeviceResponse = deviceResponse;
+            DetectedOnStartup = detectedOnStartup;
         }
     }
 }

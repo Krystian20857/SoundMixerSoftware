@@ -4,6 +4,7 @@ using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Device;
+using SoundMixerSoftware.Helpers.NotifyWrapper;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.USBLib;
 using ButtonStruct = SoundMixerSoftware.Helpers.ButtonStruct;
@@ -23,6 +24,7 @@ namespace SoundMixerSoftware.Models
         #region Private Static Fields
 
         private static Dictionary<string, DeviceConnectedEventArgs> _connectedDevices = new Dictionary<string, DeviceConnectedEventArgs>();
+        private static DeviceNotification _deviceNotification = new DeviceNotification();
 
         #endregion
         
@@ -59,13 +61,28 @@ namespace SoundMixerSoftware.Models
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
             _connectedDevices.Add(e.Device.COMPort, e);
+            if (!e.DetectedOnStartup)
+            {
+                _deviceNotification.Device = e;
+                _deviceNotification.State = DeviceNotificationState.Connected;
+                _deviceNotification.Show();
+            }
         }
-        
+
         private static void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
         {
-            _connectedDevices.Remove(e.DeviceProperties.COMPort);
+            var comPort = e.DeviceProperties.COMPort;
+            if (_connectedDevices.TryGetValue(comPort, out var device))
+            {
+                _connectedDevices.Remove(comPort);
+                _deviceNotification.Device = device;
+                _deviceNotification.State = DeviceNotificationState.Disconnected;
+                _deviceNotification.Show();
+            }
+            else
+                Logger.Warn($"Device: {e.DeviceProperties.COMPort} not present.");
         }
-        
+
         private static void DeviceHandlerOnDataReceived(object sender, DataReceivedEventArgs e)
         {
             switch (e.Command)
