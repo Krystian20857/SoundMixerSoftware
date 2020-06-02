@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using NLog;
-using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.Helpers.Device
 {

@@ -66,8 +66,9 @@
       <Compile Include="LocalSystem\PropertyAttribute.cs" />
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Property\IProperties.cs" />
+      <Compile Include="Utils\Application\AutoRunHandle.cs" />
       <Compile Include="Utils\ArrayUtils.cs" />
-      <Compile Include="Utils\EnumNameConverter.cs" />
+      <Compile Include="Utils\Enum\EnumNameConverter.cs" />
       <Compile Include="Utils\ObjectUtils.cs" />
       <Compile Include="Utils\ProcessUtils.cs" />
       <Compile Include="Utils\StructUtils.cs" />

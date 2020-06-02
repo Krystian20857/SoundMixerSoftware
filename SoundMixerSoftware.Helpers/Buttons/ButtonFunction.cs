@@ -1,5 +1,6 @@
 ﻿using System;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Utils.Enum;
 
 namespace SoundMixerSoftware.Helpers.Buttons
 {

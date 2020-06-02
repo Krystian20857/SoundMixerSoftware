@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
-using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.NotifyWrapper;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.USBLib;
-using ButtonStruct = SoundMixerSoftware.Helpers.ButtonStruct;
 using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
-using SliderStruct = SoundMixerSoftware.Helpers.SliderStruct;
 
-namespace SoundMixerSoftware.Models
+namespace SoundMixerSoftware.Helpers.Device
 {
     public static class DeviceHandlerGlobal
     {

@@ -2,10 +2,12 @@
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Utils.Enum;
 using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
+using ButtonStruct = SoundMixerSoftware.Helpers.Profile.ButtonStruct;
 
 namespace SoundMixerSoftware.ViewModels
 {

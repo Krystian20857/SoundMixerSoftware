@@ -97,7 +97,8 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
-            SessionHandler.SessionEnumerator.VolumeChanged += SessionEnumeratorOnVolumeChanged;
+            foreach(var sessionEnum in SessionHandler.SessionEnumerators)
+                sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
         }
 

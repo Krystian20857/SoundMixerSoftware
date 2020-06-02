@@ -21,7 +21,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         #region Public Fields
 
         public static DeviceEnumerator DeviceEnumerator { get; } = new DeviceEnumerator();
-        public static SessionEnumerator SessionEnumerator { get; } = new SessionEnumerator(DeviceEnumerator.DefaultOutput);
+        public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; } = new Dictionary<string, SessionEnumerator>();
         public static List<List<IVirtualSlider>> Sliders { get; } = new List<List<IVirtualSlider>>();
 
         public static List<List<string>> RequestedSliders { get; } = new List<List<string>>();
@@ -44,9 +44,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         static SessionHandler()
         {
             SessionAdded += OnSessionAdded;
-            SessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
-            SessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
-
+            foreach (var device in DeviceEnumerator.OutputDevices)
+            {
+                var sessionEnum = new SessionEnumerator(device);
+                sessionEnum.SessionCreated += SessionEnumeratorOnSessionCreated;
+                sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
+                SessionEnumerators.Add(device.ID, sessionEnum);
+            }
             DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
         }
 
@@ -83,7 +87,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
         {
             var device = sender as MMDevice;
-            SessionEnumerator.SetDevice(device);
         }
 
         private static void OnSessionAdded(object sender, SliderAddedArgs e)
@@ -176,7 +179,11 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     }
                     break;
                 case SessionMode.Session:
-                    var audioSession = SessionEnumerator.GetById(session.ID);
+                    //var audioSession = SessionEnumerator.GetById(session.ID);
+                    var deviceID = Identifier.GetDeviceId(session.ID);
+                    if (!SessionEnumerators.ContainsKey(deviceID))
+                        return false;
+                    var audioSession = SessionEnumerators[deviceID].GetById(session.ID);
                     if(audioSession != null)
                         slider = new SessionSlider(audioSession);
                     else

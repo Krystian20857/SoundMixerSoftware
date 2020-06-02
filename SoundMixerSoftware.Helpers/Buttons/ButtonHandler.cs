@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Windows;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
-using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Win32.Wrapper;
 using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 

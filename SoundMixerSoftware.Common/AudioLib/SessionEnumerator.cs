@@ -128,6 +128,7 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         #region Public Methods
 
+        
         /// <summary>
         /// Set current handling device.
         /// </summary>
@@ -142,6 +143,7 @@ namespace SoundMixerSoftware.Common.AudioLib
                 RegisterEvents(session);
             }
         }
+        
 
         /// <summary>
         /// Get audio session from process name.
@@ -207,7 +209,6 @@ namespace SoundMixerSoftware.Common.AudioLib
             var exitHandler = new ExitHandler(session.GetProcessID, session.GetSessionIdentifier);
             exitHandler.SessionExited += (exitSender, id) =>
             {
-                _device.AudioSessionManager.RefreshSessions();
                 SessionExited?.Invoke(session, id);
             };
         }

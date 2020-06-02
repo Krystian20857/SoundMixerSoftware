@@ -128,19 +128,22 @@ namespace SoundMixerSoftware.ViewModels
                 {
                     var app = apps[n];
                     if (!app.IsActive && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
-                        continue;
-                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
-                    apps.RemoveAt(n);
-                    apps.Add(new SessionModel
                     {
-                        ID = e.Session.ID,
-                        Image = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int) e.SessionControl.GetProcessID).GetFileName()).ToImageSource(),
-                        IsActive = true,
-                        Name = $"{e.Session.Name} - {device.FriendlyName}",
-                        SessionMode = SessionMode.Session
-                    });
+
+
+                        var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
+                        apps.RemoveAt(n);
+                        apps.Add(new SessionModel
+                        {
+                            ID = e.Session.ID,
+                            Image = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int) e.SessionControl.GetProcessID).GetFileName()).ToImageSource(),
+                            IsActive = true,
+                            Name = $"{e.Session.Name} - {device.FriendlyName}",
+                            SessionMode = SessionMode.Session
+                        });
+                    }
                 }
-            });
+           });
         }
 
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
@@ -176,9 +179,15 @@ namespace SoundMixerSoftware.ViewModels
                 }
                 else if (session.SessionMode == SessionMode.Session)
                 {
-                    var pid = (int)SessionHandler.SessionEnumerator.GetById(session.ID).GetProcessID;
+                    var deviceID = Identifier.GetDeviceId(session.ID);
+                    if (!SessionHandler.SessionEnumerators.ContainsKey(deviceID))
+                    {
+                        model.Image = ExtractedIcons.FailedIcon.ToImageSource();
+                        model.Name = $"{session.Name}(Device not available)";
+                    }
+                    var pid = (int)SessionHandler.SessionEnumerators[deviceID].GetById(session.ID).GetProcessID;
                     var process = Process.GetProcessById(pid);
-                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
+                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(deviceID);
                     model.Image = System.Drawing.Icon.ExtractAssociatedIcon(process.GetFileName()).ToImageSource();
                     model.Name = $"{process.ProcessName} - {device.FriendlyName}";
                 }

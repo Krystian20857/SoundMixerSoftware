@@ -1,7 +1,6 @@
-﻿using System.Drawing;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace SoundMixerSoftware.Helpers
+namespace SoundMixerSoftware.Helpers.Device
 {
     [StructLayout(LayoutKind.Explicit)]
     public struct DeviceIdRequest

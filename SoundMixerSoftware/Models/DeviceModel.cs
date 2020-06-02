@@ -1,5 +1,6 @@
 ﻿﻿using SoundMixerSoftware.Common.Utils;
  using SoundMixerSoftware.Helpers;
+ using SoundMixerSoftware.Helpers.Device;
  using SoundMixerSoftware.Win32.USBLib;
 
  namespace SoundMixerSoftware.Models

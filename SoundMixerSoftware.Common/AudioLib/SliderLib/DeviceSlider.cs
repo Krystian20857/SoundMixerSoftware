@@ -30,6 +30,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         public DeviceSlider(MMDevice device)
         {
             _device = device;
+            DeviceID = string.Copy(device.ID);
             SliderType = device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER;
 
             _lastVolume = _device.AudioEndpointVolume.MasterVolumeLevelScalar;

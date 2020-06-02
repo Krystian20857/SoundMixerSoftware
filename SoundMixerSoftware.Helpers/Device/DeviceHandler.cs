@@ -185,7 +185,7 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             var request = new DeviceIdRequest {command = 0x02};
             byte flag = 0x01;
-            while (_requestFlags.ContainsKey(flag) && flag < 254)
+            while (_requestFlags.ContainsKey(flag) && _flagsOnStartup.Contains(flag) && flag < 254)
                 flag++;
             request.flag = flag;
             _requestFlags.Add(flag, properties);
