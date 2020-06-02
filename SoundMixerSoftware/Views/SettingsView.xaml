@@ -4,9 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Stretch">
+            <GroupBox Header="Application Settings">
+                <Border BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                    <DockPanel LastChildFill="False">
+                        <TextBlock DockPanel.Dock="Left">Run with windows</TextBlock>
+                        <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=AutoRun, Mode=TwoWay}"/>
+                    </DockPanel>
+                </Border>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </UserControl>
