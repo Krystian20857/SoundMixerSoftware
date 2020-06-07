@@ -28,7 +28,8 @@ namespace SoundMixerSoftware.Helpers.Config
                 Timeout = 30000
             },
             Terminator = 0xFF,
-            ProfilesOrder = new List<Guid>()
+            ProfilesOrder = new List<Guid>(),
+            EnableNotifications = true
         };
         
         #endregion
@@ -47,6 +48,7 @@ namespace SoundMixerSoftware.Helpers.Config
         public byte Terminator { get; set; }
         public Guid SelectedProfile { get; set; }
         public List<Guid> ProfilesOrder { get; set; }
+        public bool? EnableNotifications { get; set; }
 
         #endregion
         

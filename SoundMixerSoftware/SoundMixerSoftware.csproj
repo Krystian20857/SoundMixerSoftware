@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da">
       <HintPath>..\packages\Autofac.2.6.3.862\lib\NET40\Autofac.dll</HintPath>
@@ -185,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +212,10 @@
     <ProjectReference Include="..\SoundMixerSoftware.Helpers\SoundMixerSoftware.Helpers.csproj">
       <Project>{3ef28ff9-c3a7-4abf-b2d0-84b9e6d187b1}</Project>
       <Name>SoundMixerSoftware.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundMixerSoftware.Overlay\SoundMixerSoftware.Overlay.csproj">
+      <Project>{38345ef4-a142-4dd5-bdf4-4e0bf74600df}</Project>
+      <Name>SoundMixerSoftware.Overlay</Name>
     </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj">
       <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>

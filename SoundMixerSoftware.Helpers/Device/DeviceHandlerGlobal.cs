@@ -2,7 +2,9 @@
 using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
+using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.NotifyWrapper;
+using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.USBLib;
 using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
@@ -57,7 +59,7 @@ namespace SoundMixerSoftware.Helpers.Device
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
             _connectedDevices.Add(e.Device.COMPort, e);
-            if (!e.DetectedOnStartup)
+            if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.EnableNotifications ?? false))
             {
                 _deviceNotification.Device = e;
                 _deviceNotification.State = DeviceNotificationState.Connected;
@@ -71,9 +73,12 @@ namespace SoundMixerSoftware.Helpers.Device
             if (_connectedDevices.TryGetValue(comPort, out var device))
             {
                 _connectedDevices.Remove(comPort);
-                _deviceNotification.Device = device;
-                _deviceNotification.State = DeviceNotificationState.Disconnected;
-                _deviceNotification.Show();
+                if (ConfigHandler.ConfigStruct.EnableNotifications ?? false)
+                {
+                    _deviceNotification.Device = device;
+                    _deviceNotification.State = DeviceNotificationState.Disconnected;
+                    _deviceNotification.Show();
+                }
             }
             else
                 Logger.Warn($"Device: {e.DeviceProperties.COMPort} not present.");
@@ -94,6 +99,9 @@ namespace SoundMixerSoftware.Helpers.Device
 
                     var value = sliderStruct.value;
                     SessionHandler.SetVolume(sliderIndex, sliderStruct.value / 100.0F, false);
+                    OverlayHandler.VolumeOverlay.Volume = value;
+                    if(!OverlayHandler.VolumeOverlay.IsVisible)
+                        OverlayHandler.VolumeOverlay.ShowWindow();
                     break;
                 case 0x02:
                     ButtonStruct buttonStruct = e.Data;

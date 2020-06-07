@@ -5,9 +5,11 @@ using System.Windows;
 using Caliburn.Micro;
 using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
+using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
 using SoundMixerSoftware.Helpers.LocalSystem;
+using SoundMixerSoftware.Overlay.OverlayWindow;
 using SoundMixerSoftware.ViewModels;
 using LogManager = NLog.LogManager;
 

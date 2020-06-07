@@ -9,7 +9,7 @@ namespace SoundMixerSoftware.Helpers.Utils
         
         public const string DMDSKRES_DLL = @"%systemroot%\system32\dmdskres.dll";
         public const string MMRES_DLL = @"%systemroot%\system32\mmres.dll";
-        
+
         #endregion
 
         public static Icon FailedIcon = IconExtractor.ExtractIcon(DMDSKRES_DLL, 5, true);

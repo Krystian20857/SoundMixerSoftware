@@ -22,30 +22,12 @@ namespace SoundMixerSoftware.Common.Utils
             var type = typeof(T);
             foreach (var property in type.GetProperties())
             {
-                var propertyType = property.PropertyType;
-
-                var propertyValue = property.GetValue(source);
-                var propertyName = property.Name;
-                var destPropertyValue = property.GetValue(dest);
-                
-                if(propertyType == typeof(Type))
-                    MergeObjects((T)propertyValue, (T)type.GetProperty(propertyName).GetValue(dest));
-                else if(HasEmptyConstructor(propertyType) || propertyType.IsValueType)
+                var valueSource = property.GetValue(source);
+                var valueDest = property.GetValue(dest);
+                if (valueSource == null)
                 {
-                    if(propertyValue != null)
-                        if (destPropertyValue == null)
-                        {
-                            property.SetValue(dest, propertyValue);
-                            modified = true;
-                        }
-                }
-                else if (propertyType == typeof(string))
-                {
-                    if (destPropertyValue == null)
-                    {
-                        property.SetValue(dest, propertyValue);
-                        modified = true;
-                    }
+                    property.SetValue(source, valueDest);
+                    modified = true;
                 }
             }
 

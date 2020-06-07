@@ -77,7 +77,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             if (File.Exists(_configPath))
             {
                 Config = _deserializer.Deserialize<T>(ReadYAML(_configPath));
-                if (ObjectUtils.MergeObjects(_sampleConfig, Config))
+                if (ObjectUtils.MergeObjects(Config, _sampleConfig))
                 {
                     SaveConfig();
                     Logger.Info($"Updated config: {_configPath}");

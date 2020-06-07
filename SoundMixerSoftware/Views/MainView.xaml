@@ -8,8 +8,7 @@
         mc:Ignorable="d"
         Title="Sound Mixer Software"
         Height="450" Width="800" MinHeight="300" MinWidth="750"
-        Icon="{StaticResource SpeakerIcon}"
-        WindowState="Minimized">
+        Icon="{StaticResource SpeakerIcon}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>

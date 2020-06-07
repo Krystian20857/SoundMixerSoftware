@@ -3,7 +3,12 @@
                     xmlns:tb="http://www.hardcodet.net/taskbar"
                     xmlns:viewModels="clr-namespace:SoundMixerSoftware.ViewModels"
                     xmlns:cal="http://www.caliburnproject.org">
-    <tb:TaskbarIcon x:Key="TaskbarIcon" ToolTipText="Sound Mixer Software" IconSource="{StaticResource SpeakerIcon}">
+    <tb:TaskbarIcon x:Key="TaskbarIcon" Style="{x:Null}" IconSource="{StaticResource SpeakerIcon}">
+        <tb:TaskbarIcon.TrayToolTip >
+            <Border BorderBrush="#4f4f4f" Background="#4f4f4f" BorderThickness="3" CornerRadius="3">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="GhostWhite">Sound Mixer Software</TextBlock>
+            </Border>
+        </tb:TaskbarIcon.TrayToolTip>
         <tb:TaskbarIcon.ContextMenu>
             <ContextMenu Style="{x:Null}">
                 <MenuItem Style="{x:Null}" Header="Show Window" cal:Message.Attach="ShowWindow">

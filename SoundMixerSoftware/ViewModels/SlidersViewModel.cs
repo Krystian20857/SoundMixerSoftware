@@ -129,8 +129,6 @@ namespace SoundMixerSoftware.ViewModels
                     var app = apps[n];
                     if (!app.IsActive && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                     {
-
-
                         var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
                         apps.RemoveAt(n);
                         apps.Add(new SessionModel
@@ -143,7 +141,7 @@ namespace SoundMixerSoftware.ViewModels
                         });
                     }
                 }
-           });
+            });
         }
 
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)

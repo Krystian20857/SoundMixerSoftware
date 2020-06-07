@@ -1,6 +1,5 @@
 ﻿﻿using System;
- using System.ComponentModel;
- using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 
 namespace SoundMixerSoftware.Common.AudioLib

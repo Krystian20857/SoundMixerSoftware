@@ -4,6 +4,7 @@ using System.Windows;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Device;
+using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.Wrapper;
 using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
@@ -142,6 +143,7 @@ namespace SoundMixerSoftware.Helpers.Buttons
             var defaultInput = SessionHandler.DeviceEnumerator.DefaultInput;
             var audioEndpoint = defaultInput.AudioEndpointVolume;
             audioEndpoint.Mute = !audioEndpoint.Mute;
+            ShowOverlay(audioEndpoint.Mute);
         }
 
         internal static void HandleMuteOutput()
@@ -149,6 +151,14 @@ namespace SoundMixerSoftware.Helpers.Buttons
             var defaultInput = SessionHandler.DeviceEnumerator.DefaultOutput;
             var audioEndpoint = defaultInput.AudioEndpointVolume;
             audioEndpoint.Mute = !audioEndpoint.Mute;
+            ShowOverlay(audioEndpoint.Mute);
+        }
+
+        private static void ShowOverlay(bool mute)
+        {
+            OverlayHandler.MuteOverlay.IsMuted = mute;
+            if(!OverlayHandler.MuteOverlay.IsVisible)
+                OverlayHandler.MuteOverlay.ShowWindow();
         }
         
         #endregion

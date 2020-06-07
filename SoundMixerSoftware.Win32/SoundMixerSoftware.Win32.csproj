@@ -45,6 +45,8 @@
       <Compile Include="Wrapper\IconExtractor.cs" />
       <Compile Include="Wrapper\MediaControl.cs" />
       <Compile Include="Wrapper\NativeWindowWrapper.cs" />
+      <Compile Include="Wrapper\SystemVersion.cs" />
+      <Compile Include="Wrapper\ThemeWrapper.cs" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.CSharp" />
