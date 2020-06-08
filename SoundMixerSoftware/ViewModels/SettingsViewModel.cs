@@ -1,8 +1,12 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using MaterialDesignThemes.Wpf;
 using NLog;
+using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels
@@ -22,8 +26,11 @@ namespace SoundMixerSoftware.ViewModels
         
         private bool _autoRun;
         private bool _enableNotify;
+        private bool _enableOverlay;
+        private int _fadeTime;
         
         private AutoRunHandle _autoRunHandle = new AutoRunHandle(Assembly.GetExecutingAssembly().Location);
+        private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
         
         #endregion
         
@@ -56,6 +63,35 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
+        public bool EnableOverlay
+        {
+            get => _enableOverlay;
+            set
+            {
+                ConfigHandler.ConfigStruct.EnableOverlay = value;
+                if(!LockConfig)
+                    ConfigHandler.SaveConfig();
+                Logger.Trace($"Changed overlay-enable setting to {value}");
+                _enableOverlay = value;
+            }
+        }
+
+        public int FadeTime
+        {
+            get => _fadeTime;
+            set
+            {
+                ConfigHandler.ConfigStruct.FadeTime = value;
+                if(!LockConfig)
+                    _debounceDispatcher.Debounce(300,(param) =>
+                    {
+                        ConfigHandler.SaveConfig();
+                        OverlayHandler.SetFadeTime(value);
+                    });
+                _fadeTime = value;
+            }
+        }
+
         public bool LockConfig { get; set; }
 
         #endregion
@@ -78,6 +114,8 @@ namespace SoundMixerSoftware.ViewModels
             
             AutoRun = _autoRunHandle.CheckInstance();
             EnableNotify = ConfigHandler.ConfigStruct.EnableNotifications;
+            EnableOverlay = ConfigHandler.ConfigStruct.EnableOverlay;
+            FadeTime = ConfigHandler.ConfigStruct.FadeTime;
 
             LockConfig = false;
         }

@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Models\ButtonModel.cs" />
+    <Compile Include="Models\DebounceDispatcher.cs" />
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\ITabModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />

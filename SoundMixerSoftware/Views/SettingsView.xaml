@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -27,6 +28,36 @@
                         <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=EnableNotify, Mode=TwoWay}"/>
                     </DockPanel>
                 </Border>
+            </GroupBox>
+            <GroupBox Margin="5" Header="Overlay Settings">
+                <StackPanel Orientation="Vertical">
+                    <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <DockPanel LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left">Enable Overlay</TextBlock>
+                            <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=EnableOverlay, Mode=TwoWay}"/>
+                        </DockPanel>
+                    </Border>
+                    <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <DockPanel HorizontalAlignment="Stretch" LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left">Overlay Fade Time</TextBlock>
+                            <Slider DockPanel.Dock="Right"
+                                    Width="250"
+                                    Margin="5,0"
+                                    TickFrequency="100"
+                                    IsSnapToTickEnabled="True"
+                                    Orientation="Horizontal"
+                                    Minimum="100"
+                                    Maximum="10000"
+                                    Value="{Binding Path=FadeTime, Mode=TwoWay, UpdateSourceTrigger = PropertyChanged}" />
+                            <TextBox DockPanel.Dock="Right"
+                                     Width="50"
+                                     Margin="5,0"
+                                     TextAlignment="Center"
+                                     Text="{Binding Path=FadeTime, Mode=TwoWay, UpdateSourceTrigger = PropertyChanged}"
+                                     />
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
             </GroupBox>
         </StackPanel>
     </Grid>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Ports;
-using System.Text;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Win32.USBLib;
