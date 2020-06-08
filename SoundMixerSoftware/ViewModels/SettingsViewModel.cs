@@ -77,7 +77,7 @@ namespace SoundMixerSoftware.ViewModels
             LockConfig = true;
             
             AutoRun = _autoRunHandle.CheckInstance();
-            EnableNotify = ConfigHandler.ConfigStruct.EnableNotifications ?? false;
+            EnableNotify = ConfigHandler.ConfigStruct.EnableNotifications;
 
             LockConfig = false;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Timers;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
@@ -16,7 +15,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         #region Protected Fields
 
-        protected GraphicsWindow _window;
+        protected volatile GraphicsWindow _window;
         
         #endregion
         
@@ -139,11 +138,12 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         /// </summary>
         public void ShowWindow()
         {
+            if(IsVisible)
+                return;
             if(!_window.IsInitialized)
                 _window.Create();
             _window.Show();
             _window.Unpause();
-            _window.IsVisible = true;
             if (_fadeTimer.Enabled)
                 _fadeTimer.Stop();
             _fadeTimer.Start();
@@ -151,10 +151,11 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
 
         public void HideWindow()
         {
+            if(!IsVisible)
+                return;
             _fadeTimer.Start();
             _window.Pause(); 
             _window.Hide();
-            _window.IsVisible = false;
         }
         
         #endregion

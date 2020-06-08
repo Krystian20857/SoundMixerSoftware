@@ -43,7 +43,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         #region Constructor
         
-        public VolumeOverlay() : base(WINDOW_WIDTH, WINDOW_HEIGHT, 25, 25, 10000)
+        public VolumeOverlay(int fadeTime) : base(WINDOW_WIDTH, WINDOW_HEIGHT, 25, 25, fadeTime)
         {
             ThemeManager.ReloadResources += ThemeManagerOnReloadResources;
         }
@@ -54,7 +54,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         private void ThemeManagerOnReloadResources(object sender, EventArgs e)
         {
-            _brushResource["Theme"] =  Graphics.CreateSolidBrush(ThemeManager.ThemeColor);
+            if(Graphics.IsInitialized)
+                _brushResource["Theme"] =  Graphics.CreateSolidBrush(ThemeManager.ThemeColor);
         }
         
         #endregion
@@ -86,7 +87,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         {
             var graphics = args.Graphics;
             
-            BrushResource.CreateFromColors(graphics, _colorResource);
+            foreach (var color in _colorResource.GetResources())
+                _brushResource.SetResource(color.Key, graphics.CreateSolidBrush(color.Value));
             FontResource.CreateFonts(graphics);
             
             _brushResource["Theme"] = graphics.CreateSolidBrush(ThemeManager.ThemeColor);

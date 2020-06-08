@@ -143,7 +143,7 @@ namespace SoundMixerSoftware.Helpers.Buttons
             var defaultInput = SessionHandler.DeviceEnumerator.DefaultInput;
             var audioEndpoint = defaultInput.AudioEndpointVolume;
             audioEndpoint.Mute = !audioEndpoint.Mute;
-            ShowOverlay(audioEndpoint.Mute);
+            OverlayHandler.ShowMute(audioEndpoint.Mute);
         }
 
         internal static void HandleMuteOutput()
@@ -151,16 +151,9 @@ namespace SoundMixerSoftware.Helpers.Buttons
             var defaultInput = SessionHandler.DeviceEnumerator.DefaultOutput;
             var audioEndpoint = defaultInput.AudioEndpointVolume;
             audioEndpoint.Mute = !audioEndpoint.Mute;
-            ShowOverlay(audioEndpoint.Mute);
+            OverlayHandler.ShowMute(audioEndpoint.Mute);
         }
 
-        private static void ShowOverlay(bool mute)
-        {
-            OverlayHandler.MuteOverlay.IsMuted = mute;
-            if(!OverlayHandler.MuteOverlay.IsVisible)
-                OverlayHandler.MuteOverlay.ShowWindow();
-        }
-        
         #endregion
     }
 }

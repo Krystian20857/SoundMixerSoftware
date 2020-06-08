@@ -16,7 +16,7 @@ namespace SoundMixerSoftware.Helpers.Profile
 
         public static IProfileManager<ProfileStruct> ProfileManager { get; } = new YamlProfileManager<ProfileStruct>(LocalContainer.Profiles);
 
-        public static ProfileStruct SelectedProfile { get; set; }
+        public static ProfileStruct SelectedProfile { get; set; } = new ProfileStruct();
         public static Guid SelectedGuid { get; set; }
 
         #endregion

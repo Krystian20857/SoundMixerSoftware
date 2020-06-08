@@ -59,7 +59,7 @@ namespace SoundMixerSoftware.Helpers.Device
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
             _connectedDevices.Add(e.Device.COMPort, e);
-            if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.EnableNotifications ?? false))
+            if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.EnableNotifications))
             {
                 _deviceNotification.Device = e;
                 _deviceNotification.State = DeviceNotificationState.Connected;
@@ -73,7 +73,7 @@ namespace SoundMixerSoftware.Helpers.Device
             if (_connectedDevices.TryGetValue(comPort, out var device))
             {
                 _connectedDevices.Remove(comPort);
-                if (ConfigHandler.ConfigStruct.EnableNotifications ?? false)
+                if (ConfigHandler.ConfigStruct.EnableNotifications)
                 {
                     _deviceNotification.Device = device;
                     _deviceNotification.State = DeviceNotificationState.Disconnected;
@@ -99,9 +99,7 @@ namespace SoundMixerSoftware.Helpers.Device
 
                     var value = sliderStruct.value;
                     SessionHandler.SetVolume(sliderIndex, sliderStruct.value / 100.0F, false);
-                    OverlayHandler.VolumeOverlay.Volume = value;
-                    if(!OverlayHandler.VolumeOverlay.IsVisible)
-                        OverlayHandler.VolumeOverlay.ShowWindow();
+                    OverlayHandler.ShowVolume(value);
                     break;
                 case 0x02:
                     ButtonStruct buttonStruct = e.Data;

@@ -23,6 +23,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         private IResourceProvider<IBrush> _brushResource = new BrushResource();
         private IResourceProvider<Font> _fontResource = new FontResource();
         private IResourceProvider<Image> _imageResource = new ImageResource();
+
+        //private IBrush DARK_GRAY_BRUSH_TEST;
         
         #endregion
         
@@ -34,7 +36,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         #region Constructor
         
-        public MuteWindow() : base(WINDOW_WIDTH, WINDOW_HEIGHT, 150, 150, 5000)
+        public MuteWindow(int fadeTime) : base(WINDOW_WIDTH, WINDOW_HEIGHT, 25, 25, fadeTime)
         {
             
         }
@@ -57,8 +59,9 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         protected override void CreateResource(SetupGraphicsEventArgs args)
         {
             var graphics = args.Graphics;
-            
-            BrushResource.CreateFromColors(graphics, _colorResource);
+
+            foreach (var color in _colorResource.GetResources())
+                _brushResource.SetResource(color.Key, graphics.CreateSolidBrush(color.Value));
             FontResource.CreateFonts(graphics);
             ImageResource.CreateImages(graphics);
         }

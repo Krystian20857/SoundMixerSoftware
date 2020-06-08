@@ -29,7 +29,9 @@ namespace SoundMixerSoftware.Helpers.Config
             },
             Terminator = 0xFF,
             ProfilesOrder = new List<Guid>(),
-            EnableNotifications = true
+            EnableNotifications = true,
+            FadeTime = 2500,
+            EnableOverlay = true
         };
         
         #endregion
@@ -41,14 +43,50 @@ namespace SoundMixerSoftware.Helpers.Config
         
         #endregion
         
-        #region Public Properties
-
+        #region Base Values
         public List<USBID> UsbIDs { get; set; }
         public SerialConfig SerialConfig { get; set; }
-        public byte Terminator { get; set; }
         public Guid SelectedProfile { get; set; }
         public List<Guid> ProfilesOrder { get; set; }
-        public bool? EnableNotifications { get; set; }
+        #endregion
+        
+        #region Nullable value-types
+        [YamlMember(Alias = "Terminator")]
+        public byte? TerminatorNullable { get; set; }
+        [YamlMember(Alias = "EnableNotifications")]
+        public bool? EnableNotificationsNullable { get; set; }
+        [YamlMember(Alias = "FadeTime")]
+        public int? FadeTimeNullable { get; set; }
+        [YamlMember(Alias = "EnableOverlay")]
+        public bool? EnableOverlayNullable { get; set; }
+        #endregion
+        
+        #region Non-null value-types
+
+        [YamlIgnore]
+        public bool EnableNotifications
+        {
+            get => EnableNotificationsNullable ?? false;
+            set => EnableNotificationsNullable = value;
+        }
+        [YamlIgnore]
+        public int FadeTime
+        {
+            get => FadeTimeNullable ?? 0;
+            set => FadeTimeNullable = value;
+        }
+        [YamlIgnore]
+        public bool EnableOverlay
+        {
+            get => EnableOverlayNullable ?? false;
+            set => EnableOverlayNullable = value;
+        }
+        [YamlIgnore]
+        public byte Terminator
+        {
+            get => TerminatorNullable ?? 127;
+            set => TerminatorNullable = value;
+        }
 
         #endregion
         
