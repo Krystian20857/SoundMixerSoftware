@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Threading;
 using GameOverlay.Drawing;
 using SoundMixerSoftware.Win32.Wrapper;
 
@@ -8,7 +10,7 @@ namespace SoundMixerSoftware.Overlay.Resource
     {
         #region Static Fields
         
-        private static readonly ThemeWrapper _themeWrapper = new ThemeWrapper();
+        private static ThemeWrapper _themeWrapper = new ThemeWrapper();
         
         #endregion
         
@@ -25,8 +27,12 @@ namespace SoundMixerSoftware.Overlay.Resource
         #endregion
         
         #region Static Constructor
+
+        #endregion
         
-        static ThemeManager()
+        #region Static Methods
+
+        public static void Initialize()
         {
             if (SystemVersion.IsWin8OrHigher())
                 ThemeColor = Color.FromARGB(_themeWrapper.GetThemeColor());

@@ -9,6 +9,7 @@ using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.ViewModels
@@ -48,7 +49,6 @@ namespace SoundMixerSoftware.ViewModels
         public PackIconKind Icon { get; set; }
 
         #endregion
-        
 
         #region Constructor
         
@@ -63,6 +63,7 @@ namespace SoundMixerSoftware.ViewModels
                 return;
             
             UpdateProfile();
+            ThemeManager.Initialize();
         }
 
         #endregion

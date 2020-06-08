@@ -10,6 +10,7 @@ using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Overlay.OverlayWindow;
+using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.ViewModels;
 using LogManager = NLog.LogManager;
 

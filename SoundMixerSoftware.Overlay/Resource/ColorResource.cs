@@ -31,6 +31,7 @@ namespace SoundMixerSoftware.Overlay.Resource
             Colors.Add("DarkGray", new Color(50,50,50, TRANSPARENCY));
             Colors.Add("LightGray", new Color(200,200,200,TRANSPARENCY));
             Colors.Add("DimWhite", new Color(245, 245, 245, TRANSPARENCY));
+            Colors.Add("BlackNoAlpha", new Color(0, 0, 0));
         }
 
         #endregion

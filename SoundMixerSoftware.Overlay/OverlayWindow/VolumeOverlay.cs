@@ -71,12 +71,12 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             
             graphics.ClearScene(Color.Transparent);
             graphics.FillRoundedRectangle(_brushResource.GetResource("DarkGray"), 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 5);
-            graphics.DrawHorizontalProgressBar(_brushResource["LightGray"], _brushResource["Theme"],
+            graphics.DrawHorizontalProgressBar(_brushResource["BlackNoAlpha"], _brushResource["Theme"],
                 xcenter - VOLUME_WIDTH / 2,
                 ycenter - VOLUME_HEIGHT / 2 - VOLUME_OFFSET,
                 (float) (xcenter + 0.5*VOLUME_WIDTH),
                 (float) (ycenter + 0.5*VOLUME_HEIGHT) - VOLUME_OFFSET,
-                0,
+                1,
                 Volume);
             var text = $"{Math.Floor(Volume)}%";
             var textSize = graphics.MeasureString(_fontResource["Default"], text);
