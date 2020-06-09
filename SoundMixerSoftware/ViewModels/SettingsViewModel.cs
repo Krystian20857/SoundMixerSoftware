@@ -6,6 +6,7 @@ using NLog;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 
@@ -118,6 +119,15 @@ namespace SoundMixerSoftware.ViewModels
             FadeTime = ConfigHandler.ConfigStruct.FadeTime;
 
             LockConfig = false;
+        }
+        
+        #endregion
+        
+        #region Private Events
+
+        public void LogsFolderOpenClick()
+        {
+            AppUtils.OpenExplorer(LocalContainer.LogsFolder);
         }
         
         #endregion

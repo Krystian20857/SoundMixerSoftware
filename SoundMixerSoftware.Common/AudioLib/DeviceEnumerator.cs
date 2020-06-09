@@ -5,7 +5,6 @@ using System.Linq;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
-using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
