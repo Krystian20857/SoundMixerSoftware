@@ -77,6 +77,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
             SessionHandler.ClearAll -= SessionHandlerOnClearAll;
 
+            ProfileHandler.ProfileManager.Load(ProfileHandler.SelectedGuid);
             Sliders.Clear();
             for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
                 Sliders.Add(new SliderModel
@@ -220,6 +221,11 @@ namespace SoundMixerSoftware.ViewModels
             var model = sender as SliderModel;
             var addViewModel = new SessionAddViewModel(model.Index);
             _windowManager.ShowDialog(addViewModel);
+        }
+
+        public void ReloadClick()
+        {
+            UpdateProfile();
         }
 
         /// <summary>

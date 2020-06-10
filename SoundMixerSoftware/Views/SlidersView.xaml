@@ -15,10 +15,14 @@
             <materialDesign:PackIconKind>VolumeHigh</materialDesign:PackIconKind>
             <materialDesign:PackIconKind>VolumeMute</materialDesign:PackIconKind>
         </x:Array>
-        <converters:IconConverter x:Key="IconConverter"/>
-        <converters:BoolInvertConverter x:Key="BoolInvertConverter"/>
+        <converters:IconConverter x:Key="IconConverter" />
+        <converters:BoolInvertConverter x:Key="BoolInvertConverter" />
     </UserControl.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="Sliders" HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
@@ -52,8 +56,8 @@
                                                 Minimum="0"
                                                 Maximum="100"
                                                 Value="{Binding Path=Volume, Mode=TwoWay}"
-                                                Width="300" 
-                                                IsEnabled="{Binding Path=Mute, Converter={StaticResource BoolInvertConverter}}"/>
+                                                Width="300"
+                                                IsEnabled="{Binding Path=Mute, Converter={StaticResource BoolInvertConverter}}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Vertical" HorizontalAlignment="Center">
@@ -69,8 +73,7 @@
                                         <Button cal:Message.Attach="[Click] = [Action MuteClick($this)]"
                                                 Margin="5,2"
                                                 Content="{Binding Path=Mute, Converter={StaticResource IconConverter}, ConverterParameter={StaticResource MuteIcons}}"
-                                                ToolTip="Mute"
-                                                />
+                                                ToolTip="Mute" />
                                     </StackPanel>
                                     <!-- Volume Label -->
                                     <TextBlock Margin="5" Style="{StaticResource MaterialDesignHeadline5TextBlock}" HorizontalAlignment="Center">
@@ -84,5 +87,8 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        <StackPanel Grid.Row="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+            <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" cal:Message.Attach="[Click] = [ReloadClick()]" Width="150" Content="Reload Sessions" ToolTip="Reload Sessions" />
+        </StackPanel>
     </Grid>
 </UserControl>
