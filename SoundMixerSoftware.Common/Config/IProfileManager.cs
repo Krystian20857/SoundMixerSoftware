@@ -41,6 +41,11 @@ namespace SoundMixerSoftware.Common.Config
         /// </summary>
         void SaveAll();
         /// <summary>
+        /// Refresh uuid with specified uuid.
+        /// </summary>
+        /// <param name="uuid"></param>
+        void RefreshProfile(Guid uuid);
+        /// <summary>
         /// Get profiles.
         /// </summary>
         /// <returns>Returns available profiles</returns>

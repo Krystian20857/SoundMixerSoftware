@@ -206,6 +206,10 @@
     <Page Include="Views\UsbManagerView.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ApplicationReloader\ApplicationReloader.csproj">
+      <Project>{d59fb9d1-dad8-4fc2-9bed-69a4b1ddaae4}</Project>
+      <Name>ApplicationReloader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">
       <Project>{2040554a-678b-4e8e-a915-dd4710fb7105}</Project>
       <Name>SoundMixerSoftware.Common</Name>
@@ -231,6 +235,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ListImage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ReloadImage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets')" />

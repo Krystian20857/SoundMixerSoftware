@@ -1,6 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using Caliburn.Micro;
+using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Views;
 
 namespace SoundMixerSoftware.ViewModels
@@ -35,7 +41,7 @@ namespace SoundMixerSoftware.ViewModels
         {
             Application.Current.Shutdown();
         }
-        
+
         #endregion
     }
 }

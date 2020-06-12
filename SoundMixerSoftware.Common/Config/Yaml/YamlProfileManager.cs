@@ -102,6 +102,14 @@ namespace SoundMixerSoftware.Common.Config.Yaml
                 Save(profile);
         }
 
+        public void RefreshProfile(Guid uuid)
+        {
+            if (!Profiles.ContainsKey(uuid))
+                return;
+            Profiles.Remove(uuid);
+            Load(uuid);
+        }
+
         public IEnumerable<Guid> GetProfiles()
         {
             foreach (var profileFile in Directory.GetFiles(_profileFolder))

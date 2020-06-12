@@ -176,7 +176,6 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key)
         {
-            Debug.WriteLine($"Property changed: {key.propertyId}");
             PropertyValueChanged?.Invoke(_deviceEnumerator.GetDevice(pwstrDeviceId), new PropertyChangedArgs(key));
         }
 

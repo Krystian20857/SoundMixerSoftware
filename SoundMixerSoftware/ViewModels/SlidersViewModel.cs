@@ -4,6 +4,7 @@ using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.AudioLib;
+using SoundMixerSoftware.Common.Config.Yaml;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
@@ -75,9 +76,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
-            SessionHandler.ClearAll -= SessionHandlerOnClearAll;
-
-            ProfileHandler.ProfileManager.Load(ProfileHandler.SelectedGuid);
+            SessionHandler.Reload -= SessionHandlerOnReload;
             Sliders.Clear();
             for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
                 Sliders.Add(new SliderModel
@@ -88,17 +87,13 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionAdded += SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive += SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected += SessionHandlerOnSessionDisconnected;
-            SessionHandler.ClearAll += SessionHandlerOnClearAll;
+            SessionHandler.Reload += SessionHandlerOnReload;
             SessionHandler.CreateSliders();
         }
 
-        private void SessionHandlerOnClearAll(object sender, EventArgs e)
+        private void SessionHandlerOnReload(object sender, EventArgs e)
         {
-            Execute.OnUIThread(() =>
-            {
-                Sliders.Clear();
-                SessionHandler.CreateSliders();
-            });
+            Execute.OnUIThread(UpdateProfile);
         }
 
         private void SessionHandlerOnSessionDisconnected(object sender, SliderAddedArgs e)
@@ -129,7 +124,7 @@ namespace SoundMixerSoftware.ViewModels
                 for (var n = 0; n < apps.Count; n++)
                 {
                     var app = apps[n];
-                    if (!app.IsActive && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
+                    if (app.SessionState == SessionState.Active && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
                         apps.RemoveAt(n);
@@ -137,7 +132,7 @@ namespace SoundMixerSoftware.ViewModels
                         {
                             ID = e.Session.ID,
                             Image = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int) e.SessionControl.GetProcessID).GetFileName()).ToImageSource(),
-                            IsActive = true,
+                            SessionState = SessionState.Active,
                             Name = $"{e.Session.Name} - {device.FriendlyName}",
                             SessionMode = SessionMode.Session
                         });
@@ -154,6 +149,8 @@ namespace SoundMixerSoftware.ViewModels
         private void SessionHandlerOnSessionAdded(object sender, SliderAddedArgs e)
         {
             Execute.OnUIThread(() =>{
+                if(Sliders[e.Index].Applications.Any(x => x.ID == e.Session.ID))
+                    return;
                 Sliders[e.Index].Applications.Add(TranslateModel(e));
             });
         }
@@ -165,11 +162,11 @@ namespace SoundMixerSoftware.ViewModels
             {
                 DataFlow = session.DataFlow,
                 ID = session.ID,
-                IsActive = e.IsActive,
+                SessionState = e.SessionState,
                 SessionMode = session.SessionMode
             };
 
-            if(e.IsActive)
+            if(e.SessionState == SessionState.Active)
             {
                 if (session.SessionMode == SessionMode.Device)
                 {
@@ -202,11 +199,16 @@ namespace SoundMixerSoftware.ViewModels
                     model.Image = ExtractedIcons.SpeakerIcon.ToImageSource();
                 }
             }
-            else
+            else if(e.SessionState == SessionState.Disconnected)
             {
                 var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
                 model.Image = ExtractedIcons.FailedIcon.ToImageSource();
                 model.Name = $"{session.Name} - {device.FriendlyName}(Not Active)";
+            }            
+            else if(e.SessionState == SessionState.DeviceNotDetected)
+            {
+                model.Image = ExtractedIcons.FailedIcon.ToImageSource();
+                model.Name = $"{session.Name} - (Unknown device)";
             }
 
             return model;
@@ -225,6 +227,8 @@ namespace SoundMixerSoftware.ViewModels
 
         public void ReloadClick()
         {
+            SessionHandler.ReloadSessionHandler();
+            ProfileHandler.ProfileManager.RefreshProfile(ProfileHandler.SelectedGuid);
             UpdateProfile();
         }
 

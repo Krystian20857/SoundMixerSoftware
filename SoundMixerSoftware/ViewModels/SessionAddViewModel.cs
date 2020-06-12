@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Caliburn.Micro;
 using SoundMixerSoftware.Common.AudioLib;
@@ -6,6 +7,7 @@ using SoundMixerSoftware.Models;
 using System.Linq;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Win32.Wrapper;
@@ -169,7 +171,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="process"></param>
         private void AddSession(AudioSessionControl session)
         {
-            if (Process.GetProcesses().All(x => x.Id != (int) session.GetProcessID))
+            if (!ProcessUtils.IsAlive((int)session.GetProcessID))
                 return;
             var process = Process.GetProcessById((int) session.GetProcessID);
 
@@ -205,6 +207,8 @@ namespace SoundMixerSoftware.ViewModels
                     Name = SelectedSession.Name,
                     ID = SelectedSession.ID
                 };
+                if (session.SessionMode == SessionMode.DefaultOutputDevice || session.SessionMode == SessionMode.DefaultInputDevice)
+                    session.ID = string.Empty;
                 SessionHandler.AddSlider(_sliderIndex,session);
                 slider.Applications.Add(session);
                 ProfileHandler.ProfileManager.SaveAll();

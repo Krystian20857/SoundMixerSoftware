@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 using Caliburn.Micro;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -30,6 +31,7 @@ namespace SoundMixerSoftware
         #region Public Static Properties
 
         public static TaskbarIcon TaskbarIcon { get; set; }
+        public static Mutex Mutex { get; set; } = new Mutex(true, "{40F97157-0940-4877-A018-37B994816DD7}");
 
         #endregion
         
@@ -46,11 +48,19 @@ namespace SoundMixerSoftware
         #endregion
         
         public Bootstrapper()
-        { 
-            LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
-            LocalManager.ResolveLocal();
-
-            Initialize();
+        {
+            if (Mutex.WaitOne(TimeSpan.Zero, true))
+            {
+                LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
+                LocalManager.ResolveLocal();
+                Initialize();
+                Mutex.ReleaseMutex();
+            }
+            else
+            {
+                MessageBox.Show("Only one instance can be running in the same time.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Application.Current.Shutdown();
+            }
         }
 
         protected override object GetInstance(Type service, string key) => _container.GetInstance(service, key);
@@ -88,6 +98,18 @@ namespace SoundMixerSoftware
             TaskbarIcon.Dispose();
             Logger.Info("App shutdown.");
             base.OnExit(sender, e);
+        }
+
+        private void RegisterExceptionHandler()
+        {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+        }
+
+        private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exceptionObject = e.ExceptionObject;
+            if (exceptionObject is Exception exception)
+                Logger.Error(exception);
         }
     }
 }

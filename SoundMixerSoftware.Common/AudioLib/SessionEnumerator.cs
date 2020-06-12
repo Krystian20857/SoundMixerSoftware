@@ -159,14 +159,22 @@ namespace SoundMixerSoftware.Common.AudioLib
         {
             for (var n = 0; n < AudioSessions.Count; n++)
             {
-                var session = AudioSessions[n];
-                if (!ProcessUtils.IsAlive((int) session.GetProcessID))
+                try
                 {
-                    session.Dispose();
-                    continue;
+                    var session = AudioSessions[n];
+                    if (!ProcessUtils.IsAlive((int) session.GetProcessID))
+                    {
+                        session.Dispose();
+                        continue;
+                    }
+
+                    if (session.GetSessionIdentifier.Equals(sessionId, StringComparison.InvariantCultureIgnoreCase))
+                        return session;
                 }
-                if (session.GetSessionIdentifier.Equals(sessionId, StringComparison.InvariantCultureIgnoreCase))
-                    return session;
+                catch (Exception exception)
+                {
+                    Logger.Error(exception);
+                }
             }
 
             return null;

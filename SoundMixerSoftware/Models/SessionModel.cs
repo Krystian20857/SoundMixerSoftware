@@ -32,6 +32,6 @@ namespace SoundMixerSoftware.Models
         /// <summary>
         /// Is Active.
         /// </summary>
-        public bool IsActive { get; set; }
+        public SessionState SessionState { get; set; }
     }
 }

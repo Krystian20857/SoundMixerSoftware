@@ -23,8 +23,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static DeviceEnumerator DeviceEnumerator { get; } = new DeviceEnumerator();
         public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; } = new Dictionary<string, SessionEnumerator>();
         public static List<List<IVirtualSlider>> Sliders { get; } = new List<List<IVirtualSlider>>();
-
         public static List<List<string>> RequestedSliders { get; } = new List<List<string>>();
+        public static Dictionary<string, DeviceState> LastDeviceStates = new Dictionary<string, DeviceState>();
 
         #endregion
 
@@ -35,7 +35,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static event EventHandler<SliderAddedArgs> SessionDisconnected;
         public static event EventHandler<VolumeChangedArgs> VolumeChange; 
         public static event EventHandler<MuteChangedArgs> MuteChanged;
-        public static event EventHandler<EventArgs> ClearAll;
+        public static event EventHandler<EventArgs> Reload;
 
         #endregion
 
@@ -43,6 +43,12 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         static SessionHandler()
         {
+            ReloadSessionHandler();
+        }
+
+        public static void ReloadSessionHandler()
+        {
+            SessionEnumerators.Clear();
             SessionAdded += OnSessionAdded;
             foreach (var device in DeviceEnumerator.OutputDevices)
             {
@@ -52,6 +58,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 SessionEnumerators.Add(device.ID, sessionEnum);
             }
             DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
+            DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
+            DeviceEnumerator.DeviceStateChanged += DeviceEnumeratorOnDeviceStateChanged;
         }
 
         private static void SessionEnumeratorOnSessionExited(object sender, string e)
@@ -73,7 +81,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                             ID = sessionControl.GetSessionIdentifier,
                             Name = name,
                             SessionMode = SessionMode.Session
-                        }, n, false));
+                        }, n, SessionState.Disconnected));
                         RequestedSliders[n].Add(sessionControl.GetSessionIdentifier);
                     }
                 }
@@ -88,10 +96,42 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         {
             var device = sender as MMDevice;
         }
+        
+        private static void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
+        {
+            var device = sender as MMDevice;
+            if(!SessionEnumerators.ContainsKey(device.ID))
+                SessionEnumerators.Add(device.ID, new SessionEnumerator(device));
+        }
+        
+        private static void DeviceEnumeratorOnDeviceStateChanged(object sender, DeviceStateChangedArgs e)
+        {
+            var device = sender as MMDevice;
+            if (!LastDeviceStates.ContainsKey(device.ID))
+                LastDeviceStates.Add(device.ID, e.DeviceState);
+            if (LastDeviceStates[device.ID] == e.DeviceState)
+                return;
+            if (e.DeviceState == DeviceState.Active)
+            {
+                if (!SessionEnumerators.ContainsKey(device.ID))
+                    SessionEnumerators.Add(device.ID, new SessionEnumerator(device));
+                ReloadSessionHandler();
+                Reload?.Invoke(null, EventArgs.Empty);
+                LastDeviceStates[device.ID] = e.DeviceState;
+            }
+            else if (e.DeviceState == DeviceState.Unplugged)
+            {
+                if (SessionEnumerators.ContainsKey(device.ID))
+                    SessionEnumerators.Remove(device.ID);
+                ReloadSessionHandler();
+                Reload?.Invoke(null, EventArgs.Empty);
+                LastDeviceStates[device.ID] = e.DeviceState;
+            }
+        }
 
         private static void OnSessionAdded(object sender, SliderAddedArgs e)
         {
-            if(!e.IsActive)
+            if(e.SessionState == SessionState.Disconnected || e.SessionState == SessionState.DeviceNotDetected)
                 RequestedSliders[e.Index].Add(e.Session.ID);
         }
 
@@ -174,7 +214,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     }
                     catch
                     {
-                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, false));
+                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.Disconnected));
                         return true;
                     }
                     break;
@@ -182,13 +222,16 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     //var audioSession = SessionEnumerator.GetById(session.ID);
                     var deviceID = Identifier.GetDeviceId(session.ID);
                     if (!SessionEnumerators.ContainsKey(deviceID))
+                    {
+                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.DeviceNotDetected));
                         return false;
+                    }
                     var audioSession = SessionEnumerators[deviceID].GetById(session.ID);
                     if(audioSession != null)
                         slider = new SessionSlider(audioSession);
                     else
                     {
-                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, false));
+                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.Disconnected));
                         return true;
                     }
                     break;
@@ -200,7 +243,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     break;
             }
             Sliders[index].Add(slider);
-            SessionAdded?.Invoke(null, new SliderAddedArgs(slider, session, index, true));
+            SessionAdded?.Invoke(null, new SliderAddedArgs(slider, session, index, SessionState.Active));
             return true;
         }
 
@@ -275,14 +318,14 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public Session Session { get; set; }
         public int Index { get; set; }
 
-        public bool IsActive { get; set; }
+        public SessionState SessionState { get; set; }
 
-        public SliderAddedArgs(IVirtualSlider slider, Session session, int index, bool isActive)
+        public SliderAddedArgs(IVirtualSlider slider, Session session, int index, SessionState sessionState)
         {
             Slider = slider;
             Session = session;
             Index = index;
-            IsActive = isActive;
+            SessionState = sessionState;
         }
     }
 
