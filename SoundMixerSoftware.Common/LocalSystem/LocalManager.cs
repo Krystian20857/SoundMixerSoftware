@@ -116,6 +116,14 @@ namespace SoundMixerSoftware.Common.LocalSystem
             return _registry[key];
         }
 
+        public void SetValue(object key, object value)
+        {
+            if (_registry.ContainsKey(key))
+                _registry[key] = value;
+            else
+                _registry.Add(key, value);
+        }
+
         public bool RemoveValue(object key)
         {
             if (!_registry.Contains(key))

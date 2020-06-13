@@ -29,8 +29,9 @@ namespace SoundMixerSoftware.Helpers.Config
             Terminator = 0xFF,
             ProfilesOrder = new List<Guid>(),
             EnableNotifications = true,
-            FadeTime = 2500,
-            EnableOverlay = true
+            OverlayFadeTimeNullable = 2500,
+            EnableOverlay = true,
+            NotificationShowTime = 7000
         };
         
         #endregion
@@ -55,9 +56,12 @@ namespace SoundMixerSoftware.Helpers.Config
         [YamlMember(Alias = "EnableNotifications")]
         public bool? EnableNotificationsNullable { get; set; }
         [YamlMember(Alias = "FadeTime")]
-        public int? FadeTimeNullable { get; set; }
+        public int? OverlayFadeTimeNullable { get; set; }
         [YamlMember(Alias = "EnableOverlay")]
         public bool? EnableOverlayNullable { get; set; }
+        [YamlMember(Alias = "NotificationShowTime")]
+        public int? NotificationShowTimeNullable { get; set; }
+
         #endregion
         
         #region Non-null value-types
@@ -69,10 +73,10 @@ namespace SoundMixerSoftware.Helpers.Config
             set => EnableNotificationsNullable = value;
         }
         [YamlIgnore]
-        public int FadeTime
+        public int OverlayFadeTime
         {
-            get => FadeTimeNullable ?? 0;
-            set => FadeTimeNullable = value;
+            get => OverlayFadeTimeNullable ?? 0;
+            set => OverlayFadeTimeNullable = value;
         }
         [YamlIgnore]
         public bool EnableOverlay
@@ -85,6 +89,13 @@ namespace SoundMixerSoftware.Helpers.Config
         {
             get => TerminatorNullable ?? 127;
             set => TerminatorNullable = value;
+        }
+
+        [YamlIgnore]
+        public int NotificationShowTime
+        {
+            get => NotificationShowTimeNullable ?? 0;
+            set => NotificationShowTimeNullable = value;
         }
 
         #endregion

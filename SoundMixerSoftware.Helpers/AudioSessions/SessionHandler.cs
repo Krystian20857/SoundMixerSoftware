@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
+using System.Windows;
 using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.AudioLib.SliderLib;
-using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Profile;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions
@@ -20,7 +17,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         #region Public Fields
 
-        public static DeviceEnumerator DeviceEnumerator { get; } = new DeviceEnumerator();
+        public static DeviceEnumerator DeviceEnumerator { get; private set; } = new DeviceEnumerator();
         public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; } = new Dictionary<string, SessionEnumerator>();
         public static List<List<IVirtualSlider>> Sliders { get; } = new List<List<IVirtualSlider>>();
         public static List<List<string>> RequestedSliders { get; } = new List<List<string>>();
@@ -36,6 +33,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static event EventHandler<VolumeChangedArgs> VolumeChange; 
         public static event EventHandler<MuteChangedArgs> MuteChanged;
         public static event EventHandler<EventArgs> Reload;
+
+        public static event EventHandler<EventArgs> RegisterDevice;
 
         #endregion
 
@@ -117,6 +116,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     SessionEnumerators.Add(device.ID, new SessionEnumerator(device));
                 ReloadSessionHandler();
                 Reload?.Invoke(null, EventArgs.Empty);
+                RegisterDevice?.Invoke(device.ID, EventArgs.Empty);
                 LastDeviceStates[device.ID] = e.DeviceState;
             }
             else if (e.DeviceState == DeviceState.Unplugged)

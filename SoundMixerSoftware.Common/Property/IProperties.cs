@@ -12,6 +12,12 @@
         /// <returns>value</returns>
         U GetValue(T key);
         /// <summary>
+        /// Sets value with specified key.
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="value">value</param>
+        void SetValue(T key, U value);
+        /// <summary>
         /// Remove value/key pair.
         /// </summary>
         /// <param name="key">key</param>

@@ -17,8 +17,8 @@ namespace SoundMixerSoftware.Helpers.Overlay
         
         static OverlayHandler()
         {
-            _overlays.Add(new MuteWindow(ConfigHandler.ConfigStruct.FadeTime));
-            _overlays.Add(new VolumeOverlay(ConfigHandler.ConfigStruct.FadeTime));
+            _overlays.Add(new MuteWindow(ConfigHandler.ConfigStruct.OverlayFadeTime));
+            _overlays.Add(new VolumeOverlay(ConfigHandler.ConfigStruct.OverlayFadeTime));
         }
         
         #endregion

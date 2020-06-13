@@ -10,6 +10,7 @@ using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
 using SoundMixerSoftware.Helpers.LocalSystem;
+using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.ViewModels;
@@ -109,7 +110,7 @@ namespace SoundMixerSoftware
         {
             var exceptionObject = e.ExceptionObject;
             if (exceptionObject is Exception exception)
-                Logger.Error(exception);
+                ExceptionHandler.HandleException(Logger, exception);
         }
     }
 }

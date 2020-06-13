@@ -55,10 +55,12 @@
     <Compile Include="LocalSystem\LocalContainer.cs" />
     <Compile Include="NotifyWrapper\DeviceNotification.cs" />
     <Compile Include="NotifyWrapper\DeviceNotificationState.cs" />
+    <Compile Include="NotifyWrapper\ExceptionNotification.cs" />
     <Compile Include="NotifyWrapper\INotification.cs" />
     <Compile Include="Overlay\OverlayHandler.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />
     <Compile Include="Profile\ProfileStruct.cs" />
+    <Compile Include="Utils\ExceptionHandler.cs" />
     <Compile Include="Utils\ExtractedIcons.cs" />
   </ItemGroup>
   <ItemGroup>

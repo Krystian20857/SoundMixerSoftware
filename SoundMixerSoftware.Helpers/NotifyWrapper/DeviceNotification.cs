@@ -1,16 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using Notifications.Wpf;
+using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Device;
 
 namespace SoundMixerSoftware.Helpers.NotifyWrapper
 {
-    public class DeviceNotification : INotification
+    public class DeviceNotification : INotification<object>
     {
+        #region Constants
+
+        public const string EVENT_ARGS_KEY = "EVENTARGS";
+        public const string DEVICE_STATE_KEY = "DEVICESTATE";
+        
+        #endregion
+        
         #region Private Fields
         
         private NotificationManager _notificationManager = new NotificationManager();
-
+        private DeviceConnectedEventArgs device;
+        private DeviceNotificationState state;
         #endregion
         
         #region Implemented Events
@@ -19,19 +27,33 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
         public event Action Closed;
         
         #endregion
-        
-        #region Public Proeprties
 
-        public DeviceConnectedEventArgs Device { get; set; }
-        public DeviceNotificationState State { get; set; }
-
-        #endregion
-        
         #region Implemented Methods
         
-        public DeviceConnectedEventArgs GetValue(string key)
+        public object GetValue(string key)
         {
-            throw new NotImplementedException();
+            switch (key)
+            {
+                case EVENT_ARGS_KEY:
+                    return device;
+                case DEVICE_STATE_KEY:
+                    return state;
+                default:
+                    return null;
+            }
+        }
+
+        public void SetValue(string key, object value)
+        {
+            switch (key)
+            {
+                case EVENT_ARGS_KEY:
+                    device = value as DeviceConnectedEventArgs;
+                    break;
+                case DEVICE_STATE_KEY:
+                    state = (DeviceNotificationState)value;
+                    break;
+            }
         }
 
         public bool RemoveValue(string key)
@@ -39,7 +61,7 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
             throw new NotImplementedException();
         }
 
-        public DeviceConnectedEventArgs[] GetValues()
+        public object[] GetValues()
         {
             throw new NotImplementedException();
         }
@@ -52,25 +74,25 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
         public void Show()
         {
             var content = new NotificationContent();
-            if (State == DeviceNotificationState.Connected)
+            if (state == DeviceNotificationState.Connected)
             {
                 content = new NotificationContent
                 {
-                    Title = $"Device Connected: {Device.DeviceResponse.name}",
-                    Message = $"ComPort: {Device.Device.COMPort}\n",
+                    Title = $"Device Connected: {device.DeviceResponse.name}",
+                    Message = $"ComPort: {device.Device.COMPort}\n",
                     Type = NotificationType.Information
                 };
             }
-            else if (State == DeviceNotificationState.Disconnected)
+            else if (state == DeviceNotificationState.Disconnected)
             {
                 content = new NotificationContent
                 {
-                    Title = $"Device Disconnected: {Device.DeviceResponse.name}",
-                    Message = $"ComPort: {Device.Device.COMPort}\n",
-                    Type = NotificationType.Error
+                    Title = $"Device Disconnected: {device.DeviceResponse.name}",
+                    Message = $"ComPort: {device.Device.COMPort}\n",
+                    Type = NotificationType.Warning
                 };
             }
-            _notificationManager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: TimeSpan.FromSeconds(7));
+            _notificationManager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.NotificationShowTime));
         }
         
         #endregion

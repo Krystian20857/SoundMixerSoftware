@@ -28,7 +28,8 @@ namespace SoundMixerSoftware.ViewModels
         private bool _autoRun;
         private bool _enableNotify;
         private bool _enableOverlay;
-        private int _fadeTime;
+        private int _overlayFadeTime;
+        private int _notificationShowTime;
         
         private AutoRunHandle _autoRunHandle = new AutoRunHandle(Assembly.GetExecutingAssembly().Location);
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
@@ -77,19 +78,31 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
-        public int FadeTime
+        public int OverlayFadeTime
         {
-            get => _fadeTime;
+            get => _overlayFadeTime;
             set
             {
-                ConfigHandler.ConfigStruct.FadeTime = value;
+                ConfigHandler.ConfigStruct.OverlayFadeTime = value;
                 if(!LockConfig)
-                    _debounceDispatcher.Debounce(300,(param) =>
+                    _debounceDispatcher.Debounce(300,param =>
                     {
                         ConfigHandler.SaveConfig();
                         OverlayHandler.SetFadeTime(value);
                     });
-                _fadeTime = value;
+                _overlayFadeTime = value;
+            }
+        }
+        
+        public int NotificationShowTime
+        {
+            get => _notificationShowTime;
+            set
+            {
+                ConfigHandler.ConfigStruct.NotificationShowTime = value;
+                if(!LockConfig)
+                    _debounceDispatcher.Debounce(300,param => ConfigHandler.SaveConfig());
+                _notificationShowTime = value;
             }
         }
 
@@ -116,7 +129,8 @@ namespace SoundMixerSoftware.ViewModels
             AutoRun = _autoRunHandle.CheckInstance();
             EnableNotify = ConfigHandler.ConfigStruct.EnableNotifications;
             EnableOverlay = ConfigHandler.ConfigStruct.EnableOverlay;
-            FadeTime = ConfigHandler.ConfigStruct.FadeTime;
+            OverlayFadeTime = ConfigHandler.ConfigStruct.OverlayFadeTime;
+            NotificationShowTime = ConfigHandler.ConfigStruct.NotificationShowTime;
 
             LockConfig = false;
         }

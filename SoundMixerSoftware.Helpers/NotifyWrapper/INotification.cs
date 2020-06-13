@@ -5,7 +5,7 @@ using SoundMixerSoftware.Helpers.Device;
 
 namespace SoundMixerSoftware.Helpers.NotifyWrapper
 {
-    public interface INotification : IProperties<string, DeviceConnectedEventArgs>
+    public interface INotification<T> : IProperties<string, T>
     {
         /// <summary>
         /// Attach onClick event.

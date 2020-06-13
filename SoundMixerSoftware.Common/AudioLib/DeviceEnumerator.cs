@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
@@ -131,7 +132,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         
         #region Private Methods
 
-        private void RegisterEvents(MMDevice device)
+        public void RegisterEvents(MMDevice device)
         {
             device.AudioEndpointVolume.NotificationGuid = VolumeUUID;
             var volumeHandler = new VolumeHandler(device);
@@ -149,7 +150,8 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-            DeviceStateChanged?.Invoke(_deviceEnumerator.GetDevice(deviceId), new DeviceStateChangedArgs(newState));
+            var device = _deviceEnumerator.GetDevice(deviceId);
+            DeviceStateChanged?.Invoke(device, new DeviceStateChangedArgs(newState));
         }
 
         public void OnDeviceAdded(string pwstrDeviceId)

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
+using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Config.Yaml;
 using SoundMixerSoftware.Common.Extension;
@@ -77,18 +78,21 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
             SessionHandler.Reload -= SessionHandlerOnReload;
+            SessionHandler.RegisterDevice -= SessionHandlerOnRegisterDevice;
             Sliders.Clear();
             for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
-                Sliders.Add(new SliderModel
-                {
-                    Index = n
-                });
-            
+                Sliders.Add(new SliderModel { Index = n });
             SessionHandler.SessionAdded += SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive += SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected += SessionHandlerOnSessionDisconnected;
             SessionHandler.Reload += SessionHandlerOnReload;
+            SessionHandler.RegisterDevice += SessionHandlerOnRegisterDevice;
             SessionHandler.CreateSliders();
+        }
+
+        private void SessionHandlerOnRegisterDevice(object sender, EventArgs e)
+        { 
+            Execute.OnUIThread(() => SessionHandler.DeviceEnumerator.RegisterEvents(SessionHandler.DeviceEnumerator.GetDeviceById(sender as string)));
         }
 
         private void SessionHandlerOnReload(object sender, EventArgs e)
@@ -124,7 +128,7 @@ namespace SoundMixerSoftware.ViewModels
                 for (var n = 0; n < apps.Count; n++)
                 {
                     var app = apps[n];
-                    if (app.SessionState == SessionState.Active && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
+                    if (app.SessionState == SessionState.Disconnected && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
                         apps.RemoveAt(n);

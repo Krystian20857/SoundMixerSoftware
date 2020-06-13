@@ -31,7 +31,7 @@ namespace SoundMixerSoftware.Models
         /// When true volume changed can happen.
         /// </summary>
         private bool change;
-        
+
         #endregion
         
         #region Public Properties
@@ -46,10 +46,7 @@ namespace SoundMixerSoftware.Models
             {
                 _volume = value;
                 if (change)
-                {
                     SessionHandler.SetVolume(Index, (float)Math.Round(_volume / 100.0F,2), true);
-                    change = true;
-                }
                 change = true;
                 OnPropertyChanged(nameof(Volume));
             }
@@ -65,11 +62,8 @@ namespace SoundMixerSoftware.Models
             {
                 _mute = value;
                 if (change)
-                {
                     SessionHandler.SetMute(Index, _mute, true);
-                    change = true;
-                }
-
+                change = true;
                 OnPropertyChanged(nameof(Mute));
             }
         }
@@ -120,7 +114,8 @@ namespace SoundMixerSoftware.Models
                     change = false;
                     var volume = (int) Math.Floor(e.Volume * 100.0F);
                     Volume = volume;
-                    Mute = e.Mute;
+                    if(volume != 0)
+                        Mute = e.Mute;
                 }
             });
         }

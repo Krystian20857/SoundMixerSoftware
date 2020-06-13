@@ -6,11 +6,14 @@ using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Models;
 using System.Linq;
 using NAudio.CoreAudioApi;
+using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
+using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -19,6 +22,12 @@ namespace SoundMixerSoftware.ViewModels
     /// </summary>
     public class SessionAddViewModel : Screen
     {
+        #region Logger
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Fields
 
         private readonly SessionEnumerator _sessionEnumerator;
@@ -196,22 +205,29 @@ namespace SoundMixerSoftware.ViewModels
             if(profile.Sliders.Count <= _sliderIndex)
                 profile.Sliders.Add(new SliderStruct());
 
-            var slider = profile.Sliders[_sliderIndex];
-            if (slider.Applications.All(x => x.ID != SelectedSession.ID))
+            try
             {
-                slider.Index = _sliderIndex;
-                var session = new Session
+                var slider = profile.Sliders[_sliderIndex];
+                if (slider.Applications.All(x => x.ID != SelectedSession.ID))
                 {
-                    SessionMode = SelectedSession.SessionMode,
-                    DataFlow = SelectedSession.DataFlow,
-                    Name = SelectedSession.Name,
-                    ID = SelectedSession.ID
-                };
-                if (session.SessionMode == SessionMode.DefaultOutputDevice || session.SessionMode == SessionMode.DefaultInputDevice)
-                    session.ID = string.Empty;
-                SessionHandler.AddSlider(_sliderIndex,session);
-                slider.Applications.Add(session);
-                ProfileHandler.ProfileManager.SaveAll();
+                    slider.Index = _sliderIndex;
+                    var session = new Session
+                    {
+                        SessionMode = SelectedSession.SessionMode,
+                        DataFlow = SelectedSession.DataFlow,
+                        Name = SelectedSession.Name,
+                        ID = SelectedSession.ID
+                    };
+                    if (session.SessionMode == SessionMode.DefaultOutputDevice || session.SessionMode == SessionMode.DefaultInputDevice)
+                        session.ID = string.Empty;
+                    SessionHandler.AddSlider(_sliderIndex, session);
+                    slider.Applications.Add(session);
+                    ProfileHandler.ProfileManager.SaveAll();
+                }
+            }
+            catch (Exception exception)
+            {
+                ExceptionHandler.HandleException(Logger, exception);
             }
 
             TryClose();

@@ -61,8 +61,8 @@ namespace SoundMixerSoftware.Helpers.Device
             _connectedDevices.Add(e.Device.COMPort, e);
             if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.EnableNotifications))
             {
-                _deviceNotification.Device = e;
-                _deviceNotification.State = DeviceNotificationState.Connected;
+                _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
+                _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);
                 _deviceNotification.Show();
             }
         }
@@ -75,8 +75,8 @@ namespace SoundMixerSoftware.Helpers.Device
                 _connectedDevices.Remove(comPort);
                 if (ConfigHandler.ConfigStruct.EnableNotifications)
                 {
-                    _deviceNotification.Device = device;
-                    _deviceNotification.State = DeviceNotificationState.Disconnected;
+                    _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, device);
+                    _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Disconnected);
                     _deviceNotification.Show();
                 }
             }
@@ -99,7 +99,8 @@ namespace SoundMixerSoftware.Helpers.Device
 
                     var value = sliderStruct.value;
                     SessionHandler.SetVolume(sliderIndex, sliderStruct.value / 100.0F, false);
-                    OverlayHandler.ShowVolume(value);
+                    if(SessionHandler.Sliders[sliderIndex].Count > 0)
+                        OverlayHandler.ShowVolume(value);
                     break;
                 case 0x02:
                     ButtonStruct buttonStruct = e.Data;
