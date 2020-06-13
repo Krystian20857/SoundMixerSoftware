@@ -93,7 +93,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Cancel()
         {
-            TryClose();
+            TryCloseAsync();
         }
 
         #endregion

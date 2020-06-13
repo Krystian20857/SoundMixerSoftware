@@ -123,7 +123,7 @@ namespace SoundMixerSoftware.ViewModels
             var model = sender as ProfileModel;
             var index = Profiles.IndexOf(model);
             var addWindow = new ProfileAddViewModel(model);
-            _windowManager.ShowDialog(addWindow);
+            _windowManager.ShowDialogAsync(addWindow);
             Profiles[index] = addWindow.CreatedProfile;
         }
         
@@ -148,7 +148,7 @@ namespace SoundMixerSoftware.ViewModels
         public void AddClick(object sender)
         {
             var addWindow = new ProfileAddViewModel();
-            _windowManager.ShowDialog(addWindow);
+            _windowManager.ShowDialogAsync(addWindow);
             var model = addWindow.CreatedProfile;
             if (model.IsInitialized())
             {

@@ -63,7 +63,7 @@ namespace SoundMixerSoftware.ViewModels
                 CreatedProfile = model;
             }
 
-            TryClose();
+            TryCloseAsync();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void CancelClick()
         {
-            TryClose();
+            TryCloseAsync();
         }
         
         #endregion

@@ -230,7 +230,7 @@ namespace SoundMixerSoftware.ViewModels
                 ExceptionHandler.HandleException(Logger, exception);
             }
 
-            TryClose();
+            TryCloseAsync();
         }
 
         #endregion

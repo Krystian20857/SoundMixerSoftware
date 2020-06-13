@@ -226,7 +226,7 @@ namespace SoundMixerSoftware.ViewModels
         {
             var model = sender as SliderModel;
             var addViewModel = new SessionAddViewModel(model.Index);
-            _windowManager.ShowDialog(addViewModel);
+            _windowManager.ShowDialogAsync(addViewModel);
         }
 
         public void ReloadClick()

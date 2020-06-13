@@ -100,7 +100,7 @@ namespace SoundMixerSoftware.ViewModels
         public void ManagerClick()
         {
             var usbManager = new UsbManagerViewModel();
-            _windowManager.ShowDialog(usbManager);
+            _windowManager.ShowDialogAsync(usbManager);
         }
 
         /// <summary>
