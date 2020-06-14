@@ -73,6 +73,7 @@
       <Compile Include="Utils\Enum\EnumNameConverter.cs" />
       <Compile Include="Utils\ObjectUtils.cs" />
       <Compile Include="Utils\ProcessUtils.cs" />
+      <Compile Include="Utils\RecursionAttribute.cs" />
       <Compile Include="Utils\StructUtils.cs" />
     </ItemGroup>
     <ItemGroup>

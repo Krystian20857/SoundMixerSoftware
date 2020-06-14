@@ -94,16 +94,16 @@ namespace SoundMixerSoftware.Helpers.Device
             if (!ConfigHandler.IsInitialize())
                 ConfigHandler.Initialize();
             
-            _usbDevice = new USBDevice(NativeClasses.GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, ConfigHandler.ConfigStruct.UsbIDs);
-            _usbDevice.VidPid = ConfigHandler.ConfigStruct.UsbIDs;
+            _usbDevice = new USBDevice(NativeClasses.GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, ConfigHandler.ConfigStruct.Hardware.UsbIDs);
+            _usbDevice.VidPid = ConfigHandler.ConfigStruct.Hardware.UsbIDs;
             _usbDevice.RegisterDeviceChange(_windowWrapper.Handle);
 
-            _dataConverter = new DataConverter(ConfigHandler.ConfigStruct.Terminator);
+            _dataConverter = new DataConverter(ConfigHandler.ConfigStruct.Hardware.Terminator);
             _dataConverter.DataReceived += DataConverterOnDataReceived;
             _dataConverter.SizeError += (sender, args) => DataReceiveError?.Invoke(this, new EventArgs());
             RegisterTypes();
             
-            _serialConnection = new SerialConnection(ConfigHandler.ConfigStruct.SerialConfig);
+            _serialConnection = new SerialConnection(ConfigHandler.ConfigStruct.Hardware.SerialConfig);
             _serialConnection.DataReceived += (sender, args) => _dataConverter.ProcessData(args.Data);
             _serialConnection.DeviceConnected += SerialConnectionOnDeviceConnected;
             
@@ -136,7 +136,7 @@ namespace SoundMixerSoftware.Helpers.Device
         public void SendData(string comport, byte[] data)
         {
             _serialConnection.SendBytes(comport, data);
-            _serialConnection.SendBytes(comport, new []{ConfigHandler.ConfigStruct.Terminator});
+            _serialConnection.SendBytes(comport, new []{ConfigHandler.ConfigStruct.Hardware.Terminator});
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace SoundMixerSoftware.Helpers.Device
         public void SendData<T>(string comport, T data) where T : struct
         {
             _serialConnection.SendData(comport, data);
-            _serialConnection.SendBytes(comport, new []{ConfigHandler.ConfigStruct.Terminator});
+            _serialConnection.SendBytes(comport, new []{ConfigHandler.ConfigStruct.Hardware.Terminator});
         }
 
         #endregion

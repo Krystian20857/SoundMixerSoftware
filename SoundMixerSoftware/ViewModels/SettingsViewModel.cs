@@ -67,7 +67,7 @@ namespace SoundMixerSoftware.ViewModels
             get => _enableNotify;
             set
             {
-                ConfigHandler.ConfigStruct.EnableNotifications = value;
+                ConfigHandler.ConfigStruct.Notification.EnableNotifications = value;
                 if(!LockConfig)
                     ConfigHandler.SaveConfig();
                 Logger.Trace($"Changed enable-notification setting to: {value}");
@@ -80,7 +80,7 @@ namespace SoundMixerSoftware.ViewModels
             get => _enableOverlay;
             set
             {
-                ConfigHandler.ConfigStruct.EnableOverlay = value;
+                ConfigHandler.ConfigStruct.Overlay.EnableOverlay = value;
                 if(!LockConfig)
                     ConfigHandler.SaveConfig();
                 Logger.Trace($"Changed overlay-enable setting to {value}");
@@ -93,7 +93,7 @@ namespace SoundMixerSoftware.ViewModels
             get => _overlayFadeTime;
             set
             {
-                ConfigHandler.ConfigStruct.OverlayFadeTime = value;
+                ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime = value;
                 if(!LockConfig)
                     _debounceDispatcher.Debounce(300,param =>
                     {
@@ -109,7 +109,7 @@ namespace SoundMixerSoftware.ViewModels
             get => _notificationShowTime;
             set
             {
-                ConfigHandler.ConfigStruct.NotificationShowTime = value;
+                ConfigHandler.ConfigStruct.Notification.NotificationShowTime = value;
                 if(!LockConfig)
                     _debounceDispatcher.Debounce(300,param => ConfigHandler.SaveConfig());
                 _notificationShowTime = value;
@@ -122,7 +122,7 @@ namespace SoundMixerSoftware.ViewModels
             set
             {
                 _selectedTheme = value;
-                ConfigHandler.ConfigStruct.ThemeName = value.ThemeName;
+                ConfigHandler.ConfigStruct.Application.ThemeName = value.ThemeName;
                 if(!LockConfig)
                     ConfigHandler.SaveConfig();
                 ThemeManager.SetTheme(value.ThemeName);
@@ -159,10 +159,10 @@ namespace SoundMixerSoftware.ViewModels
             LockConfig = true;
             
             AutoRun = _autoRunHandle.CheckInstance();
-            EnableNotify = ConfigHandler.ConfigStruct.EnableNotifications;
-            EnableOverlay = ConfigHandler.ConfigStruct.EnableOverlay;
-            OverlayFadeTime = ConfigHandler.ConfigStruct.OverlayFadeTime;
-            NotificationShowTime = ConfigHandler.ConfigStruct.NotificationShowTime;
+            EnableNotify = ConfigHandler.ConfigStruct.Notification.EnableNotifications;
+            EnableOverlay = ConfigHandler.ConfigStruct.Overlay.EnableOverlay;
+            OverlayFadeTime = ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
+            NotificationShowTime = ConfigHandler.ConfigStruct.Notification.NotificationShowTime;
             
             LoadThemes();
             
@@ -187,7 +187,7 @@ namespace SoundMixerSoftware.ViewModels
                     Themes.Add(new ThemeModel(new SolidColorBrush(theme.Lookup[(MaterialDesignColor) primaryColor]), theme.Name));
             }
 
-            var themeConfig = ConfigHandler.ConfigStruct.ThemeName;
+            var themeConfig = ConfigHandler.ConfigStruct.Application.ThemeName;
             SelectedTheme = Themes.Any(x => x.ThemeName.Equals(themeConfig)) ? 
                 Themes.First(x => x.ThemeName.Equals(themeConfig)) : Themes[0];
         }

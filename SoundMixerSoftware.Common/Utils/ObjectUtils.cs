@@ -16,9 +16,15 @@ namespace SoundMixerSoftware.Common.Utils
         /// <param name="dest">Destination object.</param>
         /// <typeparam name="T">Type of object</typeparam>
         /// <returns>Returns true when any changes where made.</returns>
-        public static bool MergeObjects<T>(T source, T dest)
+        public static bool MergeObjects<T>(ref T source, T dest)
         {
             var modified = false;
+            if (source == null)
+            {
+                source = dest;
+                modified = true;
+            }
+
             var type = typeof(T);
             foreach (var property in type.GetProperties())
             {
@@ -29,19 +35,37 @@ namespace SoundMixerSoftware.Common.Utils
                     property.SetValue(source, valueDest);
                     modified = true;
                 }
+
+                if (!property.PropertyType.IsValueType && Attribute.IsDefined(property, typeof(RecursionAttribute)))
+                    if (InvokeGenericMethod<bool>(
+                        typeof(ObjectUtils),
+                        null,
+                        nameof(MergeObjects),
+                        property.PropertyType,
+                        new[] {valueSource, valueDest})
+                    )
+                        modified = true;
             }
 
             return modified;
         }
 
         /// <summary>
-        /// Checks if the <see cref="type"/> has empty constructor.
+        /// Invoke method with dynamic generic type.
         /// </summary>
-        /// <param name="type">Checking type.</param>
-        /// <returns>Returns true when has empty constructor.</returns>
-        public static bool HasEmptyConstructor(Type type)
+        /// <param name="methodType">Type of method container(class, interface, etc.).</param>
+        /// <param name="methodName">Name of method.</param>
+        /// <param name="genericType">Dynamic generic type.</param>
+        /// <param name="context">Invoke context of method.</param>
+        /// <param name="parameters">Parameters to pass.</param>
+        /// <typeparam name="T">Return type.</typeparam>
+        /// <returns>Returns method result.</returns>
+        /// 
+        public static T InvokeGenericMethod<T>(Type methodType, object context, string methodName, Type genericType, object[] parameters)
         {
-            return type.GetConstructors().Any(ctor => ctor.GetParameters().Length == 0);
+            var method = methodType.GetMethod(methodName);
+            var generic = method.MakeGenericMethod(genericType);
+            return (T) generic.Invoke(context, parameters);
         }
     }
 }

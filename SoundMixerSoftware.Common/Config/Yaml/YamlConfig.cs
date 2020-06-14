@@ -21,12 +21,17 @@ namespace SoundMixerSoftware.Common.Config.Yaml
         
         #region Public Properties
 
-        public T Config { get; set; } = Activator.CreateInstance<T>();
+        public T Config
+        {
+            get => _config;
+            set => _config = value;
+        }
 
         #endregion
         
         #region Private Fields
 
+        private T _config = Activator.CreateInstance<T>();
         /// <summary>
         /// Absolute config file path.
         /// </summary>
@@ -60,7 +65,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
         {
             _configPath = configPath;
             
-            _sampleConfig = Config.SampleConfig;
+            _sampleConfig = Config.GetSampleConfig();
 
             _serializer = _serializationHelper.Serializer;
             _deserializer = _serializationHelper.Deserializer;
@@ -77,7 +82,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             if (File.Exists(_configPath))
             {
                 Config = _deserializer.Deserialize<T>(ReadYAML(_configPath));
-                if (ObjectUtils.MergeObjects(Config, _sampleConfig))
+                if (ObjectUtils.MergeObjects(ref _config, _sampleConfig))
                 {
                     SaveConfig();
                     Logger.Info($"Updated config: {_configPath}");
@@ -96,7 +101,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
 
         public void SaveSampleConfig()
         {
-            Config = _sampleConfig.Copy();
+            Config = (T)_sampleConfig.Clone();
             SaveConfig();
             Logger.Info($"Saved sample config: {_configPath}");
         }

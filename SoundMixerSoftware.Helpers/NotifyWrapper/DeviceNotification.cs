@@ -92,7 +92,7 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
                     Type = NotificationType.Warning
                 };
             }
-            _notificationManager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.NotificationShowTime));
+            _notificationManager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.Notification.NotificationShowTime));
         }
         
         #endregion

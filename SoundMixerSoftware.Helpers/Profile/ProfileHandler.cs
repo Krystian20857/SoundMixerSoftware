@@ -29,7 +29,7 @@ namespace SoundMixerSoftware.Helpers.Profile
         {
             SelectedGuid = e.Uuid;
             SelectedProfile = ProfileManager.Profiles[e.Uuid];
-            ConfigHandler.ConfigStruct.SelectedProfile = e.Uuid;
+            ConfigHandler.ConfigStruct.Application.SelectedProfile = e.Uuid;
             ConfigHandler.SaveConfig();
         }
         

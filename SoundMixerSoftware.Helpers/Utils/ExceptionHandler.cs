@@ -18,7 +18,7 @@ namespace SoundMixerSoftware.Helpers.Utils
         public static void HandleException(Logger logger,Exception exception)
         {
             logger.Error(exception);
-            if (!ConfigHandler.ConfigStruct.EnableNotifications)
+            if (!ConfigHandler.ConfigStruct.Notification.EnableNotifications)
                 return;
             var exceptionNotification = new ExceptionNotification();
             exceptionNotification.SetValue(ExceptionNotification.EXCEPTION_KEY, exception);

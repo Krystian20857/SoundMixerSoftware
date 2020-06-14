@@ -64,6 +64,7 @@ namespace SoundMixerSoftware.Common.Config.Yaml
             Logger.Info("Serializer Created.");
 
             _deserializerBuilder.IgnoreFields();
+            _deserializerBuilder.IgnoreUnmatchedProperties();
             Deserializer = _deserializerBuilder.Build();
             Logger.Info("Deserializer Created.");
         }

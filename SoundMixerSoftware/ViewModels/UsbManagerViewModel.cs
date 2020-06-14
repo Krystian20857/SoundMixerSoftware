@@ -55,7 +55,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public UsbManagerViewModel()
         {
-            foreach (var usbid in ConfigHandler.ConfigStruct.UsbIDs)
+            foreach (var usbid in ConfigHandler.ConfigStruct.Hardware.UsbIDs)
                 USBIds.Add(usbid);
         }
         
@@ -74,7 +74,7 @@ namespace SoundMixerSoftware.ViewModels
                 Vid = Vid
             };
             USBIds.Add(usbId);
-            ConfigHandler.ConfigStruct.UsbIDs.Add(usbId);
+            ConfigHandler.ConfigStruct.Hardware.UsbIDs.Add(usbId);
             ConfigHandler.SaveConfig();
         }
 
@@ -83,7 +83,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Remove()
         {
-            ConfigHandler.ConfigStruct.UsbIDs.Remove(SelectedItem);
+            ConfigHandler.ConfigStruct.Hardware.UsbIDs.Remove(SelectedItem);
             USBIds.Remove(SelectedItem);
             ConfigHandler.SaveConfig();
         }

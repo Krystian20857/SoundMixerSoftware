@@ -17,8 +17,8 @@ namespace SoundMixerSoftware.Helpers.Overlay
         
         static OverlayHandler()
         {
-            _overlays.Add(new MuteWindow(ConfigHandler.ConfigStruct.OverlayFadeTime));
-            _overlays.Add(new VolumeOverlay(ConfigHandler.ConfigStruct.OverlayFadeTime));
+            _overlays.Add(new MuteWindow(ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime));
+            _overlays.Add(new VolumeOverlay(ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime));
         }
         
         #endregion
@@ -43,7 +43,7 @@ namespace SoundMixerSoftware.Helpers.Overlay
 
         private static void HandleOverlay<T>(Action<T> valueChange)
         {
-            if (!ConfigHandler.ConfigStruct.EnableOverlay)
+            if (!ConfigHandler.ConfigStruct.Overlay.EnableOverlay)
                 return;
             foreach (var overlay in _overlays)
             {

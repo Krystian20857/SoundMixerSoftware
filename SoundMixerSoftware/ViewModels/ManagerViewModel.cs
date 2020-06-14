@@ -63,7 +63,7 @@ namespace SoundMixerSoftware.ViewModels
             Name = "Profiles";
             Icon = PackIconKind.AccountBoxMultipleOutline;
             var profilesToRemove = new List<Guid>();
-            foreach (var uuid in ConfigHandler.ConfigStruct.ProfilesOrder)
+            foreach (var uuid in ConfigHandler.ConfigStruct.Application.ProfilesOrder)
             {
                 if (!ProfileHandler.ProfileManager.Profiles.ContainsKey(uuid))
                 {
@@ -74,7 +74,7 @@ namespace SoundMixerSoftware.ViewModels
                 var profile = ProfileHandler.ProfileManager.Profiles[uuid];
                 var model = ProfileModel.CreateModel(profile);
                 model.Guid = uuid;
-                if (model.Guid == ConfigHandler.ConfigStruct.SelectedProfile)
+                if (model.Guid == ConfigHandler.ConfigStruct.Application.SelectedProfile)
                 {
                     model.Selected = true;
                     ProfileHandler.OnProfileChanged(model.Guid);
@@ -83,7 +83,7 @@ namespace SoundMixerSoftware.ViewModels
             }
 
             foreach (var profile in profilesToRemove)
-                ConfigHandler.ConfigStruct.ProfilesOrder.Remove(profile);
+                ConfigHandler.ConfigStruct.Application.ProfilesOrder.Remove(profile);
             ConfigHandler.SaveConfig();
 
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
@@ -137,7 +137,7 @@ namespace SoundMixerSoftware.ViewModels
             Profiles.Remove(model);
             var profiles = ProfileHandler.ProfileManager.Profiles;
             ProfileHandler.ProfileManager.Remove(model.Guid);
-            ConfigHandler.ConfigStruct.ProfilesOrder.Remove(model.Guid);
+            ConfigHandler.ConfigStruct.Application.ProfilesOrder.Remove(model.Guid);
             ConfigHandler.SaveConfig();
         }
         
@@ -153,7 +153,7 @@ namespace SoundMixerSoftware.ViewModels
             if (model.IsInitialized())
             {
                 Profiles.Add(model);
-                ConfigHandler.ConfigStruct.ProfilesOrder.Add(model.Guid);
+                ConfigHandler.ConfigStruct.Application.ProfilesOrder.Add(model.Guid);
                 ConfigHandler.SaveConfig();
             }
         }

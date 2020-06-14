@@ -59,7 +59,7 @@ namespace SoundMixerSoftware.Helpers.Device
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
             _connectedDevices.Add(e.Device.COMPort, e);
-            if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.EnableNotifications))
+            if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.Notification.EnableNotifications))
             {
                 _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
                 _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);
@@ -73,7 +73,7 @@ namespace SoundMixerSoftware.Helpers.Device
             if (_connectedDevices.TryGetValue(comPort, out var device))
             {
                 _connectedDevices.Remove(comPort);
-                if (ConfigHandler.ConfigStruct.EnableNotifications)
+                if (ConfigHandler.ConfigStruct.Notification.EnableNotifications)
                 {
                     _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, device);
                     _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Disconnected);

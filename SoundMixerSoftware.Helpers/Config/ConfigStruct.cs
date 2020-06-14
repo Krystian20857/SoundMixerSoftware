@@ -1,80 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Ports;
+using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Common.Config;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Win32.USBLib;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Helpers.Config
 {
+    [Recursion]
     public class ConfigStruct : IConfigStruct<ConfigStruct>
     {
         #region Static Sample Config
 
         public static ConfigStruct SampleConfigStruct = new ConfigStruct()
         {
-            UsbIDs = new List<USBID>()
+            Hardware = new HardwareSettings()
             {
-                new USBID{ Vid = 0x468F, Pid= 0x895D}
+                UsbIDs = new List<USBID>()
+                {
+                    new USBID{ Vid = 0x468F, Pid= 0x895D}
+                },
+                SerialConfig = new SerialConfig()
+                {
+                    BaudRate = 115200,
+                    DataBits = 8,
+                    Parity = Parity.None,
+                    StopBits = StopBits.One,
+                    Timeout = 30000
+                },
+                TerminatorNullable = 0xFF
             },
-            SerialConfig = new SerialConfig()
+            Application = new ApplicationSettings()
             {
-                BaudRate = 115200,
-                DataBits = 8,
-                Parity = Parity.None,
-                StopBits = StopBits.One,
-                Timeout = 30000
+                ThemeName = "Red",
+                ProfilesOrder = new List<Guid>(),
+                SelectedProfile = Guid.Empty
             },
-            Terminator = 0xFF,
-            ProfilesOrder = new List<Guid>(),
-            EnableNotifications = true,
-            OverlayFadeTimeNullable = 2500,
-            EnableOverlay = true,
-            NotificationShowTime = 7000,
-            ThemeName = "Purple"
+            Notification = new NotificationSettings()
+            {
+                EnableNotificationsNullable = true,
+                NotificationShowTimeNullable = 7000,
+            },
+            Overlay = new OverlaySettings()
+            {
+                EnableOverlayNullable = true,
+                OverlayFadeTimeNullable = 2500
+            }
         };
         
         #endregion
 
-        #region Implemented Properties
-        
-        [YamlIgnore]
-        public ConfigStruct SampleConfig => SampleConfigStruct;
-        
+        #region Implemented Methods
+
+        public ConfigStruct GetSampleConfig()
+        {
+            return SampleConfigStruct;
+        }
+
         #endregion
         
         #region Base Values
-        public List<USBID> UsbIDs { get; set; }
-        public SerialConfig SerialConfig { get; set; }
-        public Guid SelectedProfile { get; set; }
-        public List<Guid> ProfilesOrder { get; set; }
+
+        [Recursion]
+        public ApplicationSettings Application { get; set; }
+        [Recursion]
+        public HardwareSettings Hardware { get; set; }
+        [Recursion]
+        public OverlaySettings Overlay { get; set; }
+        [Recursion]
+        public NotificationSettings Notification { get; set; }
+
         #endregion
         
-        #region Nullable value-types
-        [YamlMember(Alias = "Terminator")]
-        public byte? TerminatorNullable { get; set; }
-        [YamlMember(Alias = "EnableNotifications")]
-        public bool? EnableNotificationsNullable { get; set; }
+        
+        #region Public Methods
+        
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+        
+        #endregion
+    }
+    
+    public class OverlaySettings
+    {
+        #region Base Types
+        
         [YamlMember(Alias = "FadeTime")]
         public int? OverlayFadeTimeNullable { get; set; }
         [YamlMember(Alias = "EnableOverlay")]
         public bool? EnableOverlayNullable { get; set; }
-        [YamlMember(Alias = "NotificationShowTime")]
-        public int? NotificationShowTimeNullable { get; set; }
-
-        public string ThemeName { get; set; }
-
+        
         #endregion
         
-        #region Non-null value-types
-
-        [YamlIgnore]
-        public bool EnableNotifications
-        {
-            get => EnableNotificationsNullable ?? false;
-            set => EnableNotificationsNullable = value;
-        }
+        #region Non-null Types
+        
         [YamlIgnore]
         public int OverlayFadeTime
         {
@@ -87,13 +111,24 @@ namespace SoundMixerSoftware.Helpers.Config
             get => EnableOverlayNullable ?? false;
             set => EnableOverlayNullable = value;
         }
-        [YamlIgnore]
-        public byte Terminator
-        {
-            get => TerminatorNullable ?? 127;
-            set => TerminatorNullable = value;
-        }
-
+        
+        #endregion
+    }
+    
+    public class NotificationSettings
+    {
+        #region Base Types
+        
+        [YamlMember(Alias = "EnableNotifications")]
+        public bool? EnableNotificationsNullable { get; set; }
+        
+        [YamlMember(Alias = "NotificationShowTime")]
+        public int? NotificationShowTimeNullable { get; set; }
+        
+        #endregion
+        
+        #region Non-null Types
+        
         [YamlIgnore]
         public int NotificationShowTime
         {
@@ -101,14 +136,51 @@ namespace SoundMixerSoftware.Helpers.Config
             set => NotificationShowTimeNullable = value;
         }
 
+        [YamlIgnore]
+        public bool EnableNotifications
+        {
+            get => EnableNotificationsNullable ?? false;
+            set => EnableNotificationsNullable = value;
+        }
+
+        #endregion
+    }
+    
+    public class HardwareSettings
+    {
+        #region Base Types
+        
+        [YamlMember(Alias = "Terminator")]
+        public byte? TerminatorNullable { get; set; }
+        public List<USBID> UsbIDs { get; set; }
+        [Recursion]
+        public SerialConfig SerialConfig { get; set; }
+        
         #endregion
         
-        #region Public Methods
+        #region Non-null Types
         
-        public ConfigStruct Copy()
+        [YamlIgnore]
+        public byte Terminator
         {
-            return (ConfigStruct)MemberwiseClone();
+            get => TerminatorNullable ?? 127;
+            set => TerminatorNullable = value;
         }
+        
+        #endregion
+    }
+
+    public class ApplicationSettings
+    {
+        #region Base Types
+        
+        public Guid SelectedProfile { get; set; }
+        public List<Guid> ProfilesOrder { get; set; }
+        public string ThemeName { get; set; }
+        
+        #endregion
+        
+        #region Non-null Types;
         
         #endregion
     }
