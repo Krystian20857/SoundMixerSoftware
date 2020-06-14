@@ -24,6 +24,23 @@
                         </Border>
                         <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
                             <DockPanel LastChildFill="False">
+                                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Theme</TextBlock>
+                                <ComboBox DockPanel.Dock="Right"
+                                          SelectedItem="{Binding Path=SelectedTheme, Mode=TwoWay, 
+                                          UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=Themes, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel LastChildFill="False">
+                                                <Rectangle Margin="5, 0" Width="35" Height="15" Fill="{Binding Path=PrimaryColor}"/>
+                                                <TextBlock Margin="5, 0" Text="{Binding Path=ThemeName}"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </DockPanel>
+                        </Border>
+                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                            <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Logs Folder</TextBlock>
                                 <Button DockPanel.Dock="Right" Width="150" Height="30" Content="Open" cal:Message.Attach="[Click] = [LogsFolderOpenClick()]" />
                             </DockPanel>

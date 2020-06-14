@@ -13,6 +13,7 @@ using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Win32.Wrapper;
+using ThemeManager = SoundMixerSoftware.Overlay.Resource.ThemeManager;
 
 namespace SoundMixerSoftware.ViewModels
 {

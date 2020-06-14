@@ -1,6 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms.VisualStyles;
+using System.Windows.Media;
+using Caliburn.Micro;
+using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using NLog;
 using SoundMixerSoftware.Annotations;
@@ -9,6 +15,7 @@ using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
+using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -30,6 +37,9 @@ namespace SoundMixerSoftware.ViewModels
         private bool _enableOverlay;
         private int _overlayFadeTime;
         private int _notificationShowTime;
+        
+        private ThemeModel _selectedTheme;
+        private BindableCollection<ThemeModel> _themes = new BindableCollection<ThemeModel>();
         
         private AutoRunHandle _autoRunHandle = new AutoRunHandle(Assembly.GetExecutingAssembly().Location);
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
@@ -106,6 +116,28 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
+        public ThemeModel SelectedTheme
+        {
+            get => _selectedTheme;
+            set
+            {
+                _selectedTheme = value;
+                ConfigHandler.ConfigStruct.ThemeName = value.ThemeName;
+                if(!LockConfig)
+                    ConfigHandler.SaveConfig();
+                ThemeManager.SetTheme(value.ThemeName);
+            }
+        }
+
+        public BindableCollection<ThemeModel> Themes
+        {
+            get => _themes;
+            set
+            {
+                _themes = value;
+            }
+        }
+
         public bool LockConfig { get; set; }
 
         #endregion
@@ -131,7 +163,9 @@ namespace SoundMixerSoftware.ViewModels
             EnableOverlay = ConfigHandler.ConfigStruct.EnableOverlay;
             OverlayFadeTime = ConfigHandler.ConfigStruct.OverlayFadeTime;
             NotificationShowTime = ConfigHandler.ConfigStruct.NotificationShowTime;
-
+            
+            LoadThemes();
+            
             LockConfig = false;
         }
         
@@ -142,6 +176,20 @@ namespace SoundMixerSoftware.ViewModels
         public void LogsFolderOpenClick()
         {
             AppUtils.OpenExplorer(LocalContainer.LogsFolder);
+        }
+
+        private void LoadThemes()
+        {
+            foreach (var theme in  SwatchHelper.Swatches)
+            {
+                var themeColor = theme.Name.Replace(" ", "");
+                if(Enum.TryParse<PrimaryColor>(themeColor, out var primaryColor))
+                    Themes.Add(new ThemeModel(new SolidColorBrush(theme.Lookup[(MaterialDesignColor) primaryColor]), theme.Name));
+            }
+
+            var themeConfig = ConfigHandler.ConfigStruct.ThemeName;
+            SelectedTheme = Themes.Any(x => x.ThemeName.Equals(themeConfig)) ? 
+                Themes.First(x => x.ThemeName.Equals(themeConfig)) : Themes[0];
         }
         
         #endregion

@@ -31,7 +31,8 @@ namespace SoundMixerSoftware.Helpers.Config
             EnableNotifications = true,
             OverlayFadeTimeNullable = 2500,
             EnableOverlay = true,
-            NotificationShowTime = 7000
+            NotificationShowTime = 7000,
+            ThemeName = "Purple"
         };
         
         #endregion
@@ -61,6 +62,8 @@ namespace SoundMixerSoftware.Helpers.Config
         public bool? EnableOverlayNullable { get; set; }
         [YamlMember(Alias = "NotificationShowTime")]
         public int? NotificationShowTimeNullable { get; set; }
+
+        public string ThemeName { get; set; }
 
         #endregion
         

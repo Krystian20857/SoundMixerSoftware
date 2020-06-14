@@ -63,6 +63,8 @@ namespace SoundMixerSoftware.ViewModels
             Tabs.Add(new DevicesViewModel());
             Tabs.Add(new SettingsViewModel());
 
+            ThemeManager.GetTheme();
+            
             SelectedTab = Tabs[0];
         }
         
