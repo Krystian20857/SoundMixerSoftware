@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Timers;
 using NAudio.CoreAudioApi;
 
@@ -49,7 +50,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         private void UpdateOnElapsed(object sender, ElapsedEventArgs e)
         {
-            if (Volume != _lastVolume || IsMute != _lastMute)
+            if (Math.Abs(Volume - _lastVolume) >= SliderUtils.CHANGE_DIFF)
             {
                 var device = _deviceEnumerator.GetDefaultAudioEndpoint(_dataFlow, Role.Multimedia);
                 
@@ -57,6 +58,15 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
                 _lastMute = IsMute;
                 
                 device.AudioEndpointVolume.MasterVolumeLevelScalar = _lastVolume;
+                device.AudioEndpointVolume.Mute = _lastMute;
+            }
+
+            if (IsMute != _lastMute)
+            {
+                var device = _deviceEnumerator.GetDefaultAudioEndpoint(_dataFlow, Role.Multimedia);
+                
+                _lastMute = IsMute;
+                
                 device.AudioEndpointVolume.Mute = _lastMute;
             }
         }

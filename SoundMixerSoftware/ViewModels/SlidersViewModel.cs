@@ -78,27 +78,15 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
-            SessionHandler.Reload -= SessionHandlerOnReload;
-            SessionHandler.RegisterDevice -= SessionHandlerOnRegisterDevice;
+
             Sliders.Clear();
             for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
                 Sliders.Add(new SliderModel { Index = n });
+            
             SessionHandler.SessionAdded += SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive += SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected += SessionHandlerOnSessionDisconnected;
-            SessionHandler.Reload += SessionHandlerOnReload;
-            SessionHandler.RegisterDevice += SessionHandlerOnRegisterDevice;
             SessionHandler.CreateSliders();
-        }
-
-        private void SessionHandlerOnRegisterDevice(object sender, EventArgs e)
-        { 
-            Execute.OnUIThread(() => SessionHandler.DeviceEnumerator.RegisterEvents(SessionHandler.DeviceEnumerator.GetDeviceById(sender as string)));
-        }
-
-        private void SessionHandlerOnReload(object sender, EventArgs e)
-        {
-            Execute.OnUIThread(UpdateProfile);
         }
 
         private void SessionHandlerOnSessionDisconnected(object sender, SliderAddedArgs e)

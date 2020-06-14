@@ -21,7 +21,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; } = new Dictionary<string, SessionEnumerator>();
         public static List<List<IVirtualSlider>> Sliders { get; } = new List<List<IVirtualSlider>>();
         public static List<List<string>> RequestedSliders { get; } = new List<List<string>>();
-        public static Dictionary<string, DeviceState> LastDeviceStates = new Dictionary<string, DeviceState>();
 
         #endregion
 
@@ -32,9 +31,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static event EventHandler<SliderAddedArgs> SessionDisconnected;
         public static event EventHandler<VolumeChangedArgs> VolumeChange; 
         public static event EventHandler<MuteChangedArgs> MuteChanged;
-        public static event EventHandler<EventArgs> Reload;
-
-        public static event EventHandler<EventArgs> RegisterDevice;
 
         #endregion
 
@@ -47,6 +43,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         public static void ReloadSessionHandler()
         {
+            DeviceEnumerator.Dispose();
+            DeviceEnumerator = new DeviceEnumerator();
             SessionEnumerators.Clear();
             SessionAdded += OnSessionAdded;
             foreach (var device in DeviceEnumerator.OutputDevices)
@@ -56,9 +54,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
                 SessionEnumerators.Add(device.ID, sessionEnum);
             }
-            DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
-            DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
-            DeviceEnumerator.DeviceStateChanged += DeviceEnumeratorOnDeviceStateChanged;
         }
 
         private static void SessionEnumeratorOnSessionExited(object sender, string e)
@@ -90,44 +85,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         #endregion
         
         #region Private Events
-        
-        private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
-        {
-            var device = sender as MMDevice;
-        }
-        
-        private static void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
-        {
-            var device = sender as MMDevice;
-            if(!SessionEnumerators.ContainsKey(device.ID))
-                SessionEnumerators.Add(device.ID, new SessionEnumerator(device));
-        }
-        
-        private static void DeviceEnumeratorOnDeviceStateChanged(object sender, DeviceStateChangedArgs e)
-        {
-            var device = sender as MMDevice;
-            if (!LastDeviceStates.ContainsKey(device.ID))
-                LastDeviceStates.Add(device.ID, e.DeviceState);
-            if (LastDeviceStates[device.ID] == e.DeviceState)
-                return;
-            if (e.DeviceState == DeviceState.Active)
-            {
-                if (!SessionEnumerators.ContainsKey(device.ID))
-                    SessionEnumerators.Add(device.ID, new SessionEnumerator(device));
-                ReloadSessionHandler();
-                Reload?.Invoke(null, EventArgs.Empty);
-                RegisterDevice?.Invoke(device.ID, EventArgs.Empty);
-                LastDeviceStates[device.ID] = e.DeviceState;
-            }
-            else if (e.DeviceState == DeviceState.Unplugged)
-            {
-                if (SessionEnumerators.ContainsKey(device.ID))
-                    SessionEnumerators.Remove(device.ID);
-                ReloadSessionHandler();
-                Reload?.Invoke(null, EventArgs.Empty);
-                LastDeviceStates[device.ID] = e.DeviceState;
-            }
-        }
 
         private static void OnSessionAdded(object sender, SliderAddedArgs e)
         {

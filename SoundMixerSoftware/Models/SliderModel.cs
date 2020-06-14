@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
@@ -91,6 +92,7 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
+            Debug.WriteLine("Instance");
             foreach(var sessionEnum in SessionHandler.SessionEnumerators)
                 sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
@@ -107,6 +109,7 @@ namespace SoundMixerSoftware.Models
             Execute.OnUIThread(() =>
             {
                 var device = sender as MMDevice;
+                //Debug.WriteLine($"Invocation: {device.FriendlyName}");
                 if (Applications.Any(x => x.ID == device.ID ||
                                           (x.SessionMode == SessionMode.DefaultInputDevice && device.ID == SessionHandler.DeviceEnumerator.DefaultInput.ID) ||
                                           (x.SessionMode == SessionMode.DefaultOutputDevice && device.ID == SessionHandler.DeviceEnumerator.DefaultOutput.ID)))
@@ -153,5 +156,6 @@ namespace SoundMixerSoftware.Models
         }
 
         #endregion
+        
     }
 }

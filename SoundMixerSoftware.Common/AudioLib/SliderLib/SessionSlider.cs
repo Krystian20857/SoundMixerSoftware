@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System;
+using System.Timers;
 using NAudio.CoreAudioApi;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
@@ -50,7 +51,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         private void UpdateOnElapsed(object sender, ElapsedEventArgs e)
         {
-            if (Volume != _lastVolume)
+            if (Math.Abs(Volume - _lastVolume) >= SliderUtils.CHANGE_DIFF)
             {
                 _lastVolume = Volume;
                 _simpleVolume.Volume = _lastVolume;

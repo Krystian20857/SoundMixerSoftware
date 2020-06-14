@@ -42,6 +42,7 @@
       <Compile Include="AudioLib\SliderLib\DeviceSlider.cs" />
       <Compile Include="AudioLib\SliderLib\SessionSlider.cs" />
       <Compile Include="AudioLib\SliderLib\SliderType.cs" />
+      <Compile Include="AudioLib\SliderLib\SliderUtils.cs" />
       <Compile Include="Cache\ICache.cs" />
       <Compile Include="Cache\IconCache.cs" />
       <Compile Include="Cache\NativeCache.cs" />

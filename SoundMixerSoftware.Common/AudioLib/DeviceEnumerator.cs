@@ -6,6 +6,7 @@ using System.Windows;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
+using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -33,6 +34,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         private MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
         private string _lastDefaultDevice = string.Empty;
+        private Dictionary<string, VolumeHandler> _volumeHandlers = new Dictionary<string, VolumeHandler>();
         
         #endregion
 
@@ -134,9 +136,12 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void RegisterEvents(MMDevice device)
         {
-            device.AudioEndpointVolume.NotificationGuid = VolumeUUID;
+            if (_volumeHandlers.ContainsKey(device.ID))
+                _volumeHandlers.Remove(device.ID);
             var volumeHandler = new VolumeHandler(device);
+            device.AudioEndpointVolume.NotificationGuid = VolumeUUID;
             volumeHandler.VolumeChanged += VolumeHandlerOnVolumeChanged;
+            _volumeHandlers.Add(device.ID, volumeHandler);
         }
 
         private void VolumeHandlerOnVolumeChanged(object sender, VolumeChangedArgs e)
@@ -190,6 +195,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         public void Dispose()
         {
+            foreach (var handler in _volumeHandlers)
+                handler.Value.Dispose();
+            _volumeHandlers.Clear();
             _deviceEnumerator?.Dispose();
             GC.SuppressFinalize(this);
         }
@@ -197,7 +205,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         #endregion
     }
     
-    public class VolumeHandler
+    public class VolumeHandler : IDisposable
     {
         public event EventHandler<VolumeChangedArgs> VolumeChanged;
 
@@ -213,6 +221,13 @@ namespace SoundMixerSoftware.Common.AudioLib
         private void AudioEndpointVolumeOnOnVolumeNotification(AudioVolumeNotificationData data)
         {
             VolumeChanged?.Invoke(Device, new VolumeChangedArgs(data.MasterVolume, data.Muted, data.Guid == DeviceEnumerator.VolumeUUID));
+        }
+        
+        public void Dispose()
+        {
+            Device.AudioEndpointVolume.OnVolumeNotification -= AudioEndpointVolumeOnOnVolumeNotification;
+            Device?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
