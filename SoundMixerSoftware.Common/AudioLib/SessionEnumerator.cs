@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
@@ -159,9 +160,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         {
             for (var n = 0; n < AudioSessions.Count; n++)
             {
+                var session = AudioSessions[n];
                 try
                 {
-                    var session = AudioSessions[n];
                     if (!ProcessUtils.IsAlive((int) session.GetProcessID))
                     {
                         session.Dispose();
@@ -173,6 +174,8 @@ namespace SoundMixerSoftware.Common.AudioLib
                 }
                 catch (Exception exception)
                 {
+                    if(exception is COMException)
+                        Logger.Error($"Last win32 error:{Marshal.GetLastWin32Error()}");
                     Logger.Error(exception);
                 }
             }

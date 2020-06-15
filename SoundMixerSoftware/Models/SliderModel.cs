@@ -92,8 +92,7 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
-            Debug.WriteLine("Instance");
-            foreach(var sessionEnum in SessionHandler.SessionEnumerators)
+            foreach (var sessionEnum in SessionHandler.SessionEnumerators)
                 sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
         }
@@ -105,14 +104,14 @@ namespace SoundMixerSoftware.Models
         /// <param name="e"></param>
         private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
         {
-            //Device invocation can only happen in main thread(ui thread) otherwise exception occurs.
+            //Device invocation can only happen in thread where COM instance happened otherwise exception occurs and a lot of weird stuff happen.
             Execute.OnUIThread(() =>
             {
                 var device = sender as MMDevice;
-                //Debug.WriteLine($"Invocation: {device.FriendlyName}");
-                if (Applications.Any(x => x.ID == device.ID ||
-                                          (x.SessionMode == SessionMode.DefaultInputDevice && device.ID == SessionHandler.DeviceEnumerator.DefaultInput.ID) ||
-                                          (x.SessionMode == SessionMode.DefaultOutputDevice && device.ID == SessionHandler.DeviceEnumerator.DefaultOutput.ID)))
+                string deviceID = string.Copy(device.ID);
+                if (Applications.Any(x => x.ID == deviceID ||
+                                          (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInput.ID) ||
+                                          (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutput.ID)))
                 {
                     change = false;
                     var volume = (int) Math.Floor(e.Volume * 100.0F);
@@ -131,13 +130,13 @@ namespace SoundMixerSoftware.Models
         private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
         {
             var sessionControl = sender as AudioSessionControl;
-            if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
-            {
-                change = false;
-                var volume = (int) Math.Floor(e.Volume * 100.0F);
-                Volume = volume;
-                Mute = e.Mute;
-            }
+                if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
+                {
+                    change = false;
+                    var volume = (int) Math.Floor(e.Volume * 100.0F);
+                    Volume = volume;
+                    Mute = e.Mute;
+                }
         }
 
         #endregion

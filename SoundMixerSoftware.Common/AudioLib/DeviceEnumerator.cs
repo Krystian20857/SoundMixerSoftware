@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -195,6 +196,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         public void Dispose()
         {
+            _deviceEnumerator.UnregisterEndpointNotificationCallback(this);
             foreach (var handler in _volumeHandlers)
                 handler.Value.Dispose();
             _volumeHandlers.Clear();
@@ -226,8 +228,8 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void Dispose()
         {
             Device.AudioEndpointVolume.OnVolumeNotification -= AudioEndpointVolumeOnOnVolumeNotification;
-            Device?.Dispose();
-            GC.SuppressFinalize(this);
+            //Device?.Dispose();
+            //GC.SuppressFinalize(this);
         }
     }
 }

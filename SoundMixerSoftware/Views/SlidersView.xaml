@@ -88,7 +88,6 @@
             </ItemsControl>
         </ScrollViewer>
         <StackPanel Grid.Row="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-            <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" cal:Message.Attach="[Click] = [ReloadClick()]" Width="150" Content="Reload Sessions" ToolTip="Reload Sessions" />
         </StackPanel>
     </Grid>
 </UserControl>

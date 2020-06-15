@@ -3,15 +3,12 @@ using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
-using SoundMixerSoftware.Common.Config.Yaml;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Models;
-using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Win32.Wrapper;
 using ThemeManager = SoundMixerSoftware.Overlay.Resource.ThemeManager;
 
@@ -57,16 +54,14 @@ namespace SoundMixerSoftware.ViewModels
         
         public SlidersViewModel()
         {
+            ThemeManager.Initialize();
             Name = "Sliders";
             Icon = PackIconKind.VolumeSource;
 
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
 
-            if(ProfileHandler.SelectedProfile == null)
-                return;
-            
-            UpdateProfile();
-            ThemeManager.Initialize();
+            if(ProfileHandler.SelectedProfile != null)
+                UpdateProfile();
         }
 
         #endregion
@@ -216,13 +211,6 @@ namespace SoundMixerSoftware.ViewModels
             var model = sender as SliderModel;
             var addViewModel = new SessionAddViewModel(model.Index);
             _windowManager.ShowDialogAsync(addViewModel);
-        }
-
-        public void ReloadClick()
-        {
-            SessionHandler.ReloadSessionHandler();
-            ProfileHandler.ProfileManager.RefreshProfile(ProfileHandler.SelectedGuid);
-            UpdateProfile();
         }
 
         /// <summary>
