@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:cal="http://www.caliburnproject.org"
+        xmlns:models="clr-namespace:SoundMixerSoftware.Models"
         mc:Ignorable="d"
         Title="Session Add" Height="500" Width="700" Icon="{StaticResource SpeakerIcon}">
     <Window.Resources>
@@ -64,7 +65,19 @@
                 
             </ListView>
         </GroupBox>
-        <GroupBox Grid.Row="2" Header="Sessions">
+        <GroupBox Grid.Row="2">
+            <GroupBox.Header>
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock Text="Sessions" Margin="5, 5"/>
+                        <ComboBox ItemsSource="{Binding Path=DeviceSessions}" SelectedItem="{Binding Path=SelectedDevice, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+            </GroupBox.Header>
             <ListView x:Name="Sessions"
                       Style="{StaticResource ListViewItems}"
                       SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">

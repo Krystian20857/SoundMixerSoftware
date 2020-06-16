@@ -30,9 +30,11 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Private Fields
 
-        private readonly SessionEnumerator _sessionEnumerator;
+        private SessionEnumerator _sessionEnumerator;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
         private readonly int _sliderIndex;
+        private SessionModel _selectedDevice;
+        private BindableCollection<SessionModel> _deviceSessions = new BindableCollection<SessionModel>();
 
         private BindableCollection<SessionModel> _sessions = new BindableCollection<SessionModel>();
         private BindableCollection<SessionModel> _defaultDevices = new BindableCollection<SessionModel>();
@@ -73,7 +75,23 @@ namespace SoundMixerSoftware.ViewModels
         /// Currently Selected Audio Session
         /// </summary>
         public SessionModel SelectedSession { get; set; } = new SessionModel();
-        
+
+        public BindableCollection<SessionModel> DeviceSessions
+        {
+            get => _deviceSessions;
+            set => _deviceSessions = value;
+        }
+
+        public SessionModel SelectedDevice
+        {
+            get => _selectedDevice;
+            set
+            {
+                _selectedDevice = value;
+                SetSessions(_selectedDevice.ID);
+            }
+        }
+
         #endregion
 
         #region Constructor
@@ -85,7 +103,7 @@ namespace SoundMixerSoftware.ViewModels
         public SessionAddViewModel(int sliderIndex)
         {
             _sliderIndex = sliderIndex;
-            _sessionEnumerator = new SessionEnumerator(_deviceEnumerator.DefaultOutput);
+
             CreateDefault();
 
             foreach (var device in _deviceEnumerator.AllDevices)
@@ -99,19 +117,22 @@ namespace SoundMixerSoftware.ViewModels
                     DataFlow = device.DataFlow
                 });
             }
+            
+            _deviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
 
-            var sessions = _sessionEnumerator.AudioSessions;
-            for (var n = 0; n < sessions.Count; n++)
+            foreach (var device in _deviceEnumerator.OutputDevices)
             {
-                var session = sessions[n];
-                if(!session.IsSystemSoundsSession)
-                    AddSession(session);
+                DeviceSessions.Add(new SessionModel
+                {
+                    Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
+                    Name = device.FriendlyName,
+                    ID = device.ID,
+                    SessionMode = SessionMode.Device,
+                    DataFlow = device.DataFlow
+                });
             }
 
-            _sessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
-            _sessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
-
-            _deviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
+            SelectedDevice = DeviceSessions.First(x => x.ID == _deviceEnumerator.DefaultOutput.ID);
         }
 
         #endregion
@@ -172,6 +193,29 @@ namespace SoundMixerSoftware.ViewModels
                     DataFlow = DataFlow.Capture
                 });
             });
+        }
+
+        private void SetSessions(string deviceId)
+        {
+            if (_sessionEnumerator != null)
+            {
+                _sessionEnumerator.SessionCreated -= SessionEnumeratorOnSessionCreated;
+                _sessionEnumerator.SessionExited -= SessionEnumeratorOnSessionExited;
+            }
+
+            Sessions.Clear();
+            _sessionEnumerator = new SessionEnumerator(_deviceEnumerator.GetDeviceById(deviceId));
+                
+            var sessions = _sessionEnumerator.AudioSessions;
+            for (var n = 0; n < sessions.Count; n++)
+            {
+                var session = sessions[n];
+                if(!session.IsSystemSoundsSession)
+                    AddSession(session);
+            }
+
+            _sessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
+            _sessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
         }
 
         /// <summary>

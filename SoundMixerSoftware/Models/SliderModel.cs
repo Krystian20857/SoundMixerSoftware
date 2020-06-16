@@ -28,6 +28,9 @@ namespace SoundMixerSoftware.Models
 
         private bool _mute;
         private int _volume;
+
+        private int _lastVolume;
+        private bool _lastMute;
         /// <summary>
         /// When true volume changed can happen.
         /// </summary>
@@ -113,11 +116,21 @@ namespace SoundMixerSoftware.Models
                                           (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInput.ID) ||
                                           (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutput.ID)))
                 {
-                    change = false;
                     var volume = (int) Math.Floor(e.Volume * 100.0F);
-                    Volume = volume;
-                    if(volume != 0)
+
+                    if (volume != _lastVolume)
+                    {
+                        change = false;
+                        Volume = volume;
+                        _lastVolume = volume;
+                    }
+
+                    if (e.Mute != _lastMute)
+                    {
+                        change = false;
                         Mute = e.Mute;
+                        _lastMute = e.Mute;
+                    }
                 }
             });
         }
@@ -132,10 +145,21 @@ namespace SoundMixerSoftware.Models
             var sessionControl = sender as AudioSessionControl;
                 if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
                 {
-                    change = false;
                     var volume = (int) Math.Floor(e.Volume * 100.0F);
-                    Volume = volume;
-                    Mute = e.Mute;
+                    
+                    if (volume != _lastVolume)
+                    {
+                        change = false;
+                        Volume = volume;
+                        _lastVolume = volume;
+                    }
+
+                    if (e.Mute != _lastMute)
+                    {
+                        change = false;
+                        Mute = e.Mute;
+                        _lastMute = e.Mute;
+                    }
                 }
         }
 
