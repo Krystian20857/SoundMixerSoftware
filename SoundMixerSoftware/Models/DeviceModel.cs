@@ -25,22 +25,22 @@
         /// <summary>
         /// Device Vendor Id.
         /// </summary>
-        public string Vid { get; set; }
+        public uint Vid { get; set; }
 
         /// <summary>
         /// Device product Id.
         /// </summary>
-        public string Pid { get; set; }
+        public uint Pid { get; set; }
 
         /// <summary>
         /// Device count of sliders.
         /// </summary>
-        public string Sliders { get; set; }
+        public int Sliders { get; set; }
 
         /// <summary>
         /// Device count of buttons
         /// </summary>
-        public string Buttons { get; set; }
+        public int Buttons { get; set; }
         /// <summary>
         /// UUID of current device
         /// </summary>
@@ -60,14 +60,24 @@
         {
             return new DeviceModel
             {
-                Buttons = response.button_count.ToString(),
+                Buttons = response.button_count,
                 ComPort = properties.COMPort,
                 Name = response.name,
-                Pid = "0x" + properties.Pid.ToString("X2"),
-                Vid = "0x" + properties.Vid.ToString("X2"),
-                Sliders = response.slider_count.ToString(),
+                Pid =  properties.Pid,
+                Vid =  properties.Vid,
+                Sliders = response.slider_count,
                 UUID = ArrayUtils.ConvertToString(response.uuid)
             };
+        }
+        
+        /// <summary>
+        /// Create DeviceModel from DeviceConnectedEventArgs.
+        /// </summary>
+        /// <param name="eventArgs">Event args</param>
+        /// <returns></returns>
+        public static DeviceModel CreateModel(DeviceConnectedEventArgs eventArgs)
+        {
+            return CreateModel(eventArgs.Device, eventArgs.DeviceResponse);
         }
         
         #endregion

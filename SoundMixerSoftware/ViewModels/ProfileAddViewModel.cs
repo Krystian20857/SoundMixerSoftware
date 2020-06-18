@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.ComponentModel;
+using Caliburn.Micro;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
 
@@ -8,7 +10,8 @@ namespace SoundMixerSoftware.ViewModels
     {
         #region Private Fields
 
-        private bool _editMode = false;
+        private bool _editMode;
+        private DeviceModel _selectedDevice;
 
         #endregion
         
@@ -16,6 +19,22 @@ namespace SoundMixerSoftware.ViewModels
         
         public ProfileModel CreatedProfile { get; set; }
         public string Title { get; set; }
+        public BindableCollection<DeviceModel> Devices { get; set; } = new BindableCollection<DeviceModel>();
+
+        public DeviceModel SelectedDevice
+        {
+            get => _selectedDevice;
+            set
+            {
+                _selectedDevice = value;
+                if (Devices.IndexOf(value) < 0)
+                    return;
+                CreatedProfile.ProfileName = value.Name;
+                CreatedProfile.ButtonCount = value.Buttons;
+                CreatedProfile.SliderCount = value.Sliders;
+                NotifyOfPropertyChange(nameof(CreatedProfile));
+            }
+        }
 
         #endregion
         
@@ -34,6 +53,9 @@ namespace SoundMixerSoftware.ViewModels
                 Title = "Add Profile";
                 CreatedProfile = new ProfileModel();
             }
+            
+            foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
+                Devices.Add(DeviceModel.CreateModel(device.Value));
         }
         
         #endregion

@@ -7,13 +7,33 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        Title="{Binding Path=Title, UpdateSourceTrigger=PropertyChanged}" Height="200" Width="350" Icon="{StaticResource SpeakerIcon}">
+        Title="{Binding Path=Title, UpdateSourceTrigger=PropertyChanged}" Height="225" Width="350" Icon="{StaticResource SpeakerIcon}">
     <Grid>
         <StackPanel>
-            <TextBox x:Name="CreatedProfile_ProfileName"
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     materialDesign:HintAssist.Hint="Profile Name"
-                     Width="150" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBox x:Name="CreatedProfile_ProfileName"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.Hint="Profile Name"
+                         Width="150"
+                         Margin="0, 0, 10, 0"
+                />
+                <ComboBox 
+                    Width="150"
+                    Padding="0, 15"
+                    Margin="10, 0, 0, 0"
+                    x:Name="Devices" SelectedItem="{Binding Path=SelectedDevice, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock >
+                                    <Run Text="{Binding Path=Name}"/>
+                                    <Run Text="("/>
+                                    <Run Text="{Binding Path=ComPort}"/>
+                                    <Run Text=")"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBox Margin="10"
                          x:Name="CreatedProfile_ButtonCount"

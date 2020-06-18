@@ -28,9 +28,9 @@ namespace SoundMixerSoftware.Helpers.Buttons
 
         static ButtonHandler()
         {
-
+            ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
         }
-        
+
         #endregion
         
         #region Private Events
@@ -95,6 +95,11 @@ namespace SoundMixerSoftware.Helpers.Buttons
             }
             
             return true;
+        }
+        
+        private static void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
+        {
+            Initialize();
         }
 
         public static void DisplayMute(bool isOutput, bool state)

@@ -9,6 +9,9 @@
              xmlns:cv="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <cv:HexConverter x:Key="HexConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -32,9 +35,9 @@
                                     </TextBlock>
                                     <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignBody2TextBlock}">
                                         <Run Text="VID: " />
-                                        <Run Text="{Binding Path=Vid}" Foreground="DarkGray" />
+                                        <Run Text="{Binding Path=Vid, Converter={StaticResource HexConverter}}" Foreground="DarkGray" />
                                         <Run Text="   PID: " />
-                                        <Run Text="{Binding Path=Pid}" Foreground="DarkGray" />
+                                        <Run Text="{Binding Path=Pid, Converter={StaticResource HexConverter}}" Foreground="DarkGray" />
                                     </TextBlock>
                                 </StackPanel>
                                 <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
