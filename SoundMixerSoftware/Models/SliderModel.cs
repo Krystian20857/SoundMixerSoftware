@@ -97,6 +97,7 @@ namespace SoundMixerSoftware.Models
         {
             foreach (var sessionEnum in SessionHandler.SessionEnumerators)
                 sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
+
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
         }
 

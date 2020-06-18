@@ -10,6 +10,7 @@ using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using NLog;
 using SoundMixerSoftware.Annotations;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.LocalSystem;

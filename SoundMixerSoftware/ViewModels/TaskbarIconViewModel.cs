@@ -32,9 +32,9 @@ namespace SoundMixerSoftware.ViewModels
 
         public void ShowWindow()
         {
-            var container = IoC.Get<MainViewModel>();
-            if(!container.IsActive)
-                _windowManager.ShowWindowAsync(container);
+            var mainView = IoC.Get<MainViewModel>();
+            if(!mainView.IsActive)
+                _windowManager.ShowWindowAsync(mainView);
         }
 
         public void ExitApp()

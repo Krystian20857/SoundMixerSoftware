@@ -70,6 +70,7 @@ namespace SoundMixerSoftware.ViewModels
 
         private void UpdateProfile()
         {
+            SessionHandler.ReloadSessionHandler();
             SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;

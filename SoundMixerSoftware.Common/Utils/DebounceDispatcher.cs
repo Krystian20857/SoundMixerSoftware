@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace SoundMixerSoftware.Models
+namespace SoundMixerSoftware.Common.Utils
 {
     public class DebounceDispatcher
     {

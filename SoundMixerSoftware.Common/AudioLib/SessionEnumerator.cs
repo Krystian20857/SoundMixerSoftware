@@ -10,7 +10,7 @@ using SoundMixerSoftware.Common.Utils;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
-    public class SessionEnumerator
+    public class SessionEnumerator : IDisposable
     {
         #region Logger
 
@@ -24,6 +24,8 @@ namespace SoundMixerSoftware.Common.AudioLib
         #region Private Fields
 
         private MMDevice _device;
+        private List<AudioSessionControl> _registeredSessions = new List<AudioSessionControl>();
+        private List<ExitHandler> _exitHandlers = new List<ExitHandler>();
 
         #endregion
 
@@ -112,6 +114,41 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Occurs when session process quits
         /// </summary>
         public event EventHandler<string> SessionExited;
+        
+        private void EventClientOnIconPathChanged(object sender, string e)
+        {
+            IconPathChanged?.Invoke(sender,e );
+        }
+
+        private void EventClientOnGroupingParamChanged(object sender, Guid e)
+        {
+            GroupingParamChanged?.Invoke(sender, e);
+        }
+
+        private void EventClientOnDisplayNameChanged(object sender, string e)
+        {
+            DisplayNameChanged?.Invoke(sender, e);
+        }
+
+        private void EventClientOnChannelVolumeChanged(object sender, ChannelVolumeChangedArgs e)
+        {
+            ChannelVolumeChanged?.Invoke(sender, e);
+        }
+
+        private void EventClientOnVolumeChanged(object sender, VolumeChangedArgs e)
+        {
+            VolumeChanged?.Invoke(sender, e);
+        }
+
+        private void EventClientOnStateChanged(object sender, AudioSessionState e)
+        {
+            StateChanged?.Invoke(sender, e);
+        }
+
+        private void EventClientOnSessionDisconnected(object sender, AudioSessionDisconnectReason e)
+        {
+            SessionDisconnected?.Invoke(sender, e);
+        }
 
         #endregion
 
@@ -209,20 +246,23 @@ namespace SoundMixerSoftware.Common.AudioLib
         private void RegisterEvents(AudioSessionControl session)
         {
             var eventClient = new AudioSessionEventClient(session);
-            eventClient.SessionDisconnected += (sender, args) =>SessionDisconnected?.Invoke(sender, args);
-            eventClient.StateChanged += (sender, args) => StateChanged?.Invoke(sender, args);
-            eventClient.VolumeChanged += (sender, args) => VolumeChanged?.Invoke(sender, args);
-            eventClient.ChannelVolumeChanged += (sender, args) => ChannelVolumeChanged?.Invoke(sender, args);
-            eventClient.DisplayNameChanged += (sender, args) => DisplayNameChanged?.Invoke(sender, args);
-            eventClient.GroupingParamChanged += (sender, args) => GroupingParamChanged?.Invoke(sender, args);
-            eventClient.IconPathChanged += (sender, args) => IconPathChanged?.Invoke(sender, args);
+            eventClient.SessionDisconnected += EventClientOnSessionDisconnected;
+            eventClient.StateChanged += EventClientOnStateChanged;
+            eventClient.VolumeChanged += EventClientOnVolumeChanged;
+            eventClient.ChannelVolumeChanged += EventClientOnChannelVolumeChanged;
+            eventClient.DisplayNameChanged += EventClientOnDisplayNameChanged;
+            eventClient.GroupingParamChanged += EventClientOnGroupingParamChanged;
+            eventClient.IconPathChanged += EventClientOnIconPathChanged;
             session.RegisterEventClient(eventClient);
+            _registeredSessions.Add(session);
             var exitHandler = new ExitHandler(session.GetProcessID, session.GetSessionIdentifier);
             exitHandler.SessionExited += (exitSender, id) =>
             {
                 SessionExited?.Invoke(session, id);
             };
+            _exitHandlers.Add(exitHandler);
         }
+        
 
         private void OnSessionCreated(object sender, IAudioSessionControl newsession)
         {
@@ -231,6 +271,21 @@ namespace SoundMixerSoftware.Common.AudioLib
             SessionCreated?.Invoke(_device, session);
         }
         #endregion
+
+        public void Dispose()
+        {
+
+            foreach (var session in _registeredSessions)
+            {
+                session.UnRegisterEventClient(null);
+                session.Dispose();
+            }
+
+            _registeredSessions.Clear();
+
+            _device.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 
     public class ExitHandler

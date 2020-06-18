@@ -71,6 +71,7 @@
       <Compile Include="Utils\Application\AppUtils.cs" />
       <Compile Include="Utils\Application\AutoRunHandle.cs" />
       <Compile Include="Utils\ArrayUtils.cs" />
+      <Compile Include="Utils\DebounceDispatcher.cs" />
       <Compile Include="Utils\Enum\EnumNameConverter.cs" />
       <Compile Include="Utils\ObjectUtils.cs" />
       <Compile Include="Utils\ProcessUtils.cs" />

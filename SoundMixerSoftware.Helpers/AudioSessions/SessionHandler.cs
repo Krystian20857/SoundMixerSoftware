@@ -5,6 +5,7 @@ using System.Windows;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.AudioLib.SliderLib;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Profile;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions
@@ -21,6 +22,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; } = new Dictionary<string, SessionEnumerator>();
         public static List<List<IVirtualSlider>> Sliders { get; } = new List<List<IVirtualSlider>>();
         public static List<List<string>> RequestedSliders { get; } = new List<List<string>>();
+        private static DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
 
         #endregion
 
@@ -43,10 +45,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         public static void ReloadSessionHandler()
         {
+            foreach (var sessionEnumerator in SessionEnumerators)
+                sessionEnumerator.Value.Dispose();
+            SessionEnumerators.Clear();
+            
             DeviceEnumerator.Dispose();
             DeviceEnumerator = new DeviceEnumerator();
-            SessionEnumerators.Clear();
-            SessionAdded += OnSessionAdded;
+            
             foreach (var device in DeviceEnumerator.OutputDevices)
             {
                 var sessionEnum = new SessionEnumerator(device);
@@ -54,6 +59,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
                 SessionEnumerators.Add(device.ID, sessionEnum);
             }
+            
+            SessionAdded += OnSessionAdded;
         }
 
         private static void SessionEnumeratorOnSessionExited(object sender, string e)
