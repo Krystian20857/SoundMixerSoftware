@@ -149,13 +149,12 @@ namespace SoundMixerSoftware.ViewModels
             CreateDefault();
         }
         
-        private void SessionEnumeratorOnSessionExited(object sender, string e)
+        private void SessionEnumeratorOnSessionExited(object sender, string sessionId)
         {
-            var audioSession = sender as AudioSessionControl;
-            Sessions.Where(x => x.ID == audioSession.GetSessionIdentifier).ToList().ForEach(y =>
-            {
-                Sessions.Remove(y);
-            });
+            var sessionToRemove = Sessions.FirstOrDefault(x => x.ID == sessionId);
+            if (sessionToRemove == default(SessionModel) || !Sessions.Contains(sessionToRemove))
+                return;
+            Sessions.Remove(sessionToRemove);
         }
 
         private void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)

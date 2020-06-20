@@ -50,6 +50,7 @@ namespace SoundMixerSoftware
         
         public Bootstrapper()
         {
+            RegisterExceptionHandler();
             if (Mutex.WaitOne(TimeSpan.Zero, true))
             {
                 LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
@@ -111,6 +112,8 @@ namespace SoundMixerSoftware
             var exceptionObject = e.ExceptionObject;
             if (exceptionObject is Exception exception)
                 ExceptionHandler.HandleException(Logger, exception);
+            else
+                Logger.Error(exceptionObject.ToString());
         }
     }
 }

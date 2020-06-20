@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Threading.Tasks;
 using NLog;
 using SoundMixerSoftware.Common.Utils;
 
@@ -67,7 +69,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
         /// </summary>
         /// <param name="comport">Serial device location.</param>
         /// <returns>Device connection state.</returns>
-        public bool Connect(string comport)
+        public bool Connect(string comport, bool fireEvent = true)
         {
             try
             {
@@ -78,7 +80,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
                     var device = _connectedDevices[comport];
                     if (!device.IsOpen)
                         device.Open();
-                    if (device.IsOpen)
+                    if (device.IsOpen && fireEvent)
                         DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
                     return device.IsOpen;
                 }
@@ -91,7 +93,8 @@ namespace SoundMixerSoftware.Common.Communication.Serial
                     device.Open();
                     if (device.IsOpen)
                     {
-                        DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                        if(fireEvent)
+                            DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
                         Logger.Info($"Device connected: {comport}");
                     }
 

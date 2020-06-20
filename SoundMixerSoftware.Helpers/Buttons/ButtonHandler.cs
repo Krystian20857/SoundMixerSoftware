@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Device;
@@ -75,10 +73,10 @@ namespace SoundMixerSoftware.Helpers.Buttons
         {
             switch (function)
             {
-                case ButtonFunction.MuteInput:
+                case ButtonFunction.MuteDefaultInput:
                     HandleMuteInput();
                     break;
-                case ButtonFunction.MuteOutput:
+                case ButtonFunction.MuteDefaultOutput:
                     HandleMuteOutput();
                     break;
                 case ButtonFunction.PrevTrack:
@@ -118,10 +116,10 @@ namespace SoundMixerSoftware.Helpers.Buttons
                     };
                     if (isOutput)
                     {
-                        if (button.Function == ButtonFunction.MuteOutput)
+                        if (button.Function == ButtonFunction.MuteDefaultOutput)
                             DeviceHandlerGlobal.DeviceHandler.SendData(device.Key, structure);
                     }
-                    else if (button.Function == ButtonFunction.MuteInput)
+                    else if (button.Function == ButtonFunction.MuteDefaultInput)
                         DeviceHandlerGlobal.DeviceHandler.SendData(device.Key, structure);
 
                 }
@@ -153,8 +151,8 @@ namespace SoundMixerSoftware.Helpers.Buttons
 
         internal static void HandleMuteOutput()
         {
-            var defaultInput = SessionHandler.DeviceEnumerator.DefaultOutput;
-            var audioEndpoint = defaultInput.AudioEndpointVolume;
+            var defaultOutput = SessionHandler.DeviceEnumerator.DefaultOutput;
+            var audioEndpoint = defaultOutput.AudioEndpointVolume;
             audioEndpoint.Mute = !audioEndpoint.Mute;
             OverlayHandler.ShowMute(audioEndpoint.Mute);
         }

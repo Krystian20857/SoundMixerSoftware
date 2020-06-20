@@ -70,9 +70,9 @@ namespace SoundMixerSoftware.ViewModels
             //This type of action need to be handled in main thread.
             Execute.OnUIThread(() =>
             {
-                var _device = Devices.First(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
+                var _device = Devices.FirstOrDefault(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
                 if(Devices.Contains(_device))
-                Devices.Remove(_device);
+                    Devices.Remove(_device);
             });
         }
 

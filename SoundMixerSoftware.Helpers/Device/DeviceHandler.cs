@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Markup;
 using NAudio.MediaFoundation;
 using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
@@ -26,11 +31,6 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         private readonly SerialConnection _serialConnection;
         /// <summary>
-        /// Data converter instance is responsible for handling data conversion.
-        /// </summary>
-        private readonly DataConverter _dataConverter;
-        
-        /// <summary>
         /// Stores flags needed to read Device ID.
         /// </summary>
         private Dictionary<byte, DeviceProperties> _requestFlags = new Dictionary<byte, DeviceProperties>();
@@ -46,6 +46,18 @@ namespace SoundMixerSoftware.Helpers.Device
         /// Contains detected devices flag on application startup
         /// </summary>
         private List<byte> _flagsOnStartup = new List<byte>();
+        /// <summary>
+        /// Contains data converters for each connected device.
+        /// </summary>
+        private Dictionary<string, DataConverter> _dataConverters = new Dictionary<string, DataConverter>();
+        /// <summary>
+        /// Use in synchronization between data converters and devicehandler.
+        /// </summary>
+        private Dictionary<byte, Type> _typesToRegister = new Dictionary<byte, Type>();
+        /// <summary>
+        /// Indicates if serial data event has subscribed.
+        /// </summary>
+        private bool _serialEventRegistered = false;
 
         #endregion
         
@@ -97,14 +109,10 @@ namespace SoundMixerSoftware.Helpers.Device
             _usbDevice = new USBDevice(NativeClasses.GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, ConfigHandler.ConfigStruct.Hardware.UsbIDs);
             _usbDevice.VidPid = ConfigHandler.ConfigStruct.Hardware.UsbIDs;
             _usbDevice.RegisterDeviceChange(_windowWrapper.Handle);
-
-            _dataConverter = new DataConverter(ConfigHandler.ConfigStruct.Hardware.Terminator);
-            _dataConverter.DataReceived += DataConverterOnDataReceived;
-            _dataConverter.SizeError += (sender, args) => DataReceiveError?.Invoke(this, new EventArgs());
+            
             RegisterTypes();
             
             _serialConnection = new SerialConnection(ConfigHandler.ConfigStruct.Hardware.SerialConfig);
-            _serialConnection.DataReceived += (sender, args) => _dataConverter.ProcessData(args.Data);
             _serialConnection.DeviceConnected += SerialConnectionOnDeviceConnected;
             
             _usbDevice.DeviceArrive += UsbDeviceOnDeviceArrive;
@@ -121,12 +129,25 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         /// <param name="command"></param>
         /// <param name="type"></param>
-        public void RegisterType(byte command, Type type) => _dataConverter.RegisterType(command, type);
+        public void RegisterType(byte command, Type type)
+        { 
+            if(!_typesToRegister.ContainsKey(command))
+                _typesToRegister.Add(command, type);
+            foreach (var converter in _dataConverters)
+                converter.Value.RegisterType(command, type);    
+        }
+
         /// <summary>
         /// Unregister type from data conversion.
         /// </summary>
         /// <param name="command"></param>
-        public void UnRegisterType(byte command) => _dataConverter.UnregisterType(command);
+        public void UnRegisterType(byte command)
+        {
+            if(_typesToRegister.ContainsKey(command))
+                _typesToRegister.Remove(command);
+            foreach (var converter in _dataConverters)
+                converter.Value.UnregisterType(command);  
+        }
 
         /// <summary>
         /// SendBytes from serial connection.
@@ -159,7 +180,32 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         internal void RegisterTypes()
         {
-            _dataConverter.RegisterType(0x03, typeof(DeviceIdResponse));
+            RegisterType(0x03, typeof(DeviceIdResponse));
+        }
+
+        /// <summary>
+        /// Create dataconverter for specified serial device.
+        /// </summary>
+        /// <param name="comPort"></param>
+        private void CreateDataConverter(string comPort)
+        {
+            if (!_dataConverters.ContainsKey(comPort))
+            {
+                var dataConverter = new DataConverter(ConfigHandler.ConfigStruct.Hardware.Terminator);
+                foreach(var type in _typesToRegister)
+                    dataConverter.RegisterType(type.Key, type.Value);
+                dataConverter.DataReceived += DataConverterOnDataReceived;
+                if (!_serialEventRegistered)
+                {
+                    _serialConnection.DataReceived += (sender, args) =>
+                    {
+                        if (_dataConverters.ContainsKey(args.COMPort))
+                            _dataConverters[args.COMPort].ProcessData(args.Data);
+                    };
+                }
+                _serialEventRegistered = true;
+                _dataConverters.Add(comPort, dataConverter);
+            }
         }
 
         /// <summary>
@@ -170,9 +216,10 @@ namespace SoundMixerSoftware.Helpers.Device
             foreach (var device in _usbDevice.ConnectedDevices)
             {
                 var comPort = device.COMPort;
+                CreateDataConverter(comPort);
                 _serialConnection.Connect(comPort);
-                _serialConnection.SendData(comPort,CreateDeviceRequest(device, true));
-                _serialConnection.SendBytes(comPort, new byte[]{0xFF});
+                _serialConnection.SendData(comPort, CreateDeviceRequest(device, true));
+                _serialConnection.SendBytes(comPort, new byte[] {0xFF});
             }
         }
 
@@ -207,6 +254,7 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="e"></param>
         private void SerialConnectionOnDeviceConnected(object sender, DeviceStateChangeArgs e)
         {
+            CreateDataConverter(e.COMPort);
             if (!_requestProperties.ContainsKey(e.COMPort))
             {
                 DeviceIdRequestError?.Invoke(this, new EventArgs());
@@ -265,6 +313,8 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             _serialConnection.Disconnect(e.DeviceProperties.COMPort);
             DeviceDisconnected?.Invoke(this, e);
+            if (_dataConverters.ContainsKey(e.DeviceProperties.COMPort))
+                _dataConverters.Remove(e.DeviceProperties.COMPort);
         }
 
         /// <summary>
