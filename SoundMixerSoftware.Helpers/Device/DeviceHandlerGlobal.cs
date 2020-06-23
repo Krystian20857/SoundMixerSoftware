@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
@@ -58,8 +60,10 @@ namespace SoundMixerSoftware.Helpers.Device
 
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(e.Device.COMPort) || _connectedDevices.ContainsKey(e.Device.COMPort))
+                return;
             _connectedDevices.Add(e.Device.COMPort, e);
-            if (!e.DetectedOnStartup && (ConfigHandler.ConfigStruct.Notification.EnableNotifications))
+            if (!e.DetectedOnStartup && ConfigHandler.ConfigStruct.Notification.EnableNotifications)
             {
                 _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
                 _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);

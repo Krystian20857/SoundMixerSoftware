@@ -55,10 +55,8 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
                 var device = _deviceEnumerator.GetDefaultAudioEndpoint(_dataFlow, Role.Multimedia);
                 
                 _lastVolume = Volume;
-                _lastMute = IsMute;
-                
+
                 device.AudioEndpointVolume.MasterVolumeLevelScalar = _lastVolume;
-                device.AudioEndpointVolume.Mute = _lastMute;
             }
 
             if (IsMute != _lastMute)

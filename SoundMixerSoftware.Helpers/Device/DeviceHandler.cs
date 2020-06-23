@@ -196,13 +196,14 @@ namespace SoundMixerSoftware.Helpers.Device
                     dataConverter.RegisterType(type.Key, type.Value);
                 dataConverter.DataReceived += DataConverterOnDataReceived;
                 if (!_serialEventRegistered)
-                {
                     _serialConnection.DataReceived += (sender, args) =>
                     {
-                        if (_dataConverters.ContainsKey(args.COMPort))
-                            _dataConverters[args.COMPort].ProcessData(args.Data);
+                        Task.Factory.StartNew(() =>
+                        {
+                            if (_dataConverters.ContainsKey(args.COMPort))
+                                _dataConverters[args.COMPort].ProcessData(args.Data);
+                        });
                     };
-                }
                 _serialEventRegistered = true;
                 _dataConverters.Add(comPort, dataConverter);
             }
@@ -217,7 +218,7 @@ namespace SoundMixerSoftware.Helpers.Device
             {
                 var comPort = device.COMPort;
                 CreateDataConverter(comPort);
-                _serialConnection.Connect(comPort);
+                _serialConnection.Connect(comPort, false);
                 _serialConnection.SendData(comPort, CreateDeviceRequest(device, true));
                 _serialConnection.SendBytes(comPort, new byte[] {0xFF});
             }
@@ -263,8 +264,8 @@ namespace SoundMixerSoftware.Helpers.Device
             }
             var properties = _requestProperties[e.COMPort];
             _serialConnection.SendData(e.COMPort,CreateDeviceRequest(properties, false));
-            _requestProperties.Remove(e.COMPort);
             _serialConnection.SendBytes(e.COMPort, new byte[]{0xFF});
+            _requestProperties.Remove(e.COMPort);
         }
         
         #endregion
@@ -324,6 +325,8 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="e"></param>
         private void UsbDeviceOnDeviceArrive(object sender, DeviceStateArgs e)
         {
+            if (e.DeviceProperties.Equals(default))
+                return;
             _requestProperties.Add(e.DeviceProperties.COMPort, e.DeviceProperties);
             _serialConnection.Connect(e.DeviceProperties.COMPort);
         }

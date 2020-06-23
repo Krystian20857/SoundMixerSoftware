@@ -80,8 +80,13 @@ namespace SoundMixerSoftware.Common.Communication.Serial
                     var device = _connectedDevices[comport];
                     if (!device.IsOpen)
                         device.Open();
-                    if (device.IsOpen && fireEvent)
-                        DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                    if (device.IsOpen)
+                    {
+                        if(fireEvent)
+                            DeviceConnected?.Invoke(this, new DeviceStateChangeArgs(comport));
+                        Logger.Info($"Device connected: {comport}");
+                    }
+
                     return device.IsOpen;
                 }
                 else

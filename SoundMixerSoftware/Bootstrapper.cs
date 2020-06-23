@@ -114,6 +114,7 @@ namespace SoundMixerSoftware
                 ExceptionHandler.HandleException(Logger, exception);
             else
                 Logger.Error(exceptionObject.ToString());
+            Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
         }
     }
 }
