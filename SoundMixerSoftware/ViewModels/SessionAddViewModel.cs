@@ -253,7 +253,6 @@ namespace SoundMixerSoftware.ViewModels
                 var slider = profile.Sliders[_sliderIndex];
                 if (slider.Applications.All(x => x.ID != SelectedSession.ID))
                 {
-                    slider.Index = _sliderIndex;
                     var session = new Session
                     {
                         SessionMode = SelectedSession.SessionMode,

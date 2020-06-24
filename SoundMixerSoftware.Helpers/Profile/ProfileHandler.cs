@@ -53,6 +53,11 @@ namespace SoundMixerSoftware.Helpers.Profile
             ProfileChanged?.Invoke(null, new ProfileChangedEventArgs(uuid));
         }
 
+        public static void SaveSelectedProfile()
+        {
+            ProfileManager.Save(SelectedGuid);
+        }
+
         #endregion
     }
 

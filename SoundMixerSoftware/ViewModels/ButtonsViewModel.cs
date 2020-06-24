@@ -81,7 +81,7 @@ namespace SoundMixerSoftware.ViewModels
             if (!(sender is ButtonModel model)) return;
             var function = EnumNameConverter.GetValue<ButtonFunction>(model.SelectedItem);
             ProfileHandler.SelectedProfile.Buttons[model.Index].Function = function;
-            ProfileHandler.ProfileManager.Save(ProfileHandler.SelectedGuid);
+            ProfileHandler.SaveSelectedProfile();
         }
 
         /// <summary>
@@ -129,7 +129,6 @@ namespace SoundMixerSoftware.ViewModels
                 {
                     buttons.Add(new ButtonStruct
                     {
-                        Index = n,
                         Function = ButtonFunction.NoFunction
                     });
                     ProfileHandler.ProfileManager.Save(ProfileHandler.SelectedGuid);

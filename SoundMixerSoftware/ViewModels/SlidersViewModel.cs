@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.AudioLib;
@@ -76,9 +77,32 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
 
             Sliders.Clear();
-            for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
-                Sliders.Add(new SliderModel { Index = n });
+            var sliders = ProfileHandler.SelectedProfile.Sliders;
+            var sliderCount = ProfileHandler.SelectedProfile.SliderCount;
+            var modified = false;
             
+            if (sliderCount >= sliders.Count)
+            {
+                for (var n = sliders.Count; n < sliderCount; n++)
+                    sliders.Add(new SliderStruct {Name = $"Slider {n + 1}"});
+                modified = true;
+            }
+            
+            for (var n = 0; n < sliderCount; n++)
+            {
+                var slider = sliders[n];
+                if (string.IsNullOrWhiteSpace(slider.Name))
+                {
+                    slider.Name = $"Slider {n + 1}";
+                    modified = true;
+                }
+                var sliderModel = new SliderModel { Index = n, Name = slider.Name };
+                Sliders.Add(sliderModel);
+            }
+            
+            if(modified)
+                ProfileHandler.SaveSelectedProfile();
+
             SessionHandler.SessionAdded += SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive += SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected += SessionHandlerOnSessionDisconnected;
@@ -255,7 +279,13 @@ namespace SoundMixerSoftware.ViewModels
             var model = sender as SliderModel;
             model.Mute = !model.Mute;
         }
-        
+
+        public void EditNameClicked(object sender)
+        {
+            var sliderModel = sender as SliderModel;
+            sliderModel.IsEditing = !sliderModel.IsEditing;
+        }
+
         #endregion
     }
 }

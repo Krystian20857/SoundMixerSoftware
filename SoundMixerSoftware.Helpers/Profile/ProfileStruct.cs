@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Common.Config.Yaml;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
+using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Helpers.Profile
 {
@@ -20,21 +19,66 @@ namespace SoundMixerSoftware.Helpers.Profile
     public class SliderStruct
     {
         public List<Session> Applications { get; set; } = new List<Session>();
-        public int Index { get; set; }
+
+        public string Name { get; set; }
     }
 
     public class Session
     {
         public string Name { get; set; }
         public string ID { get; set; }
+        
+        [YamlIgnore]
         public SessionMode SessionMode { get; set; }
+        
+        [YamlMember(Alias = "SessionMode")]
+        public string SessionModeString
+        {
+            get => SessionMode.ToString();
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    SessionMode = default;
+                else
+                    SessionMode = Enum.TryParse<SessionMode>(value, out var result) ? result : default;
+            }
+        }
+        
+        [YamlIgnore]
         public DataFlow DataFlow { get; set; }
+        
+        [YamlMember(Alias = "DataFlow")]
+        public string DataFlowString
+        {
+            get => DataFlow.ToString();
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    DataFlow = default;
+                else
+                    DataFlow = Enum.TryParse<DataFlow>(value, out var result) ? result : default;
+            }
+        }
     }
     
     public class ButtonStruct
     {
-        [DefaultValue(ButtonFunction.NoFunction)]
+        [YamlIgnore]
         public ButtonFunction Function { get; set; }
-        public int Index { get; set; }
+
+        [YamlMember(Alias = "Function")]
+        public string FunctionString
+        {
+            get => Function.ToString();
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    Function = default;
+                else
+                    Function = Enum.TryParse<ButtonFunction>(value, out var result) ? result : default;
+            }
+        }
+
+        public string Name { get; set; }
     }
 }

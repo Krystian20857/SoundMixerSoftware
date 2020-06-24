@@ -3,11 +3,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
 using NLog;
 using SoundMixerSoftware.Annotations;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Profile;
 using LogManager = NLog.LogManager;
 using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
@@ -28,6 +31,8 @@ namespace SoundMixerSoftware.Models
 
         private bool _mute;
         private int _volume;
+        private bool _isEditing;
+        private string _name;
 
         private int _lastVolume;
         private bool _lastMute;
@@ -35,6 +40,8 @@ namespace SoundMixerSoftware.Models
         /// When true volume changed can happen.
         /// </summary>
         private bool change;
+
+        private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
 
         #endregion
         
@@ -76,6 +83,31 @@ namespace SoundMixerSoftware.Models
         /// Index of current slider.
         /// </summary>
         public int Index { get; set; }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged(nameof(Name));
+            } 
+        }
+
+        public bool IsEditing
+        {
+            get => _isEditing;
+            set
+            {
+                _isEditing = value;
+                if (!value)
+                {
+                    ProfileHandler.SelectedProfile.Sliders[Index].Name = Name;
+                    ProfileHandler.SaveSelectedProfile();
+                }
+                OnPropertyChanged(nameof(IsEditing));
+            }
+        }
+
 
         /// <summary>
         /// Session Collection.

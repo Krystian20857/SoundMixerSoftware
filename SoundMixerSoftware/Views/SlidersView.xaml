@@ -17,6 +17,7 @@
         </x:Array>
         <converters:IconConverter x:Key="IconConverter" />
         <converters:BoolInvertConverter x:Key="BoolInvertConverter" />
+        <converters:VisibilityConverter x:Key="VisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -28,8 +29,27 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
-                            <DockPanel Height="85" LastChildFill="False">
+                            <DockPanel Height="100" LastChildFill="False">
                                 <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Margin="5, 0"
+                                                 Visibility="{Binding Path=IsEditing, Converter={StaticResource VisibilityConverter}}"
+                                                 FontSize="16"
+                                                 Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 MaxWidth="255"/>
+                                        <TextBlock Margin="5, 0"
+                                                   MaxWidth="255"
+                                                   Visibility="{Binding Path=IsEditing, Converter={StaticResource VisibilityConverter}, ConverterParameter=true}"
+                                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}">
+                                            <Run Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </TextBlock>
+                                        <Button Margin="5, 0"
+                                                Padding="0"
+                                                Width="35"
+                                                Height="20"
+                                                Content="Edit"
+                                                cal:Message.Attach="[Click] = [EditNameClicked($this)]"/>
+                                    </StackPanel>
                                     <!-- Application icons -->
                                     <ListView MaxWidth="350" x:Name="Applications" SelectedItem="{Binding SelectedApp}"
                                               HorizontalContentAlignment="Stretch"

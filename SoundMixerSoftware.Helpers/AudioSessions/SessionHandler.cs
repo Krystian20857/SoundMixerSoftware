@@ -155,11 +155,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 RequestedSliders.Add(new List<string>());
             }
 
-            foreach (var sliderStruct in ProfileHandler.SelectedProfile.Sliders)
+            var sliders = ProfileHandler.SelectedProfile.Sliders;
+            for (var n = 0; n < sliders.Count; n++)
             {
-                foreach (var session in sliderStruct.Applications)
+                var slider = sliders[n];
+                foreach (var session in slider.Applications)
                 {
-                    AddSlider(sliderStruct.Index, session);
+                    AddSlider(n, session);
                 }
             }
         }

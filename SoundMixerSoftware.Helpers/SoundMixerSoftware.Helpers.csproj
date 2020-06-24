@@ -50,6 +50,7 @@
     <Compile Include="Converters\BoolInvertConverter.cs" />
     <Compile Include="Converters\HexConverter.cs" />
     <Compile Include="Converters\IconConverter.cs" />
+    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Device\ConnectionStructs.cs" />
     <Compile Include="Device\DeviceHandler.cs" />
     <Compile Include="Device\DeviceHandlerGlobal.cs" />
@@ -88,6 +89,7 @@
       <HintPath>..\packages\Notifications.Wpf.Updated.0.1.1\lib\net461\Notifications.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
