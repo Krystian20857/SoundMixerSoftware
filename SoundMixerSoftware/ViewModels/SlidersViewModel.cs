@@ -118,10 +118,12 @@ namespace SoundMixerSoftware.ViewModels
                 var app = apps[n];
                 if (app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var n1 = n;
+                    var n_ = n;
+                    if (apps.ElementAt(n) == null)
+                        continue;
                     Execute.OnUIThread(() =>
                     {
-                        apps.RemoveAt(n1);
+                        apps.RemoveAt(n_);
                         apps.Add(TranslateModel(e));
                     });
                 }
@@ -140,6 +142,8 @@ namespace SoundMixerSoftware.ViewModels
                     if (app.SessionState == SessionState.Disconnected && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
+                        if (apps.ElementAt(n) == null)
+                            continue;
                         apps.RemoveAt(n);
                         apps.Add(new SessionModel
                         {

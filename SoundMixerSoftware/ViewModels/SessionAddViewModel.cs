@@ -246,7 +246,8 @@ namespace SoundMixerSoftware.ViewModels
             if(profile.Sliders == null)
                 profile.Sliders = new List<SliderStruct>();
             if(profile.Sliders.Count <= _sliderIndex)
-                profile.Sliders.Add(new SliderStruct());
+                for(var n = profile.Sliders.Count; n < _sliderIndex + 1; n++)
+                    profile.Sliders.Add(new SliderStruct());
 
             try
             {
