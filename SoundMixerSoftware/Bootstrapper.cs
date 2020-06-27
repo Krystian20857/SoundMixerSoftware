@@ -14,7 +14,11 @@ using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.ViewModels;
+using SoundMixerSoftware.Views;
+using SoundMixerSoftware.Win32.Utils;
+using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
+using Message = System.Windows.Forms.Message;
 
 namespace SoundMixerSoftware
 {
@@ -32,37 +36,53 @@ namespace SoundMixerSoftware
         #region Public Static Properties
 
         public static TaskbarIcon TaskbarIcon { get; set; }
-        public static Mutex Mutex { get; set; } = new Mutex(true, "{40F97157-0940-4877-A018-37B994816DD7}");
+        
 
         #endregion
         
         #region Private Fields
         
         private readonly SimpleContainer _container = new SimpleContainer();
+        private StarterHelper _starter = new StarterHelper();
+        private IWindowManager _windowManager = new WindowManager();
 
         #endregion
         
         #region Public Fields
-        
+
         public LocalManager LocalManager = new LocalManager(typeof(LocalContainer));
-        
+
         #endregion
         
         public Bootstrapper()
         {
-            RegisterExceptionHandler();
-            if (Mutex.WaitOne(TimeSpan.Zero, true))
-            {
-                LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
-                LocalManager.ResolveLocal();
-                Initialize();
-                Mutex.ReleaseMutex();
-            }
+            _starter.StartApplication += StarterOnStartApplication;
+            _starter.BringWindowToFront += StarterOnBringWindowToFront;
+            _starter.ExitAppliation += StarterOnExitAppliation;
+            _starter.CheckInstances();
+        }
+
+        private void StarterOnExitAppliation(object sender, EventArgs e)
+        {
+           Application.Shutdown(0x04);
+        }
+
+        private void StarterOnBringWindowToFront(object sender, EventArgs e)
+        {
+            var mainWindow = IoC.Get<MainViewModel>();
+            var view = mainWindow.GetView() as MainView;
+            if (!mainWindow.IsActive)
+                _windowManager.ShowWindowAsync(mainWindow);
             else
-            {
-                MessageBox.Show("Only one instance can be running in the same time.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Application.Current.Shutdown();
-            }
+                view.WindowState = WindowState.Normal;
+        }
+
+        private void StarterOnStartApplication(object sender, EventArgs e)
+        {
+            LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
+            LocalManager.ResolveLocal();
+            RegisterExceptionHandler();
+            Initialize();
         }
 
         protected override object GetInstance(Type service, string key) => _container.GetInstance(service, key);

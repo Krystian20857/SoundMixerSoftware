@@ -14,7 +14,7 @@ namespace SoundMixerSoftware.Win32.Win32
         /// Synthesizes keystrokes, mouse motions, and button clicks.
         /// </summary>
         [DllImport("user32.dll")]
-        internal static extern uint SendInput(uint nInputs,
+        public static extern uint SendInput(uint nInputs,
             [MarshalAs(UnmanagedType.LPArray), In] NativeStructs.INPUT[] pInputs, int cbSize);
 
         [DllImport("user32.dll")]
@@ -58,5 +58,18 @@ namespace SoundMixerSoftware.Win32.Win32
         public static extern uint GetImmersiveColorTypeFromName(IntPtr pName);
         [DllImport("uxtheme.dll", EntryPoint = "#98")]
         public static extern int GetImmersiveUserColorSetPreference(bool bForceCheckRegistry, bool bSkipCheckOnFail);
+        
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", EntryPoint="FindWindow", SetLastError = true)]
+        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
     }
 }
