@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Windows;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
-using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -34,7 +30,6 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Helps with audio devices enumeration.
         /// </summary>
         private MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
-        private string _lastDefaultDevice = string.Empty;
         private Dictionary<string, VolumeHandler> _volumeHandlers = new Dictionary<string, VolumeHandler>();
         
         #endregion
@@ -62,6 +57,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// Gets default multimedia input device.
         /// </summary>
         public MMDevice DefaultInput => _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
+
+        public string DefaultInputID;
+        public string DefaultOutputID;
 
         /// <summary>
         /// Gets all devices.
@@ -109,6 +107,8 @@ namespace SoundMixerSoftware.Common.AudioLib
             _deviceEnumerator.RegisterEndpointNotificationCallback(this);
             foreach (var device in AllDevices)
                 RegisterEvents(device);
+            DefaultInputID = DefaultInput.ID;
+            DefaultOutputID = DefaultOutput.ID;
         }
 
         #endregion
@@ -175,11 +175,11 @@ namespace SoundMixerSoftware.Common.AudioLib
         
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            if (defaultDeviceId != _lastDefaultDevice)
-            {
-                _lastDefaultDevice = defaultDeviceId;
-                DefaultDeviceChange?.Invoke(_deviceEnumerator.GetDevice(defaultDeviceId), new DefaultDeviceChangedArgs(flow, role));
-            }
+            if (flow == DataFlow.Render)
+                DefaultOutputID = string.Copy(defaultDeviceId);
+            else if (flow == DataFlow.Capture)
+                DefaultInputID = string.Copy(defaultDeviceId);
+            DefaultDeviceChange?.Invoke(defaultDeviceId, new DefaultDeviceChangedArgs(flow, role));
         }
 
         public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key)

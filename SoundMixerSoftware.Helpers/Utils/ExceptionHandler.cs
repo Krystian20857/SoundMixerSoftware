@@ -10,14 +10,14 @@ namespace SoundMixerSoftware.Helpers.Utils
     /// </summary>
     public static class ExceptionHandler
     {
-
         /// <summary>
-        /// Logs exception and inform user.
+        /// Logs exception and notify user.
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="exception"></param>
         public static void HandleException(Logger logger,Exception exception)
         {
-            logger.Error(exception);
+            logger?.Error(exception);
             if (!ConfigHandler.ConfigStruct.Notification.EnableNotifications)
                 return;
             var exceptionNotification = new ExceptionNotification();

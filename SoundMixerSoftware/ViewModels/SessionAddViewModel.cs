@@ -171,7 +171,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         private void CreateDefault()
         {
-            Execute.OnUIThread(() =>
+            Execute.OnUIThreadAsync(async () =>
             {
                 DefaultDevices.Clear();
                 DefaultDevices.Add(new SessionModel
@@ -221,21 +221,22 @@ namespace SoundMixerSoftware.ViewModels
         /// Add audio session to Sessions tab.
         /// </summary>
         /// <param name="process"></param>
+        /// <param name="session"></param>
         private void AddSession(AudioSessionControl session)
         {
-            if (!ProcessUtils.IsAlive((int)session.GetProcessID))
+            if (!ProcessUtils.IsAlive((int) session.GetProcessID))
                 return;
             var process = Process.GetProcessById((int) session.GetProcessID);
 
 
-                Sessions.Add(new SessionModel()
-                {
-                    Name = process.ProcessName,
-                    Image = process.GetIcon().ToImageSource(),
-                    ID = session.GetSessionIdentifier,
-                });
+            Sessions.Add(new SessionModel()
+            {
+                Name = process.ProcessName,
+                Image = process.GetIcon().ToImageSource(),
+                ID = session.GetSessionIdentifier,
+            });
         }
-        
+
         /// <summary>
         /// Occurs when Add Button has clicked.
         /// </summary>

@@ -121,6 +121,7 @@ namespace SoundMixerSoftware.Common.Communication
                     var command = _buffer.Peek();
                     if (!_typeRegistry.ContainsKey(command))
                     {
+                        _buffer.Clear();
                         return;
                     }
                     var (type, size) = _typeRegistry[command];

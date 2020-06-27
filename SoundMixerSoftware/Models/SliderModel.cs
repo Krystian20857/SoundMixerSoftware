@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
 using NLog;
@@ -144,10 +143,10 @@ namespace SoundMixerSoftware.Models
             Execute.OnUIThread(() =>
             {
                 var device = sender as MMDevice;
-                string deviceID = string.Copy(device.ID);
+                var deviceID = string.Copy(device.ID);
                 if (Applications.Any(x => x.ID == deviceID ||
-                                          (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInput.ID) ||
-                                          (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutput.ID)))
+                                          (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInputID) ||
+                                          (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutputID)))
                 {
                     var volume = (int) Math.Floor(e.Volume * 100.0F);
 

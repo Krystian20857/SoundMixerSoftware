@@ -47,6 +47,7 @@
       <Compile Include="Wrapper\NativeWindowWrapper.cs" />
       <Compile Include="Wrapper\SystemVersion.cs" />
       <Compile Include="Wrapper\ThemeWrapper.cs" />
+      <Compile Include="Wrapper\WindowWrapper.cs" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Microsoft.CSharp" />

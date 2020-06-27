@@ -43,6 +43,10 @@ namespace SoundMixerSoftware.Common.Communication.Serial
         /// Fires when new data arrives.
         /// </summary>
         public event EventHandler<SerialDataReceivedArgs> DataReceived;
+        /// <summary>
+        /// Fires when exception has throws while serial connection.
+        /// </summary>
+        public event EventHandler<Exception> ExceptionOccurs;
 
         #endregion
         
@@ -109,6 +113,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
             catch (Exception ex)
             {
                 Logger.Error(ex);
+                ExceptionOccurs?.Invoke(this, ex);
                 return false;
             }
         }

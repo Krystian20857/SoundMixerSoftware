@@ -11,6 +11,7 @@ using NAudio.MediaFoundation;
 using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.USBLib;
 using SoundMixerSoftware.Win32.Utils;
 using SoundMixerSoftware.Win32.Win32;
@@ -114,6 +115,7 @@ namespace SoundMixerSoftware.Helpers.Device
             
             _serialConnection = new SerialConnection(ConfigHandler.ConfigStruct.Hardware.SerialConfig);
             _serialConnection.DeviceConnected += SerialConnectionOnDeviceConnected;
+            _serialConnection.ExceptionOccurs += SerialConnectionOnExceptionOccurs;
             
             _usbDevice.DeviceArrive += UsbDeviceOnDeviceArrive;
             _usbDevice.DeviceRemove += UsbDeviceOnDeviceRemove;
@@ -181,6 +183,11 @@ namespace SoundMixerSoftware.Helpers.Device
         internal void RegisterTypes()
         {
             RegisterType(0x03, typeof(DeviceIdResponse));
+        }
+        
+        private void SerialConnectionOnExceptionOccurs(object sender, Exception e)
+        {
+            ExceptionHandler.HandleException(null, e);
         }
 
         /// <summary>

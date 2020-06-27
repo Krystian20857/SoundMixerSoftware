@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows;
+using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.AudioLib.SliderLib;
@@ -48,10 +48,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             foreach (var sessionEnumerator in SessionEnumerators)
                 sessionEnumerator.Value.Dispose();
             SessionEnumerators.Clear();
-            
+
             DeviceEnumerator.Dispose();
             DeviceEnumerator = new DeviceEnumerator();
-            
+
             foreach (var device in DeviceEnumerator.OutputDevices)
             {
                 var sessionEnum = new SessionEnumerator(device);
@@ -59,8 +59,18 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
                 SessionEnumerators.Add(device.ID, sessionEnum);
             }
-            
+
             SessionAdded += OnSessionAdded;
+            DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
+        }
+
+        private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var device = DeviceEnumerator.GetDeviceById(sender as string);
+                Debug.WriteLine($"Default Device Changed: {device.FriendlyName}");
+            });
         }
 
         private static void SessionEnumeratorOnSessionExited(object sender, string e)
