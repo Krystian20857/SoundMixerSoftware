@@ -30,7 +30,7 @@ namespace SoundMixerSoftware
 
         public event EventHandler BringWindowToFront;
         public event EventHandler StartApplication;
-        public event EventHandler ExitAppliation;
+        public event EventHandler ExitApplciation;
         
         #endregion
         
@@ -57,7 +57,7 @@ namespace SoundMixerSoftware
             else
             {
                 NativeMethods.PostMessage((IntPtr)0xFFFF, WM_SETFOREGROUND, IntPtr.Zero, IntPtr.Zero);
-                ExitAppliation?.Invoke(this, EventArgs.Empty);
+                ExitApplciation?.Invoke(this, EventArgs.Empty);
             }
 
             return isAlone;

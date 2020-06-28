@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using Caliburn.Micro;
+using NLog.LayoutRenderers;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Win32.USBLib;
@@ -13,6 +15,7 @@ namespace SoundMixerSoftware.ViewModels
         #region Private Fields
         
         private BindableCollection<USBID> _USBIds = new BindableCollection<USBID>();
+        private USBID _selectedItem;
         
         #endregion
         
@@ -27,6 +30,7 @@ namespace SoundMixerSoftware.ViewModels
             set
             {
                 _USBIds = value;
+                NotifyOfPropertyChange(nameof(USBIds));
             }
         }
 
@@ -42,7 +46,19 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Currently Selected USBID.
         /// </summary>
-        public USBID SelectedItem { get; set; }
+        public USBID SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                _selectedItem = value;
+                if (value == null) return;
+                Vid = value.Vid;
+                NotifyOfPropertyChange(nameof(Vid));
+                Pid = value.Pid;
+                NotifyOfPropertyChange(nameof(Pid));
+            }
+        }
 
         #endregion
         
@@ -68,13 +84,15 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Save()
         {
+            var usbIds = ConfigHandler.ConfigStruct.Hardware.UsbIDs;
             var usbId = new USBID
             {
                 Pid = Pid,
                 Vid = Vid
             };
+            if (usbIds.Any(x => x.Pid == usbId.Pid && x.Vid == usbId.Vid)) return;
             USBIds.Add(usbId);
-            ConfigHandler.ConfigStruct.Hardware.UsbIDs.Add(usbId);
+            usbIds.Add(usbId);
             ConfigHandler.SaveConfig();
         }
 
@@ -91,7 +109,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Occurs when Cancel button has clicked.
         /// </summary>
-        public void Cancel()
+        public void Close()
         {
             TryCloseAsync();
         }

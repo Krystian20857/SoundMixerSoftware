@@ -1,24 +1,18 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows;
 using Caliburn.Micro;
 using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
-using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Utils;
-using SoundMixerSoftware.Overlay.OverlayWindow;
-using SoundMixerSoftware.Overlay.Resource;
+using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Views;
-using SoundMixerSoftware.Win32.Utils;
-using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
-using Message = System.Windows.Forms.Message;
 
 namespace SoundMixerSoftware
 {
@@ -58,11 +52,11 @@ namespace SoundMixerSoftware
         {
             _starter.StartApplication += StarterOnStartApplication;
             _starter.BringWindowToFront += StarterOnBringWindowToFront;
-            _starter.ExitAppliation += StarterOnExitAppliation;
+            _starter.ExitApplciation += StarterOnExitApplication;
             _starter.CheckInstances();
         }
 
-        private void StarterOnExitAppliation(object sender, EventArgs e)
+        private void StarterOnExitApplication(object sender, EventArgs e)
         {
            Application.Shutdown(0x04);
         }
@@ -93,6 +87,8 @@ namespace SoundMixerSoftware
 
         protected override void Configure()
         {
+            ParserHelper.ConfigureShortCuts();
+            
             _container.Singleton<IWindowManager, WindowManager>();
             _container.Singleton<IEventAggregator, EventAggregator>();
             

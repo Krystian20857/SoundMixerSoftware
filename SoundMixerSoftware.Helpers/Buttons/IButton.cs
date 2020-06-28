@@ -5,5 +5,6 @@
         ButtonFunction Key { get; }
         string Name { get; }
         bool Clicked(int index);
+        //Create property container.
     }
 }

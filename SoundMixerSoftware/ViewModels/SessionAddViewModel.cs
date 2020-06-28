@@ -74,7 +74,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Currently Selected Audio Session
         /// </summary>
-        public SessionModel SelectedSession { get; set; } = new SessionModel();
+        public SessionModel SelectedSession { get; set; }// = new SessionModel();
 
         public BindableCollection<SessionModel> DeviceSessions
         {
@@ -242,6 +242,8 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void AddClick()
         {
+            if (SelectedSession == null)
+                return;
             var profile = ProfileHandler.SelectedProfile;
 
             if(profile.Sliders == null)

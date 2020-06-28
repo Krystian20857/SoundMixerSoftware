@@ -99,6 +99,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Input\KeyFormatter.cs" />
+    <Compile Include="Input\KeyTrigger.cs" />
     <Compile Include="Models\ButtonModel.cs" />
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\ITabModel.cs" />
@@ -114,6 +116,7 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="StarterHelper.cs" />
+    <Compile Include="Utils\ParserHelper.cs" />
     <Compile Include="ViewModels\ButtonsViewModel.cs" />
     <Compile Include="ViewModels\DevicesViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

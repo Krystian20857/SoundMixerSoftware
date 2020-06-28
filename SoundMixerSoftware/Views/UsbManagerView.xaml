@@ -8,13 +8,15 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        Title="Usb Manager" Height="250" Width="400" Icon="{StaticResource SpeakerIcon}">
+        Title="Usb Manager" Height="250" Width="400" Icon="{StaticResource SpeakerIcon}"
+        cal:Message.Attach="[Shortcut Enter] = [Action Save()]">
     <Window.Resources>
         <converters:HexConverter x:Key="HexConverter"/>
     </Window.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" Margin="10" Orientation="Vertical">
-            <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="5">
+            <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="5"
+                    cal:Message.Attach="[Shortcut Delete] = [Action Remove()]">
                 <ListView SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="100" HorizontalContentAlignment="Stretch" x:Name="USBIds">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -33,12 +35,12 @@
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBox Margin="5"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Text="{Binding Path=Vid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
+                         Text="{Binding Path=Vid,Converter={StaticResource HexConverter}, Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="VID(Hex)"
                          Width="100" />
                 <TextBox Margin="5"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Text="{Binding Path=Pid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
+                         Text="{Binding Path=Pid,Converter={StaticResource HexConverter}, Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="PID(Hex)"
                          Width="100" />
             </StackPanel>
@@ -54,10 +56,10 @@
                         Width="100"
                         Content="Remove" />
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                        cal:Message.Attach="[Event Click] = [Action Cancel()]"
+                        cal:Message.Attach="[Event Click] = [Action Close()]"
                         Margin="5,0"
                         Width="100"
-                        Content="Cancel" />
+                        Content="Close" />
             </StackPanel>
         </StackPanel>
     </Grid>

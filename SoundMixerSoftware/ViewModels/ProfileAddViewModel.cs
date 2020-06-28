@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Windows.Forms;
 using Caliburn.Micro;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
+using Screen = Caliburn.Micro.Screen;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -72,9 +74,9 @@ namespace SoundMixerSoftware.ViewModels
             if (_editMode)
             {
                 model.Guid = CreatedProfile.Guid;
-                ProfileHandler.ProfileManager.Profiles[model.Guid].ButtonCount = profile.ButtonCount;
-                ProfileHandler.ProfileManager.Profiles[model.Guid].SliderCount = profile.SliderCount;
-                ProfileHandler.ProfileManager.Save(model.Guid);
+                ProfileHandler.SelectedProfile.ButtonCount = profile.ButtonCount;
+                ProfileHandler.SelectedProfile.SliderCount = profile.SliderCount;
+                ProfileHandler.SaveSelectedProfile();
                 ProfileHandler.OnProfileChanged(model.Guid);
                 CreatedProfile = model;
             }

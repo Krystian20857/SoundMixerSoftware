@@ -62,6 +62,7 @@
       <Compile Include="Extension\ICollectionExtension.cs" />
       <Compile Include="Extension\IconExtension.cs" />
       <Compile Include="Extension\ProcessExtension.cs" />
+      <Compile Include="Extension\StringExtension.cs" />
       <Compile Include="LocalSystem\LocalContainerAttribute.cs" />
       <Compile Include="LocalSystem\LocalManager.cs" />
       <Compile Include="LocalSystem\PathAttribute.cs" />
