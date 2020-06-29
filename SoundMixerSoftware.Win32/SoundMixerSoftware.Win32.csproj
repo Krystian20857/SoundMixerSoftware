@@ -37,7 +37,6 @@
       <Compile Include="USBLib\USBDescriptor.cs" />
       <Compile Include="USBLib\USBDevice.cs" />
       <Compile Include="USBLib\USBID.cs" />
-      <Compile Include="Utils\KeyHelper.cs" />
       <Compile Include="Win32\NativeClasses.cs" />
       <Compile Include="Win32\NativeEnums.cs" />
       <Compile Include="Win32\NativeMethods.cs" />
@@ -50,6 +49,10 @@
       <Compile Include="Wrapper\WindowWrapper.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\packages\GregsStack.InputSimulatorStandard.1.2.0-beta0003\lib\netstandard2.0\GregsStack.InputSimulatorStandard.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
       <Reference Include="Microsoft.CSharp" />
       <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
         <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>

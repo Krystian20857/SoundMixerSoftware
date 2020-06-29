@@ -1,4 +1,6 @@
-﻿using SoundMixerSoftware.Win32.Utils;
+﻿using GregsStack.InputSimulatorStandard;
+using GregsStack.InputSimulatorStandard.Native;
+using SoundMixerSoftware.Win32.Utils;
 using SoundMixerSoftware.Win32.Win32;
 using  VirtualKeyShort = SoundMixerSoftware.Win32.Win32.NativeEnums.VirtualKeyShort;
 
@@ -8,11 +10,8 @@ namespace SoundMixerSoftware.Win32.Wrapper
     {
         #region Private Static Fields
         
-        private static readonly NativeStructs.INPUT PrevTractInput = KeyHelper.CreateKey(VirtualKeyShort.MEDIA_PREV_TRACK);
-        private static readonly NativeStructs.INPUT NextTractInput = KeyHelper.CreateKey(VirtualKeyShort.MEDIA_NEXT_TRACK);
-        private static readonly NativeStructs.INPUT PausePlayInput = KeyHelper.CreateKey(VirtualKeyShort.MEDIA_PLAY_PAUSE);
-        private static readonly NativeStructs.INPUT StopInput = KeyHelper.CreateKey(VirtualKeyShort.MEDIA_STOP);
-
+        private static readonly KeyboardSimulator _keyboardSimulator = new KeyboardSimulator();
+        
         #endregion
         
         #region Public Static Methods
@@ -21,7 +20,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         public static void PrevTrack()
         {
-            KeyHelper.KeyClick(PrevTractInput);
+            _keyboardSimulator.KeyPress(VirtualKeyCode.MEDIA_PREV_TRACK);
         }
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         public static void NextTrack()
         {
-            KeyHelper.KeyClick(NextTractInput);
+            _keyboardSimulator.KeyPress(VirtualKeyCode.MEDIA_NEXT_TRACK);
         }
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         public static void PauseResume()
         {
-            KeyHelper.KeyClick(PausePlayInput);
+            _keyboardSimulator.KeyPress(VirtualKeyCode.MEDIA_PLAY_PAUSE);
         }
         
         /// <summary>
@@ -45,7 +44,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         public static void Stop()
         {
-            KeyHelper.KeyClick(StopInput);
+            _keyboardSimulator.KeyPress(VirtualKeyCode.MEDIA_STOP);
         }
         
         #endregion
