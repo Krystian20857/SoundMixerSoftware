@@ -27,12 +27,12 @@ namespace SoundMixerSoftware.Helpers.Overlay
 
         public static void ShowVolume(float volume)
         {
-            HandleOverlay<VolumeOverlay>(window => window.Volume = volume);
+            HandleOverlay<VolumeOverlay>((window, n) => window.Volume = volume);
         }
 
         public static void ShowMute(bool mute)
         {
-            HandleOverlay<MuteWindow>(window => window.IsMuted = mute);
+            HandleOverlay<MuteWindow>((window, n) => window.IsMuted = mute);
         }
 
         public static void SetFadeTime(int fadeTime)
@@ -41,15 +41,16 @@ namespace SoundMixerSoftware.Helpers.Overlay
                 overlay.FadeTime = fadeTime;
         }
 
-        private static void HandleOverlay<T>(Action<T> valueChange)
+        private static void HandleOverlay<T>(Action<T, int> valueChange)
         {
             if (!ConfigHandler.ConfigStruct.Overlay.EnableOverlay)
                 return;
-            foreach (var overlay in _overlays)
+            for (var n = 0;n < _overlays.Count; n++)
             {
+                var overlay = _overlays[n];
                 if (overlay is T genericOverlay)
                 {
-                    valueChange(genericOverlay);
+                    valueChange(genericOverlay, n);
                     overlay.ShowWindow();
                 }
                 else

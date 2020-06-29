@@ -171,7 +171,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         private void CreateDefault()
         {
-            Execute.OnUIThreadAsync(async () =>
+            Execute.OnUIThread( () =>
             {
                 DefaultDevices.Clear();
                 DefaultDevices.Add(new SessionModel
@@ -273,7 +273,7 @@ namespace SoundMixerSoftware.ViewModels
             }
             catch (Exception exception)
             {
-                ExceptionHandler.HandleException(Logger, exception);
+                ExceptionHandler.HandleException(Logger, exception.Message,exception);
             }
 
             TryCloseAsync();

@@ -7,15 +7,6 @@ namespace SoundMixerSoftware.Common.Cache
 {
     public class IconCache : ICache<Icon>
     {
-        #region Logger
-
-        /// <summary>
-        /// Current Class Logger
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        
-        #endregion
-        
         #region Private Methods
 
         #endregion

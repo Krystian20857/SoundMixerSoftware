@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using Caliburn.Micro;
 using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
@@ -23,14 +25,16 @@ namespace SoundMixerSoftware
         /// <summary>
         /// Current Class Logger
         /// </summary>
-        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
         
         #region Public Static Properties
 
+        /// <summary>
+        /// Global application Tray.
+        /// </summary>
         public static TaskbarIcon TaskbarIcon { get; set; }
-        
 
         #endregion
         
@@ -44,6 +48,9 @@ namespace SoundMixerSoftware
         
         #region Public Fields
 
+        /// <summary>
+        /// Current bootstrapper LocalManager.
+        /// </summary>
         public LocalManager LocalManager = new LocalManager(typeof(LocalContainer));
 
         #endregion
@@ -52,13 +59,13 @@ namespace SoundMixerSoftware
         {
             _starter.StartApplication += StarterOnStartApplication;
             _starter.BringWindowToFront += StarterOnBringWindowToFront;
-            _starter.ExitApplciation += StarterOnExitApplication;
+            _starter.ExitApplication += StarterOnExitApplication;
             _starter.CheckInstances();
         }
 
         private void StarterOnExitApplication(object sender, EventArgs e)
         {
-           Application.Shutdown(0x04);
+            Application.Shutdown(0x04);        
         }
 
         private void StarterOnBringWindowToFront(object sender, EventArgs e)
@@ -118,19 +125,20 @@ namespace SoundMixerSoftware
             base.OnExit(sender, e);
         }
 
+        /// <summary>
+        /// Register unhandled exception "notifications".
+        /// </summary>
         private void RegisterExceptionHandler()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-        }
-
-        private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            var exceptionObject = e.ExceptionObject;
-            if (exceptionObject is Exception exception)
-                ExceptionHandler.HandleException(Logger, exception);
-            else
-                Logger.Error(exceptionObject.ToString());
-            Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                var exceptionObject = args.ExceptionObject;
+                if (exceptionObject is Exception exception)
+                    ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!!!" ,exception);
+                else
+                    Logger.Error(exceptionObject.ToString());
+                Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
+            };
         }
     }
 }

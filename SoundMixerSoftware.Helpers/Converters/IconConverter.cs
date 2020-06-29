@@ -5,6 +5,9 @@ using MaterialDesignThemes.Wpf;
 
 namespace SoundMixerSoftware.Helpers.Converters
 {
+    /// <summary>
+    /// Converts boolean to two icons.
+    /// </summary>
     [ValueConversion(typeof(bool), typeof(PackIconKind))]
     public class IconConverter : BaseConverter, IValueConverter
     {

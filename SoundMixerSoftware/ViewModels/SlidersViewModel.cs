@@ -77,6 +77,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
 
             Sliders.Clear();
+            
             var sliders = ProfileHandler.SelectedProfile.Sliders;
             var sliderCount = ProfileHandler.SelectedProfile.SliderCount;
             var modified = false;

@@ -14,15 +14,6 @@ namespace SoundMixerSoftware.Common.AudioLib
         public static readonly Guid VolumeUUID = new Guid("DBD9BCEE-06FB-44E5-9842-53C9A309782A");
         
         #endregion
-        
-        #region Logger
-
-        /// <summary>
-        /// Current Class Logger.
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        #endregion
 
         #region Private Fields
 

@@ -8,18 +8,18 @@ using SoundMixerSoftware.Helpers.LocalSystem;
 
 namespace SoundMixerSoftware.Helpers.NotifyWrapper
 {
-    public class ExceptionNotification : INotification<Exception>
+    public class ExceptionNotification : INotification<string>
     {
         #region Constants
         
-        public const string EXCEPTION_KEY = "EXCEPTION";
+        public const string MESSAGE_KEY = "MESSAGE";
         
         #endregion
         
         #region Fields
 
         private NotificationManager _manager = new NotificationManager();
-        private Exception _exception;
+        private string _message;
         
         #endregion
         
@@ -41,15 +41,15 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
         
         #region Impelemted Methods
 
-        public Exception GetValue(string key)
+        public string GetValue(string key)
         {
-            return key.Equals(EXCEPTION_KEY) ? _exception : null;
+            return key.Equals(MESSAGE_KEY) ? _message : null;
         }
 
-        public void SetValue(string key, Exception value)
+        public void SetValue(string key, string value)
         {
-            if (key.Equals(EXCEPTION_KEY))
-                _exception = value;
+            if (key.Equals(MESSAGE_KEY))
+                _message = value;
         }
 
         public bool RemoveValue(string key)
@@ -57,7 +57,7 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
             throw new NotImplementedException();
         }
 
-        public Exception[] GetValues()
+        public string[] GetValues()
         {
             throw new NotImplementedException();
         }
@@ -72,7 +72,7 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
             var content = new NotificationContent
             {
                 Type = NotificationType.Error,
-                Title = $"Error: {_exception.Message}",
+                Title = $"Error: {_message}",
                 Message = "For more info check logs or click this notification."
             };
             

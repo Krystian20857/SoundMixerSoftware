@@ -22,7 +22,9 @@ namespace SoundMixerSoftware.Helpers.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            if(targetType != typeof(bool))
+                throw new InvalidOperationException("type must be bool.");
+            return !(bool) value;
         }
         
         #endregion

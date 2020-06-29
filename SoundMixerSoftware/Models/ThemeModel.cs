@@ -6,7 +6,13 @@ namespace SoundMixerSoftware.Models
     {
         #region Properties
 
+        /// <summary>
+        /// Primary color fo theme.
+        /// </summary>
         public SolidColorBrush PrimaryColor { get; set; }
+        /// <summary>
+        /// Theme name.
+        /// </summary>
         public string ThemeName { get; set; }
 
         #endregion

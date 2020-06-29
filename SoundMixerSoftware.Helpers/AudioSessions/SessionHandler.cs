@@ -42,27 +42,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         {
             ReloadSessionHandler();
         }
-
-        public static void ReloadSessionHandler()
-        {
-            foreach (var sessionEnumerator in SessionEnumerators)
-                sessionEnumerator.Value.Dispose();
-            SessionEnumerators.Clear();
-
-            DeviceEnumerator.Dispose();
-            DeviceEnumerator = new DeviceEnumerator();
-
-            foreach (var device in DeviceEnumerator.OutputDevices)
-            {
-                var sessionEnum = new SessionEnumerator(device);
-                sessionEnum.SessionCreated += SessionEnumeratorOnSessionCreated;
-                sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
-                SessionEnumerators.Add(device.ID, sessionEnum);
-            }
-
-            SessionAdded += OnSessionAdded;
-            DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
-        }
+        
+        #endregion
 
         private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
         {
@@ -99,8 +80,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             }
         }
 
-        #endregion
-        
         #region Private Events
 
         private static void OnSessionAdded(object sender, SliderAddedArgs e)
@@ -242,47 +221,90 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static void RemoveSlider(int index, Session session)
         {
             var sliders = Sliders[index];
-            if (session.SessionMode == SessionMode.Device)
+            switch (session.SessionMode)
             {
-                for (var n = 0; n < sliders.Count; n++)
+                case SessionMode.Device:
+                    TransformSlider<DeviceSlider>(index, (slider, sliderIndex) =>
+                    {
+                        if (slider.DeviceID == session.ID)
+                            sliders.RemoveAt(sliderIndex);
+                    });
+                    break;
+                
+                case SessionMode.Session:
                 {
-                    var slider = sliders[n];
-                    if(slider is DeviceSlider deviceSlider)
-                        if(deviceSlider.DeviceID == session.ID)
-                            sliders.RemoveAt(n);
+                    TransformSlider<SessionSlider>(index, (slider, sliderIndex) =>
+                    {
+                        if (slider.SessionID == session.ID)
+                            sliders.RemoveAt(sliderIndex);
+                    });
+                    break;
+                }
+                case SessionMode.DefaultInputDevice:
+                {
+                    TransformSlider<DefaultDeviceSlider>(index, (slider, sliderIndex) =>
+                    {
+                        if (!slider.IsDefaultOutput)
+                            sliders.RemoveAt(sliderIndex);
+                    });
+                    break;
+                }
+                case SessionMode.DefaultOutputDevice:
+                {
+                    TransformSlider<DefaultDeviceSlider>(index, (slider, sliderIndex) =>
+                    {
+                        if (slider.IsDefaultOutput)
+                            sliders.RemoveAt(sliderIndex);
+                    });
+
+                    break;
                 }
             }
-            else if (session.SessionMode == SessionMode.Session)
+        }
+        
+        /// <summary>
+        /// Reload entire session handler.
+        /// </summary>
+        public static void ReloadSessionHandler()
+        {
+            foreach (var sessionEnumerator in SessionEnumerators)
+                sessionEnumerator.Value.Dispose();
+            SessionEnumerators.Clear();
+
+            DeviceEnumerator.Dispose();
+            DeviceEnumerator = new DeviceEnumerator();
+
+            foreach (var device in DeviceEnumerator.OutputDevices)
             {
-                for (var n = 0; n < sliders.Count; n++)
-                {
-                    var slider = sliders[n];
-                    if(slider is SessionSlider sessionSlider)
-                        if(sessionSlider.SessionID == session.ID)
-                            sliders.RemoveAt(n);
-                }
+                var sessionEnum = new SessionEnumerator(device);
+                sessionEnum.SessionCreated += SessionEnumeratorOnSessionCreated;
+                sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
+                SessionEnumerators.Add(device.ID, sessionEnum);
             }
-            else if (session.SessionMode == SessionMode.DefaultInputDevice)
+
+            SessionAdded += OnSessionAdded;
+            DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
+        }
+        
+        #endregion
+        
+        #region Private Methods
+
+        /// <summary>
+        /// Find sliders in specified index and type.
+        /// </summary>
+        /// <param name="index">Index in sliders array.</param>
+        /// <typeparam name="T">Type of slider.</typeparam>
+        /// <returns>List of sliders.</returns>
+        private static void TransformSlider<T>(int index, Action<T, int> action) where T : IVirtualSlider
+        {
+            var sliders = Sliders[index];
+            for (var n = 0; n < sliders.Count; n++)
             {
-                for (var n = 0; n < sliders.Count; n++)
-                {
-                    var slider = sliders[n];
-                    if(slider is DefaultDeviceSlider sessionSlider)
-                        if(!sessionSlider.IsDefaultOutput)
-                            sliders.RemoveAt(n);
-                }
+                var slider = sliders[n];
+                if (slider is T virtualSlider)
+                    action.Invoke(virtualSlider, n);
             }
-            else if (session.SessionMode == SessionMode.DefaultOutputDevice)
-            {
-                for (var n = 0; n < sliders.Count; n++)
-                {
-                    var slider = sliders[n];
-                    if(slider is DefaultDeviceSlider sessionSlider)
-                        if(sessionSlider.IsDefaultOutput)
-                            sliders.RemoveAt(n);
-                }
-            }
-            
         }
         
         #endregion
@@ -293,7 +315,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public IVirtualSlider Slider { get; set; }
         public Session Session { get; set; }
         public int Index { get; set; }
-
         public SessionState SessionState { get; set; }
 
         public SliderAddedArgs(IVirtualSlider slider, Session session, int index, SessionState sessionState)

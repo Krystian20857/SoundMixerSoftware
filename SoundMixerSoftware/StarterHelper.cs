@@ -28,9 +28,18 @@ namespace SoundMixerSoftware
         
         #region Public Events
 
+        /// <summary>
+        /// Occurs when application instance need to be set as foreground window.
+        /// </summary>
         public event EventHandler BringWindowToFront;
+        /// <summary>
+        /// Occurs when any of applications instances are not running and can be safely started.  
+        /// </summary>
         public event EventHandler StartApplication;
-        public event EventHandler ExitApplciation;
+        /// <summary>
+        /// Occurs when another instance of application is running and started application need to be exited.
+        /// </summary>
+        public event EventHandler ExitApplication;
         
         #endregion
         
@@ -46,6 +55,10 @@ namespace SoundMixerSoftware
         
         #region Public Methods
 
+        /// <summary>
+        /// Check for running instances and fire events.
+        /// </summary>
+        /// <returns></returns>
         public bool CheckInstances()
         {
             var isAlone = _mutex.WaitOne(TimeSpan.Zero, true);
@@ -57,7 +70,7 @@ namespace SoundMixerSoftware
             else
             {
                 NativeMethods.PostMessage((IntPtr)0xFFFF, WM_SETFOREGROUND, IntPtr.Zero, IntPtr.Zero);
-                ExitApplciation?.Invoke(this, EventArgs.Empty);
+                ExitApplication?.Invoke(this, EventArgs.Empty);
             }
 
             return isAlone;

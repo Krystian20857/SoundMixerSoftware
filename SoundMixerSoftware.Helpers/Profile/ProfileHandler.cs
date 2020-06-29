@@ -23,6 +23,9 @@ namespace SoundMixerSoftware.Helpers.Profile
         
         #region Static Events
 
+        /// <summary>
+        /// Occurs when selected profile has changed.
+        /// </summary>
         public static event EventHandler<ProfileChangedEventArgs> ProfileChanged;
         
         private static void OnProfileChanged(object sender, ProfileChangedEventArgs e)
@@ -47,12 +50,19 @@ namespace SoundMixerSoftware.Helpers.Profile
 
         #region Public Static Methods
 
+        /// <summary>
+        /// Invoke profile change event.
+        /// </summary>
+        /// <param name="uuid"></param>
         public static void OnProfileChanged(Guid uuid)
         {
             SelectedGuid = uuid;
             ProfileChanged?.Invoke(null, new ProfileChangedEventArgs(uuid));
         }
 
+        /// <summary>
+        /// Save currently selected profile.
+        /// </summary>
         public static void SaveSelectedProfile()
         {
             ProfileManager.Save(SelectedGuid);

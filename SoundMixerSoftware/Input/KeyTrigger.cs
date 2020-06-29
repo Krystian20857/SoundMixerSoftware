@@ -4,9 +4,7 @@ using Microsoft.Xaml.Behaviors;
 
 namespace SoundMixerSoftware.Input
 {
-    /// <summary>
-    /// Code base on: https://github.com/Caliburn-Micro/Caliburn.Micro/blob/master/samples/scenarios/Scenario.KeyBinding/Input/KeyTrigger.cs
-    /// </summary>
+    // Code base on: https://github.com/Caliburn-Micro/Caliburn.Micro/blob/master/samples/scenarios/Scenario.KeyBinding/Input/KeyTrigger.cs
     public class KeyTrigger : TriggerBase<UIElement>
     {
         #region Dependency Properties

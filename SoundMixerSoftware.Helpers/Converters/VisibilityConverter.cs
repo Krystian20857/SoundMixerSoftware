@@ -6,6 +6,9 @@ using System.Windows.Data;
 
 namespace SoundMixerSoftware.Helpers.Converters
 {
+    /// <summary>
+    /// Converts boolean to wpf visibility.
+    /// </summary>
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class VisibilityConverter : BaseConverter, IValueConverter
     {

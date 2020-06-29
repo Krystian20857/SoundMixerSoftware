@@ -12,7 +12,7 @@ namespace SoundMixerSoftware.ViewModels
     {
         #region Private Fields
 
-        private bool _editMode;
+        private readonly bool _editMode;
         private DeviceModel _selectedDevice;
 
         #endregion

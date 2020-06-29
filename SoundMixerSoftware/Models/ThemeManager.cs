@@ -24,11 +24,19 @@ namespace SoundMixerSoftware.Models
         
         #region Methods
         
+        /// <summary>
+        /// Get current theme
+        /// </summary>
+        /// <returns></returns>
         public static ITheme GetTheme()
         {
             return _paletteHelper.GetTheme();
         }
 
+        /// <summary>
+        /// Set theme to specified one.
+        /// </summary>
+        /// <param name="themeName"></param>
         public static void SetTheme(string themeName)
         {
             var swatch = SwatchHelper.Swatches.First(x => x.Name.Equals(themeName));

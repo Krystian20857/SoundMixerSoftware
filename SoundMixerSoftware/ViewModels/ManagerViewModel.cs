@@ -135,7 +135,6 @@ namespace SoundMixerSoftware.ViewModels
         {
             var model = sender as ProfileModel;
             Profiles.Remove(model);
-            var profiles = ProfileHandler.ProfileManager.Profiles;
             ProfileHandler.ProfileManager.Remove(model.Guid);
             ConfigHandler.ConfigStruct.Application.ProfilesOrder.Remove(model.Guid);
             ConfigHandler.SaveConfig();

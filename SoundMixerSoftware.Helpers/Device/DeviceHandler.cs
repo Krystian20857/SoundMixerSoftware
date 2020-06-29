@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using NAudio.MediaFoundation;
+using NLog;
 using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Helpers.Config;
@@ -21,6 +22,12 @@ namespace SoundMixerSoftware.Helpers.Device
 {
     public class DeviceHandler
     {
+        #region Current Class Logger
+
+        public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Fields
 
         /// <summary>
@@ -187,7 +194,7 @@ namespace SoundMixerSoftware.Helpers.Device
         
         private void SerialConnectionOnExceptionOccurs(object sender, Exception e)
         {
-            ExceptionHandler.HandleException(null, e);
+            ExceptionHandler.HandleException(Logger,  "Serial Connection Error" ,e);
         }
 
         /// <summary>

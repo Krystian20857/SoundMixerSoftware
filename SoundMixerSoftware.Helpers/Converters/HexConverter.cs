@@ -4,6 +4,9 @@ using System.Windows.Data;
 
 namespace SoundMixerSoftware.Helpers.Converters
 {
+    /// <summary>
+    /// Converts hex string to unsigned integer and vice versa.
+    /// </summary>
     [ValueConversion(typeof(uint), typeof(string))]
     public class HexConverter : BaseConverter, IValueConverter
     {

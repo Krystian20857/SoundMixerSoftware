@@ -57,6 +57,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
                 _lastVolume = Volume;
 
                 device.AudioEndpointVolume.MasterVolumeLevelScalar = _lastVolume;
+                device.Dispose();
             }
 
             if (IsMute != _lastMute)
@@ -66,6 +67,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
                 _lastMute = IsMute;
                 
                 device.AudioEndpointVolume.Mute = _lastMute;
+                device.Dispose();
             }
         }
 
