@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
@@ -66,11 +67,12 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     if (!(slidertmp is SessionSlider slider)) continue;
                     if (slider.SessionID == sessionControl.GetSessionIdentifier)
                     {
-                        var name = ProfileHandler.SelectedProfile.Sliders[n].Applications[x].Name;
+                        var sessionControlID = sessionControl.GetSessionIdentifier;
+                        var name = ProfileHandler.SelectedProfile.Sliders[n].Applications.First(session => session.ID.Equals(sessionControlID)).Name;
                         sliders.RemoveAt(x);
                         SessionDisconnected?.Invoke(null, new SliderAddedArgs(slider, new Session
                         {
-                            ID = sessionControl.GetSessionIdentifier,
+                            ID = sessionControlID,
                             Name = name,
                             SessionMode = SessionMode.Session
                         }, n, SessionState.Disconnected));
