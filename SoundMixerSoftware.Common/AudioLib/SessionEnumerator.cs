@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
@@ -107,10 +108,6 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         public event EventHandler<AudioSessionState> StateChanged;
         /// <summary>
-        /// Fires when session disconnected.
-        /// </summary>
-        public event EventHandler<AudioSessionDisconnectReason> SessionDisconnected;
-        /// <summary>
         /// Occurs when session process quits
         /// </summary>
         public event EventHandler<string> SessionExited;
@@ -147,7 +144,7 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         private void EventClientOnSessionDisconnected(object sender, AudioSessionDisconnectReason e)
         {
-            SessionDisconnected?.Invoke(sender, e);
+            SessionExited?.Invoke(this, (sender as AudioSessionControl)?.GetSessionIdentifier);
         }
 
         #endregion
@@ -293,20 +290,14 @@ namespace SoundMixerSoftware.Common.AudioLib
         private readonly string _id;
         private readonly Process _process;
         public event EventHandler<string> SessionExited;
-        
+
         public ExitHandler(uint pid, string id)
         {
-            if(pid == 0)
+            if (pid == 0)
                 return;
             _id = id;
-            _process = Process.GetProcessById((int)pid);
-            _process.EnableRaisingEvents = true;
-            _process.Exited += ProcessOnExited;
-        }
-
-        private void ProcessOnExited(object sender, EventArgs e)
-        {
-            SessionExited?.Invoke(this, _id);
+            _process = Process.GetProcessById((int) pid);
+            Task.Factory.StartNew(() => _process.WaitForExit()).ContinueWith(task => SessionExited?.Invoke(this, _id));
         }
     }
     

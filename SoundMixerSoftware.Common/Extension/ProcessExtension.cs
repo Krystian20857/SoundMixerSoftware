@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using SoundMixerSoftware.Win32.Win32;
@@ -55,8 +57,18 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns>string description.</returns>
         public static string GetPreciseName(this Process process)
         {
-            var label = FileVersionInfo.GetVersionInfo(process.GetFileName()).FileDescription;
-            if (label != null) return label;
+            var label = string.Empty;
+            try
+            {
+                label = FileVersionInfo.GetVersionInfo(process.GetFileName()).FileDescription;
+            }
+            catch (Win32Exception win32Exception)
+            {
+                //Win32 hresult for access denied: dec: -2147467259 hex: 0x80004005
+                if (win32Exception.ErrorCode == 0x80004005)
+                    label = process.ProcessName;
+            }
+            if (!string.IsNullOrWhiteSpace(label)) return label;
             var handle = FindSimilar(process).FirstOrDefault(x => x.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle ?? IntPtr.Zero;
             return handle == IntPtr.Zero ? null : WindowWrapper.GetWindowTitle(handle);
         }
