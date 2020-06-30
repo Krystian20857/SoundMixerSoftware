@@ -120,12 +120,12 @@ namespace SoundMixerSoftware.ViewModels
             
             _deviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
 
-            foreach (var device in _deviceEnumerator.OutputDevices)
+            foreach (var device in _deviceEnumerator.AllDevices)
             {
                 DeviceSessions.Add(new SessionModel
                 {
                     Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
-                    Name = device.FriendlyName,
+                    Name = $"{device.FriendlyName} - ({(device.DataFlow == DataFlow.Capture ? "Input" : "Output")})",
                     ID = device.ID,
                     SessionMode = SessionMode.Device,
                     DataFlow = device.DataFlow

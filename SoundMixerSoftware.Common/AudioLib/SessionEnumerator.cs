@@ -144,7 +144,7 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         private void EventClientOnSessionDisconnected(object sender, AudioSessionDisconnectReason e)
         {
-            SessionExited?.Invoke(this, (sender as AudioSessionControl)?.GetSessionIdentifier);
+            //SessionExited?.Invoke(this, (sender as AudioSessionControl)?.GetSessionIdentifier);
         }
 
         #endregion

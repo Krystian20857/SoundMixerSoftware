@@ -112,24 +112,23 @@ namespace SoundMixerSoftware.ViewModels
 
         private void SessionHandlerOnSessionDisconnected(object sender, SliderAddedArgs e)
         {
-
             var apps = Sliders[e.Index].Applications;
             for (var n = 0; n < apps.Count; n++)
             {
-                var app = apps[n];
-                if (app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
+                var n1 = n;
+                Execute.OnUIThread(() =>
                 {
-                    var n_ = n;
-                    if (apps.ElementAt(n) == null)
-                        continue;
-                    Execute.OnUIThread(() =>
+                    var app = apps[n1];
+                    if (app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        apps.RemoveAt(n_);
-                        apps.Add(TranslateModel(e));
-                    });
-                }
+                        if (apps.ElementAt(n1) != null)
+                        {
+                            apps.RemoveAt(n1);
+                            apps.Add(TranslateModel(e));
+                        }
+                    }
+                });
             }
-
         }
 
         private void SessionHandlerOnSessionActive(object sender, SessionActiveArgs e)
