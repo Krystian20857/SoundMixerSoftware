@@ -231,8 +231,8 @@ namespace SoundMixerSoftware.ViewModels
 
             Sessions.Add(new SessionModel()
             {
-                Name = process.ProcessName,
-                Image = process.GetIcon().ToImageSource(),
+                Name = process.GetPreciseName(),
+                Image = process.GetMainWindowIcon().ToImageSource(),
                 ID = session.GetSessionIdentifier,
             });
         }

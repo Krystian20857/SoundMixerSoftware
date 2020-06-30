@@ -4,6 +4,27 @@ namespace SoundMixerSoftware.Win32.Win32
 {
     public class NativeClasses
     {
+        public class GCL
+        {
+            public const int GCL_CBCLSEXTRA = -20;
+            public const int GCL_CBWNDEXTRA = -18;
+            public const int GCL_HBRBACKGROUND = -10;
+            public const int GCL_HCURSOR = -12;
+            public const int GCL_HICON = -14;
+            public const int GCL_HICONSM = -34;
+            public const int GCL_HMODULE = -16;
+            public const int GCL_MENUNAME = -8;
+            public const int GCL_STYLE = -26;
+            public const int GCL_WNDPROC = -24;
+        }
+
+        public class ICON
+        {
+            public const int ICON_SMALL = 0;
+            public const int ICON_BIG = 1;
+            public const int ICON_SMALL2 = 2;
+        }
+        
         /// <summary>
         /// taken from http://msdn.microsoft.com/en-us/library/windows/hardware/ff553412(v=vs.85).aspx
         /// </summary>

@@ -146,12 +146,13 @@ namespace SoundMixerSoftware.ViewModels
                         if (apps.ElementAt(n) == null)
                             continue;
                         apps.RemoveAt(n);
+                        var process = Process.GetProcessById((int) e.SessionControl.GetProcessID);
                         apps.Add(new SessionModel
                         {
                             ID = e.Session.ID,
-                            Image = System.Drawing.Icon.ExtractAssociatedIcon(Process.GetProcessById((int) e.SessionControl.GetProcessID).GetFileName()).ToImageSource(),
+                            Image = process.GetMainWindowIcon().ToImageSource(),
                             SessionState = SessionState.Active,
-                            Name = $"{e.Session.Name} - {device.FriendlyName}",
+                            Name = $"{process.GetPreciseName()} - {device.FriendlyName}",
                             SessionMode = SessionMode.Session
                         });
                     }
@@ -191,6 +192,7 @@ namespace SoundMixerSoftware.ViewModels
                     var device = SessionHandler.DeviceEnumerator.GetDeviceById(session.ID);
                     model.Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource();
                     model.Name = device.FriendlyName;
+                    device.Dispose();
                 }
                 else if (session.SessionMode == SessionMode.Session)
                 {
@@ -200,11 +202,13 @@ namespace SoundMixerSoftware.ViewModels
                         model.Image = ExtractedIcons.FailedIcon.ToImageSource();
                         model.Name = $"{session.Name}(Device not available)";
                     }
-                    var pid = (int)SessionHandler.SessionEnumerators[deviceID].GetById(session.ID).GetProcessID;
-                    var process = Process.GetProcessById(pid);
+                    var audioSession = SessionHandler.SessionEnumerators[deviceID].GetById(session.ID);
+                    var process = Process.GetProcessById((int)audioSession.GetProcessID);
                     var device = SessionHandler.DeviceEnumerator.GetDeviceById(deviceID);
-                    model.Image = System.Drawing.Icon.ExtractAssociatedIcon(process.GetFileName()).ToImageSource();
-                    model.Name = $"{process.ProcessName} - {device.FriendlyName}";
+                    model.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
+                    model.Name = $"{process.GetPreciseName()} - {device.FriendlyName}";
+                    audioSession.Dispose();
+                    device.Dispose();
                 }
                 else if (session.SessionMode == SessionMode.DefaultInputDevice)
                 {

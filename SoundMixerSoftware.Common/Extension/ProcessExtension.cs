@@ -1,7 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
+using System.Windows;
 using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Common.Extension
 {
@@ -29,5 +34,39 @@ namespace SoundMixerSoftware.Common.Extension
         {
             return Icon.ExtractAssociatedIcon(process.GetFileName());
         }
+        
+        /// <summary>
+        /// Get main window icon of process. If process has not main window method returns icon of process file.
+        /// </summary>
+        /// <param name="process">target process.</param>
+        /// <returns>icon</returns>
+        public static Icon GetMainWindowIcon(this Process process)
+        {
+            var handle = FindSimilar(process).FirstOrDefault(x => x.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle ?? IntPtr.Zero;
+            if (handle == IntPtr.Zero)
+                return GetIcon(process);
+            return WindowWrapper.GetWindowIcon(handle);
+        }
+
+        /// <summary>
+        /// Gets string describing process default returns description from process file. If file does not contains description method will return main window title.
+        /// </summary>
+        /// <param name="process">target process.</param>
+        /// <returns>string description.</returns>
+        public static string GetPreciseName(this Process process)
+        {
+            var label = FileVersionInfo.GetVersionInfo(process.GetFileName()).FileDescription;
+            if (label != null) return label;
+            var handle = FindSimilar(process).FirstOrDefault(x => x.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle ?? IntPtr.Zero;
+            return handle == IntPtr.Zero ? null : WindowWrapper.GetWindowTitle(handle);
+        }
+
+        /// <summary>
+        /// Find processes with same name.
+        /// </summary>
+        /// <param name="process">target process.</param>
+        /// <returns>List of matched processes.</returns>
+        public static IEnumerable<Process> FindSimilar(this Process process) => Process.GetProcesses().Where(x => x.ProcessName.Equals(process.ProcessName));
+        
     }
 }
