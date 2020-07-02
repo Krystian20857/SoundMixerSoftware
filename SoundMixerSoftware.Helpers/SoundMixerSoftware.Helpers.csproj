@@ -39,11 +39,10 @@
     <Compile Include="AudioSessions\SessionHandler.cs" />
     <Compile Include="AudioSessions\SessionMode.cs" />
     <Compile Include="AudioSessions\SessionState.cs" />
-    <Compile Include="Buttons\ButtonFunction.cs" />
     <Compile Include="Buttons\ButtonHandler.cs" />
-    <Compile Include="Buttons\Functions\MediaButtons.cs" />
-    <Compile Include="Buttons\Functions\MuteButtons.cs" />
+    <Compile Include="Buttons\Functions\MediaFunction.cs" />
     <Compile Include="Buttons\IButton.cs" />
+    <Compile Include="Buttons\IButtonCreator.cs" />
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\ConfigStruct.cs" />
     <Compile Include="Converters\BaseConverter.cs" />

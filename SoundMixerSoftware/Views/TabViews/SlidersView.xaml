@@ -28,7 +28,11 @@
             <ItemsControl x:Name="Sliders" HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border cal:Message.Attach="[Shortcut Delete] = [Action RemoveClick($this)]" Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+                        <Border cal:Message.Attach="[Shortcut Delete] = [Action RemoveClick($this)]; [Shortcut Enter] = [ConfirmEdit($this)]" 
+                                Margin="5" 
+                                BorderBrush="DarkGray" 
+                                BorderThickness="2" 
+                                CornerRadius="5">
                             <DockPanel Height="100" LastChildFill="False">
                                 <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">

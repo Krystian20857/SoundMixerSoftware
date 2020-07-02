@@ -103,7 +103,9 @@
     <Compile Include="Input\KeyTrigger.cs" />
     <Compile Include="Models\ButtonModel.cs" />
     <Compile Include="Models\DeviceModel.cs" />
+    <Compile Include="Models\IButtonAddModel.cs" />
     <Compile Include="Models\ITabModel.cs" />
+    <Compile Include="Models\MediaFunctionModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\SessionModel.cs" />
     <Compile Include="Models\SliderModel.cs" />
@@ -117,41 +119,49 @@
     </Compile>
     <Compile Include="StarterHelper.cs" />
     <Compile Include="Utils\ParserHelper.cs" />
-    <Compile Include="ViewModels\ButtonsViewModel.cs" />
-    <Compile Include="ViewModels\DevicesViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\ManagerViewModel.cs" />
-    <Compile Include="ViewModels\ProfileAddViewModel.cs" />
-    <Compile Include="ViewModels\SessionAddViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\SlidersViewModel.cs" />
+    <Compile Include="ViewModels\ButtonViewModels\MediaButtonViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\ButtonsViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\DevicesViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\ManagerViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\SlidersViewModel.cs" />
     <Compile Include="ViewModels\TaskbarIconViewModel.cs" />
-    <Compile Include="ViewModels\UsbManagerViewModel.cs" />
-    <Compile Include="Views\ButtonsView.xaml.cs">
+    <Compile Include="ViewModels\WindowViewModels\ButtonAddViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\UsbManagerViewModel.cs" />
+    <Compile Include="Views\ButtonViews\MediaButtonView.xaml.cs">
+      <DependentUpon>MediaButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TabViews\ButtonsView.xaml.cs">
       <DependentUpon>ButtonsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DevicesView.xaml.cs">
+    <Compile Include="Views\TabViews\DevicesView.xaml.cs">
       <DependentUpon>DevicesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ManagerView.xaml.cs">
+    <Compile Include="Views\TabViews\ManagerView.xaml.cs">
       <DependentUpon>ManagerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProfileAddView.xaml.cs">
-      <DependentUpon>ProfileAddView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SessionAddView.xaml.cs">
-      <DependentUpon>SessionAddView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SettingsView.xaml.cs">
+    <Compile Include="Views\TabViews\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SlidersView.xaml.cs">
+    <Compile Include="Views\TabViews\SlidersView.xaml.cs">
       <DependentUpon>SlidersView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UsbManagerView.xaml.cs">
+    <Compile Include="Views\WindowViews\ButtonAddView.xaml.cs">
+      <DependentUpon>ButtonAddView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\ProfileAddView.xaml.cs">
+      <DependentUpon>ProfileAddView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\SessionAddView.xaml.cs">
+      <DependentUpon>SessionAddView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\UsbManagerView.xaml.cs">
       <DependentUpon>UsbManagerView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -181,15 +191,17 @@
   <ItemGroup>
     <Page Include="ImageDictionary.xaml" />
     <Page Include="TaskbarResource.xaml" />
-    <Page Include="Views\ButtonsView.xaml" />
-    <Page Include="Views\DevicesView.xaml" />
-    <Page Include="Views\MainView.xaml" />
-    <Page Include="Views\ManagerView.xaml" />
-    <Page Include="Views\ProfileAddView.xaml" />
-    <Page Include="Views\SessionAddView.xaml" />
-    <Page Include="Views\SettingsView.xaml" />
-    <Page Include="Views\SlidersView.xaml" />
-    <Page Include="Views\UsbManagerView.xaml" />
+    <Page Include="Views\ButtonViews\MediaButtonView.xaml" />
+    <Page Include="Views\TabViews\ButtonsView.xaml" />
+    <Page Include="Views\TabViews\DevicesView.xaml" />
+    <Page Include="Views\TabViews\ManagerView.xaml" />
+    <Page Include="Views\TabViews\SettingsView.xaml" />
+    <Page Include="Views\TabViews\SlidersView.xaml" />
+    <Page Include="Views\WindowViews\ButtonAddView.xaml" />
+    <Page Include="Views\WindowViews\MainView.xaml" />
+    <Page Include="Views\WindowViews\ProfileAddView.xaml" />
+    <Page Include="Views\WindowViews\SessionAddView.xaml" />
+    <Page Include="Views\WindowViews\UsbManagerView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">

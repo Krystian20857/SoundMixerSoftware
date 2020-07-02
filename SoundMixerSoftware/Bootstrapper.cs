@@ -105,7 +105,8 @@ namespace SoundMixerSoftware
             _container.PerRequest<SlidersViewModel>();
             _container.PerRequest<ButtonsViewModel>();
             
-            _container.PerRequest<SessionAddViewModel>();
+            _container.Singleton<SessionAddViewModel>();
+            _container.Singleton<ButtonAddViewModel>();
             
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();

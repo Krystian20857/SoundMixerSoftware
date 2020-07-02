@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="SoundMixerSoftware.Views.ButtonsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:converters="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:VisibilityConverter x:Key="VisibilityConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="Buttons" HorizontalContentAlignment="Stretch">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5" cal:Message.Attach="[Shortcut Enter] = [ConfirmEdit($this)]" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+                            <DockPanel Height="85" LastChildFill="False">
+                                <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Margin="5, 0"
+                                                 Visibility="{Binding Path=IsEditing, Converter={StaticResource VisibilityConverter}}"
+                                                 FontSize="16"
+                                                 Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 MaxWidth="255" />
+                                        <TextBlock Margin="5, 0"
+                                                   MaxWidth="255"
+                                                   Visibility="{Binding Path=IsEditing, Converter={StaticResource VisibilityConverter}, ConverterParameter=true}"
+                                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}">
+                                            <Run Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" />
+                                        </TextBlock>
+                                        <Button Margin="5, 0"
+                                                Padding="0"
+                                                Width="35"
+                                                Height="20"
+                                                Content="Edit"
+                                                cal:Message.Attach="[Click] = [EditNameClicked($this)]" />
+                                    </StackPanel>
+                                    <ListView MaxWidth="350" x:Name="Applications" SelectedItem="{Binding SelectedFunction}"
+                                              HorizontalContentAlignment="Stretch"
+                                              ItemsSource="{Binding Path=Functions}"
+                                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Background="Transparent" Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Padding="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="3">
+                                                    <Image Source="{Binding Path=Image}" ToolTip="{Binding Path=Name}" />
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button
+                                            ToolTip="Add"
+                                            Margin="5, 2"
+                                            Content="{materialDesign:PackIcon PencilPlus}"
+                                            cal:Message.Attach="[Click] = [AddClick($this)]"/>
+                                        <Button
+                                            ToolTip="Remove"
+                                            Margin="5, 2"
+                                            Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}"
+                                            cal:Message.Attach="[Click] = [RemoveClick($this)]"/>
+                                        <Button
+                                            ToolTip="Light up"
+                                            Margin="5, 2"
+                                            Content="{materialDesign:PackIcon Lightbulb}"
+                                            cal:Message.Attach="[Click] = [LightClicked($this)]"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

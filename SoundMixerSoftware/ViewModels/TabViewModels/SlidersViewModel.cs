@@ -293,6 +293,13 @@ namespace SoundMixerSoftware.ViewModels
             var sliderModel = sender as SliderModel;
             sliderModel.IsEditing = !sliderModel.IsEditing;
         }
+        
+        public void ConfirmEdit(object sender)
+        {
+            var buttonModel = sender as ButtonModel;
+            if(buttonModel.IsEditing)
+                buttonModel.IsEditing = !buttonModel.IsEditing;
+        }
 
         #endregion
     }

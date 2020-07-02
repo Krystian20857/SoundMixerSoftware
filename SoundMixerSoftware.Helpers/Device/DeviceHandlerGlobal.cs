@@ -117,8 +117,8 @@ namespace SoundMixerSoftware.Helpers.Device
                     }
 
                     var button = profile.Buttons[buttonIndex];
-                    if (buttonStruct.state == 0x00)
-                        ButtonHandler.HandleButton(button.Function);
+                    if (buttonStruct.state == 0x00) ;
+                        //ButtonHandler.HandleButton(button.Function);
                     break;
             }
         }

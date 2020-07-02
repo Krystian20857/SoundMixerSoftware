@@ -63,22 +63,13 @@ namespace SoundMixerSoftware.Helpers.Profile
     
     public class ButtonStruct
     {
-        [YamlIgnore]
-        public ButtonFunction Function { get; set; }
-
-        [YamlMember(Alias = "Function")]
-        public string FunctionString
-        {
-            get => Function.ToString();
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                    Function = default;
-                else
-                    Function = Enum.TryParse<ButtonFunction>(value, out var result) ? result : default;
-            }
-        }
-
         public string Name { get; set; }
+        public List<ButtonFunction> Functions { get; set; } = new List<ButtonFunction>();
+    }
+
+    public class ButtonFunction
+    {
+        public string Key { get; set; }
+        public Dictionary<object, object> Container { get; set; }
     }
 }

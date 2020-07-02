@@ -1,27 +1,75 @@
-﻿using Caliburn.Micro;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Caliburn.Micro;
+using SoundMixerSoftware.Annotations;
+using SoundMixerSoftware.Helpers.Buttons;
+using SoundMixerSoftware.Helpers.Profile;
 
 namespace SoundMixerSoftware.Models
 {
     /// <summary>
     /// Class contains properties used in button view creating.
     /// </summary>
-    public class ButtonModel
+    public class ButtonModel : INotifyPropertyChanged
     {
-        /// <summary>
-        /// Button name.
-        /// </summary>
-        public string Name { get; set; }
+        #region Private Fields
+
+        private bool _isEditing;
+        private string _name;
+        
+        #endregion
+        
+        #region Priperties
+        
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged(nameof(Name));
+            } 
+        }
+
+        public bool IsEditing
+        {
+            get => _isEditing;
+            set
+            {
+                _isEditing = value;
+                if (!value)
+                {
+                    ProfileHandler.SelectedProfile.Buttons[Index].Name = _name;
+                    ProfileHandler.SaveSelectedProfile();
+                }
+                OnPropertyChanged(nameof(IsEditing));
+            }
+        }
         /// <summary>
         /// Buttons base functions.
         /// </summary>
-        public BindableCollection<string> Function { get; set; } = new BindableCollection<string>();
+        public BindableCollection<IButton> Functions { get; set; } = new BindableCollection<IButton>();
         /// <summary>
         /// Button Function.
         /// </summary>
-        public string SelectedItem { get; set; }
+        public IButton SelectedFunction { get; set; }
         /// <summary>
         /// Index of current button.
         /// </summary>
         public int Index { get; set; }
+        
+        #endregion
+
+        #region Property Changed
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
+        #endregion
     }
 }

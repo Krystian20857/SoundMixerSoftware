@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NLog;
 
 namespace SoundMixerSoftware.Helpers.Device
@@ -14,7 +15,9 @@ namespace SoundMixerSoftware.Helpers.Device
         
         #endregion
 
-        #region MyRegion
+        #region Private Fields
+
+        private static Task _testDeviceTask = Task.CompletedTask;
         
         #endregion
 
@@ -26,7 +29,8 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="comport"></param>
         public static void TestLights(string comport)
         {
-            var testTask = Task.Run(async () =>
+            //if (_testDeviceTask.Status == TaskStatus.RanToCompletion)
+            _testDeviceTask = Task.Run(async () =>
             {
                 if (DeviceHandlerGlobal.ConnectedDevice.TryGetValue(comport, out var result))
                 {

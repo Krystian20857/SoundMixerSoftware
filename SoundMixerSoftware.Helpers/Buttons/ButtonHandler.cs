@@ -1,25 +1,30 @@
-﻿using System.Windows;
-using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Device;
-using SoundMixerSoftware.Helpers.Overlay;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SoundMixerSoftware.Helpers.Profile;
-using SoundMixerSoftware.Win32.Wrapper;
-using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
 namespace SoundMixerSoftware.Helpers.Buttons
 {
     public static class ButtonHandler
     {
         #region Private Fields
-
-        private static bool _lastMuteInput;
-        private static bool _lastMuteOutput;
+        
+        
         
         #endregion
         
         #region Public Properties
 
+        public static Dictionary<string, IButtonCreator> ButtonRegistry { get; } = new Dictionary<string, IButtonCreator>();
+        public static List<List<IButton>> Buttons { get; } = new List<List<IButton>>();
+
+        #endregion
+        
+        #region Events
+
+        public static event EventHandler<IButton> ButtonCreated;
+        public static event EventHandler<IButton> ButtonRemoved;
+        
         #endregion
         
         #region Constructor
@@ -31,130 +36,115 @@ namespace SoundMixerSoftware.Helpers.Buttons
 
         #endregion
         
-        #region Private Events
-
-        private static void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                var device = sender as MMDevice;
-                var defaultInputID = SessionHandler.DeviceEnumerator.DefaultInput.ID;
-                var defaultOutputID = SessionHandler.DeviceEnumerator.DefaultOutput.ID;
-                var mute = e.Mute;
-                if (device.ID == defaultInputID)
-                {
-                    if (mute != _lastMuteInput)
-                    {
-                        DisplayMute(false, mute);
-                        _lastMuteInput = mute;
-                    }
-                }
-                else if (device.ID == defaultOutputID)
-                {
-                    if (mute != _lastMuteOutput)
-                    {
-                        DisplayMute(true, mute);
-                        _lastMuteOutput = mute;
-                    }
-                }
-            });
-        }
-
-        #endregion
-        
         #region Public Static Methods
 
         /// <summary>
-        /// Handle function of specified button.
+        /// Create all buttons from selected profile.
         /// </summary>
-        /// <param name="function"></param>
-        /// <returns></returns>
-        public static bool HandleButton(ButtonFunction function)
+        public static void CreateButtons()
         {
-            switch (function)
+            Buttons.Clear();
+            var buttonCount = ProfileHandler.SelectedProfile.ButtonCount;
+            Buttons.Capacity = buttonCount;
+            for (var n = 0; n < buttonCount; n++)
+                Buttons.Add(new List<IButton>());
+            var buttons = ProfileHandler.SelectedProfile.Buttons;
+            for (var n = 0; n < buttons.Count; n++)
             {
-                case ButtonFunction.MuteDefaultInput:
-                    HandleMuteInput();
-                    break;
-                case ButtonFunction.MuteDefaultOutput:
-                    HandleMuteOutput();
-                    break;
-                case ButtonFunction.PrevTrack:
-                    MediaControl.PrevTrack();
-                    break;
-                case ButtonFunction.NextTrack:
-                    MediaControl.NextTrack();
-                    break;
-                case ButtonFunction.PausePlay:
-                    MediaControl.PauseResume();
-                    break;
-                default:
-                    return false;
-            }
-            
-            return true;
-        }
-        
-        private static void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
-        {
-            Initialize();
-        }
-
-        public static void DisplayMute(bool isOutput, bool state)
-        {
-            foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
-            {
-                var buttons = ProfileHandler.SelectedProfile.Buttons;
-                for (var n = 0; n < buttons.Count; n++)
+                var buttonStruct = buttons[n];
+                if(n >= buttonCount)
+                    continue;
+                if(buttonStruct.Functions == null)
+                    buttonStruct.Functions = new List<ButtonFunction>();
+                for (var x = 0; x < buttonStruct.Functions.Count; x++)
                 {
-                    var button = buttons[n];
-                    var structure = new LedStruct
-                    {
-                        command = 0x01,
-                        state = (byte) (state ? 0x01 : 0x00),
-                        led = (byte) n,
-                    };
-                    if (isOutput)
-                    {
-                        if (button.Function == ButtonFunction.MuteDefaultOutput)
-                            DeviceHandlerGlobal.DeviceHandler.SendData(device.Key, structure);
-                    }
-                    else if (button.Function == ButtonFunction.MuteDefaultInput)
-                        DeviceHandlerGlobal.DeviceHandler.SendData(device.Key, structure);
-
+                    var function = buttonStruct.Functions[x];
+                    AddFunction(n, function);
                 }
             }
         }
 
-        #endregion
-        
-        #region Public Static Methods
-
-        public static void Initialize()
+        /// <summary>
+        /// Add function to button.
+        /// </summary>
+        /// <param name="Index"></param>
+        /// <param name="button"></param>
+        public static IButton AddFunction(int Index, ButtonFunction button)
         {
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
-            _lastMuteOutput = SessionHandler.DeviceEnumerator.DefaultOutput.AudioEndpointVolume.Mute;
-            _lastMuteInput = SessionHandler.DeviceEnumerator.DefaultInput.AudioEndpointVolume.Mute;
+            if (!ButtonRegistry.ContainsKey(button.Key) || string.IsNullOrEmpty(button.Key))
+                return null;
+            var creator = ButtonRegistry[button.Key];
+            var iButton = creator.CreateButton(button.Container);
+            Buttons[Index].Add(iButton);
+            ButtonCreated?.Invoke(null, iButton);
+            return iButton;
         }
         
+        /// <summary>
+        /// Add function to button.
+        /// </summary>
+        /// <param name="Index"></param>
+        /// <param name="button"></param>
+        public static ButtonFunction AddFunction(int Index, IButton iButton)
+        {
+            Buttons[Index].Add(iButton);
+            ButtonCreated?.Invoke(null, iButton);
+            return new ButtonFunction
+            {
+                Container = iButton.Save(),
+                Key = iButton.Key,
+            };
+        }
+
+        /// <summary>
+        /// Remove function from button by index of function.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="functionIndex"></param>
+        public static void RemoveFunction(int index, int functionIndex)
+        {
+            var iButton = Buttons[index][functionIndex];
+            ButtonRemoved?.Invoke(null, iButton);
+            Buttons[index].Remove(iButton);
+        }
+
+        /// <summary>
+        /// Registry button creator.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="creator"></param>
+        public static void RegisterCreator(string key, IButtonCreator creator)
+        {
+            if (!ButtonRegistry.ContainsKey(key))
+                ButtonRegistry.Add(key, creator);
+        }
+        
+        /// <summary>
+        /// Unregister button creator.
+        /// </summary>
+        /// <param name="key"></param>
+        public static void UnregisterCreator(string key)
+        {
+            if (ButtonRegistry.ContainsKey(key))
+                ButtonRegistry.Remove(key);
+        }
+
+        public static void HandleButton(int index)
+        {
+            if (index >= Buttons.Count)
+                return;
+            var buttons = Buttons[index];
+            for (var n = 0; n < buttons.Count; n++)
+                buttons[n].ButtonPressed(index);
+        }
+
         #endregion
 
         #region Private Static Methods
 
-        internal static void HandleMuteInput()
+        private static void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
-            var defaultInput = SessionHandler.DeviceEnumerator.DefaultInput;
-            var audioEndpoint = defaultInput.AudioEndpointVolume;
-            audioEndpoint.Mute = !audioEndpoint.Mute;
-            OverlayHandler.ShowMute(audioEndpoint.Mute);
-        }
-
-        internal static void HandleMuteOutput()
-        {
-            var defaultOutput = SessionHandler.DeviceEnumerator.DefaultOutput;
-            var audioEndpoint = defaultOutput.AudioEndpointVolume;
-            audioEndpoint.Mute = !audioEndpoint.Mute;
-            OverlayHandler.ShowMute(audioEndpoint.Mute);
+            
         }
 
         #endregion

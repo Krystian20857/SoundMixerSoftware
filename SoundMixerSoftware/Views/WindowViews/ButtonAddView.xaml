@@ -1,0 +1,41 @@
+﻿<Window x:Class="SoundMixerSoftware.Views.ButtonAddView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+        xmlns:cal="http://caliburnmicro.com"
+        mc:Ignorable="d"
+        Title="ButtonAddView" Height="350" Width="500"
+        cal:Message.Attach="[Shortcut Enter] = [AddClicked()]">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl x:Name="Tabs"
+                    SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding Path=Tabs, Mode=OneWay}"
+                    TabStripPlacement="Left"
+                    HorizontalContentAlignment="Left">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="2, 5" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Path=Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentControl cal:View.Model="{Binding}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+        <DockPanel Grid.Row="1" LastChildFill="False">
+            <Button DockPanel.Dock="Right" cal:Message.Attach="[Click] = [AddClicked()]" Margin="5, 5" Style="{StaticResource MaterialDesignRaisedButton}" Width="150" Content="Add Button" ToolTip="Add Button"/>
+        </DockPanel>
+    </Grid>
+</Window>
