@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace SoundMixerSoftware.Helpers.Buttons
 {
@@ -13,9 +15,17 @@ namespace SoundMixerSoftware.Helpers.Buttons
         /// </summary>
         string Key { get; }
         /// <summary>
-        /// Store data from profile file and helps while saving.
+        /// Index of assigned button.
         /// </summary>
-        Dictionary<object, object> Container { get; }
+        int Index { get; }
+        /// <summary>
+        /// UUID of function.
+        /// </summary>
+        Guid UUID { get; set; }
+        /// <summary>
+        /// Defines image.
+        /// </summary>
+        ImageSource Image { get; set; }
         /// <summary>
         /// Saves button to container.
         /// </summary>
@@ -23,9 +33,14 @@ namespace SoundMixerSoftware.Helpers.Buttons
         /// <returns></returns>
         Dictionary<object, object> Save();
         /// <summary>
-        /// 
+        /// Occurs when button has been pushed down.
         /// </summary>
         /// <param name="index"></param>
-        void ButtonPressed(int index);
+        void ButtonKeyDown(int index);
+        /// <summary>
+        /// Occurs when button has been pulled up?.
+        /// </summary>
+        /// <param name="index"></param>
+        void ButtonKeyUp(int index);
     }
 }

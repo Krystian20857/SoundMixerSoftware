@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.Enum;
+using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Helpers.Buttons.Functions
@@ -14,6 +18,12 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         #endregion
         
+        #region Private Fields
+
+        private string _name;
+        
+        #endregion
+
         #region Properties
 
         public MediaTask MediaTask { get; }
@@ -22,17 +32,29 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         #region Implemented Properties
 
-        public string Name { get; set; } = "Button Media Controller";
+        public string Name
+        {
+            get
+            {
+                _name = $"Media Control: {EnumNameConverter.GetName(typeof(MediaTask),MediaTask.ToString())}";
+                return _name;
+            }
+            set => _name = value;
+        }
         public string Key { get; } = "media_func";
-        public Dictionary<object, object> Container { get; }
-        
+        public Guid UUID { get; set; }
+        public ImageSource Image { get; set; } = Resource.MediaIcon.ToImageSource();
+        public int Index { get; }
+
         #endregion
         
         #region Constructor
 
-        public MediaFunction(MediaTask mediaTask)
+        public MediaFunction(int index, MediaTask mediaTask, Guid uuid)
         {
+            Index = index;
             MediaTask = mediaTask;
+            UUID = uuid;
         }
         
         #endregion
@@ -46,7 +68,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             return result;
         }
 
-        public void ButtonPressed(int index)
+        public void ButtonKeyDown(int index)
         {
             switch (MediaTask)
             {
@@ -65,18 +87,23 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             }
         }
 
+        public void ButtonKeyUp(int index)
+        {
+            
+        }
+
         #endregion
     }
     
     public class MediaFunctionCreator : IButtonCreator
     {
-        public IButton CreateButton(Dictionary<object, object> container)
+        public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
             if(!container.ContainsKey(MediaFunction.MEDIA_TASK_KEY))
                 throw new NotImplementedException($"Container does not contains: {MediaFunction.MEDIA_TASK_KEY} key");
             var mediaTask = container[MediaFunction.MEDIA_TASK_KEY].ToString();
             var mediaTaskEnum = Enum.TryParse<MediaTask>(mediaTask, out var result) ? result : default;
-            return new MediaFunction(mediaTaskEnum);
+            return new MediaFunction(index, mediaTaskEnum, uuid);
         }
     }
     

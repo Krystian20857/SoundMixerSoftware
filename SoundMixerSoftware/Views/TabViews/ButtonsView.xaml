@@ -52,7 +52,7 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Padding="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="3">
-                                                    <Image Source="{Binding Path=Image}" ToolTip="{Binding Path=Name}" />
+                                                    <Image MaxHeight="32" MaxWidth="32" Source="{Binding Path=Image}" ToolTip="{Binding Path=Name}" />
                                                 </Border>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 using SoundMixerSoftware.Helpers.Profile;
 
 namespace SoundMixerSoftware.Helpers.Buttons
@@ -22,8 +23,8 @@ namespace SoundMixerSoftware.Helpers.Buttons
         
         #region Events
 
-        public static event EventHandler<IButton> ButtonCreated;
-        public static event EventHandler<IButton> ButtonRemoved;
+        public static event EventHandler<FunctionArgs> FunctionCreated;
+        public static event EventHandler<FunctionArgs> FunctionRemoved;
         
         #endregion
         
@@ -74,9 +75,9 @@ namespace SoundMixerSoftware.Helpers.Buttons
             if (!ButtonRegistry.ContainsKey(button.Key) || string.IsNullOrEmpty(button.Key))
                 return null;
             var creator = ButtonRegistry[button.Key];
-            var iButton = creator.CreateButton(button.Container);
+            var iButton = creator.CreateButton(Index, button.Container, button.UUID);
             Buttons[Index].Add(iButton);
-            ButtonCreated?.Invoke(null, iButton);
+            FunctionCreated?.Invoke(null, new FunctionArgs(Index, Buttons[Index].IndexOf(iButton), iButton));
             return iButton;
         }
         
@@ -88,11 +89,12 @@ namespace SoundMixerSoftware.Helpers.Buttons
         public static ButtonFunction AddFunction(int Index, IButton iButton)
         {
             Buttons[Index].Add(iButton);
-            ButtonCreated?.Invoke(null, iButton);
+            FunctionCreated?.Invoke(null, new FunctionArgs(Index, Buttons[Index].IndexOf(iButton), iButton));
             return new ButtonFunction
             {
                 Container = iButton.Save(),
                 Key = iButton.Key,
+                UUID = iButton.UUID
             };
         }
 
@@ -104,7 +106,18 @@ namespace SoundMixerSoftware.Helpers.Buttons
         public static void RemoveFunction(int index, int functionIndex)
         {
             var iButton = Buttons[index][functionIndex];
-            ButtonRemoved?.Invoke(null, iButton);
+            FunctionRemoved?.Invoke(null, new FunctionArgs(index, Buttons[index].IndexOf(iButton), iButton));
+            Buttons[index].Remove(iButton);
+        }
+        
+        /// <summary>
+        /// Remove function from button by index of function.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="functionIndex"></param>
+        public static void RemoveFunction(int index, IButton iButton)
+        {
+            FunctionRemoved?.Invoke(null, new FunctionArgs(index, Buttons[index].IndexOf(iButton), iButton));
             Buttons[index].Remove(iButton);
         }
 
@@ -129,13 +142,22 @@ namespace SoundMixerSoftware.Helpers.Buttons
                 ButtonRegistry.Remove(key);
         }
 
-        public static void HandleButton(int index)
+        public static void HandleKeyDown(int index)
         {
             if (index >= Buttons.Count)
                 return;
             var buttons = Buttons[index];
             for (var n = 0; n < buttons.Count; n++)
-                buttons[n].ButtonPressed(index);
+                buttons[n].ButtonKeyDown(index);
+        }
+        
+        public static void HandleKeyUp(int index)
+        {
+            if (index >= Buttons.Count)
+                return;
+            var buttons = Buttons[index];
+            for (var n = 0; n < buttons.Count; n++)
+                buttons[n].ButtonKeyUp(index);
         }
 
         #endregion
@@ -148,5 +170,28 @@ namespace SoundMixerSoftware.Helpers.Buttons
         }
 
         #endregion
+    }
+
+    public class FunctionArgs : EventArgs
+    {
+        /// <summary>
+        /// Index of button.
+        /// </summary>
+        public int Index { get; set; }
+        /// <summary>
+        /// Index of function.
+        /// </summary>
+        public int FunctionIndex { get; set; }
+        /// <summary>
+        /// Button instance.
+        /// </summary>
+        public IButton Button { get; set; }
+
+        public FunctionArgs(int index, int functionIndex, IButton button)
+        {
+            Index = index;
+            FunctionIndex = functionIndex;
+            Button = button;
+        }
     }
 }

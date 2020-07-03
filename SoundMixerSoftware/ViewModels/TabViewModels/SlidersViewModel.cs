@@ -222,9 +222,17 @@ namespace SoundMixerSoftware.ViewModels
             }
             else if(e.SessionState == SessionState.Disconnected)
             {
-                var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
-                model.Image = ExtractedIcons.FailedIcon.ToImageSource();
-                model.Name = $"{session.Name} - {device.FriendlyName}(Not Active)";
+                try
+                {
+                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
+                    model.Image = ExtractedIcons.FailedIcon.ToImageSource();
+                    model.Name = $"{session.Name} - {device.FriendlyName}(Not Active)";
+                }
+                catch
+                {
+                    model.Image = ExtractedIcons.FailedIcon.ToImageSource();
+                    model.Name = $"{session.Name} - (Unknown device)";
+                }
             }            
             else if(e.SessionState == SessionState.DeviceNotDetected)
             {

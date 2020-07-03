@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
+using ButtonStruct = SoundMixerSoftware.Helpers.Profile.ButtonStruct;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -41,17 +46,33 @@ namespace SoundMixerSoftware.ViewModels
             Icon = PackIconKind.GestureTapButton;
             
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
+            
+            ButtonHandler.FunctionCreated += ButtonHandlerOnFunctionCreated;
+            ButtonHandler.FunctionRemoved += ButtonHandlerOnFunctionRemoved;
+            
+            ButtonHandler.RegisterCreator("media_func", new MediaFunctionCreator());
+            ButtonHandler.RegisterCreator("mute_func", new MuteFunctionCreator());
+            
             CreateButtons();
             
-            //ButtonHandler.RegisterCreator("media_func", new MediaFunctionCreator());
-            //ButtonHandler.CreateButtons();
-            //ButtonHandler.HandleButton(2);
         }
 
         #endregion
         
         #region Private Events
         
+        private void ButtonHandlerOnFunctionRemoved(object sender, FunctionArgs e)
+        {
+            var functions = Buttons[e.Index].Functions;
+            functions.Remove(e.Button);
+        }
+
+        private void ButtonHandlerOnFunctionCreated(object sender, FunctionArgs e)
+        {
+            var functions = Buttons[e.Index].Functions;
+            functions.Add(e.Button);
+        }
+
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
             CreateButtons();
@@ -64,17 +85,28 @@ namespace SoundMixerSoftware.ViewModels
             addViewModel.Index = buttonModel.Index;
             _windowManager.ShowWindowAsync(addViewModel);
         }
-        
-        
+
         public void RemoveClick(object sender)
         {
+            var buttonModel = sender as ButtonModel;
             
+            var functions = ProfileHandler.SelectedProfile.Buttons[buttonModel.Index].Functions;
+            var functionsObjects = ButtonHandler.Buttons[buttonModel.Index];
+            var functionToRemove = functionsObjects.IndexOf(buttonModel.SelectedFunction);
+            functions.RemoveAt(functionToRemove);
+            ProfileHandler.SaveSelectedProfile();
+            ButtonHandler.RemoveFunction(buttonModel.Index, buttonModel.SelectedFunction);
         }
         
         
         public void LightClicked(object sender)
         {
-            
+            var buttonModel = sender as ButtonModel;
+            Task.Factory.StartNew(() =>
+            {
+                foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
+                    DeviceNotifier.LightButton(device.Key, unchecked((byte)buttonModel.Index), TimeSpan.FromMilliseconds(500));
+            });
         }
 
         public void EditNameClicked(object sender)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
@@ -115,10 +116,11 @@ namespace SoundMixerSoftware.Helpers.Device
                         Logger.Warn("Button receive index mismatch.");
                         return;
                     }
-
-                    var button = profile.Buttons[buttonIndex];
-                    if (buttonStruct.state == 0x00) ;
-                        //ButtonHandler.HandleButton(button.Function);
+                    
+                    if (buttonStruct.state == 0x00) 
+                        ButtonHandler.HandleKeyDown(buttonIndex);
+                    else if(buttonStruct.state == 0x01)
+                        ButtonHandler.HandleKeyUp(buttonIndex);
                     break;
             }
         }

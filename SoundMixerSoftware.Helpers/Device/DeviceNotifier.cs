@@ -48,6 +48,34 @@ namespace SoundMixerSoftware.Helpers.Device
         }
 
         /// <summary>
+        /// Light button for specified period of time.
+        /// </summary>
+        /// <param name="comport"></param>
+        /// <param name="button"></param>
+        /// <param name="illuminationTime"></param>
+        public static void LightButton(string comport, byte button, TimeSpan illuminationTime)
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                LightButton(comport, button, true);
+                await Task.Delay(illuminationTime);
+                LightButton(comport, button, false);
+            });
+        }
+        
+        /// <summary>
+        /// Light button for specified period of time on every device.
+        /// </summary>
+        /// <param name="comport"></param>
+        /// <param name="button"></param>
+        /// <param name="illuminationTime"></param>
+        public static void LightButton(byte button, bool state)
+        {
+            foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
+                LightButton(device.Key, button, state);
+        }
+
+        /// <summary>
         /// Set illumination state of specified button.
         /// </summary>
         /// <param name="comport">serial port of device</param>

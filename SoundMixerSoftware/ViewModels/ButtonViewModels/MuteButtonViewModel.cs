@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Windows;
 using Caliburn.Micro;
 using SoundMixerSoftware.Common.Utils.Enum;
 using SoundMixerSoftware.Helpers.Buttons;
@@ -10,42 +8,42 @@ using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels
 {
-    public class MediaButtonViewModel : IButtonAddModel
+    public class MuteButtonViewModel : IButtonAddModel
     {
         #region Private Fields
         
-        private EnumDisplayModel<MediaTask> _selectedFunction;
+        private EnumDisplayModel<MuteTask> _selectedFunction;
         
         #endregion
         
         #region Public Properties
 
-        public BindableCollection<EnumDisplayModel<MediaTask>> Functions { get; set; } = new BindableCollection<EnumDisplayModel<MediaTask>>();
+        public BindableCollection<EnumDisplayModel<MuteTask>> Functions { get; set; } = new BindableCollection<EnumDisplayModel<MuteTask>>();
 
-        public EnumDisplayModel<MediaTask> SelectedFunction
+        public EnumDisplayModel<MuteTask> SelectedFunction
         {
             get => _selectedFunction;
-            set => _selectedFunction = value;
+            set => _selectedFunction = value; 
         }
-
+        
         #endregion
-        
-        #region Implemented Proeprties
-        
-        public string Name { get; set; } = "Media Control";
+
+        #region Implemented Properties
+
+        public string Name { get; set; } = "Mute Control";
         
         #endregion
         
         #region Constructor
 
-        public MediaButtonViewModel()
+        public MuteButtonViewModel()
         {
-            var enumNames = Enum.GetNames(typeof(MediaTask));
+            var enumNames = Enum.GetNames(typeof(MuteTask));
             foreach (var enumName in enumNames)
             {
-                var mediaModel = new EnumDisplayModel<MediaTask>()
+                var mediaModel = new EnumDisplayModel<MuteTask>
                 {
-                    EnumValue = (MediaTask)Enum.Parse(typeof(MediaTask), enumName)
+                    EnumValue = (MuteTask)Enum.Parse(typeof(MuteTask), enumName)
                 };
                 Functions.Add(mediaModel);
             }
@@ -55,11 +53,11 @@ namespace SoundMixerSoftware.ViewModels
         
         #endregion
         
-        #region Implemented Methods
+        #region Implemented Metods
         
         public bool AddClicked(int index)
         {
-            var function = ButtonHandler.AddFunction(index, new MediaFunction(index, SelectedFunction.EnumValue, Guid.NewGuid()));
+            var function = ButtonHandler.AddFunction(index, new MuteFunction(index, SelectedFunction.EnumValue, Guid.NewGuid()));
             ProfileHandler.SelectedProfile.Buttons[index].Functions.Add(function);
             ProfileHandler.SaveSelectedProfile();
             return true;

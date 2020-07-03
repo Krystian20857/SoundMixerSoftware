@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SoundMixerSoftware.Helpers.Buttons
 {
@@ -9,6 +10,6 @@ namespace SoundMixerSoftware.Helpers.Buttons
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        IButton CreateButton(Dictionary<object, object> container);
+        IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid);
     }
 }

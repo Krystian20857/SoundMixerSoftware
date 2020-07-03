@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
@@ -57,7 +58,7 @@ namespace SoundMixerSoftware.Models
         /// Index of current button.
         /// </summary>
         public int Index { get; set; }
-        
+
         #endregion
 
         #region Property Changed

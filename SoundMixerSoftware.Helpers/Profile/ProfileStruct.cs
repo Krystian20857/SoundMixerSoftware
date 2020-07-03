@@ -71,5 +71,6 @@ namespace SoundMixerSoftware.Helpers.Profile
     {
         public string Key { get; set; }
         public Dictionary<object, object> Container { get; set; }
+        public Guid UUID { get; set; }
     }
 }

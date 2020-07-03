@@ -20,6 +20,7 @@ namespace SoundMixerSoftware.ViewModels
         public ButtonAddViewModel()
         {
             AddView(new MediaButtonViewModel());
+            AddView(new MuteButtonViewModel());
 
             if (Tabs.Count > 0)
                 SelectedTab = Tabs[0];
@@ -55,6 +56,7 @@ namespace SoundMixerSoftware.ViewModels
         public void AddClicked()
         {
             SelectedTab.AddClicked(Index);
+            TryCloseAsync();
         }
         
         #endregion
