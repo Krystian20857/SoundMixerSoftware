@@ -1,5 +1,5 @@
 ﻿using System;
-using SoundMixerSoftware.Common.Utils.Enum;
+using SoundMixerSoftware.Common.Utils.EnumUtils;
 
 namespace SoundMixerSoftware.Models
 {

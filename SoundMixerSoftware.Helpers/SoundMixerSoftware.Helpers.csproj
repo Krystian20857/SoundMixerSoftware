@@ -40,6 +40,7 @@
     <Compile Include="AudioSessions\SessionMode.cs" />
     <Compile Include="AudioSessions\SessionState.cs" />
     <Compile Include="Buttons\ButtonHandler.cs" />
+    <Compile Include="Buttons\Functions\KeystrokeFunction.cs" />
     <Compile Include="Buttons\Functions\MediaFunction.cs" />
     <Compile Include="Buttons\Functions\MuteFunction.cs" />
     <Compile Include="Buttons\IButton.cs" />
@@ -73,6 +74,10 @@
     <Compile Include="Utils\ExtractedIcons.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GregsStack.InputSimulatorStandard.1.2.0-beta0003\lib\netstandard2.0\GregsStack.InputSimulatorStandard.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MaterialDesignColors, Version=1.2.5.1465, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\MaterialDesignColors.1.2.5\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
@@ -135,6 +140,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\KeyboardIcon.png" />
     <Content Include="Resources\MediaIcon.png" />
     <Content Include="Resources\MuteIcon.png" />
   </ItemGroup>

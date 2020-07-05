@@ -63,6 +63,16 @@ namespace SoundMixerSoftware.Helpers {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap KeyboardIcon {
+            get {
+                object obj = ResourceManager.GetObject("KeyboardIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap MediaIcon {
             get {
                 object obj = ResourceManager.GetObject("MediaIcon", resourceCulture);

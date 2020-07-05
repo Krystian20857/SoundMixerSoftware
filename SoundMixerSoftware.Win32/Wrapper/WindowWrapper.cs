@@ -42,15 +42,23 @@ namespace SoundMixerSoftware.Win32.Wrapper
 
         public static Icon GetWindowIcon(IntPtr windowHandle)
         {
-            var iconHandle = NativeMethods.SendMessage(windowHandle, (int)NativeClasses.WM.WM_GETICON, (IntPtr)NativeClasses.ICON.ICON_BIG, IntPtr.Zero);
-            if(iconHandle == IntPtr.Zero)
-                iconHandle = NativeMethods.SendMessage(windowHandle, (int)NativeClasses.WM.WM_GETICON, (IntPtr)NativeClasses.ICON.ICON_SMALL, IntPtr.Zero);
-            if(iconHandle == IntPtr.Zero)
-                iconHandle = NativeMethods.SendMessage(windowHandle, (int)NativeClasses.WM.WM_GETICON, (IntPtr)NativeClasses.ICON.ICON_SMALL2, IntPtr.Zero);
-            if (iconHandle == IntPtr.Zero)
-                iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICON);
-            if (iconHandle == IntPtr.Zero)
-                iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICONSM);
+            var iconHandle = IntPtr.Zero;
+            try
+            {
+                iconHandle = NativeMethods.SendMessage(windowHandle, (int) NativeClasses.WM.WM_GETICON, (IntPtr) NativeClasses.ICON.ICON_BIG, IntPtr.Zero);
+                if (iconHandle == IntPtr.Zero)
+                    iconHandle = NativeMethods.SendMessage(windowHandle, (int) NativeClasses.WM.WM_GETICON, (IntPtr) NativeClasses.ICON.ICON_SMALL, IntPtr.Zero);
+                if (iconHandle == IntPtr.Zero)
+                    iconHandle = NativeMethods.SendMessage(windowHandle, (int) NativeClasses.WM.WM_GETICON, (IntPtr) NativeClasses.ICON.ICON_SMALL2, IntPtr.Zero);
+                if (iconHandle == IntPtr.Zero)
+                    iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICON);
+                if (iconHandle == IntPtr.Zero)
+                    iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICONSM);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             if (iconHandle == IntPtr.Zero)
                 return null;

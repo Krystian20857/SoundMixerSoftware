@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SoundMixerSoftware.Common.Utils.Enum
+namespace SoundMixerSoftware.Common.Utils.EnumUtils
 {
     public static class EnumNameConverter
     {

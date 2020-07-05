@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using Caliburn.Micro;
-using SoundMixerSoftware.Common.Utils.Enum;
 using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Profile;

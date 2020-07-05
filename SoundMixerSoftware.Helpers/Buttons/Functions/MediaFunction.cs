@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Utils.Enum;
+using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
@@ -102,7 +102,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             if(!container.ContainsKey(MediaFunction.MEDIA_TASK_KEY))
                 throw new NotImplementedException($"Container does not contains: {MediaFunction.MEDIA_TASK_KEY} key");
             var mediaTask = container[MediaFunction.MEDIA_TASK_KEY].ToString();
-            var mediaTaskEnum = Enum.TryParse<MediaTask>(mediaTask, out var result) ? result : default;
+            var mediaTaskEnum = EnumUtils.Parse<MediaTask>(mediaTask);
             return new MediaFunction(index, mediaTaskEnum, uuid);
         }
     }

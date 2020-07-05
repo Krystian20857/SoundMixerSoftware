@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Utils.Enum;
+using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Overlay;
@@ -247,7 +247,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             if(!container.ContainsKey(MuteFunction.MUTE_TASK_KEY))
                 throw new NotImplementedException($"Container does not contains: {MuteFunction.MUTE_TASK_KEY} key");
             var muteTask = container[MuteFunction.MUTE_TASK_KEY].ToString();
-            var muteTaskEnum = Enum.TryParse<MuteTask>(muteTask, out var result) ? result : default;
+            var muteTaskEnum = EnumUtils.Parse<MuteTask>(muteTask);
             return new MuteFunction(index, muteTaskEnum, uuid);
         }
         

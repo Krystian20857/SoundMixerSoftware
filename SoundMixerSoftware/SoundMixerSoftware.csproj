@@ -46,6 +46,10 @@
       <HintPath>..\packages\Caliburn.Micro.4.0.105-alpha\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\GregsStack.InputSimulatorStandard.1.2.0-beta0003\lib\netstandard2.0\GregsStack.InputSimulatorStandard.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
@@ -119,6 +123,7 @@
     </Compile>
     <Compile Include="StarterHelper.cs" />
     <Compile Include="Utils\ParserHelper.cs" />
+    <Compile Include="ViewModels\ButtonViewModels\KeystrokeFunctionViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MediaButtonViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MuteButtonViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\ButtonsViewModel.cs" />
@@ -132,6 +137,9 @@
     <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\UsbManagerViewModel.cs" />
+    <Compile Include="Views\ButtonViews\KeystrokeFunctionView.xaml.cs">
+      <DependentUpon>KeystrokeFunctionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ButtonViews\MediaButtonView.xaml.cs">
       <DependentUpon>MediaButtonView.xaml</DependentUpon>
     </Compile>
@@ -195,6 +203,7 @@
   <ItemGroup>
     <Page Include="ImageDictionary.xaml" />
     <Page Include="TaskbarResource.xaml" />
+    <Page Include="Views\ButtonViews\KeystrokeFunctionView.xaml" />
     <Page Include="Views\ButtonViews\MediaButtonView.xaml" />
     <Page Include="Views\ButtonViews\MuteButtonView.xaml" />
     <Page Include="Views\TabViews\ButtonsView.xaml" />

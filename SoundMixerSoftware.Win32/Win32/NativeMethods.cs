@@ -58,7 +58,10 @@ namespace SoundMixerSoftware.Win32.Win32
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
         public static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
         {
-            return IntPtr.Size > 4 ? GetClassLongPtr64(hWnd, nIndex) : new IntPtr(GetClassLongPtr32(hWnd, nIndex));
+            if (IntPtr.Size > 4)
+                return GetClassLongPtr64(hWnd, nIndex);
+            else
+                return new IntPtr(GetClassLongPtr32(hWnd, nIndex));
         }
         [DllImport("user32.dll", EntryPoint="GetClassLong")]
         public static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
