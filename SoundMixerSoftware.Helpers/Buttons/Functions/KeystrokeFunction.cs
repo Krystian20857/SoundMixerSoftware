@@ -143,7 +143,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             var keyBuilder = new StringBuilder();
             for (var n = 0; n < modifiers.Length; n++)
             {
-                keyBuilder.Append(PascalNamingConverter.ApplySpacing(modifiers[n].ToString()));
+                keyBuilder.Append(KeyUtils.GetKeyName(modifiers[n]));
                 if (n != modifiers.Length - 1)
                     keyBuilder.Append(" + ");
             }
@@ -152,7 +152,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             {
                 if(modifiers.Length > 0)
                     keyBuilder.Append(" + ");
-                keyBuilder.Append(PascalNamingConverter.ApplySpacing(key.ToString()));
+                keyBuilder.Append(KeyUtils.GetKeyName(key));
             }
             
             return keyBuilder.ToString();
@@ -167,7 +167,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             switch (KeystrokeMode)
             {
                 case KeystrokeMode.KeyPress:
-                    return FormatKeys(KeyUtils.ConvertKey(Keystroke), KeyUtils.ConvertKeys(ModifierKeys));
+                    return $"Key: {FormatKeys(KeyUtils.ConvertKey(Keystroke), KeyUtils.ConvertKeys(ModifierKeys))}";
                 case KeystrokeMode.TextMode:
                     return $"Text: {Text}";
                 default:

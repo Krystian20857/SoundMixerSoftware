@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Caliburn.Micro;
 using Microsoft.Xaml.Behaviors;
 using SoundMixerSoftware.Annotations;
+using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Buttons.Functions;

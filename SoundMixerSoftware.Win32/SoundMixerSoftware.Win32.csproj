@@ -42,6 +42,7 @@
       <Compile Include="Win32\NativeMethods.cs" />
       <Compile Include="Win32\NativeStructs.cs" />
       <Compile Include="Wrapper\IconExtractor.cs" />
+      <Compile Include="Wrapper\KeyWrapper.cs" />
       <Compile Include="Wrapper\MediaControl.cs" />
       <Compile Include="Wrapper\NativeWindowWrapper.cs" />
       <Compile Include="Wrapper\SystemVersion.cs" />

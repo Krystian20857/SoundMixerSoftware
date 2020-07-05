@@ -76,9 +76,9 @@ namespace SoundMixerSoftware.Win32.Win32
         public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
-        
-        
-        
+
+        [DllImport("user32.dll")]
+        public static extern int ToUnicode(uint virtualKeyCode, uint scanCode, byte[] keyboardState, [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 64)] StringBuilder receivingBuffer, int bufferSize, uint flags);
         
         
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
