@@ -143,7 +143,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             var keyBuilder = new StringBuilder();
             for (var n = 0; n < modifiers.Length; n++)
             {
-                keyBuilder.Append(modifiers[n]);
+                keyBuilder.Append(PascalNamingConverter.ApplySpacing(modifiers[n].ToString()));
                 if (n != modifiers.Length - 1)
                     keyBuilder.Append(" + ");
             }
@@ -152,7 +152,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             {
                 if(modifiers.Length > 0)
                     keyBuilder.Append(" + ");
-                keyBuilder.Append(key);
+                keyBuilder.Append(PascalNamingConverter.ApplySpacing(key.ToString()));
             }
             
             return keyBuilder.ToString();
