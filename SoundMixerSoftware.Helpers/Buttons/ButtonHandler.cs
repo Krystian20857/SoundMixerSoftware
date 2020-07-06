@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using NLog;
 using SoundMixerSoftware.Helpers.Profile;
+using ExceptionHandler = SoundMixerSoftware.Helpers.Utils.ExceptionHandler;
 
 namespace SoundMixerSoftware.Helpers.Buttons
 {
@@ -53,9 +57,9 @@ namespace SoundMixerSoftware.Helpers.Buttons
             for (var n = 0; n < buttons.Count; n++)
             {
                 var buttonStruct = buttons[n];
-                if(n >= buttonCount)
+                if (n >= buttonCount)
                     continue;
-                if(buttonStruct.Functions == null)
+                if (buttonStruct.Functions == null)
                     buttonStruct.Functions = new List<ButtonFunction>();
                 for (var x = 0; x < buttonStruct.Functions.Count; x++)
                 {

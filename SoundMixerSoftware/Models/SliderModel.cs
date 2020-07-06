@@ -44,6 +44,13 @@ namespace SoundMixerSoftware.Models
 
         #endregion
         
+        #region Events
+
+        public static event EventHandler<VolumeChangedArgs> VolumeChanged; 
+        public static event EventHandler<VolumeChangedArgs> MuteChanged; 
+        
+        #endregion
+        
         #region Public Properties
         
         /// <summary>
@@ -208,6 +215,15 @@ namespace SoundMixerSoftware.Models
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            switch (propertyName)
+            {
+                case nameof(Volume):
+                    VolumeChanged?.Invoke(this, new VolumeChangedArgs(Volume, Mute, false));
+                    break;
+                case nameof(Mute):
+                    MuteChanged?.Invoke(this, new VolumeChangedArgs(Volume, Mute, false));
+                    break;
+            }
         }
 
         #endregion

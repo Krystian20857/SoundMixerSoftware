@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.Extension;
@@ -18,6 +19,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         #region Constant
 
         public const string MUTE_TASK_KEY = "mute";
+        public const string SLIDER_INDEX = "slider_index";
         
         #endregion
         
@@ -26,6 +28,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         private static IDictionary<string, bool> _lastMute =  new Dictionary<string, bool>();
         private static List<MuteFunction> _speakerMute = new List<MuteFunction>();
         private static List<MuteFunction> _micMute = new List<MuteFunction>();
+        private static IDictionary<int, bool> _sliderMute = new Dictionary<int, bool>();
         
         #endregion
         
@@ -38,6 +41,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         #region Public Proeprties
 
         public MuteTask MuteTask { get; set; }
+        public int SliderIndex { get; set; }
 
         #endregion
         
@@ -47,7 +51,18 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         {
             get
             {
-                _name = EnumNameConverter.GetName(typeof(MuteTask), MuteTask.ToString());
+                switch (MuteTask)
+                {
+                    case MuteTask.MuteDefaultSpeaker:
+                        _name = $"Default Speaker Mute";
+                        break;
+                    case MuteTask.MuteDefaultMic:
+                        _name = $"Default Microphone Mute";
+                        break;
+                    case MuteTask.MuteSlider:
+                        _name = $"Slider Mute: {ProfileHandler.SelectedProfile.Buttons[SliderIndex].Name}";
+                        break;
+                }
                 return _name;
             }
             set => _name = value;
@@ -66,6 +81,14 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         {
             Index = index;
             MuteTask = muteTask;
+            UUID = uuid;
+        }
+
+        public MuteFunction(int index, int sliderIndex, Guid uuid)
+        {
+            MuteTask = MuteTask.MuteSlider;
+            Index = index;
+            SliderIndex = sliderIndex;
             UUID = uuid;
         }
 
@@ -89,6 +112,12 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         {
             var result = new Dictionary<object, object>();
             result.Add(MUTE_TASK_KEY, MuteTask);
+            switch (MuteTask)
+            {
+                case MuteTask.MuteSlider:
+                    result.Add(SLIDER_INDEX, SliderIndex);
+                    break;
+            }
             return result;
         }
 
@@ -101,6 +130,9 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                     break;
                 case MuteTask.MuteDefaultSpeaker:
                     HandleMute(SessionHandler.DeviceEnumerator.DefaultOutput);
+                    break;
+                case MuteTask.MuteSlider:
+                    HandleSliderMute(SliderIndex);
                     break;
             }
         }
@@ -124,6 +156,19 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             var mute = !volumeEndpoint.Mute;
             volumeEndpoint.Mute = mute;
             OverlayHandler.ShowMute(mute);
+        }
+
+        /// <summary>
+        /// Handle current slider mute.
+        /// </summary>
+        /// <param name="sliderIndex"></param>
+        public static void HandleSliderMute(int sliderIndex)
+        {
+            if (!_sliderMute.ContainsKey(sliderIndex))
+                _sliderMute.Add(sliderIndex, false);
+            var mute = !_sliderMute[sliderIndex];
+            _sliderMute[sliderIndex] = mute;
+            SessionHandler.SetMute(sliderIndex, mute, true);
         }
 
         #endregion
@@ -246,9 +291,15 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         {
             if(!container.ContainsKey(MuteFunction.MUTE_TASK_KEY))
                 throw new NotImplementedException($"Container does not contains: {MuteFunction.MUTE_TASK_KEY} key");
-            var muteTask = container[MuteFunction.MUTE_TASK_KEY].ToString();
-            var muteTaskEnum = EnumUtils.Parse<MuteTask>(muteTask);
-            return new MuteFunction(index, muteTaskEnum, uuid);
+            var muteTask = EnumUtils.Parse<MuteTask>(container[MuteFunction.MUTE_TASK_KEY].ToString());
+            switch (muteTask)
+            {
+                case MuteTask.MuteSlider:
+                    var sliderIndex = container[MuteFunction.SLIDER_INDEX] as int? ?? 0;
+                    return new MuteFunction(index, sliderIndex, uuid);
+                default:
+                    return new MuteFunction(index, muteTask, uuid);
+            }
         }
         
         #endregion
@@ -257,6 +308,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
     public enum MuteTask
     {
         [ValueName("Mute/Unmute Default Speaker")]MuteDefaultSpeaker,
-        [ValueName("Mute/Unmute Default Microphone")]MuteDefaultMic
+        [ValueName("Mute/Unmute Default Microphone")]MuteDefaultMic,
+        [ValueName("Mute/Unmute Slider")]MuteSlider
     }
 }
