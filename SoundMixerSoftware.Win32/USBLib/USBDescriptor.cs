@@ -52,7 +52,7 @@ namespace SoundMixerSoftware.Win32.USBLib
             var deviceHandle = NativeMethods.SetupDiGetClassDevs(IntPtr.Zero, "USB", IntPtr.Zero,
                 (uint) (NativeEnums.DIGCF.DIGCF_PRESENT | NativeEnums.DIGCF.DIGCF_ALLCLASSES));
             var bufferPtr = Marshal.AllocHGlobal(BUFFER_SIZE);
-            if (((int) deviceHandle) != -1)
+            if (deviceHandle != new IntPtr(-1))
             {
                 var hardwareIDFormat = FormatHardwareID(vid, pid);
                 var success = true;

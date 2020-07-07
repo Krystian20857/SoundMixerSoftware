@@ -60,7 +60,10 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                         _name = $"Default Microphone Mute";
                         break;
                     case MuteTask.MuteSlider:
-                        _name = $"Slider Mute: {ProfileHandler.SelectedProfile.Buttons[SliderIndex].Name}";
+                        if (SliderIndex >= ProfileHandler.SelectedProfile.Sliders.Count)
+                            _name = $"Slider Mute: slider out of size";
+                        else
+                            _name = $"Slider Mute: {ProfileHandler.SelectedProfile.Sliders[SliderIndex].Name}";
                         break;
                 }
                 return _name;
@@ -132,7 +135,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                     HandleMute(SessionHandler.DeviceEnumerator.DefaultOutput);
                     break;
                 case MuteTask.MuteSlider:
-                    HandleSliderMute(SliderIndex);
+                    HandleSliderMute(Index, SliderIndex);
                     break;
             }
         }
@@ -162,13 +165,15 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         /// Handle current slider mute.
         /// </summary>
         /// <param name="sliderIndex"></param>
-        public static void HandleSliderMute(int sliderIndex)
+        public static void HandleSliderMute(int buttonIndex, int sliderIndex)
         {
             if (!_sliderMute.ContainsKey(sliderIndex))
                 _sliderMute.Add(sliderIndex, false);
             var mute = !_sliderMute[sliderIndex];
             _sliderMute[sliderIndex] = mute;
             SessionHandler.SetMute(sliderIndex, mute, true);
+            DeviceNotifier.LightButton(unchecked((byte) buttonIndex), mute);
+            OverlayHandler.ShowMute(mute);
         }
 
         #endregion
@@ -295,7 +300,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             switch (muteTask)
             {
                 case MuteTask.MuteSlider:
-                    var sliderIndex = container[MuteFunction.SLIDER_INDEX] as int? ?? 0;
+                    var sliderIndex = int.TryParse(container[MuteFunction.SLIDER_INDEX].ToString(), out var result) ? result : 0;
                     return new MuteFunction(index, sliderIndex, uuid);
                 default:
                     return new MuteFunction(index, muteTask, uuid);

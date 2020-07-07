@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using NLog;
 using SoundMixerSoftware.Win32.Win32;
 
 namespace SoundMixerSoftware.Win32.Wrapper
@@ -14,6 +15,12 @@ namespace SoundMixerSoftware.Win32.Wrapper
     /// </summary>
     public class WindowWrapper
     {
+        #region Current Class Logger
+
+        public static Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         /// <summary>
         /// 
         /// </summary>
@@ -55,8 +62,11 @@ namespace SoundMixerSoftware.Win32.Wrapper
                 if (iconHandle == IntPtr.Zero)
                     iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICONSM);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Logger.Error(exception);
+                if (exception is OverflowException)
+                    Logger.Error("Application might be running in 32-bit mode. If you are running 64-bit os there may occurs problems with getting 64-bit pointers.");
                 return null;
             }
 

@@ -60,11 +60,10 @@ namespace SoundMixerSoftware.Win32.Win32
         {
             if (IntPtr.Size > 4)
                 return GetClassLongPtr64(hWnd, nIndex);
-            else
-                return new IntPtr(GetClassLongPtr32(hWnd, nIndex));
+            return GetClassLongPtr32(hWnd, nIndex);
         }
         [DllImport("user32.dll", EntryPoint="GetClassLong")]
-        public static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
+        public static extern IntPtr GetClassLongPtr32(IntPtr hWnd, int nIndex);
         [DllImport("user32.dll", EntryPoint="GetClassLongPtr")]
         public static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -79,8 +78,7 @@ namespace SoundMixerSoftware.Win32.Win32
 
         [DllImport("user32.dll")]
         public static extern int ToUnicode(uint virtualKeyCode, uint scanCode, byte[] keyboardState, [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 64)] StringBuilder receivingBuffer, int bufferSize, uint flags);
-        
-        
+
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
     }
 }
