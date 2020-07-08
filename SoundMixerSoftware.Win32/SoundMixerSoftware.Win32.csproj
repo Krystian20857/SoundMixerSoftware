@@ -59,7 +59,6 @@
       <Compile Include="USBLib\USBDescriptor.cs" />
       <Compile Include="USBLib\USBDevice.cs" />
       <Compile Include="USBLib\USBID.cs" />
-      <Compile Include="Interop\NativeMethods.cs" />
       <Compile Include="Wrapper\IconExtractor.cs" />
       <Compile Include="Wrapper\KeyWrapper.cs" />
       <Compile Include="Wrapper\MediaControl.cs" />

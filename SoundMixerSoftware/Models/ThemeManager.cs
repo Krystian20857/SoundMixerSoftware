@@ -39,7 +39,7 @@ namespace SoundMixerSoftware.Models
         /// <param name="themeName"></param>
         public static void SetTheme(string themeName)
         {
-            var swatch = SwatchHelper.Swatches.First(x => x.Name.Equals(themeName));
+            var swatch = SwatchHelper.Swatches.FirstOrDefault(x => x.Name.Equals(themeName)) ?? SwatchHelper.Swatches.First();
             var count = swatch.Hues.Count();
             var hues = swatch.Hues.ToList();
             var primaryColor = hues[count - 1];

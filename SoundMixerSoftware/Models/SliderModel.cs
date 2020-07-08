@@ -148,8 +148,9 @@ namespace SoundMixerSoftware.Models
                 var sliderIndex = sliderModel.Index;
                 if (MuteFunction.SliderMute.ContainsKey(sliderIndex))
                 {
-                    var buttonIndex = MuteFunction.SliderMute[sliderIndex];
-                    DeviceNotifier.LightButton(unchecked((byte)buttonIndex), sliderModel.Mute);
+                    var buttonIndexList = MuteFunction.SliderMute[sliderIndex];
+                    foreach(var buttonIndex in buttonIndexList)
+                        DeviceNotifier.LightButton(unchecked((byte)buttonIndex), sliderModel.Mute);
                 }
             };
         }

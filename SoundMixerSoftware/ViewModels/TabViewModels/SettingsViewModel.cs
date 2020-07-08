@@ -183,9 +183,10 @@ namespace SoundMixerSoftware.ViewModels
         {
             foreach (var theme in  SwatchHelper.Swatches)
             {
-                var themeColor = theme.Name.Trim();
+                var themeColor = theme.Name.Trim().Replace(" ", "");
                 if(Enum.TryParse<PrimaryColor>(themeColor, out var primaryColor))
-                    Themes.Add(new ThemeModel(new SolidColorBrush(theme.Lookup[(MaterialDesignColor) primaryColor]), theme.Name));
+                    //Themes.Add(new ThemeModel(new SolidColorBrush(theme.Lookup[(MaterialDesignColor) primaryColor]), theme.Name));
+                    Themes.Add(new ThemeModel(new SolidColorBrush(theme.Hues.Last()), theme.Name));
             }
 
             var themeConfig = ConfigHandler.ConfigStruct.Application.ThemeName;

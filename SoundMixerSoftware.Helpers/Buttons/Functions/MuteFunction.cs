@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -34,7 +35,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         #region Static Properties
 
-        public static Dictionary<int, int> SliderMute { get; } = new Dictionary<int, int>(); // int1: index of slider, int2: index od button
+        public static Dictionary<int, List<int>> SliderMute { get; } = new Dictionary<int, List<int>>(); // int: index of slider, List<int>: indexes of assigned buttons
 
         #endregion
         
@@ -104,13 +105,13 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         static MuteFunction()
         {
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
-            Initialize();
+            Initialize(false);
             
         }
 
         private static void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
-            Initialize();
+            Initialize(true);
         }
 
         #endregion
@@ -242,7 +243,23 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                     _speakerMute.Add(muteFunction);
                     break;
                 case MuteTask.MuteSlider:
-                    SliderMute.Add(muteFunction.SliderIndex, muteFunction.Index);
+                    var sliderIndex = muteFunction.SliderIndex;
+                    var buttonIndex = muteFunction.Index;
+                    if (SliderMute.ContainsKey(sliderIndex))
+                    {
+                        var buttonList = SliderMute[sliderIndex];
+                        if (!buttonList.Contains(buttonIndex))
+                            buttonList.Add(buttonIndex);
+                        SliderMute[buttonIndex] = buttonList;
+                    }
+                    else
+                    {
+                        var buttonList = new List<int>();
+                        buttonList.Add(buttonIndex);
+                        SliderMute.Add(sliderIndex, buttonList);
+                    }
+
+                    
                     break;
             }
         }
@@ -262,7 +279,19 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                     _speakerMute.Remove(muteFunction);
                     break;
                 case MuteTask.MuteSlider:
-                    SliderMute.Remove(muteFunction.SliderIndex);
+                    var sliderIndex = muteFunction.SliderIndex;
+                    var buttonIndex = muteFunction.Index;
+                    if(!SliderMute.ContainsKey(sliderIndex))
+                        return;
+                    var buttonList = SliderMute[sliderIndex];
+                    if (buttonList.Count == 1 && buttonList.Contains(buttonIndex))
+                        SliderMute.Remove(sliderIndex);
+                    else if (buttonList.Count > 1)
+                    {
+                        if (buttonList.Contains(buttonIndex))
+                            buttonList.Remove(buttonIndex);
+                        SliderMute[sliderIndex] = buttonList;
+                    }
                     break;
             }
         }
@@ -283,18 +312,26 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         /// <summary>
         /// Initialize global mute function handler.
         /// </summary>
-        private static void Initialize()
+        private static void Initialize(bool profileChange)
         {
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
+            ButtonHandler.FunctionRemoved -= ButtonHandlerOnFunctionRemoved;
+            ButtonHandler.FunctionCreated -= ButtonHandlerOnFunctionCreated;
+            SessionHandler.DeviceEnumerator.DeviceVolumeChanged -= DeviceEnumeratorOnDeviceVolumeChanged;
+            
 
+            SliderMute.Clear();
+            _micMute.Clear();
+            _speakerMute.Clear();
             _lastMute.Clear();
+            
             foreach (var button in ButtonHandler.Buttons)
-            foreach (var func in button)
-                if (func is MuteFunction mediaFunc)
-                    HandleFunctionAdd(mediaFunc);
+                foreach (var func in button)
+                    if (func is MuteFunction mediaFunc)
+                        HandleFunctionAdd(mediaFunc);
 
             ButtonHandler.FunctionRemoved += ButtonHandlerOnFunctionRemoved;
             ButtonHandler.FunctionCreated += ButtonHandlerOnFunctionCreated;
+            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
         }
 
         #endregion
