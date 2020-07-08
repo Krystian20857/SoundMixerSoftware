@@ -29,7 +29,13 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         private static List<MuteFunction> _speakerMute = new List<MuteFunction>();
         private static List<MuteFunction> _micMute = new List<MuteFunction>();
         private static IDictionary<int, bool> _sliderMute = new Dictionary<int, bool>();
+
+        #endregion
         
+        #region Static Properties
+
+        public static Dictionary<int, int> SliderMute { get; } = new Dictionary<int, int>(); // int1: index of slider, int2: index od button
+
         #endregion
         
         #region Private Fields
@@ -172,7 +178,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             var mute = !_sliderMute[sliderIndex];
             _sliderMute[sliderIndex] = mute;
             SessionHandler.SetMute(sliderIndex, mute, true);
-            DeviceNotifier.LightButton(unchecked((byte) buttonIndex), mute);
+            //DeviceNotifier.LightButton(unchecked((byte) buttonIndex), mute);
             OverlayHandler.ShowMute(mute);
         }
 
@@ -235,6 +241,9 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                 case MuteTask.MuteDefaultSpeaker:
                     _speakerMute.Add(muteFunction);
                     break;
+                case MuteTask.MuteSlider:
+                    SliderMute.Add(muteFunction.SliderIndex, muteFunction.Index);
+                    break;
             }
         }
 
@@ -251,6 +260,9 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                     break;
                 case MuteTask.MuteDefaultSpeaker:
                     _speakerMute.Remove(muteFunction);
+                    break;
+                case MuteTask.MuteSlider:
+                    SliderMute.Remove(muteFunction.SliderIndex);
                     break;
             }
         }

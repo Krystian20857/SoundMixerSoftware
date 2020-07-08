@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SoundMixerSoftware.Win32.Utils;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Win32.Wrapper
 {
@@ -59,9 +59,9 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <returns>ARGB unsigned integer.</returns>
         public int GetThemeColor()
         {
-            var color = NativeMethods.GetImmersiveColorFromColorSetEx(
-                (uint)NativeMethods.GetImmersiveUserColorSetPreference(false, false),
-                NativeMethods.GetImmersiveColorTypeFromName(Marshal.StringToHGlobalUni("ImmersiveStartSelectionBackground")),
+            var color = UxTheme.GetImmersiveColorFromColorSetEx(
+                (uint)UxTheme.GetImmersiveUserColorSetPreference(false, false),
+                UxTheme.GetImmersiveColorTypeFromName(Marshal.StringToHGlobalUni("ImmersiveStartSelectionBackground")),
                 false, 0);
             return (int)((color & 0xFF000000) | ((color & 0x000000FF) << 16) | (color & 0x0000FF00) | ((color & 0x00FF0000) >> 16));
         }

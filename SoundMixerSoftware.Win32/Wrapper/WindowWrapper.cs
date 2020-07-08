@@ -6,7 +6,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using NLog;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Constant;
+using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Win32.Wrapper
 {
@@ -31,7 +33,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
             var windowHandle = currentProcess.MainWindowHandle;
             if (windowHandle == IntPtr.Zero)
                 return false;
-            return NativeMethods.SetForegroundWindow(windowHandle);
+            return User32.SetForegroundWindow(windowHandle);
         }
 
         /// <summary>
@@ -41,9 +43,9 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <returns>string window title.</returns>
         public static string GetWindowTitle(IntPtr windowHandle)
         {
-            var textLength = NativeMethods.GetWindowTextLength(windowHandle);
+            var textLength = User32.GetWindowTextLength(windowHandle);
             var titleBuilder = new StringBuilder(textLength);
-            NativeMethods.GetWindowText(windowHandle, titleBuilder, textLength + 1);
+            User32.GetWindowText(windowHandle, titleBuilder, textLength + 1);
             return titleBuilder.ToString();
         }
 
@@ -52,15 +54,15 @@ namespace SoundMixerSoftware.Win32.Wrapper
             var iconHandle = IntPtr.Zero;
             try
             {
-                iconHandle = NativeMethods.SendMessage(windowHandle, (int) NativeClasses.WM.WM_GETICON, (IntPtr) NativeClasses.ICON.ICON_BIG, IntPtr.Zero);
+                iconHandle = User32.SendMessage(windowHandle, (int) WM.WM_GETICON, (IntPtr) ICON.ICON_BIG, IntPtr.Zero);
                 if (iconHandle == IntPtr.Zero)
-                    iconHandle = NativeMethods.SendMessage(windowHandle, (int) NativeClasses.WM.WM_GETICON, (IntPtr) NativeClasses.ICON.ICON_SMALL, IntPtr.Zero);
+                    iconHandle = User32.SendMessage(windowHandle, (int) WM.WM_GETICON, (IntPtr) ICON.ICON_SMALL, IntPtr.Zero);
                 if (iconHandle == IntPtr.Zero)
-                    iconHandle = NativeMethods.SendMessage(windowHandle, (int) NativeClasses.WM.WM_GETICON, (IntPtr) NativeClasses.ICON.ICON_SMALL2, IntPtr.Zero);
+                    iconHandle = User32.SendMessage(windowHandle, (int) WM.WM_GETICON, (IntPtr) ICON.ICON_SMALL2, IntPtr.Zero);
                 if (iconHandle == IntPtr.Zero)
-                    iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICON);
+                    iconHandle = User32.GetClassLongPtr(windowHandle, GCL.GCL_HICON);
                 if (iconHandle == IntPtr.Zero)
-                    iconHandle = NativeMethods.GetClassLongPtr(windowHandle, NativeClasses.GCL.GCL_HICONSM);
+                    iconHandle = User32.GetClassLongPtr(windowHandle, GCL.GCL_HICONSM);
             }
             catch (Exception exception)
             {

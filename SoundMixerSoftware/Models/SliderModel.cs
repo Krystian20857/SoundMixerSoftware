@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
@@ -9,6 +8,8 @@ using NLog;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.Buttons.Functions;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using LogManager = NLog.LogManager;
 using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
@@ -137,6 +138,20 @@ namespace SoundMixerSoftware.Models
                 sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
 
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
+        }
+
+        static SliderModel()
+        {
+            MuteChanged += (sender, args) =>
+            {
+                var sliderModel = sender as SliderModel;
+                var sliderIndex = sliderModel.Index;
+                if (MuteFunction.SliderMute.ContainsKey(sliderIndex))
+                {
+                    var buttonIndex = MuteFunction.SliderMute[sliderIndex];
+                    DeviceNotifier.LightButton(unchecked((byte)buttonIndex), sliderModel.Mute);
+                }
+            };
         }
 
         /// <summary>

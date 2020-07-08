@@ -2,8 +2,9 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using SoundMixerSoftware.Win32.Utils;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Method;
+using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware
 {
@@ -69,7 +70,7 @@ namespace SoundMixerSoftware
             }
             else
             {
-                NativeMethods.PostMessage((IntPtr)0xFFFF, WM_SETFOREGROUND, IntPtr.Zero, IntPtr.Zero);
+                User32.PostMessage((IntPtr)0xFFFF, WM_SETFOREGROUND, IntPtr.Zero, IntPtr.Zero);
                 ExitApplication?.Invoke(this, EventArgs.Empty);
             }
 

@@ -32,14 +32,34 @@
       <OutputPath>bin\Debug\</OutputPath>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Include="Interop\Constant\DBTDEVTYPE.cs" />
+      <Compile Include="Interop\Constant\DBTEVENT.cs" />
+      <Compile Include="Interop\Constant\DEVICE_FLAGS.cs" />
+      <Compile Include="Interop\Constant\GCL.cs" />
+      <Compile Include="Interop\Constant\GUID_DEVINTERFACE.cs" />
+      <Compile Include="Interop\Constant\ICON.cs" />
+      <Compile Include="Interop\Constant\WM.cs" />
+      <Compile Include="Interop\Enum\DICS_FLAG.cs" />
+      <Compile Include="Interop\Enum\DIGCF.cs" />
+      <Compile Include="Interop\Enum\DIREG.cs" />
+      <Compile Include="Interop\Enum\REGKEYSECURITY.cs" />
+      <Compile Include="Interop\Enum\SPDRP.cs" />
+      <Compile Include="Interop\Enum\WinErrors.cs" />
+      <Compile Include="Interop\Method\Advapi.cs" />
+      <Compile Include="Interop\Method\Gdi32.cs" />
+      <Compile Include="Interop\Method\Kernel32.cs" />
+      <Compile Include="Interop\Method\Setupapi.cs" />
+      <Compile Include="Interop\Method\Shell32.cs" />
+      <Compile Include="Interop\Method\User32.cs" />
+      <Compile Include="Interop\Method\UxTheme.cs" />
+      <Compile Include="Interop\Struct\DEV_BROADCASR_HDR.cs" />
+      <Compile Include="Interop\Struct\DEV_BROADCAST_DEVICEINTERFACE.cs" />
+      <Compile Include="Interop\Struct\SP_DEVINFO_DATA.cs" />
       <Compile Include="USBLib\EventArgs.cs" />
       <Compile Include="USBLib\USBDescriptor.cs" />
       <Compile Include="USBLib\USBDevice.cs" />
       <Compile Include="USBLib\USBID.cs" />
-      <Compile Include="Win32\NativeClasses.cs" />
-      <Compile Include="Win32\NativeEnums.cs" />
-      <Compile Include="Win32\NativeMethods.cs" />
-      <Compile Include="Win32\NativeStructs.cs" />
+      <Compile Include="Interop\NativeMethods.cs" />
       <Compile Include="Wrapper\IconExtractor.cs" />
       <Compile Include="Wrapper\KeyWrapper.cs" />
       <Compile Include="Wrapper\MediaControl.cs" />
@@ -72,6 +92,9 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Interop\Interface" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

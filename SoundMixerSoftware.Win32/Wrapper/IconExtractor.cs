@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Win32.Wrapper
 {
@@ -17,7 +18,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <returns>Int pointer.</returns>
         public static IntPtr ExtractPtr(string file, int index, bool largeIcon)
         {
-            NativeMethods.ExtractIconEx(file, index, out var large, out var small,1);
+            Shell32.ExtractIconEx(file, index, out var large, out var small,1);
             try
             {
                 return largeIcon ? large : small;

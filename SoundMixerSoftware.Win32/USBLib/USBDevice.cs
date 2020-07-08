@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using NLog;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Constant;
+using SoundMixerSoftware.Win32.Interop.Method;
+using SoundMixerSoftware.Win32.Interop.Struct;
 
 namespace SoundMixerSoftware.Win32.USBLib
 {
@@ -107,18 +110,18 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <returns></returns>
         public bool RegisterDeviceChange(IntPtr handle)
         {
-            var deviceinterface = new NativeStructs.DEV_BROADCAST_DEVICEINTERFACE();
-            var flags = NativeClasses.DEVICE_FLAGS.DEVICE_NOTIFY_WINDOW_HANDLE | NativeClasses.DEVICE_FLAGS.DEVICE_NOTIFY_ALL_INTERFACE_CLASSES;
+            var deviceinterface = new DEV_BROADCAST_DEVICEINTERFACE();
+            var flags = DEVICE_FLAGS.DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_FLAGS.DEVICE_NOTIFY_ALL_INTERFACE_CLASSES;
             deviceinterface.dbcc_size = Marshal.SizeOf(deviceinterface);
             if (!_deviceGuid.Equals(Guid.Empty))
             {
                 deviceinterface.dbcc_classguid = _deviceGuid;
                 flags = 0;
             }
-            deviceinterface.dbcc_devicetype = (int) NativeClasses.DBTDEVTYPE.DBT_DEVTYP_DEVICEINTERFACE;
+            deviceinterface.dbcc_devicetype = (int) DBTDEVTYPE.DBT_DEVTYP_DEVICEINTERFACE;
             var buffer = Marshal.AllocHGlobal(deviceinterface.dbcc_size);
             Marshal.StructureToPtr(deviceinterface, buffer, true);
-            var deviceHandle = NativeMethods.RegisterDeviceNotification(handle, buffer, flags);
+            var deviceHandle = User32.RegisterDeviceNotification(handle, buffer, flags);
             var status = (deviceHandle != IntPtr.Zero);
             if(!status)
                 Logger.Warn($"Win32 Error: {Marshal.GetLastWin32Error()}");
@@ -142,7 +145,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <param name="handle"></param>
         public bool UnregisterDeviceChange(IntPtr handle)
         {
-            return NativeMethods.UnregisterDeviceNotification(handle);
+            return User32.UnregisterDeviceNotification(handle);
         }
 
         /// <summary>
@@ -153,20 +156,20 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <param name="lParam"></param>
         public void ProcessMessage(uint message, IntPtr wParam, IntPtr lParam)
         {
-            if (message != NativeClasses.WM.WM_DEVICECHANGE) return;
+            if (message != WM.WM_DEVICECHANGE) return;
 
             var devices = new DeviceProperties[_connectedDevices.Count];
             _connectedDevices.CopyTo(devices);
             switch (wParam.ToInt32())
             {
-                case NativeClasses.DBTEVENT.DBT_DEVICEARRIVAL:
+                case DBTEVENT.DBT_DEVICEARRIVAL:
                     var deviceTypeArrive = (uint)Marshal.ReadInt32(lParam, 4);
                     var connectedDevice = default(DeviceProperties);
                     _connectedDevices = USBDescriptor.GetDescriptors(VidPid).ToList();
                         connectedDevice = _connectedDevices.Except(devices).FirstOrDefault();
                     DeviceArrive?.Invoke(this, new DeviceStateArgs(deviceTypeArrive, connectedDevice));
                     break;
-                case NativeClasses.DBTEVENT.DBT_DEVICEREMOVECOMPLETE:
+                case DBTEVENT.DBT_DEVICEREMOVECOMPLETE:
                     var deviceTypeRemove = (uint)Marshal.ReadInt32(lParam, 4);
                     var disconnectedDevice = default(DeviceProperties);
                     _connectedDevices = USBDescriptor.GetDescriptors(VidPid).ToList();

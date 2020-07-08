@@ -7,7 +7,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Common.Extension
@@ -24,7 +25,7 @@ namespace SoundMixerSoftware.Common.Extension
         {
             var nameBuilder = new StringBuilder(buffer);
             var bufferLength = nameBuilder.Capacity + 1;
-            return NativeMethods.QueryFullProcessImageName(process.Handle, 0, nameBuilder, ref bufferLength) ? nameBuilder.ToString() : null;
+            return Kernel32.QueryFullProcessImageName(process.Handle, 0, nameBuilder, ref bufferLength) ? nameBuilder.ToString() : null;
         }
 
         /// <summary>
@@ -65,12 +66,12 @@ namespace SoundMixerSoftware.Common.Extension
             catch (Win32Exception win32Exception)
             {
                 //Win32 hresult for access denied: dec: -2147467259 hex: 0x80004005
-                if (win32Exception.ErrorCode == 0x80004005)
-                    label = process.ProcessName;
+                //if (win32Exception.ErrorCode == 0x80004005)
+                    //label = process.ProcessName;
             }
             if (!string.IsNullOrWhiteSpace(label)) return label;
             var handle = FindSimilar(process).FirstOrDefault(x => x.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle ?? IntPtr.Zero;
-            return handle == IntPtr.Zero ? null : WindowWrapper.GetWindowTitle(handle);
+            return handle == IntPtr.Zero ? process.ProcessName : WindowWrapper.GetWindowTitle(handle);
         }
 
         /// <summary>

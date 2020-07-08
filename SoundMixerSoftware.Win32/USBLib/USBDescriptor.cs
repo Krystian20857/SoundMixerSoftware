@@ -4,7 +4,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using NLog;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Enum;
+using SoundMixerSoftware.Win32.Interop.Method;
+using SoundMixerSoftware.Win32.Interop.Struct;
 
 namespace SoundMixerSoftware.Win32.USBLib
 {
@@ -49,8 +52,8 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <returns></returns>
         public static IEnumerable<DeviceProperties> GetDescriptors(uint vid, uint pid)
         {
-            var deviceHandle = NativeMethods.SetupDiGetClassDevs(IntPtr.Zero, "USB", IntPtr.Zero,
-                (uint) (NativeEnums.DIGCF.DIGCF_PRESENT | NativeEnums.DIGCF.DIGCF_ALLCLASSES));
+            var deviceHandle = Setupapi.SetupDiGetClassDevs(IntPtr.Zero, "USB", IntPtr.Zero,
+                (uint) (DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_ALLCLASSES));
             var bufferPtr = Marshal.AllocHGlobal(BUFFER_SIZE);
             if (deviceHandle != new IntPtr(-1))
             {
@@ -59,22 +62,22 @@ namespace SoundMixerSoftware.Win32.USBLib
                 var index = 0;
                 while (success)
                 {
-                    var devinfo = new NativeStructs.SP_DEVINFO_DATA();
+                    var devinfo = new SP_DEVINFO_DATA();
                     var lastError = 0;
                     devinfo.cbSize = (uint) Marshal.SizeOf(devinfo);
-                    success = NativeMethods.SetupDiEnumDeviceInfo(deviceHandle, (uint) index, ref devinfo);
+                    success = Setupapi.SetupDiEnumDeviceInfo(deviceHandle, (uint) index, ref devinfo);
                     if (success)
                     {
-                        NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle, ref devinfo,
-                            (uint) NativeEnums.SPDRP.SPDRP_HARDWAREID, out var regType, IntPtr.Zero, 0,
+                        Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle, ref devinfo,
+                            (uint) SPDRP.SPDRP_HARDWAREID, out var regType, IntPtr.Zero, 0,
                             out var reqSize);
                         lastError = Marshal.GetLastWin32Error();
-                        if ((NativeEnums.WinErrors) lastError == NativeEnums.WinErrors.ERROR_INSUFFICIENT_BUFFER)
+                        if ((WinErrors) lastError == WinErrors.ERROR_INSUFFICIENT_BUFFER)
                         {
                             if (reqSize <= BUFFER_SIZE)
                             {
-                                if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle, ref devinfo,
-                                    (int) NativeEnums.SPDRP.SPDRP_HARDWAREID, out regType, bufferPtr, BUFFER_SIZE,
+                                if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle, ref devinfo,
+                                    (int) SPDRP.SPDRP_HARDWAREID, out regType, bufferPtr, BUFFER_SIZE,
                                     out reqSize))
                                 {
                                     var hardwareID = Marshal.PtrToStringAnsi(bufferPtr);
@@ -83,36 +86,36 @@ namespace SoundMixerSoftware.Win32.USBLib
                                         var devproperties = new DeviceProperties();
                                         devproperties.Vid = vid;
                                         devproperties.Pid = pid;
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_FRIENDLYNAME, out regType, bufferPtr,
+                                            (int) SPDRP.SPDRP_FRIENDLYNAME, out regType, bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
                                         {
                                             devproperties.FriendlyName = Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_DEVTYPE, out regType, bufferPtr,
+                                            (int) SPDRP.SPDRP_DEVTYPE, out regType, bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
                                         {
                                             devproperties.DeviceType = Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_MFG, out regType, bufferPtr,
+                                            (int) SPDRP.SPDRP_MFG, out regType, bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
                                         {
                                             devproperties.DeviceManufacturer = Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_LOCATION_INFORMATION, out regType,
+                                            (int) SPDRP.SPDRP_LOCATION_INFORMATION, out regType,
                                             bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
@@ -120,18 +123,18 @@ namespace SoundMixerSoftware.Win32.USBLib
                                             devproperties.DeviceLocation = Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_LOCATION_PATHS, out regType, bufferPtr,
+                                            (int) SPDRP.SPDRP_LOCATION_PATHS, out regType, bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
                                         {
                                             devproperties.DevicePath = Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_PHYSICAL_DEVICE_OBJECT_NAME, out regType,
+                                            (int) SPDRP.SPDRP_PHYSICAL_DEVICE_OBJECT_NAME, out regType,
                                             bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
@@ -140,21 +143,21 @@ namespace SoundMixerSoftware.Win32.USBLib
                                                 Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        if (NativeMethods.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
                                             ref devinfo,
-                                            (int) NativeEnums.SPDRP.SPDRP_DEVICEDESC, out regType, bufferPtr,
+                                            (int) SPDRP.SPDRP_DEVICEDESC, out regType, bufferPtr,
                                             BUFFER_SIZE,
                                             out reqSize))
                                         {
                                             devproperties.DeviceDescription = Marshal.PtrToStringAnsi(bufferPtr);
                                         }
 
-                                        var deviceRegKey = NativeMethods.SetupDiOpenDevRegKey(deviceHandle,
-                                            ref devinfo, (int) NativeEnums.DICS_FLAG.DICS_FLAG_GLOBAL, 0,
-                                            (int) NativeEnums.DIREG.DIREG_DEV,
-                                            (int) NativeEnums.REGKEYSECURITY.KEY_READ);
-                                        if ((NativeEnums.WinErrors) deviceRegKey ==
-                                            NativeEnums.WinErrors.ERROR_INVALID_HANDLE)
+                                        var deviceRegKey = Setupapi.SetupDiOpenDevRegKey(deviceHandle,
+                                            ref devinfo, (int) DICS_FLAG.DICS_FLAG_GLOBAL, 0,
+                                            (int) DIREG.DIREG_DEV,
+                                            (int) REGKEYSECURITY.KEY_READ);
+                                        if ((WinErrors) deviceRegKey ==
+                                            WinErrors.ERROR_INVALID_HANDLE)
                                         {
                                             lastError = Marshal.GetLastWin32Error();
                                             break;
@@ -162,14 +165,14 @@ namespace SoundMixerSoftware.Win32.USBLib
 
                                         var data = new StringBuilder(BUFFER_SIZE);
                                         var size = (uint) data.Capacity;
-                                        var result = NativeMethods.RegQueryValueEx(deviceRegKey, "PortName", 0,
+                                        var result = Setupapi.RegQueryValueEx(deviceRegKey, "PortName", 0,
                                             out var type, data, ref size);
-                                        if ((NativeEnums.WinErrors) result == NativeEnums.WinErrors.ERROR_SUCCESS)
+                                        if ((WinErrors) result == WinErrors.ERROR_SUCCESS)
                                         {
                                             devproperties.COMPort = data.ToString();
                                         }
 
-                                        NativeMethods.RegCloseKey(deviceRegKey);
+                                        Advapi.RegCloseKey(deviceRegKey);
                                         yield return devproperties;
                                     }
                                 }
@@ -185,7 +188,7 @@ namespace SoundMixerSoftware.Win32.USBLib
             else
                 Logger.Warn($"Win32 Error: {Marshal.GetLastWin32Error()}");
 
-            NativeMethods.SetupDiDestroyDeviceInfoList(deviceHandle);
+            Setupapi.SetupDiDestroyDeviceInfoList(deviceHandle);
             Marshal.FreeHGlobal(bufferPtr);
             //yield return default;
         }

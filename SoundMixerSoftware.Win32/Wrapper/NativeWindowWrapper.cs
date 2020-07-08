@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SoundMixerSoftware.Win32.Utils
+namespace SoundMixerSoftware.Win32.Wrapper
 {
     public class NativeWindowWrapper : NativeWindow
     {

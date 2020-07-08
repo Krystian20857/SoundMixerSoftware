@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO.Ports;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Markup;
-using NAudio.MediaFoundation;
 using NLog;
 using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.USBLib;
-using SoundMixerSoftware.Win32.Utils;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Wrapper;
 using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
 
 namespace SoundMixerSoftware.Helpers.Device
@@ -94,10 +89,6 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         public event EventHandler<EventArgs> DeviceIdRequestError;
         /// <summary>
-        /// Fires When error occurs while data transfer.
-        /// </summary>
-        public event EventHandler<EventArgs> DataReceiveError;
-        /// <summary>
         /// Occurs when data has received.
         /// </summary>
         public event EventHandler<DataReceivedEventArgs> DataReceived;
@@ -114,7 +105,7 @@ namespace SoundMixerSoftware.Helpers.Device
             if (!ConfigHandler.IsInitialize())
                 ConfigHandler.Initialize();
             
-            _usbDevice = new USBDevice(NativeClasses.GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, ConfigHandler.ConfigStruct.Hardware.UsbIDs);
+            _usbDevice = new USBDevice(GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, ConfigHandler.ConfigStruct.Hardware.UsbIDs);
             _usbDevice.VidPid = ConfigHandler.ConfigStruct.Hardware.UsbIDs;
             _usbDevice.RegisterDeviceChange(_windowWrapper.Handle);
             

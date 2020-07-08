@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.AudioLib;

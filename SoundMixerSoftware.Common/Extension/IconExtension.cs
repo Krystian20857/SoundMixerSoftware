@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using SoundMixerSoftware.Win32.Win32;
+using SoundMixerSoftware.Win32.Interop;
+using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Common.Extension
 {
@@ -22,7 +23,7 @@ namespace SoundMixerSoftware.Common.Extension
         {
             var ptr = bitmap.GetHbitmap();
             var result = Imaging.CreateBitmapSourceFromHBitmap(ptr, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            if(!NativeMethods.DeleteObject(ptr))
+            if(!Gdi32.DeleteObject(ptr))
                 throw new Win32Exception();
             return result;
         }

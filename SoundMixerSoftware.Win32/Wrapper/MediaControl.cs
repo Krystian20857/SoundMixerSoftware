@@ -1,8 +1,5 @@
 ﻿using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
-using SoundMixerSoftware.Win32.Utils;
-using SoundMixerSoftware.Win32.Win32;
-using  VirtualKeyShort = SoundMixerSoftware.Win32.Win32.NativeEnums.VirtualKeyShort;
 
 namespace SoundMixerSoftware.Win32.Wrapper
 {
