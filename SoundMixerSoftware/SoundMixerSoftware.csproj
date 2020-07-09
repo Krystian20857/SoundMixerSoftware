@@ -104,6 +104,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Converter\BaseConverter.cs" />
+    <Compile Include="Converter\BoolInvertConverter.cs" />
+    <Compile Include="Converter\HexConverter.cs" />
+    <Compile Include="Converter\IconConverter.cs" />
+    <Compile Include="Converter\VisibilityConverter.cs" />
     <Compile Include="Input\KeyFormatter.cs" />
     <Compile Include="Input\KeyTrigger.cs" />
     <Compile Include="Models\ButtonModel.cs" />

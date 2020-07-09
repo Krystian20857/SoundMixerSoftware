@@ -4,14 +4,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
-        xmlns:converters="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cal="http://www.caliburnproject.org"
+        xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
         mc:Ignorable="d"
         Title="Usb Manager" Height="250" Width="400" Icon="{StaticResource SpeakerIcon}"
         cal:Message.Attach="[Shortcut Enter] = [Action Save()]">
     <Window.Resources>
-        <converters:HexConverter x:Key="HexConverter"/>
+        <converter:HexConverter x:Key="HexConverter"/>
     </Window.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" Margin="10" Orientation="Vertical">
@@ -35,12 +35,12 @@
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBox Margin="5"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Text="{Binding Path=Vid,Converter={StaticResource HexConverter}, Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding Path=Vid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
                          materialDesign:HintAssist.Hint="VID(Hex)"
                          Width="100" />
                 <TextBox Margin="5"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Text="{Binding Path=Pid,Converter={StaticResource HexConverter}, Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding Path=Pid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
                          materialDesign:HintAssist.Hint="PID(Hex)"
                          Width="100" />
             </StackPanel>

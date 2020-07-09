@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Markup;
 
-namespace SoundMixerSoftware.Helpers.Converters
+namespace SoundMixerSoftware.Converter
 {
     /// <summary>
     /// Inverts bool: ! operator.

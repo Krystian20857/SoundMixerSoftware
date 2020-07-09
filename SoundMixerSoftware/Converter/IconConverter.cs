@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using MaterialDesignThemes.Wpf;
 
-namespace SoundMixerSoftware.Helpers.Converters
+namespace SoundMixerSoftware.Converter
 {
     /// <summary>
     /// Converts boolean to two icons.

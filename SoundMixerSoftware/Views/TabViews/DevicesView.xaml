@@ -6,11 +6,11 @@
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cal="http://www.caliburnproject.org"
-             xmlns:cv="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
+             xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <cv:HexConverter x:Key="HexConverter"/>
+        <converter:HexConverter x:Key="HexConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>

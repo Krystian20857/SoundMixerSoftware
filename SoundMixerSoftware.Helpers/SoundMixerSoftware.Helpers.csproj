@@ -46,11 +46,6 @@
     <Compile Include="Buttons\IButtonCreator.cs" />
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\ConfigStruct.cs" />
-    <Compile Include="Converters\BaseConverter.cs" />
-    <Compile Include="Converters\BoolInvertConverter.cs" />
-    <Compile Include="Converters\HexConverter.cs" />
-    <Compile Include="Converters\IconConverter.cs" />
-    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Device\ConnectionStructs.cs" />
     <Compile Include="Device\DeviceHandler.cs" />
     <Compile Include="Device\DeviceHandlerGlobal.cs" />

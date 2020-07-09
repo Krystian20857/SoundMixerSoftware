@@ -1,10 +1,9 @@
 ﻿using System;
-using System.CodeDom;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace SoundMixerSoftware.Helpers.Converters
+namespace SoundMixerSoftware.Converter
 {
     /// <summary>
     /// Converts boolean to wpf visibility.

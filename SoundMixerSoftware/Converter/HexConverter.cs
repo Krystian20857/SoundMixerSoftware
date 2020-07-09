@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace SoundMixerSoftware.Helpers.Converters
+namespace SoundMixerSoftware.Converter
 {
     /// <summary>
     /// Converts hex string to unsigned integer and vice versa.
@@ -20,7 +20,7 @@ namespace SoundMixerSoftware.Helpers.Converters
             var hex = value.ToString();
             if (hex.StartsWith("0x"))
                 hex = hex.Remove(0, 2);
-            return !uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result) ? 0 : result;
+            return !uint.TryParse(hex, out var result) ? 0 : result;
         }
     }
 }

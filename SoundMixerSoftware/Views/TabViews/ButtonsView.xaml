@@ -6,11 +6,11 @@
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cal="http://www.caliburnproject.org"
-             xmlns:converters="clr-namespace:SoundMixerSoftware.Helpers.Converters;assembly=SoundMixerSoftware.Helpers"
+             xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:VisibilityConverter x:Key="VisibilityConverter"/>
+        <converter:VisibilityConverter x:Key="VisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">

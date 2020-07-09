@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace SoundMixerSoftware.Helpers.Converters
+namespace SoundMixerSoftware.Converter
 {
     public abstract class BaseConverter : MarkupExtension
     {

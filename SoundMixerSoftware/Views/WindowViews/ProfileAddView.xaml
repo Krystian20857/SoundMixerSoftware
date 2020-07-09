@@ -6,9 +6,16 @@
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cal="http://www.caliburnproject.org"
+        xmlns:validation="clr-namespace:SoundMixerSoftware.Validation"
         mc:Ignorable="d"
         Title="{Binding Path=Title, UpdateSourceTrigger=PropertyChanged}" Height="225" Width="350" Icon="{StaticResource SpeakerIcon}"
         cal:Message.Attach="[Shortcut Enter] = [AddClick]">
+    <Window.Resources>
+        <Style x:Key="IntBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Width" Value="150"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -36,16 +43,30 @@
                 </ComboBox>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <TextBox Margin="10"
-                         x:Name="CreatedProfile_ButtonCount"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.Hint="Buttons Count"
-                         Width="150" />
-                <TextBox Margin="10"
-                         x:Name="CreatedProfile_SliderCount"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.Hint="Sliders Count"
-                         Width="150" />
+                <TextBox Style="{StaticResource IntBoxStyle}"
+                         materialDesign:HintAssist.Hint="Buttons Count">
+                    <TextBox.Text>
+                        <Binding Path="CreatedProfile.ButtonCount"
+                                 Mode="TwoWay"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:IntegerValidation/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox Style="{StaticResource IntBoxStyle}"
+                         materialDesign:HintAssist.Hint="Sliders Count" >
+                    <TextBox.Text>
+                        <Binding Path="CreatedProfile.SliderCount"
+                                 Mode="TwoWay"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validation:IntegerValidation/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <Button Margin="10" Style="{StaticResource MaterialDesignFlatButton}" cal:Message.Attach="[Event Click] = [Action AddClick()]" Width="150" Content="Save" />

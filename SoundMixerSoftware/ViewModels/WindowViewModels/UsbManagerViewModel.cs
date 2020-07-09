@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using Caliburn.Micro;
-using NLog.LayoutRenderers;
-using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Win32.USBLib;
 
