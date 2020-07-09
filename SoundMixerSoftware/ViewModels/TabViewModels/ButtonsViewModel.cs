@@ -84,7 +84,7 @@ namespace SoundMixerSoftware.ViewModels
             var buttonModel = sender as ButtonModel;
             var addViewModel = IoC.Get<ButtonAddViewModel>();
             addViewModel.Index = buttonModel.Index;
-            _windowManager.ShowWindowAsync(addViewModel);
+            _windowManager.ShowDialogAsync(addViewModel);
         }
 
         public void RemoveClick(object sender)

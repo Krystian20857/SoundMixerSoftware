@@ -123,7 +123,10 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="StarterHelper.cs" />
+    <Compile Include="Utils\BindingProxy.cs" />
     <Compile Include="Utils\ParserHelper.cs" />
+    <Compile Include="Validation\IntegerValidation.cs" />
+    <Compile Include="Validation\OffsetValidation.cs" />
     <Compile Include="ViewModels\ButtonViewModels\KeystrokeFunctionViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MediaButtonViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MuteButtonViewModel.cs" />
@@ -134,6 +137,7 @@
     <Compile Include="ViewModels\TabViewModels\SlidersViewModel.cs" />
     <Compile Include="ViewModels\TaskbarIconViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ButtonAddViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\DeviceSettingsViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
@@ -164,6 +168,9 @@
     </Compile>
     <Compile Include="Views\WindowViews\ButtonAddView.xaml.cs">
       <DependentUpon>ButtonAddView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\DeviceSettingsView.xaml.cs">
+      <DependentUpon>DeviceSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowViews\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -213,6 +220,7 @@
     <Page Include="Views\TabViews\SettingsView.xaml" />
     <Page Include="Views\TabViews\SlidersView.xaml" />
     <Page Include="Views\WindowViews\ButtonAddView.xaml" />
+    <Page Include="Views\WindowViews\DeviceSettingsView.xaml" />
     <Page Include="Views\WindowViews\MainView.xaml" />
     <Page Include="Views\WindowViews\ProfileAddView.xaml" />
     <Page Include="Views\WindowViews\SessionAddView.xaml" />

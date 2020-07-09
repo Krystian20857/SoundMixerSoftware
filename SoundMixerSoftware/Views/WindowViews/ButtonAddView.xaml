@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:cal="http://caliburnmicro.com"
         mc:Ignorable="d"
-        Title="ButtonAddView" Height="350" Width="500"
+        Title="ButtonAddView" Height="350" Width="600"
         cal:Message.Attach="[Shortcut Enter] = [AddClicked()]">
     <Grid>
         <Grid.RowDefinitions>
@@ -35,7 +35,12 @@
             </TabControl.ContentTemplate>
         </TabControl>
         <DockPanel Grid.Row="1" LastChildFill="False">
-            <Button DockPanel.Dock="Right" cal:Message.Attach="[Click] = [AddClicked()]" Margin="5, 5" Style="{StaticResource MaterialDesignRaisedButton}" Width="150" Content="Add Button" ToolTip="Add Button"/>
+            <Button DockPanel.Dock="Right" cal:Message.Attach="[Click] = [AddClicked()]"
+                    Margin="5, 5"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Width="150"
+                    Content="Add Button"
+                    ToolTip="Add Button"/>
         </DockPanel>
     </Grid>
 </Window>

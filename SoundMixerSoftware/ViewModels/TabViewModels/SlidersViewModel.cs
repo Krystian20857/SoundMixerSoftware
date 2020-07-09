@@ -303,7 +303,8 @@ namespace SoundMixerSoftware.ViewModels
         
         public void ConfirmEdit(object sender)
         {
-            var buttonModel = sender as ButtonModel;
+            if (!(sender is ButtonModel buttonModel))
+                return;
             if(buttonModel.IsEditing)
                 buttonModel.IsEditing = !buttonModel.IsEditing;
         }

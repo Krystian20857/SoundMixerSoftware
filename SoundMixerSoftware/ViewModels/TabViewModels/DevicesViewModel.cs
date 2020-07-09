@@ -70,9 +70,10 @@ namespace SoundMixerSoftware.ViewModels
             //This type of action need to be handled in main thread.
             Execute.OnUIThread(() =>
             {
-                var _device = Devices.FirstOrDefault(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
-                if(Devices.Contains(_device))
-                    Devices.Remove(_device);
+                var device = Devices.FirstOrDefault(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
+                var deviceIndex = Devices.IndexOf(device);
+                if(deviceIndex > 0)
+                    Devices.RemoveAt(deviceIndex);
             });
         }
 
@@ -86,7 +87,7 @@ namespace SoundMixerSoftware.ViewModels
             //This type of action need to be handled in main thread.
             Execute.OnUIThread(() =>
             {
-                Devices.Add(DeviceModel.CreateModel(e.Device, e.DeviceResponse));
+                Devices.Add(DeviceModel.CreateModel(e));
             });
         }
 
@@ -112,6 +113,15 @@ namespace SoundMixerSoftware.ViewModels
             var devicemodel = sender as DeviceModel;
             DeviceNotifier.TestLights(devicemodel.ComPort);
         }
+
+        public void SettingsClick(object sender)
+        {
+            var deviceModel = sender as DeviceModel;
+            var settingsManager = new DeviceSettingsViewModel();
+            settingsManager.Device = deviceModel;
+            _windowManager.ShowDialogAsync(settingsManager);
+        }
+        
         #endregion
     }
 }

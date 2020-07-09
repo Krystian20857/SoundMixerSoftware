@@ -30,7 +30,12 @@
                     </ComboBox>
                 </StackPanel>
             </Border>
-            <Border Visibility="{Binding Path=SlidersVisibility, Converter={StaticResource VisibilityConverter}}" DockPanel.Dock="Left" Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+            <Border Visibility="{Binding Path=SlidersVisibility, Converter={StaticResource VisibilityConverter}}"
+                    DockPanel.Dock="Left"
+                    Margin="5"
+                    BorderBrush="DarkGray"
+                    BorderThickness="2"
+                    CornerRadius="5">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Slider" Margin="5, 5"/>
                     <ComboBox

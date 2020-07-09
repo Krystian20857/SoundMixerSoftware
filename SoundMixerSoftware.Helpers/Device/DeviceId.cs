@@ -129,6 +129,8 @@ namespace SoundMixerSoftware.Helpers.Device
 
         public bool Equals(DeviceId other)
         {
+            if (ReferenceEquals(this, other))
+                return true;
             if (other == null && IsEmpty(this) || IsEmpty(this) && IsEmpty(other))
                 return true;
             if (other == null)

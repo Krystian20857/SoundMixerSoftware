@@ -201,6 +201,7 @@ namespace SoundMixerSoftware.Helpers.Device
                 foreach(var type in _typesToRegister)
                     dataConverter.RegisterType(type.Key, type.Value);
                 dataConverter.DataReceived += DataConverterOnDataReceived;
+                _dataConverters.Add(comPort, dataConverter);
                 if (!_serialEventRegistered)
                     _serialConnection.DataReceived += (sender, args) =>
                     {
@@ -214,7 +215,6 @@ namespace SoundMixerSoftware.Helpers.Device
                         });
                     };
                 _serialEventRegistered = true;
-                _dataConverters.Add(comPort, dataConverter);
             }
         }
 

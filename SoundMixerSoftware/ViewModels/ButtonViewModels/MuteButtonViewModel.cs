@@ -106,8 +106,14 @@ namespace SoundMixerSoftware.ViewModels
         public void Initialize()
         {
             var sliders = ProfileHandler.SelectedProfile.Sliders;
-            for (var n = 0; n < sliders.Count; n++)
+            var sliderCount = ProfileHandler.SelectedProfile.SliderCount;
+            for (var n = 0; n < sliderCount; n++)
+            {
+                if (n >= sliders.Count)
+                    break;
                 Sliders.Add($"{sliders[n].Name}(#{n + 1})");
+            }
+
             if (sliders.Count > 0)
                 SelectedSlider = Sliders[0];
         }
