@@ -110,7 +110,7 @@ namespace SoundMixerSoftware.Common.Communication
         /// Process input data. On data processing end <see cref="OnDataReceived"/> fires.
         /// </summary>
         /// <param name="data"></param>
-        public void ProcessData(byte[] data)
+        public void ProcessData(byte[] data, object arguments)
         {
             for (var n = 0;n < data.Length; n++)
             {
@@ -140,7 +140,8 @@ namespace SoundMixerSoftware.Common.Communication
                     var dataEventArgs = new DataReceivedEventArgs
                     {
                         Command = command,
-                        Data = genericType.Invoke(null, new object[] {_buffer.ToArray()})
+                        Data = genericType.Invoke(null, new object[] {_buffer.ToArray()}),
+                        Arguments = arguments
                     };
                     DataReceived?.Invoke(this, dataEventArgs);
                     _buffer.Clear();

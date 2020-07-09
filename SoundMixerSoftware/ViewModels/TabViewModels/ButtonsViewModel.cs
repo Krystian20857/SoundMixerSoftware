@@ -103,11 +103,7 @@ namespace SoundMixerSoftware.ViewModels
         public void LightClicked(object sender)
         {
             var buttonModel = sender as ButtonModel;
-            Task.Factory.StartNew(() =>
-            {
-                foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
-                    DeviceNotifier.LightButton(device.Key, unchecked((byte)buttonModel.Index), TimeSpan.FromMilliseconds(500));
-            });
+            Task.Factory.StartNew(() => DeviceNotifier.LightButton((byte)buttonModel.Index, TimeSpan.FromMilliseconds(500)));
         }
 
         public void EditNameClicked(object sender)

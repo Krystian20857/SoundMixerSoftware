@@ -54,8 +54,11 @@
     <Compile Include="Device\ConnectionStructs.cs" />
     <Compile Include="Device\DeviceHandler.cs" />
     <Compile Include="Device\DeviceHandlerGlobal.cs" />
+    <Compile Include="Device\DeviceId.cs" />
     <Compile Include="Device\DeviceNotifier.cs" />
+    <Compile Include="Device\DeviceSettingsManager.cs" />
     <Compile Include="Device\EventArgs.cs" />
+    <Compile Include="Device\OffsetManager.cs" />
     <Compile Include="LocalSystem\LocalContainer.cs" />
     <Compile Include="NotifyWrapper\DeviceNotification.cs" />
     <Compile Include="NotifyWrapper\DeviceNotificationState.cs" />

@@ -10,19 +10,21 @@ namespace SoundMixerSoftware.Common.Utils
     /// </summary>
     public static class ArrayUtils
     {
-
         /// <summary>
-        /// Convert valueType array to hex string terminated with '-'
+        /// Convert valueType array to hex string terminated with separator
         /// </summary>
         /// <param name="array"></param>
+        /// <param name="separator"></param>
+        /// <param name="isUpperCase"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static string ConvertToString<T>(T[] array) where T : struct, IFormattable
+        public static string ConvertToHexString<T>(T[] array, string separator = "-", bool isUpperCase = true) where T : struct, IFormattable
         {
             var builder = new StringBuilder();
             for (var n = 0; n < array.Length; n++)
             {
-                builder.Append(array[n].ToString("X2", new NumberFormatInfo()));
+                var stringHex = array[n].ToString("X2", new NumberFormatInfo());
+                builder.Append(isUpperCase ? stringHex.ToUpper( ): stringHex.ToLower());
                 if (n != array.Length - 1)
                     builder.Append('-');
             }

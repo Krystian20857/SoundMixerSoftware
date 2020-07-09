@@ -71,6 +71,7 @@ namespace SoundMixerSoftware.Helpers.Device
         #region Public Properties
 
         public IntPtr NativeHandle => _windowWrapper.Handle;
+        public Dictionary<string, DeviceId> ConnectedDevices { get; set; } = new Dictionary<string, DeviceId>();
 
         #endregion
         
@@ -206,7 +207,10 @@ namespace SoundMixerSoftware.Helpers.Device
                         Task.Factory.StartNew(() =>
                         {
                             if (_dataConverters.ContainsKey(args.COMPort))
-                                _dataConverters[args.COMPort].ProcessData(args.Data);
+                            {
+                                var deviceId = ConnectedDevices.ContainsKey(args.COMPort) ? ConnectedDevices[args.COMPort] : new DeviceId();
+                                _dataConverters[args.COMPort].ProcessData(args.Data,deviceId);
+                            }
                         });
                     };
                 _serialEventRegistered = true;
@@ -294,6 +298,7 @@ namespace SoundMixerSoftware.Helpers.Device
                     _requestFlags.Remove(response.flag);
                     var startup = _flagsOnStartup.Contains(flag);
                     DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(devproperties, response, startup));
+                    ConnectedDevices.Add(devproperties.COMPort, new DeviceId(response.uuid));
                     if (startup)
                         _flagsOnStartup.Remove(flag);
                 }
@@ -317,10 +322,13 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="e"></param>
         private void UsbDeviceOnDeviceRemove(object sender, DeviceStateArgs e)
         {
-            _serialConnection.Disconnect(e.DeviceProperties.COMPort);
+            var comPort = e.DeviceProperties.COMPort;
+            _serialConnection.Disconnect(comPort);
             DeviceDisconnected?.Invoke(this, e);
-            if (_dataConverters.ContainsKey(e.DeviceProperties.COMPort))
-                _dataConverters.Remove(e.DeviceProperties.COMPort);
+            if (_dataConverters.ContainsKey(comPort))
+                _dataConverters.Remove(comPort);
+            if (ConnectedDevices.ContainsKey(comPort))
+                ConnectedDevices.Remove(comPort);
         }
 
         /// <summary>
@@ -331,6 +339,8 @@ namespace SoundMixerSoftware.Helpers.Device
         private void UsbDeviceOnDeviceArrive(object sender, DeviceStateArgs e)
         {
             if (e.DeviceProperties.Equals(default))
+                return;
+            if(string.IsNullOrEmpty(e.DeviceProperties.COMPort))
                 return;
             _requestProperties.Add(e.DeviceProperties.COMPort, e.DeviceProperties);
             _serialConnection.Connect(e.DeviceProperties.COMPort);

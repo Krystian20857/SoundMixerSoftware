@@ -31,7 +31,8 @@ namespace SoundMixerSoftware.Helpers.Config
                     StopBits = StopBits.One,
                     Timeout = 30000
                 },
-                TerminatorNullable = 0xFF
+                TerminatorNullable = 0xFF,
+                DeviceSettings = new Dictionary<string, DeviceSettings>()
             },
             Application = new ApplicationSettings()
             {
@@ -155,7 +156,9 @@ namespace SoundMixerSoftware.Helpers.Config
         public List<USBID> UsbIDs { get; set; }
         [Recursion]
         public SerialConfig SerialConfig { get; set; }
-        
+
+        public Dictionary<string, DeviceSettings> DeviceSettings { get; set; } = new Dictionary<string, DeviceSettings>();
+
         #endregion
         
         #region Non-null Types
@@ -183,5 +186,11 @@ namespace SoundMixerSoftware.Helpers.Config
         #region Non-null Types;
         
         #endregion
+    }
+
+    public class DeviceSettings
+    {
+        public int SliderOffset { get; set; }
+        public int ButtonOffset { get; set; }
     }
 }

@@ -1,5 +1,7 @@
-﻿﻿using SoundMixerSoftware.Common.Utils;
+﻿﻿using System.Diagnostics;
+ using SoundMixerSoftware.Common.Utils;
  using SoundMixerSoftware.Helpers;
+ using SoundMixerSoftware.Helpers.Config;
  using SoundMixerSoftware.Helpers.Device;
  using SoundMixerSoftware.Win32.USBLib;
 
@@ -44,7 +46,7 @@
         /// <summary>
         /// UUID of current device
         /// </summary>
-        public string UUID { get; set; }
+        public DeviceId UUID { get; set; }
 
         #endregion
         
@@ -66,7 +68,7 @@
                 Pid =  properties.Pid,
                 Vid =  properties.Vid,
                 Sliders = response.slider_count,
-                UUID = ArrayUtils.ConvertToString(response.uuid)
+                UUID = new DeviceId(response.uuid)
             };
         }
         

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 using NLog;
 
 namespace SoundMixerSoftware.Helpers.Device
@@ -53,13 +54,29 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="comport"></param>
         /// <param name="button"></param>
         /// <param name="illuminationTime"></param>
-        public static void LightButton(string comport, byte button, TimeSpan illuminationTime)
+        private static void LightButton(string comport, byte button, TimeSpan illuminationTime)
         {
             Task.Factory.StartNew(async () =>
             {
                 LightButton(comport, button, true);
                 await Task.Delay(illuminationTime);
                 LightButton(comport, button, false);
+            });
+        }
+        
+        /// <summary>
+        /// Light button for specified period of time.
+        /// </summary>
+        /// <param name="comport"></param>
+        /// <param name="button"></param>
+        /// <param name="illuminationTime"></param>
+        public static void LightButton(byte button, TimeSpan illuminationTime)
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                LightButton(button, true);
+                await Task.Delay(illuminationTime);
+                LightButton(button, false);
             });
         }
         
@@ -72,7 +89,13 @@ namespace SoundMixerSoftware.Helpers.Device
         public static void LightButton(byte button, bool state)
         {
             foreach (var device in DeviceHandlerGlobal.ConnectedDevice)
-                LightButton(device.Key, button, state);
+            {
+                var deviceId = new DeviceId(device.Value.DeviceResponse.uuid);
+                var buttonOffset = DeviceHandlerGlobal.ButtonOffsetManager.GetOrCreateOffset(deviceId);
+                var buttonIndex = button - buttonOffset;
+                if (buttonIndex >= 0)
+                    LightButton(device.Key, (byte)buttonIndex, state);
+            }
         }
 
         /// <summary>
@@ -81,7 +104,7 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="comport">serial port of device</param>
         /// <param name="button">button index</param>
         /// <param name="state">led state</param>
-        public static void LightButton(string comport, byte button, bool state)
+        private static void LightButton(string comport, byte button, bool state)
         {
             var structure = new LedStruct()
             {
