@@ -74,15 +74,16 @@ namespace SoundMixerSoftware.ViewModels
             if (_editMode)
             {
                 model.Guid = CreatedProfile.Guid;
-                ProfileHandler.SelectedProfile.ButtonCount = profile.ButtonCount;
-                ProfileHandler.SelectedProfile.SliderCount = profile.SliderCount;
-                ProfileHandler.SaveSelectedProfile();
-                ProfileHandler.OnProfileChanged(model.Guid);
+                var profileToEdit = ProfileHandler.ProfileManager.Profiles[model.Guid];
+                profileToEdit.ButtonCount = profile.ButtonCount;
+                profileToEdit.SliderCount = profile.SliderCount;
+                ProfileHandler.ProfileManager.Save(model.Guid);
                 CreatedProfile = model;
             }
             else
             {
                 model.Guid = ProfileHandler.ProfileManager.Create(profile);
+                model.Selected = true;
                 ProfileHandler.OnProfileChanged(model.Guid);
                 CreatedProfile = model;
             }

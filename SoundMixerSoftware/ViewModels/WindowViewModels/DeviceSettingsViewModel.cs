@@ -11,9 +11,7 @@ namespace SoundMixerSoftware.ViewModels
         #region Private Fields
         
         private DeviceModel _device = new DeviceModel();
-        private int _sliderOffset;
-        private int _buttonOffset;
-        
+
         #endregion
         
         #region Public Properties
