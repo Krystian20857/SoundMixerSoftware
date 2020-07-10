@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Caliburn.Micro;
+using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Models;
 using Screen = Caliburn.Micro.Screen;
 
@@ -16,11 +18,11 @@ namespace SoundMixerSoftware.ViewModels
         private BindableCollection<ITabModel> _tabs = new BindableCollection<ITabModel>();
         private ITabModel _selectedTab;
 
-        private IWindowManager _windowManager = new WindowManager();
-        
         #endregion
         
         #region Public Properties
+
+        public static MainViewModel Instance { get; private set; }
 
         /// <summary>
         /// Collection of tabs.
@@ -30,7 +32,7 @@ namespace SoundMixerSoftware.ViewModels
             get => _tabs;
             set
             {
-                _tabs = Tabs;
+                _tabs = value;
                 NotifyOfPropertyChange(() => Tabs);
             }
         }
@@ -50,6 +52,10 @@ namespace SoundMixerSoftware.ViewModels
 
         #endregion
         
+        #region Events
+
+        #endregion
+        
         #region Constructor
         
         /// <summary>
@@ -57,20 +63,31 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            Tabs.Add(new ManagerViewModel());
-            Tabs.Add(new SlidersViewModel());
-            Tabs.Add(new ButtonsViewModel());
-            Tabs.Add(new DevicesViewModel());
-            Tabs.Add(new SettingsViewModel());
+            Instance = this;
+            
+            Tabs.Add(IoC.Get<ManagerViewModel>());
+            Tabs.Add(IoC.Get<SlidersViewModel>());
+            Tabs.Add(IoC.Get<ButtonsViewModel>());
+            Tabs.Add(IoC.Get<DevicesViewModel>());
+            Tabs.Add(IoC.Get<SettingsViewModel>());
+            
 
             ThemeManager.GetTheme();
-            
-            SelectedTab = Tabs[0];
         }
-        
+
         #endregion
-        
-        #region Private Events
+
+        #region Overriden Methods
+
+        protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+        {
+            var configTab = ConfigHandler.ConfigStruct.Application.SelectedTab;
+            SelectedTab = Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? Tabs[0];
+
+            var settingsTab = IoC.Get<SettingsViewModel>();
+            settingsTab.SelectedTab = settingsTab.Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? settingsTab.Tabs[0];
+            return base.OnInitializeAsync(cancellationToken);
+        }
 
         #endregion
     }

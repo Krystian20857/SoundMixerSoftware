@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NLog;
@@ -210,7 +211,7 @@ namespace SoundMixerSoftware.Helpers.Device
                             if (_dataConverters.ContainsKey(args.COMPort))
                             {
                                 var deviceId = ConnectedDevices.ContainsKey(args.COMPort) ? ConnectedDevices[args.COMPort] : new DeviceId();
-                                _dataConverters[args.COMPort].ProcessData(args.Data,deviceId);
+                                _dataConverters[args.COMPort].ProcessData(args.Data, deviceId);
                             }
                         });
                     };
@@ -290,23 +291,27 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             if (e.Command == 0x03)
             {
-                DeviceIdResponse response = e.Data;
-                var flag = response.flag;
-                if (_requestFlags.ContainsKey(flag))
+                Task.Factory.StartNew(() =>
                 {
-                    var devproperties = _requestFlags[flag];
-                    _requestFlags.Remove(response.flag);
-                    var startup = _flagsOnStartup.Contains(flag);
-                    DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(devproperties, response, startup));
-                    ConnectedDevices.Add(devproperties.COMPort, new DeviceId(response.uuid));
-                    if (startup)
-                        _flagsOnStartup.Remove(flag);
-                }
-                else
-                {
-                    _requestFlags.Clear();
-                    DeviceIdRequestError?.Invoke(this, new EventArgs());
-                }
+                    DeviceIdResponse response = e.Data;
+                    var flag = response.flag;
+                    if (_requestFlags.ContainsKey(flag))
+                    {
+                        var devproperties = _requestFlags[flag];
+                        _requestFlags.Remove(response.flag);
+                        var startup = _flagsOnStartup.Contains(flag);
+                        Logger.Info($"Recived device response: {devproperties.COMPort}");
+                        DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(devproperties, response, startup));
+                        ConnectedDevices.Add(devproperties.COMPort, new DeviceId(response.uuid));
+                        if (startup)
+                            _flagsOnStartup.Remove(flag);
+                    }
+                    else
+                    {
+                        _requestFlags.Clear();
+                        DeviceIdRequestError?.Invoke(this, new EventArgs());
+                    }
+                });
             }
             DataReceived?.Invoke(sender, e);
         }
@@ -322,13 +327,16 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="e"></param>
         private void UsbDeviceOnDeviceRemove(object sender, DeviceStateArgs e)
         {
-            var comPort = e.DeviceProperties.COMPort;
-            _serialConnection.Disconnect(comPort);
-            DeviceDisconnected?.Invoke(this, e);
-            if (_dataConverters.ContainsKey(comPort))
-                _dataConverters.Remove(comPort);
-            if (ConnectedDevices.ContainsKey(comPort))
-                ConnectedDevices.Remove(comPort);
+            Task.Factory.StartNew(() =>
+            {
+                var comPort = e.DeviceProperties.COMPort;
+                _serialConnection.Disconnect(comPort);
+                DeviceDisconnected?.Invoke(this, e);
+                if (_dataConverters.ContainsKey(comPort))
+                    _dataConverters.Remove(comPort);
+                if (ConnectedDevices.ContainsKey(comPort))
+                    ConnectedDevices.Remove(comPort);
+            });
         }
 
         /// <summary>
@@ -338,14 +346,17 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <param name="e"></param>
         private void UsbDeviceOnDeviceArrive(object sender, DeviceStateArgs e)
         {
-            if (e.DeviceProperties.Equals(default))
-                return;
-            if(string.IsNullOrEmpty(e.DeviceProperties.COMPort))
-                return;
-            _requestProperties.Add(e.DeviceProperties.COMPort, e.DeviceProperties);
-            _serialConnection.Connect(e.DeviceProperties.COMPort);
+            Task.Factory.StartNew(() =>
+            {
+                if (e.DeviceProperties.Equals(default))
+                    return;
+                if (string.IsNullOrEmpty(e.DeviceProperties.COMPort))
+                    return;
+                _requestProperties.Add(e.DeviceProperties.COMPort, e.DeviceProperties);
+                _serialConnection.Connect(e.DeviceProperties.COMPort);
+            });
         }
-        
+
         #endregion
         
         #region MessageLoop

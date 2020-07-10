@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Helpers.Buttons;
@@ -35,6 +34,7 @@ namespace SoundMixerSoftware.ViewModels
         
         public string Name { get; set; }
         public PackIconKind Icon { get; set; }
+        public Guid Uuid { get; set; } = new Guid("925E6CE5-2AD4-4A80-8CCC-BFE3A8EF71AA");
 
         #endregion
         

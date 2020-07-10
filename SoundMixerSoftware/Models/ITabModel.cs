@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 
@@ -17,5 +18,9 @@ namespace SoundMixerSoftware.Models
         /// Material Design Icon.
         /// </summary>
         PackIconKind Icon { get; set; }
+        /// <summary>
+        /// Represents unique id of tab.
+        /// </summary>
+        Guid Uuid { get; set; }
     }
 }

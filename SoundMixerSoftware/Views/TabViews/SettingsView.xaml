@@ -7,7 +7,8 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             cal:Message.Attach="[Initialized] = [ViewInitialized]">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -24,15 +25,33 @@
                         </Border>
                         <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
                             <DockPanel LastChildFill="False">
+                                <TextBlock DockPanel.Dock="Left">Starting Tab</TextBlock>
+                                <ComboBox DockPanel.Dock="Right"
+                                          SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          ItemsSource="{Binding Path=Tabs, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Margin="3,0" Kind="{Binding Path=Icon}" />
+                                                <TextBlock Text="{Binding Path=Name}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </DockPanel>
+                        </Border>
+                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                            <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Theme</TextBlock>
                                 <ComboBox DockPanel.Dock="Right"
                                           SelectedItem="{Binding Path=SelectedTheme, Mode=TwoWay, 
-                                          UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=Themes, UpdateSourceTrigger=PropertyChanged}">
+                                          UpdateSourceTrigger=PropertyChanged}"
+                                          ItemsSource="{Binding Path=Themes, UpdateSourceTrigger=PropertyChanged}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <DockPanel LastChildFill="False">
-                                                <Rectangle Margin="5, 0" Width="35" Height="15" Fill="{Binding Path=PrimaryColor}"/>
-                                                <TextBlock Margin="5, 0" Text="{Binding Path=ThemeName}"/>
+                                                <Rectangle Margin="5, 0" Width="35" Height="15" Fill="{Binding Path=PrimaryColor}" />
+                                                <TextBlock Margin="5, 0" Text="{Binding Path=ThemeName}" />
                                             </DockPanel>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>

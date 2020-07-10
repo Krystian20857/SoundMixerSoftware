@@ -46,6 +46,7 @@ namespace SoundMixerSoftware.ViewModels
         
         public string Name { get; set; }
         public PackIconKind Icon { get; set; }
+        public Guid Uuid { get; set; } = new Guid("3845ECE9-16B9-41BD-87A4-DD9C19EFCE10");
 
         #endregion
         
@@ -72,7 +73,7 @@ namespace SoundMixerSoftware.ViewModels
             {
                 var device = Devices.FirstOrDefault(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
                 var deviceIndex = Devices.IndexOf(device);
-                if(deviceIndex > 0)
+                if(deviceIndex >= 0)
                     Devices.RemoveAt(deviceIndex);
             });
         }

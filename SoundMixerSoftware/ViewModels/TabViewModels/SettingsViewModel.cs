@@ -1,21 +1,21 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Media;
 using Caliburn.Micro;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using NLog;
-using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Application;
+using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Views;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
@@ -38,13 +38,16 @@ namespace SoundMixerSoftware.ViewModels
         private bool _enableOverlay;
         private int _overlayFadeTime;
         private int _notificationShowTime;
-        
+
         private ThemeModel _selectedTheme;
         private BindableCollection<ThemeModel> _themes = new BindableCollection<ThemeModel>();
+
+        private TabModel _selectedTab;
+        private BindableCollection<TabModel> _tabs = new BindableCollection<TabModel>();
         
         private AutoRunHandle _autoRunHandle = new AutoRunHandle(Assembly.GetExecutingAssembly().Location);
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
-        
+
         #endregion
         
         #region Public Properties
@@ -139,6 +142,24 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
+        public TabModel SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                ConfigHandler.ConfigStruct.Application.SelectedTab = value.Uuid; 
+                if(!LockConfig)
+                    ConfigHandler.SaveConfig();
+                _selectedTab = value;
+            }
+        }
+
+        public BindableCollection<TabModel> Tabs
+        {
+            get => _tabs;
+            set => _tabs = value;
+        }
+
         public bool LockConfig { get; set; }
 
         #endregion
@@ -147,11 +168,12 @@ namespace SoundMixerSoftware.ViewModels
         
         public string Name { get; set; }
         public PackIconKind Icon { get; set; }
+        public Guid Uuid { get; set; } = new Guid("A1504124-4802-404D-8A95-CFE5056CE563");
 
         #endregion
 
         #region Constructor
-        
+
         public SettingsViewModel()
         {
             Name = "Settings";
@@ -166,10 +188,11 @@ namespace SoundMixerSoftware.ViewModels
             NotificationShowTime = ConfigHandler.ConfigStruct.Notification.NotificationShowTime;
             
             LoadThemes();
+            LoadTabs();
             
             LockConfig = false;
         }
-        
+
         #endregion
         
         #region Private Events
@@ -182,16 +205,29 @@ namespace SoundMixerSoftware.ViewModels
         private void LoadThemes()
         {
             foreach (var theme in  SwatchHelper.Swatches)
-            {
-                var themeColor = theme.Name.Trim().Replace(" ", "");
-                if(Enum.TryParse<PrimaryColor>(themeColor, out var primaryColor))
-                    //Themes.Add(new ThemeModel(new SolidColorBrush(theme.Lookup[(MaterialDesignColor) primaryColor]), theme.Name));
-                    Themes.Add(new ThemeModel(new SolidColorBrush(theme.Hues.Last()), theme.Name));
-            }
+                Themes.Add(new ThemeModel(new SolidColorBrush(theme.Hues.Last()), theme.Name));
 
             var themeConfig = ConfigHandler.ConfigStruct.Application.ThemeName;
-            SelectedTheme = Themes.Any(x => x.ThemeName.Equals(themeConfig)) ? 
-                Themes.First(x => x.ThemeName.Equals(themeConfig)) : Themes[0];
+            SelectedTheme = Themes.FirstOrDefault(x => x.ThemeName.Equals(themeConfig)) ?? Themes[0];
+        }
+
+        private void LoadTabs()
+        {
+            var mainView = MainViewModel.Instance;
+
+            Tabs.Clear();
+            foreach (var tab in mainView.Tabs)
+                Tabs.Add(TabModel.CreateModel(tab));
+
+            mainView.Tabs.CollectionChanged += (sender, args) =>
+            {
+                if(args.NewStartingIndex != -1)
+                    foreach (var tab in args.NewItems.Cast<ITabModel>())
+                        Tabs.Add(TabModel.CreateModel(tab));
+                if(args.OldStartingIndex != -1)
+                    foreach (var tab in args.NewItems.Cast<ITabModel>())
+                        Tabs.Remove(TabModel.CreateModel(tab));
+            };
         }
         
         #endregion

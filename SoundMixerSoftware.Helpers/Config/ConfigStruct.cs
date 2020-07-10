@@ -38,7 +38,8 @@ namespace SoundMixerSoftware.Helpers.Config
             {
                 ThemeName = "Red",
                 ProfilesOrder = new List<Guid>(),
-                SelectedProfile = Guid.Empty
+                SelectedProfile = Guid.Empty,
+                SelectedTab = Guid.Empty
             },
             Notification = new NotificationSettings()
             {
@@ -180,7 +181,9 @@ namespace SoundMixerSoftware.Helpers.Config
         public Guid SelectedProfile { get; set; }
         public List<Guid> ProfilesOrder { get; set; }
         public string ThemeName { get; set; }
-        
+        [YamlMember(Alias = "SelectedTab")]
+        public Guid SelectedTab { get; set; }
+
         #endregion
         
         #region Non-null Types;

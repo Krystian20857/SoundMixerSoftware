@@ -47,6 +47,7 @@ namespace SoundMixerSoftware.ViewModels
         
         public string Name { get; set; }
         public PackIconKind Icon { get; set; }
+        public Guid Uuid { get; set; } = new Guid("5BABA481-CBAD-47B4-90EF-DD1B59E6694D");
 
         #endregion
 

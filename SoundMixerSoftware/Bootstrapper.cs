@@ -1,6 +1,8 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -43,6 +45,7 @@ namespace SoundMixerSoftware
         private readonly SimpleContainer _container = new SimpleContainer();
         private StarterHelper _starter = new StarterHelper();
         private IWindowManager _windowManager = new WindowManager();
+        private IEventAggregator _eventAggregator = new EventAggregator();
 
         #endregion
         
@@ -99,11 +102,11 @@ namespace SoundMixerSoftware
             _container.Singleton<IWindowManager, WindowManager>();
             _container.Singleton<IEventAggregator, EventAggregator>();
             
-            _container.PerRequest<ManagerViewModel>();
-            _container.PerRequest<SettingsViewModel>();
-            _container.PerRequest<DevicesViewModel>();
-            _container.PerRequest<SlidersViewModel>();
-            _container.PerRequest<ButtonsViewModel>();
+            _container.Singleton<ManagerViewModel>();
+            _container.Singleton<SettingsViewModel>();
+            _container.Singleton<DevicesViewModel>();
+            _container.Singleton<SlidersViewModel>();
+            _container.Singleton<ButtonsViewModel>();
             
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ButtonAddViewModel>();
