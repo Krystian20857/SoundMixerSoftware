@@ -84,6 +84,12 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                 case MediaTask.PlayPause:
                     MediaControl.PauseResume();
                     break;
+                case MediaTask.VolumeUp:
+                    MediaControl.VolumeUp();
+                    break;
+                case MediaTask.VolumeDown:
+                    MediaControl.VolumeDown();
+                    break;
             }
         }
 
@@ -111,6 +117,8 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         [ValueName("Play/Pause Track")]PlayPause,
         [ValueName("Play Next Track")]NextTrack,
         [ValueName("Play Previous Track")]PreviousTrack,
-        [ValueName("Stop Track")]Stop
+        [ValueName("Stop Track")]Stop,
+        [ValueName("Turn Volume Up")]VolumeUp,
+        [ValueName("Turn Volume Down")]VolumeDown
     }
 }
