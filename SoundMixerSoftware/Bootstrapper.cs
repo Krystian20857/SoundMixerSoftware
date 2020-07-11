@@ -73,12 +73,11 @@ namespace SoundMixerSoftware
 
         private void StarterOnBringWindowToFront(object sender, EventArgs e)
         {
-            var mainWindow = IoC.Get<MainViewModel>();
-            var view = mainWindow.GetView() as MainView;
+            var mainWindow = MainViewModel.Instance;
             if (!mainWindow.IsActive)
                 _windowManager.ShowWindowAsync(mainWindow);
             else
-                view.WindowState = WindowState.Normal;
+                (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
         }
 
         private void StarterOnStartApplication(object sender, EventArgs e)

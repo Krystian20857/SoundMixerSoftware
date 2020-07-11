@@ -29,7 +29,7 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
         
         /// <summary>
-        /// Macro for x86 & x64 os.
+        /// GetClassLong for x86 & x64 os.
         /// </summary>
         /// <param name="hWnd"></param>
         /// <param name="nIndex"></param>
@@ -61,5 +61,46 @@ namespace SoundMixerSoftware.Win32.Interop.Method
 
         [DllImport("user32.dll")]
         public static extern int ToUnicode(uint virtualKeyCode, uint scanCode, byte[] keyboardState, [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 64)] StringBuilder receivingBuffer, int bufferSize, uint flags);
+        
+        [DllImport("user32.dll")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+        
+        [DllImport("user32.dll", EntryPoint="GetWindowLong")]
+        private static extern IntPtr GetWindowLongPtr32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint="GetWindowLongPtr")]
+        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
+
+        /// <summary>
+        /// GetWindowLong for x86 & x64 os.
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="nIndex"></param>
+        /// <returns></returns>
+        public static IntPtr GetWindowLongPtr(IntPtr windowHandle, int nIndex)
+        {
+            if (IntPtr.Size > 4)
+                return GetWindowLongPtr64(windowHandle, nIndex);
+            return GetWindowLongPtr32(windowHandle, nIndex);
+        }
+        
+        [DllImport("user32.dll", EntryPoint="SetWindowLong")]
+        public static extern IntPtr SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint="SetWindowLongPtr")]
+        public static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, int dwNewLong);
+        
+        /// <summary>
+        /// SetWindowLong for x86 & x64 os.
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="nIndex"></param>
+        /// <returns></returns>
+        public static IntPtr SetWindowLongPtr(IntPtr windowHandle, int nIndex, int dwFlags)
+        {
+            if (IntPtr.Size > 4)
+                return SetWindowLongPtr64(windowHandle, nIndex, dwFlags);
+            return SetWindowLong32(windowHandle, nIndex, dwFlags);
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using NLog;
 using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Constant;
+using SoundMixerSoftware.Win32.Interop.Enum;
 using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Win32.Wrapper
@@ -49,6 +50,31 @@ namespace SoundMixerSoftware.Win32.Wrapper
             return titleBuilder.ToString();
         }
 
+        /// <summary>
+        /// Set top layer window opticality.
+        /// </summary>
+        /// <param name="windowHandle">handle to window</param>
+        /// <param name="alpha">byte alpha value</param>
+        /// <returns></returns>
+        public static bool SetWindowOpacity(IntPtr windowHandle, byte alpha)
+        {
+            return User32.SetLayeredWindowAttributes(windowHandle, 0, alpha, LWA.LWA_ALPHA);
+        }
+
+        /// <summary>
+        /// Set window able to change opacity.
+        /// </summary>
+        /// <param name="windowHandle"></param>
+        public static void ApplyOpacityFlag(IntPtr windowHandle)
+        {
+            User32.SetWindowLongPtr(windowHandle, (int)GWL.GWL_EXSTYLE, User32.GetWindowLongPtr(windowHandle, (int) GWL.GWL_EXSTYLE).ToInt32() ^ (int) GWL.GWL_EXSTYLE);
+        }
+        
+        /// <summary>
+        /// Get window icon.
+        /// </summary>
+        /// <param name="windowHandle">handle to window</param>
+        /// <returns></returns>
         public static Icon GetWindowIcon(IntPtr windowHandle)
         {
             var iconHandle = IntPtr.Zero;
@@ -77,7 +103,5 @@ namespace SoundMixerSoftware.Win32.Wrapper
             return Icon.FromHandle(iconHandle);
         }
 
-        //public static IEnumerable<IntPtr> GetWindowHandles(int processId)
-        
     }
 }

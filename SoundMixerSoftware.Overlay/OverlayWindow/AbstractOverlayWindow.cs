@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Timers;
+using System.Threading;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
+using SoundMixerSoftware.Overlay.Resource;
+using SoundMixerSoftware.Win32.Wrapper;
+using Timer = System.Timers.Timer;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
@@ -9,36 +12,41 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
     {
         #region Private Fields
 
-        private Timer _fadeTimer;
+        private Timer _showTimer;
+        private volatile bool _fadeThreadRunning = true;
 
         #endregion
-        
+
         #region Protected Fields
 
         protected volatile GraphicsWindow _window;
-        
+        protected volatile byte _opacity = 255;
+
         #endregion
-        
+
         #region Protected Properties
 
         protected Graphics Graphics => _window.Graphics;
 
         #endregion
-        
+
         #region Properties
 
         /// <summary>
         /// Gets current window width.
         /// </summary>
         public int WindowWidth { get; }
+
         /// <summary>
         /// Gets current window height.
         /// </summary>
         public int WindowHeight { get; }
+
         /// <summary>
         /// Gets current padding in x axis.
         /// </summary>
         public int PaddingX { get; }
+
         /// <summary>
         /// Gets current padding in y axis.
         /// </summary>
@@ -48,12 +56,12 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
 
         public int FadeTime
         {
-            get => (int) _fadeTimer.Interval;
-            set => _fadeTimer.Interval = value;
+            get => (int) _showTimer.Interval;
+            set => _showTimer.Interval = value;
         }
 
         #endregion
-        
+
         #region Constructor
 
         /// <summary>
@@ -71,7 +79,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
 
             PaddingX = paddingX;
             PaddingY = paddingY;
-            
+
             var graphics = new Graphics
             {
                 PerPrimitiveAntiAliasing = true,
@@ -84,15 +92,17 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
                 IsTopmost = true,
                 IsVisible = true,
             };
-            
+
             _window.DestroyGraphics += WindowOnDestroyGraphics;
             _window.DrawGraphics += WindowOnDrawGraphics;
             _window.SetupGraphics += WindowOnSetupGraphics;
 
-            _fadeTimer = SetupFadeTimer(fadeTime);
+            WindowWrapper.ApplyOpacityFlag(_window.Handle);
+
+            SetShowTimer(fadeTime);
             FadeTime = fadeTime;
         }
-        
+
         #region Private Events
 
         private void WindowOnDrawGraphics(object sender, DrawGraphicsEventArgs e)
@@ -113,24 +123,37 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         #endregion
 
         #endregion
-        
+
         #region Private Methods
 
-        private Timer SetupFadeTimer(int fadeTime)
+        private void SetShowTimer(int showTime)
         {
-            var fadeTimer = new Timer
+            var fadeTickTime = (int) (showTime * 0.1F) / 50;
+            _showTimer = new Timer {Interval = showTime, AutoReset = false};
+            _showTimer.Elapsed += (sender, args) =>
             {
-                Interval = fadeTime,
+                var fadeThread = new Thread(() =>
+                {
+                    _fadeThreadRunning = true;
+                    while (_opacity > 25 && _fadeThreadRunning)
+                    {
+                        WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
+                        _opacity--;
+                        Thread.Sleep(fadeTickTime);
+                    }
+
+                    if (_fadeThreadRunning)
+                        HideWindow();
+                    _opacity = 255;
+                    WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
+                });
+                fadeThread.IsBackground = true;
+                fadeThread.Start();
             };
-            fadeTimer.Elapsed += (sender, args) =>
-            {
-                HideWindow();
-            };
-            return fadeTimer;
         }
 
         #endregion
-        
+
         #region Public Methods
 
         /// <summary>
@@ -138,24 +161,28 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         /// </summary>
         public void ShowWindow()
         {
-            if(IsVisible)
-                return;
-            if(!_window.IsInitialized)
+            _opacity = 255;
+            _fadeThreadRunning = false;
+            if (!_window.IsInitialized)
                 _window.Create();
-            _window.Show();
-            _window.Unpause();
-            if (_fadeTimer.Enabled)
-                _fadeTimer.Stop();
-            _fadeTimer.Start();
+            if (!IsVisible)
+            {
+
+                _window.Show();
+                _window.Unpause();
+            }
+            _showTimer.Start();
         }
 
         public void HideWindow()
         {
             if(!IsVisible)
                 return;
-            _fadeTimer.Start();
             _window.Pause(); 
             _window.Hide();
+            _opacity = 0;
+            _fadeThreadRunning = false;
+            _showTimer.Stop();
         }
         
         #endregion

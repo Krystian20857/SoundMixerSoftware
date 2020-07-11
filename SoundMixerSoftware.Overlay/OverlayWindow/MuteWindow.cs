@@ -21,11 +21,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         private IResourceProvider<Color> _colorResource = new ColorResource();
         private IResourceProvider<IBrush> _brushResource = new BrushResource();
-        private IResourceProvider<Font> _fontResource = new FontResource();
         private IResourceProvider<Image> _imageResource = new ImageResource();
 
-        //private IBrush DARK_GRAY_BRUSH_TEST;
-        
         #endregion
         
         #region Public Properties

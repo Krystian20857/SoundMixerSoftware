@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
@@ -71,8 +72,7 @@ namespace SoundMixerSoftware.ViewModels
             Tabs.Add(IoC.Get<DevicesViewModel>());
             Tabs.Add(IoC.Get<SettingsViewModel>());
             
-
-            ThemeManager.GetTheme();
+            RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);
         }
 
         #endregion

@@ -38,10 +38,12 @@
       <Compile Include="Interop\Constant\GCL.cs" />
       <Compile Include="Interop\Constant\GUID_DEVINTERFACE.cs" />
       <Compile Include="Interop\Constant\ICON.cs" />
+      <Compile Include="Interop\Constant\LWA.cs" />
       <Compile Include="Interop\Constant\WM.cs" />
       <Compile Include="Interop\Enum\DICS_FLAG.cs" />
       <Compile Include="Interop\Enum\DIGCF.cs" />
       <Compile Include="Interop\Enum\DIREG.cs" />
+      <Compile Include="Interop\Enum\GWL.cs" />
       <Compile Include="Interop\Enum\REGKEYSECURITY.cs" />
       <Compile Include="Interop\Enum\SPDRP.cs" />
       <Compile Include="Interop\Enum\WinErrors.cs" />
