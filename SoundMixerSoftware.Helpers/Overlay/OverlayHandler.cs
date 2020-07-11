@@ -17,8 +17,10 @@ namespace SoundMixerSoftware.Helpers.Overlay
         
         static OverlayHandler()
         {
-            _overlays.Add(new MuteWindow(ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime));
-            _overlays.Add(new VolumeOverlay(ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime));
+            var fadeTime = ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
+            _overlays.Add(new MuteWindow(fadeTime));
+            _overlays.Add(new VolumeOverlay(fadeTime));
+            _overlays.Add(new CenterTextWindow(fadeTime));
         }
         
         #endregion
@@ -33,6 +35,18 @@ namespace SoundMixerSoftware.Helpers.Overlay
         public static void ShowMute(bool mute)
         {
             HandleOverlay<MuteWindow>((window, n) => window.IsMuted = mute);
+        }
+
+        public static void ShowText(string text, int showTime = -1, float fontSize = -1.0F)
+        {
+            HandleOverlay<CenterTextWindow>((window, n) =>
+            {
+                window.Text = text;
+                if(showTime != -1)
+                    window.TempFadeTime = showTime;
+                if ((int)fontSize != -1)
+                    window.FontSize = fontSize;
+            });
         }
 
         public static void SetFadeTime(int fadeTime)

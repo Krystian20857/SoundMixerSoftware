@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using SoundMixerSoftware.Win32.Interop.Enum;
 
 namespace SoundMixerSoftware.Win32.Interop.Method
 {
@@ -102,5 +103,8 @@ namespace SoundMixerSoftware.Win32.Interop.Method
                 return SetWindowLongPtr64(windowHandle, nIndex, dwFlags);
             return SetWindowLong32(windowHandle, nIndex, dwFlags);
         }
+        
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(SystemMetric smIndex);
     }
 }

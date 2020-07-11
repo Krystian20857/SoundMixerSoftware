@@ -103,5 +103,17 @@ namespace SoundMixerSoftware.Win32.Wrapper
             return Icon.FromHandle(iconHandle);
         }
 
+        /// <summary>
+        /// Get screen width.
+        /// </summary>
+        /// <returns></returns>
+        public static int GetScreenWidth() => User32.GetSystemMetrics(SystemMetric.SM_CXSCREEN);
+        
+        /// <summary>
+        /// Get screen height.
+        /// </summary>
+        /// <returns></returns>
+        public static int GetScreenHeight() => User32.GetSystemMetrics(SystemMetric.SM_CYSCREEN);
+
     }
 }

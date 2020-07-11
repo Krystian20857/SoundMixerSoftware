@@ -46,6 +46,7 @@
       <Compile Include="Interop\Enum\GWL.cs" />
       <Compile Include="Interop\Enum\REGKEYSECURITY.cs" />
       <Compile Include="Interop\Enum\SPDRP.cs" />
+      <Compile Include="Interop\Enum\SystemMetrics.cs" />
       <Compile Include="Interop\Enum\WinErrors.cs" />
       <Compile Include="Interop\Method\Advapi.cs" />
       <Compile Include="Interop\Method\Gdi32.cs" />

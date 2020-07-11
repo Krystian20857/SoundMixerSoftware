@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 using Screen = Caliburn.Micro.Screen;
 
@@ -73,6 +74,7 @@ namespace SoundMixerSoftware.ViewModels
             Tabs.Add(IoC.Get<SettingsViewModel>());
             
             RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle);
         }
 
         #endregion

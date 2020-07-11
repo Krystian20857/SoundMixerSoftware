@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Device;
+using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Win32.USBLib;
 
@@ -113,6 +114,8 @@ namespace SoundMixerSoftware.ViewModels
         {
             var devicemodel = sender as DeviceModel;
             DeviceNotifier.TestLights(devicemodel.ComPort);
+            if(ConfigHandler.ConfigStruct.Overlay.EnableOverlay)
+                OverlayHandler.ShowText("Check lights on your device.");
         }
 
         public void SettingsClick(object sender)

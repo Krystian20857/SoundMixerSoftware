@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Windows.Input;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
 using SoundMixerSoftware.Overlay.Resource;
@@ -14,6 +15,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
 
         private Timer _showTimer;
         private volatile bool _fadeThreadRunning = true;
+        private int _backupFadeTime;
 
         #endregion
 
@@ -59,6 +61,19 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             get => (int) _showTimer.Interval;
             set => _showTimer.Interval = value;
         }
+
+        public int TempFadeTime
+        {
+            get => IsTempFadeTime ? FadeTime : -1;
+            set
+            {
+                _backupFadeTime = FadeTime;
+                IsTempFadeTime = true;
+                FadeTime = value;
+            }
+        }
+
+        public bool IsTempFadeTime { get; set; }
 
         #endregion
 
@@ -129,7 +144,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         private void SetShowTimer(int showTime)
         {
             var fadeTickTime = (int) (showTime * 0.1F) / 50;
-            _showTimer = new Timer {Interval = showTime, AutoReset = false};
+            _showTimer = new Timer { Interval = showTime };
             _showTimer.Elapsed += (sender, args) =>
             {
                 var fadeThread = new Thread(() =>
@@ -183,6 +198,12 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             _opacity = 0;
             _fadeThreadRunning = false;
             _showTimer.Stop();
+            if (IsTempFadeTime)
+            {
+                IsTempFadeTime = false;
+                FadeTime = _backupFadeTime;
+                _backupFadeTime = 0;
+            }
         }
         
         #endregion
