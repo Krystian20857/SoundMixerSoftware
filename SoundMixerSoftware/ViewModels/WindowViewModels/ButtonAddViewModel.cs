@@ -21,6 +21,7 @@ namespace SoundMixerSoftware.ViewModels
         {
             AddView(new MediaButtonViewModel());
             AddView(new MuteButtonViewModel());
+            AddView(new VolumeButtonViewModel());
             AddView(new KeystrokeFunctionViewModel());
 
             if (Tabs.Count > 0)

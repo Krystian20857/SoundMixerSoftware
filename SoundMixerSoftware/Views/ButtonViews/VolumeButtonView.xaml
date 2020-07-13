@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="SoundMixerSoftware.Views.VolumeButtonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:validation="clr-namespace:SoundMixerSoftware.Validation"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel LastChildFill="False">
+            <Border DockPanel.Dock="Left" Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Margin="2" Width="100" materialDesign:HintAssist.Hint="Volume" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        <TextBox.Text>
+                            <Binding
+                                Mode="TwoWay"
+                                Path="Volume"
+                                UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:MaxIntegerValidation>
+                                        <validation:MaxIntegerValidation.MaxValueWrapper>
+                                            <validation:MaxIntegerValidationWrapper MaxValue="100" />
+                                        </validation:MaxIntegerValidation.MaxValueWrapper>
+                                    </validation:MaxIntegerValidation>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </StackPanel>
+            </Border>
+            <Border DockPanel.Dock="Left" Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+                <ComboBox
+                    Margin="5, 0"
+                    ItemsSource="{Binding Path=Sliders}"
+                    SelectedItem="{Binding Path=SelectedSlider, Mode=TwoWay}"/>
+            </Border>
+        </DockPanel>
+    </Grid>
+</UserControl>

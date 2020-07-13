@@ -89,5 +89,15 @@ namespace SoundMixerSoftware.Helpers {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap VolumeIcon {
+            get {
+                object obj = ResourceManager.GetObject("VolumeIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

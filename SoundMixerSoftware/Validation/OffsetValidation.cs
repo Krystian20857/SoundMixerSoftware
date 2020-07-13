@@ -4,17 +4,17 @@ using System.Windows.Controls;
 
 namespace SoundMixerSoftware.Validation
 {
-    public class OffsetValidation : IntegerValidation
+    public class MaxIntegerValidation : IntegerValidation
     {
         #region Public Properties
 
-        public OffsetValidationWrapper MaxOffsetWrapper { get; set; }
+        public MaxIntegerValidationWrapper MaxValueWrapper { get; set; }
 
         #endregion
         
         #region Constructor
         
-        public OffsetValidation(){}
+        public MaxIntegerValidation(){}
         
         #endregion
         
@@ -25,31 +25,31 @@ namespace SoundMixerSoftware.Validation
             var result = base.Validate(value, cultureInfo);
             if(!result.IsValid)
                 return new ValidationResult(false, result.ErrorContent);
-            if((int)result.ErrorContent > MaxOffsetWrapper.MaxOffset)
-                return new ValidationResult(false, "Offset is too big :0.");
+            if((int)result.ErrorContent > MaxValueWrapper.MaxValue)
+                return new ValidationResult(false, "Value is too big :0.");
             return ValidationResult.ValidResult;
         }
         
         #endregion
     }
 
-    public class OffsetValidationWrapper : DependencyObject
+    public class MaxIntegerValidationWrapper : DependencyObject
     {
         #region Static
         
-        public static readonly DependencyProperty MaxOffsetProperty = DependencyProperty.Register(nameof(MaxOffset),
+        public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue),
             typeof(int),
-            typeof(OffsetValidationWrapper),
+            typeof(MaxIntegerValidationWrapper),
             new FrameworkPropertyMetadata(0));
         
         #endregion
         
         #region Properties
 
-        public int MaxOffset
+        public int MaxValue
         {
-            get => (int)GetValue(MaxOffsetProperty);
-            set => SetValue(MaxOffsetProperty, value);
+            get => (int)GetValue(MaxValueProperty);
+            set => SetValue(MaxValueProperty, value);
         }
 
         #endregion

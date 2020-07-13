@@ -136,6 +136,7 @@
     <Compile Include="ViewModels\ButtonViewModels\KeystrokeFunctionViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MediaButtonViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MuteButtonViewModel.cs" />
+    <Compile Include="ViewModels\ButtonViewModels\VolumeButtonViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\ButtonsViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\DevicesViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\ManagerViewModel.cs" />
@@ -156,6 +157,9 @@
     </Compile>
     <Compile Include="Views\ButtonViews\MuteButtonView.xaml.cs">
       <DependentUpon>MuteButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ButtonViews\VolumeButtonView.xaml.cs">
+      <DependentUpon>VolumeButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabViews\ButtonsView.xaml.cs">
       <DependentUpon>ButtonsView.xaml</DependentUpon>
@@ -220,6 +224,7 @@
     <Page Include="Views\ButtonViews\KeystrokeFunctionView.xaml" />
     <Page Include="Views\ButtonViews\MediaButtonView.xaml" />
     <Page Include="Views\ButtonViews\MuteButtonView.xaml" />
+    <Page Include="Views\ButtonViews\VolumeButtonView.xaml" />
     <Page Include="Views\TabViews\ButtonsView.xaml" />
     <Page Include="Views\TabViews\DevicesView.xaml" />
     <Page Include="Views\TabViews\ManagerView.xaml" />

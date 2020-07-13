@@ -37,11 +37,11 @@
                             Mode="TwoWay"
                             UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
-                                <validation:OffsetValidation>
-                                    <validation:OffsetValidation.MaxOffsetWrapper>
-                                        <validation:OffsetValidationWrapper MaxOffset="{Binding Data.MaxSliderOffset, Source={StaticResource BindingProxy}}" />
-                                    </validation:OffsetValidation.MaxOffsetWrapper>
-                                </validation:OffsetValidation>
+                                <validation:MaxIntegerValidation>
+                                    <validation:MaxIntegerValidation.MaxValueWrapper>
+                                        <validation:MaxIntegerValidationWrapper MaxValue="{Binding Data.MaxSliderOffset, Source={StaticResource BindingProxy}}" />
+                                    </validation:MaxIntegerValidation.MaxValueWrapper>
+                                </validation:MaxIntegerValidation>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
@@ -59,11 +59,11 @@
                             Mode="TwoWay"
                             UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
-                                <validation:OffsetValidation>
-                                    <validation:OffsetValidation.MaxOffsetWrapper>
-                                        <validation:OffsetValidationWrapper MaxOffset="{Binding Data.MaxButtonOffset, Source={StaticResource BindingProxy}}" />
-                                    </validation:OffsetValidation.MaxOffsetWrapper>
-                                </validation:OffsetValidation>
+                                <validation:MaxIntegerValidation>
+                                    <validation:MaxIntegerValidation.MaxValueWrapper>
+                                        <validation:MaxIntegerValidationWrapper MaxValue="{Binding Data.MaxSliderOffset, Source={StaticResource BindingProxy}}" />
+                                    </validation:MaxIntegerValidation.MaxValueWrapper>
+                                </validation:MaxIntegerValidation>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>

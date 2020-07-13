@@ -67,7 +67,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                         _name = $"Default Microphone Mute";
                         break;
                     case MuteTask.MuteSlider:
-                        if (SliderIndex >= ProfileHandler.SelectedProfile.Sliders.Count)
+                        if (SliderIndex >= ProfileHandler.SelectedProfile.SliderCount)
                             _name = $"Slider Mute: slider out of size";
                         else
                             _name = $"Slider Mute: {ProfileHandler.SelectedProfile.Sliders[SliderIndex].Name}";

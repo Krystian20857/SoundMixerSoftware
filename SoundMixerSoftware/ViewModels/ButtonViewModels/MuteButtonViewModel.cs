@@ -67,7 +67,7 @@ namespace SoundMixerSoftware.ViewModels
             }
 
             SelectedFunction = Functions[0];
-            ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
+            ProfileHandler.ProfileChanged += (sender, args) => Initialize();
             Initialize();
         }
 
@@ -120,14 +120,6 @@ namespace SoundMixerSoftware.ViewModels
         
         #endregion
         
-        #region Private Events
-        
-        private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
-        {
-            Initialize();
-        }
-        
-        #endregion
         
         #region Property Changed 
 

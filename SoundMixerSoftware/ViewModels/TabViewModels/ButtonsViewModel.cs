@@ -53,6 +53,7 @@ namespace SoundMixerSoftware.ViewModels
             ButtonHandler.RegisterCreator("media_func", new MediaFunctionCreator());
             ButtonHandler.RegisterCreator("mute_func", new MuteFunctionCreator());
             ButtonHandler.RegisterCreator("keystroke_func", new KeystrokeFunctionCreator());
+            ButtonHandler.RegisterCreator("vol_func", new VolumeFunctionCreator());
             
             CreateButtons();
             
