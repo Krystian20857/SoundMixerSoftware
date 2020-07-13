@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.NotifyWrapper;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Helpers.SliderConverter;
 using SoundMixerSoftware.Win32.USBLib;
 using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
 
@@ -140,8 +142,8 @@ namespace SoundMixerSoftware.Helpers.Device
                         return;
                     }
 
-                    var value = sliderStruct.value;
-                    SessionHandler.SetVolume(sliderIndex, sliderStruct.value / 100.0F, false);
+                    var value = (int)ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
+                    SessionHandler.SetVolume(sliderIndex, value / 100.0F, false);
                     if(SessionHandler.Sliders[sliderIndex].Count > 0)
                         OverlayHandler.ShowVolume(value);
                     break;

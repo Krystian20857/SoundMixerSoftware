@@ -104,13 +104,13 @@ namespace SoundMixerSoftware.Win32.Wrapper
         }
 
         /// <summary>
-        /// Get screen width.
+        /// Get primary screen width.
         /// </summary>
         /// <returns></returns>
         public static int GetScreenWidth() => User32.GetSystemMetrics(SystemMetric.SM_CXSCREEN);
         
         /// <summary>
-        /// Get screen height.
+        /// Get primary screen height.
         /// </summary>
         /// <returns></returns>
         public static int GetScreenHeight() => User32.GetSystemMetrics(SystemMetric.SM_CYSCREEN);

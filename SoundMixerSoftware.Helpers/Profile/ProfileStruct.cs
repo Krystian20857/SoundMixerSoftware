@@ -18,9 +18,9 @@ namespace SoundMixerSoftware.Helpers.Profile
     
     public class SliderStruct
     {
-        public List<Session> Applications { get; set; } = new List<Session>();
-
         public string Name { get; set; }
+        public List<Session> Applications { get; set; } = new List<Session>();
+        public List<ConverterStruct> Converters { get; set; } = new List<ConverterStruct>();
     }
 
     public class Session
@@ -68,6 +68,13 @@ namespace SoundMixerSoftware.Helpers.Profile
     }
 
     public class ButtonFunction
+    {
+        public string Key { get; set; }
+        public Dictionary<object, object> Container { get; set; }
+        public Guid UUID { get; set; }
+    }
+
+    public class ConverterStruct
     {
         public string Key { get; set; }
         public Dictionary<object, object> Container { get; set; }

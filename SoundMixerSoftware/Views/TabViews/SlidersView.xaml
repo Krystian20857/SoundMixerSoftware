@@ -104,6 +104,7 @@
                                         <Run Text="{Binding Path=Volume, Mode=TwoWay}" />
                                         <Run Text="%" />
                                     </TextBlock>
+                                    <CheckBox IsChecked="{Binding Path=LogScale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Content="Logarithmic scale"/>
                                 </StackPanel>
                             </DockPanel>
                         </Border>

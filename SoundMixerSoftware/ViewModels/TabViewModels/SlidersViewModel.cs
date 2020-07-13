@@ -7,6 +7,8 @@ using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Helpers.SliderConverter;
+using SoundMixerSoftware.Helpers.SliderConverter.Converters;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Win32.Wrapper;
@@ -58,6 +60,8 @@ namespace SoundMixerSoftware.ViewModels
             ThemeManager.Initialize();
             Name = "Sliders";
             Icon = PackIconKind.VolumeSource;
+            
+            ConverterHandler.RegisterCreator("log_converter", new LogConverterCreator());
 
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
 
@@ -75,6 +79,8 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
             SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
+            
+            ConverterHandler.CreateConverters();
 
             Sliders.Clear();
             
@@ -97,7 +103,11 @@ namespace SoundMixerSoftware.ViewModels
                     slider.Name = $"Slider {n + 1}";
                     modified = true;
                 }
-                var sliderModel = new SliderModel { Index = n, Name = slider.Name };
+
+                var sliderModel = new SliderModel {Index = n, Name = slider.Name};
+                var logScale = ConverterHandler.HasConverter<LogarithmicConverter>(n);
+                if (logScale)
+                    sliderModel.LogScale = true;
                 Sliders.Add(sliderModel);
             }
             

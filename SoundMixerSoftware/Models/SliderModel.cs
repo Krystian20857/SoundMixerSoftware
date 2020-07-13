@@ -5,12 +5,15 @@ using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
 using NLog;
+using NLog.Fluent;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Helpers.SliderConverter;
+using SoundMixerSoftware.Helpers.SliderConverter.Converters;
 using LogManager = NLog.LogManager;
 using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
@@ -33,6 +36,7 @@ namespace SoundMixerSoftware.Models
         private int _volume;
         private bool _isEditing;
         private string _name;
+        private bool _logScale;
 
         private int _lastVolume;
         private bool _lastMute;
@@ -112,6 +116,36 @@ namespace SoundMixerSoftware.Models
                     ProfileHandler.SaveSelectedProfile();
                 }
                 OnPropertyChanged(nameof(IsEditing));
+            }
+        }
+
+        public bool LogScale
+        {
+            get => _logScale;
+            set
+            {
+                _logScale = value;
+                if (value && !ConverterHandler.HasConverter<LogarithmicConverter>(Index))
+                {
+                    var converter = ConverterHandler.AddConverter(Index, new LogarithmicConverter(Index, Guid.NewGuid(), (float) Math.E));
+                    ProfileHandler.SelectedProfile.Sliders[Index].Converters.Add(converter);
+                }
+                
+                if(!value)
+                {
+                    var converters = ConverterHandler.Converters[Index];
+                    for (var n = 0; n < converters.Count; n++)
+                    {
+                        var converter = converters[n];
+                        if (converter is LogarithmicConverter)
+                        {
+                            ConverterHandler.RemoveConverter(Index, converter);
+                            ProfileHandler.SelectedProfile.Sliders[Index].Converters.RemoveAt(n);
+                        }
+                    }
+                }
+                ProfileHandler.SaveSelectedProfile();
+                OnPropertyChanged(nameof(LogScale));
             }
         }
 

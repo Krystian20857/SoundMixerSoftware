@@ -67,6 +67,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="SliderConverter\ConverterHandler.cs" />
+    <Compile Include="SliderConverter\Converters\LogarithmicConverter.cs" />
+    <Compile Include="SliderConverter\IConverter.cs" />
+    <Compile Include="SliderConverter\IConverterCreator.cs" />
     <Compile Include="Utils\ExceptionHandler.cs" />
     <Compile Include="Utils\ExtractedIcons.cs" />
   </ItemGroup>
