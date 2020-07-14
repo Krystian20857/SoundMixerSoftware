@@ -44,6 +44,11 @@ namespace SoundMixerSoftware.ViewModels
             Application.Current.Shutdown();
         }
 
+        public void RestartApp()
+        {
+            StarterHelper.RestartApp();
+        }
+
         #endregion
     }
 }

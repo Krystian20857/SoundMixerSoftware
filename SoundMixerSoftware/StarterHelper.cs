@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
-using System.Windows.Forms;
-using SoundMixerSoftware.Win32.Interop;
+using System.Windows;
+using SoundMixerSoftware.Common.Extension;
+using Message = System.Windows.Forms.Message;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
 
@@ -11,18 +13,19 @@ namespace SoundMixerSoftware
     /// <summary>
     /// Handles Mutex and other instances
     /// </summary>
-    public class StarterHelper
+    public class StarterHelper : IDisposable
     {
         
         #region Constant
         
         public const int WM_SETFOREGROUND = 0xDD64;
-        
+        public static readonly Guid APP_UUID = new Guid("F3F46984-70BC-428B-AAC2-F8CFB4499407");
+
         #endregion
         
         #region Private Fields
         
-        private Mutex _mutex = new Mutex(true, "F3F46984-70BC-428B-AAC2-F8CFB4499407");
+        private Mutex _mutex = new Mutex(true, APP_UUID.ToString());
         private NativeWindowWrapper _nativeWindow = new NativeWindowWrapper();
         
         #endregion
@@ -76,6 +79,19 @@ namespace SoundMixerSoftware
 
             return isAlone;
         }
+
+        public static void RestartApp()
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                Arguments = $"/C ping 127.0.0.1 -n 3 && \"{Process.GetCurrentProcess().GetFileName()}\"",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                FileName = "cmd.exe",
+            };
+            Process.Start(startInfo);
+            Application.Current.Shutdown();
+        }
         
         #endregion
 
@@ -86,6 +102,15 @@ namespace SoundMixerSoftware
             if (e.Msg != WM_SETFOREGROUND)
                 return;
             BringWindowToFront?.Invoke(this, EventArgs.Empty);
+        }
+        
+        #endregion
+
+        #region Dispose
+        
+        public void Dispose()
+        {
+            _mutex?.Dispose();
         }
         
         #endregion

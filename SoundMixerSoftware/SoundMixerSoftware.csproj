@@ -265,7 +265,7 @@
     <Resource Include="Resources\ListImage.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ReloadImage.png" />
+    <Resource Include="Resources\RestartImage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets')" />

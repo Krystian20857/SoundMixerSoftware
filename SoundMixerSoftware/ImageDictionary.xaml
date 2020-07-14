@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <BitmapImage x:Key="SpeakerIcon" UriSource="../Resources/SpeakerIcon.ico"/>
-    <BitmapImage x:Key="ReloadImage" UriSource="../Resources/ReloadImage.png"/>
+    <BitmapImage x:Key="RestartImage" UriSource="../Resources/RestartImage.png"/>
     <BitmapImage x:Key="ExitImage" UriSource="../Resources/ExitImage.png"/>
     <BitmapImage x:Key="ListImage" UriSource="../Resources/ListImage.png"/>
 </ResourceDictionary>
