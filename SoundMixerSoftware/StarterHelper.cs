@@ -110,6 +110,7 @@ namespace SoundMixerSoftware
         
         public void Dispose()
         {
+            _mutex.Close();
             _mutex?.Dispose();
         }
         

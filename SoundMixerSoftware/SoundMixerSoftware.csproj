@@ -22,7 +22,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32bit>false</Prefer32bit>
+    <Prefer32bit>true</Prefer32bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -241,6 +241,10 @@
     <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">
       <Project>{2040554a-678b-4e8e-a915-dd4710fb7105}</Project>
       <Name>SoundMixerSoftware.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundMixerSoftware.Extensibility\SoundMixerSoftware.Extensibility.csproj">
+      <Project>{0e0adfa9-7dff-405a-8ecb-34a22809ba28}</Project>
+      <Name>SoundMixerSoftware.Extensibility</Name>
     </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Helpers\SoundMixerSoftware.Helpers.csproj">
       <Project>{3ef28ff9-c3a7-4abf-b2d0-84b9e6d187b1}</Project>

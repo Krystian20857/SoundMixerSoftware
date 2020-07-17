@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
 using NLog;
@@ -205,7 +206,7 @@ namespace SoundMixerSoftware.Models
                                           (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInputID) ||
                                           (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutputID)))
                 {
-                    var volume = (int) Math.Ceiling(e.Volume * 100.0F);
+                    var volume = (int) Math.Round(e.Volume * 100.0F);
 
                     if (volume != _lastVolume)
                     {
@@ -234,7 +235,7 @@ namespace SoundMixerSoftware.Models
             var sessionControl = sender as AudioSessionControl;
                 if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
                 {
-                    var volume = (int) Math.Ceiling(e.Volume * 100.0F);
+                    var volume = (int) Math.Round(e.Volume * 100.0F);
                     
                     if (volume != _lastVolume)
                     {

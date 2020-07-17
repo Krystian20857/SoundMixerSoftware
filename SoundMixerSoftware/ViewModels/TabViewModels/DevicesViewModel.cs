@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
@@ -57,6 +59,8 @@ namespace SoundMixerSoftware.ViewModels
         {
             Name = "Devices";
             Icon = PackIconKind.CodeBraces;
+
+            RuntimeHelpers.RunClassConstructor(typeof(DeviceHandlerGlobal).TypeHandle);
             
             DeviceHandlerGlobal.DeviceHandler.DeviceConnected += DeviceHandlerOnDeviceConnected;
             DeviceHandlerGlobal.DeviceHandler.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;

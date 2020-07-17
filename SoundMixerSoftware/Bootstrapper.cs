@@ -1,6 +1,9 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +14,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
+using SoundMixerSoftware.Extensibility.Loader;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Utils;
@@ -45,7 +49,6 @@ namespace SoundMixerSoftware
         private readonly SimpleContainer _container = new SimpleContainer();
         private StarterHelper _starter = new StarterHelper();
         private IWindowManager _windowManager = new WindowManager();
-        private IEventAggregator _eventAggregator = new EventAggregator();
 
         #endregion
         
@@ -56,35 +59,37 @@ namespace SoundMixerSoftware
         /// </summary>
         public LocalManager LocalManager = new LocalManager(typeof(LocalContainer));
 
+        public static PluginLoader PluginLoader { get; } = new PluginLoader(LocalContainer.PluginFolder);
+
         #endregion
         
         public Bootstrapper()
         {
-            _starter.StartApplication += StarterOnStartApplication;
-            _starter.BringWindowToFront += StarterOnBringWindowToFront;
-            _starter.ExitApplication += StarterOnExitApplication;
-            _starter.CheckInstances();
-        }
-
-        private void StarterOnExitApplication(object sender, EventArgs e)
-        {
-            Application.Shutdown(0x04);        
-        }
-
-        private void StarterOnBringWindowToFront(object sender, EventArgs e)
-        {
-            var mainWindow = MainViewModel.Instance;
-            if (!mainWindow.IsActive)
-                _windowManager.ShowWindowAsync(mainWindow);
-            else
-                (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
-        }
-
-        private void StarterOnStartApplication(object sender, EventArgs e)
-        {
             LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
-            LocalManager.ResolveLocal();
             RegisterExceptionHandler();
+            
+            _starter.StartApplication += (sender, args) =>
+            {
+                PluginLoader.ViewLoadingEvent();
+                TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
+                DisplayRootViewFor<MainViewModel>();
+                Logger.Info("Main view started.");
+                PluginLoader.ViewLoadedEvent();
+            };
+            
+            _starter.BringWindowToFront += (sender, args) =>
+            {
+                var mainWindow = MainViewModel.Instance;
+                if (!mainWindow.IsActive)
+                    _windowManager.ShowWindowAsync(mainWindow);
+                else
+                    (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
+            };
+            
+            _starter.ExitApplication += (sender, args) => Application.Shutdown(0x04);
+            
+            LocalManager.ResolveLocal();
+            PluginLoader.LoadAllPlugins();
             Initialize();
         }
 
@@ -116,9 +121,7 @@ namespace SoundMixerSoftware
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
-            TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
-            DisplayRootViewFor<MainViewModel>();
-            Logger.Info("Main view started.");
+            _starter.CheckInstances();
         }
 
         protected override void OnExit(object sender, EventArgs e)
@@ -127,6 +130,11 @@ namespace SoundMixerSoftware
             TaskbarIcon.Dispose();
             Logger.Info("App shutdown.");
             base.OnExit(sender, e);
+        }
+
+        protected override IEnumerable<Assembly> SelectAssemblies()
+        {
+            return base.SelectAssemblies().Concat(PluginLoader.LoadedPlugins.Values.Select(x => x.Assembly));
         }
 
         /// <summary>

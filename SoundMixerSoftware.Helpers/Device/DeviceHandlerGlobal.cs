@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -128,8 +129,9 @@ namespace SoundMixerSoftware.Helpers.Device
 
         private static void DeviceHandlerOnDataReceived(object sender, DataReceivedEventArgs e)
         {
-            var deviceId = e.Arguments as DeviceId;
-            if (deviceId == null || DeviceId.IsEmpty(deviceId))
+            if (!(e.Arguments is DeviceId deviceId))
+                return;
+            if (DeviceId.IsEmpty(deviceId))
                 return;
             switch (e.Command)
             {
