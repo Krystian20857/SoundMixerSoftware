@@ -26,6 +26,10 @@ namespace SoundMixerSoftware.Extensibility
         /// </summary>
         string PluginId { get; set; }
         /// <summary>
+        /// Web page of plugin.
+        /// </summary>
+        Uri WebPage { get; set; }
+        /// <summary>
         /// Occurs when plugin has loaded.
         /// </summary>
         void OnPluginLoaded();

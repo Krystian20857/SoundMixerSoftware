@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:cm="http://caliburnmicro.com"
         mc:Ignorable="d"
-        Title="PluginLoadWindow" Height="175" Width="400" cm:Message.Attach="[Closed] = [CloseClicked]">
+        Title="Load Plugin" Height="175" Width="400" cm:Message.Attach="[Closed] = [CloseClicked]">
     <Window.Resources>
     </Window.Resources>
     <Grid>

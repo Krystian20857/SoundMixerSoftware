@@ -84,8 +84,6 @@ namespace SoundMixerSoftware.Extensibility.Loader
             {
                 Logger.Error(exception);
             }
-
-            //LoadFromZip(@"C:\Users\kryst\Desktop\AbstractPluginTest.zip");
         }
 
         public void ViewLoadingEvent()
@@ -277,7 +275,10 @@ namespace SoundMixerSoftware.Extensibility.Loader
                         else
                         {
                             var instance = (AbstractPlugin) Activator.CreateInstance(type, new object[] {this, pluginPath});
-                            RegisterPlugin(instance, assembly, id, pluginPath);
+                            if (instance.PluginId.Equals(id))
+                                RegisterPlugin(instance, assembly, id, pluginPath);
+                            else
+                                Logger.Warn($"Id: {id} does not match real plugin id: {instance.PluginId}");
                         }
                     }
                     else if (type.GetInterfaces().Contains(typeof(IPlugin)))
@@ -295,7 +296,10 @@ namespace SoundMixerSoftware.Extensibility.Loader
                             else
                             {
                                 var instance = (IPlugin) Activator.CreateInstance(type);
-                                RegisterPlugin(instance, assembly, id, pluginPath);
+                                if (instance.PluginId.Equals(id))
+                                    RegisterPlugin(instance, assembly, id, pluginPath);
+                                else
+                                    Logger.Warn($"Id: {id} does not match real plugin id: {instance.PluginId}");
                             }
                         }
                     }

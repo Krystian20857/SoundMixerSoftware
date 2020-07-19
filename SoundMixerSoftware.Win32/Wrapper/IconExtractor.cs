@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Method;
 
@@ -8,7 +12,6 @@ namespace SoundMixerSoftware.Win32.Wrapper
 {
     public static class IconExtractor
     {
-        
         /// <summary>
         /// Get int pointer of image in specified file;
         /// </summary>
@@ -16,12 +19,12 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <param name="index">Index of icon.</param>
         /// <param name="largeIcon">true: Extract large icon. false: Extract small icon.</param>
         /// <returns>Int pointer.</returns>
-        public static IntPtr ExtractPtr(string file, int index, bool largeIcon)
+        public static IntPtr ExtractPtr(string file, int index)
         {
-            Shell32.ExtractIconEx(file, index, out var large, out var small,1);
             try
             {
-                return largeIcon ? large : small;
+                return Shell32.ExtractIcon(IntPtr.Zero, file, index);
+
             }
             catch
             {
@@ -36,9 +39,9 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <param name="index">Index of icon.</param>
         /// <param name="largeIcon">true: Extract large icon. false: Extract small icon.</param>
         /// <returns>Icon.</returns>
-        public static Icon ExtractIcon(string file, int index, bool largeIcon)
+        public static Icon ExtractIcon(string file, int index)
         {
-            var ptr = ExtractPtr(file, index, largeIcon);
+            var ptr = ExtractPtr(file, index);
             if (ptr == IntPtr.Zero)
                 return null;
             return Icon.FromHandle(ptr);
@@ -51,9 +54,9 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <param name="index">Index of icon.</param>
         /// <param name="largeIcon">true: Extract large icon. false: Extract small icon.</param>
         /// <param name="fileToExtract">Absolute output file path</param>
-        public static void ExtractToFile(string file, int index, bool largeIcon, string fileToExtract)
+        public static void ExtractToFile(string file, int index, string fileToExtract)
         {
-            ExtractIcon(file, index, largeIcon)?.ToBitmap().Save(fileToExtract);
+            ExtractIcon(file, index)?.ToBitmap().Save(fileToExtract);
         }
 
         /// <summary>
@@ -64,7 +67,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         public static Icon ExtractFromIndex(string path)
         {
             var data = FormatIconPath(path);
-            return ExtractIcon(data.Path, data.Index, true);
+            return ExtractIcon(data.Path, data.Index);
         }
         
         /// <summary>

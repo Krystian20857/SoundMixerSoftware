@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Windows.Navigation;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Extension;
@@ -79,6 +81,12 @@ namespace SoundMixerSoftware.ViewModels
         public void ReloadAppClick()
         {
             StarterHelper.RestartApp();
+        }
+
+        public void NavigateRequest(object sender)
+        {
+            var pluginModel = sender as PluginModel;
+            Process.Start(pluginModel.WebPage.ToString());
         }
         
         #endregion

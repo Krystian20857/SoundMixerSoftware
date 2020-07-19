@@ -80,6 +80,8 @@ namespace SoundMixerSoftware
             _starter.BringWindowToFront += (sender, args) =>
             {
                 var mainWindow = MainViewModel.Instance;
+                if (mainWindow == null)
+                    return;
                 if (!mainWindow.IsActive)
                     _windowManager.ShowWindowAsync(mainWindow);
                 else

@@ -12,8 +12,8 @@ namespace SoundMixerSoftware.Helpers.Utils
 
         #endregion
 
-        public static Icon FailedIcon = IconExtractor.ExtractIcon(DMDSKRES_DLL, 5, true);
-        public static Icon SpeakerIcon = IconExtractor.ExtractIcon(MMRES_DLL, 1, true);
-        public static Icon MicIcon = IconExtractor.ExtractIcon(MMRES_DLL, 5, true);
+        public static Icon FailedIcon = IconExtractor.ExtractIcon(DMDSKRES_DLL, 5);
+        public static Icon SpeakerIcon = IconExtractor.ExtractIcon(MMRES_DLL, 1);
+        public static Icon MicIcon = IconExtractor.ExtractIcon(MMRES_DLL, 5);
     }
 }

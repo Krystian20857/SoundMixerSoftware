@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Extensibility;
 using SoundMixerSoftware.Helpers.Utils;
@@ -14,7 +15,9 @@ namespace SoundMixerSoftware.Models
         public string Author { get; set; }
         public string Version { get; set; }
         public string PluginId { get; set; }
-        
+
+        public Uri WebPage { get; set; }
+
         #endregion
         
         #region Public Static Methods
@@ -24,10 +27,11 @@ namespace SoundMixerSoftware.Models
             return new PluginModel
             {
                 Name = plugin.Name,
-                Image = plugin.Image ?? ExtractedIcons.FailedIcon.ToImageSource(),
+                Image = plugin.Image ?? Resource.RestartImage.ToImageSource(),
                 Author = plugin.Author,
                 Version = plugin.Version,
-                PluginId = plugin.PluginId
+                PluginId = plugin.PluginId,
+                WebPage = plugin.WebPage,
             };
         }
         

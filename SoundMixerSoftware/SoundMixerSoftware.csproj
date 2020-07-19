@@ -104,6 +104,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Controls\WebHyperLink.cs" />
     <Compile Include="Converter\BaseConverter.cs" />
     <Compile Include="Converter\BoolInvertConverter.cs" />
     <Compile Include="Converter\HexConverter.cs" />

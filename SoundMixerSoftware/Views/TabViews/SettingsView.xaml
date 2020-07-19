@@ -25,7 +25,7 @@
                         </Border>
                         <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
                             <DockPanel LastChildFill="False">
-                                <TextBlock DockPanel.Dock="Left">Starting Tab</TextBlock>
+                                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Starting Tab</TextBlock>
                                 <ComboBox DockPanel.Dock="Right"
                                           SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                           ItemsSource="{Binding Path=Tabs, UpdateSourceTrigger=PropertyChanged}">

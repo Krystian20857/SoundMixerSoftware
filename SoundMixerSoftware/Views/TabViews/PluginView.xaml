@@ -6,6 +6,7 @@
              xmlns:views="clr-namespace:SoundMixerSoftware.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cm="http://caliburnmicro.com"
+             xmlns:controls="clr-namespace:SoundMixerSoftware.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -47,13 +48,21 @@
                                         <Run Text="{Binding Path=PluginId}" />
                                         <Run Text=")" />
                                     </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource MidTextBlock}">
+                                            <Run Text="Author: " />
+                                            <Run Text="{Binding Path=Author}" />
+                                        </TextBlock>
+                                        <TextBlock Margin="25, 0" Style="{StaticResource MidTextBlock}">
+                                            <Run Text="Version: " />
+                                            <Run Text="{Binding Path=Version}" />
+                                        </TextBlock>
+                                    </StackPanel>
                                     <TextBlock Style="{StaticResource MidTextBlock}">
-                                        <Run Text="Author: " />
-                                        <Run Text="{Binding Path=Author}" />
-                                    </TextBlock>
-                                    <TextBlock Style="{StaticResource MidTextBlock}">
-                                        <Run Text="Version: " />
-                                        <Run Text="{Binding Path=Version}" />
+                                        <Run Text="Web Page: "/>
+                                        <controls:WebHyperLink NavigateUri="{Binding Path=WebPage}">
+                                            <Run Text="{Binding Path=WebPage}"/>
+                                        </controls:WebHyperLink>
                                     </TextBlock>
                                 </StackPanel>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Vertical">

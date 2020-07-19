@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using SoundMixerSoftware.Extensibility.Loader;
 
 namespace SoundMixerSoftware.Extensibility
@@ -19,6 +20,7 @@ namespace SoundMixerSoftware.Extensibility
         public abstract string Author { get; set; }
         public abstract string Version { get; set; }
         public abstract string PluginId { get; set; }
+        public abstract Uri WebPage { get; set; }
 
         #endregion
 
