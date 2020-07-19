@@ -116,6 +116,7 @@
     <Compile Include="Models\EnumDisplayModel.cs" />
     <Compile Include="Models\IButtonAddModel.cs" />
     <Compile Include="Models\ITabModel.cs" />
+    <Compile Include="Models\PluginModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\SessionModel.cs" />
     <Compile Include="Models\SliderModel.cs" />
@@ -140,12 +141,14 @@
     <Compile Include="ViewModels\TabViewModels\ButtonsViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\DevicesViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\ManagerViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\PluginViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\SlidersViewModel.cs" />
     <Compile Include="ViewModels\TaskbarIconViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ButtonAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\DeviceSettingsViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\PluginLoadViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\UsbManagerViewModel.cs" />
@@ -170,6 +173,9 @@
     <Compile Include="Views\TabViews\ManagerView.xaml.cs">
       <DependentUpon>ManagerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TabViews\PluginView.xaml.cs">
+      <DependentUpon>PluginView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TabViews\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -184,6 +190,9 @@
     </Compile>
     <Compile Include="Views\WindowViews\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\PluginLoadView.xaml.cs">
+      <DependentUpon>PluginLoadView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowViews\ProfileAddView.xaml.cs">
       <DependentUpon>ProfileAddView.xaml</DependentUpon>
@@ -228,11 +237,13 @@
     <Page Include="Views\TabViews\ButtonsView.xaml" />
     <Page Include="Views\TabViews\DevicesView.xaml" />
     <Page Include="Views\TabViews\ManagerView.xaml" />
+    <Page Include="Views\TabViews\PluginView.xaml" />
     <Page Include="Views\TabViews\SettingsView.xaml" />
     <Page Include="Views\TabViews\SlidersView.xaml" />
     <Page Include="Views\WindowViews\ButtonAddView.xaml" />
     <Page Include="Views\WindowViews\DeviceSettingsView.xaml" />
     <Page Include="Views\WindowViews\MainView.xaml" />
+    <Page Include="Views\WindowViews\PluginLoadView.xaml" />
     <Page Include="Views\WindowViews\ProfileAddView.xaml" />
     <Page Include="Views\WindowViews\SessionAddView.xaml" />
     <Page Include="Views\WindowViews\UsbManagerView.xaml" />

@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Media;
@@ -27,7 +28,7 @@ namespace SoundMixerSoftware.Extensibility.Loader
         
         private readonly DirectoryManager _directoryManager;
         private readonly IPluginInfoManager _infoManager;
-        
+
         #endregion
         
         #region Public Properties
@@ -36,15 +37,33 @@ namespace SoundMixerSoftware.Extensibility.Loader
         /// Collection of loaded plugins.
         /// </summary>
         public Dictionary<string, PluginStruct> LoadedPlugins { get; } = new Dictionary<string, PluginStruct>();
+        /// <summary>
+        /// Path to plugins.
+        /// </summary>
+        public string PluginPath => _directoryManager.PluginPath;
+        /// <summary>
+        /// Path ro plugins cache.
+        /// </summary>
+        public string CacheLocation { get; }
 
+        #endregion
+        
+        #region Events
+
+        /// <summary>
+        /// Occurs when plugin has successfully loaded.
+        /// </summary>
+        public event EventHandler<PluginLoadedArgs> PluginLoaded;
+        
         #endregion
         
         #region Constructor
 
-        public PluginLoader(string pluginsPath)
+        public PluginLoader(string pluginsPath, string cacheLocation)
         {
             _directoryManager = new DirectoryManager(pluginsPath);
             _infoManager = new YamlPluginInfoManager(_directoryManager.PluginPath);
+            CacheLocation = cacheLocation;
         }
         
         #endregion
@@ -52,12 +71,21 @@ namespace SoundMixerSoftware.Extensibility.Loader
         #region Public Methods
 
         /// <summary>
-        /// Load all detected plugins.
+        /// Load all detected plugins and catch exceptions.
         /// </summary>
         public void LoadAllPlugins()
         {
-            foreach (var pluginDir in _directoryManager.GetPluginFolders())
-                LoadPluginGroup(Path.GetDirectoryName(pluginDir));
+            try
+            {
+                foreach (var pluginDir in _directoryManager.GetPluginFolders())
+                    LoadPluginGroup(Path.GetDirectoryName(pluginDir));
+            }
+            catch (PluginLoadException exception)
+            {
+                Logger.Error(exception);
+            }
+
+            //LoadFromZip(@"C:\Users\kryst\Desktop\AbstractPluginTest.zip");
         }
 
         public void ViewLoadingEvent()
@@ -70,6 +98,101 @@ namespace SoundMixerSoftware.Extensibility.Loader
         {
             foreach (var plugin in LoadedPlugins)
                 plugin.Value.Plugin.OnViewLoaded();
+        }
+
+        /// <summary>
+        /// Copy content of zip file to cache.
+        /// </summary>
+        /// <param name="zipFile">Zip file location.</param>
+        /// <returns>Path to zip file content.</returns>
+        public string CopyZipCache(string zipFile)
+        {
+            var cacheDir = CreateCacheDir();
+            ZipFile.ExtractToDirectory(zipFile, cacheDir);
+            return cacheDir;
+        }
+
+        /// <summary>
+        /// Validate plugin zip file before loading.
+        /// </summary>
+        /// <param name="zipFile">zip file location</param>
+        /// <param name="zipContent">out zip content cache location</param>
+        /// <param name="cacheLocation">out cache location of unziped plugin</param>
+        /// <param name="finalPluginFolder">out path where plugin can bi installed</param>
+        /// <returns></returns>
+        /// <exception cref="PluginLoadException"></exception>
+        public bool ValidateZipFile(string zipFile, out string zipContent, out string cacheLocation, out string finalPluginFolder)
+        {
+            zipContent = CopyZipCache(zipFile);
+            cacheLocation = Directory.GetDirectories(zipContent).FirstOrDefault();
+            if (string.IsNullOrEmpty(cacheLocation))
+            {
+                Directory.Delete(zipContent, true);
+                throw new PluginLoadException($"Cannot extract plugin from: {zipFile}.");
+            }
+
+            var pluginInfo = _infoManager.GetInfo(cacheLocation);
+            if (pluginInfo == default)
+            {
+                Directory.Delete(zipContent, true);
+                throw new PluginLoadException("Cannot locate info file.");
+            }
+
+            if (LoadedPlugins.Keys.Any(x => pluginInfo.Plugins.ContainsKey(x)))
+            {
+                Directory.Delete(zipContent, true);
+                throw new PluginLoadException("Plugin with this id is already loaded.");
+            }
+
+            finalPluginFolder = Path.Combine(PluginPath, Path.GetFileName(cacheLocation));
+            if (Directory.Exists(finalPluginFolder))
+            {
+                Directory.Delete(zipContent, true);
+                throw new PluginLoadException("Cannot replace installed plugin. To update plugin first remove it from plugins folder.");
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Load plugin from preloaded cached zip.
+        /// </summary>
+        /// <param name="cacheLocation">location in cache</param>
+        /// <param name="pluginLocation">plugin installation path</param>
+        public void LoadPreloadedZip(string cacheLocation, string pluginLocation)
+        {
+            Directory.Move(cacheLocation, pluginLocation);
+            LoadPluginGroup(pluginLocation);
+        }
+
+        /// <summary>
+        /// Clear cache.
+        /// </summary>
+        /// <param name="cacheFolder">folder og plugin cache</param>
+        public bool ClearCache(string cacheFolder)
+        {
+            if (!Directory.Exists(cacheFolder))
+                return false;
+            Directory.Delete(Path.Combine(CacheLocation, cacheFolder), true);
+            return true;
+        }
+
+        public bool LoadFromZip(string zipFile)
+        {
+            if (!ValidateZipFile(zipFile, out var zipContent, out var cacheLocation, out var finalPluginFolder))
+                return false;
+            LoadPreloadedZip(cacheLocation, finalPluginFolder);
+            ClearCache(Path.GetFileName(zipContent));
+            return true;
+        }
+        
+        public void RegisterPlugin(IPlugin instance, Assembly assembly, string id, string pluginPath)
+        {
+            var plugin = new PluginStruct(instance, assembly, pluginPath);
+            LoadedPlugins.Add(id, plugin);
+            instance.OnViewLoaded();
+            PluginLoaded?.Invoke(this, new PluginLoadedArgs(id, plugin));
+            Logger.Debug($"Loaded {id} plugin.");
         }
         
         #endregion
@@ -85,14 +208,17 @@ namespace SoundMixerSoftware.Extensibility.Loader
             var pluginInfo = _infoManager.GetInfo(folderPath);
             if (pluginInfo == default)
             {
-                Logger.Warn($"Cannot read plugin info file: {folderPath}.");
-                return;
+                throw new PluginLoadException($"Cannot read plugin info file: {folderPath}.");
+                //Logger.Warn($"Cannot read plugin info file: {folderPath}.");
+                //return;
             }
             Logger.Debug($"Loading {folderPath} plugin group.");
 
             if (!_directoryManager.GetDirectory(folderPath, out var assemblyPath))
             {
-                Logger.Warn($"Cannot find assembly path of plugin: {folderPath}.");
+                throw new PluginLoadException($"Cannot find assembly path of plugin: {folderPath}.");
+                //Logger.Warn($"Cannot find assembly path of plugin: {folderPath}.");
+                //return;
             }
             
             var ignoreList = new List<string>();
@@ -151,9 +277,7 @@ namespace SoundMixerSoftware.Extensibility.Loader
                         else
                         {
                             var instance = (AbstractPlugin) Activator.CreateInstance(type, new object[] {this, pluginPath});
-                            LoadedPlugins.Add(id, new PluginStruct(instance, assembly, pluginPath));
-                            instance.OnPluginLoaded();
-                            Logger.Debug($"Loaded {id} plugin.");
+                            RegisterPlugin(instance, assembly, id, pluginPath);
                         }
                     }
                     else if (type.GetInterfaces().Contains(typeof(IPlugin)))
@@ -171,9 +295,7 @@ namespace SoundMixerSoftware.Extensibility.Loader
                             else
                             {
                                 var instance = (IPlugin) Activator.CreateInstance(type);
-                                LoadedPlugins.Add(id, new PluginStruct(instance, assembly, pluginPath));
-                                instance.OnPluginLoaded();
-                                Logger.Debug($"Loaded {id} plugin.");
+                                RegisterPlugin(instance, assembly, id, pluginPath);
                             }
                         }
                     }
@@ -181,14 +303,31 @@ namespace SoundMixerSoftware.Extensibility.Loader
             }
         }
 
-
-
         private string FormatAssemblies(IEnumerable<Assembly> assemblies)
         {
             return string.Join(",", assemblies.Select(x => x.GetName().Name));
         }
 
+        private string CreateCacheDir()
+        {
+            var path = Path.Combine(CacheLocation, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(path);
+            return path;
+        }
+
         #endregion
-        
+
+    }
+
+    public class PluginLoadedArgs : EventArgs
+    {
+        public string PluginId { get; set; }
+        public PluginStruct PluginStruct { get; set; }
+
+        public PluginLoadedArgs(string pluginId, PluginStruct pluginStruct)
+        {
+            PluginId = pluginId;
+            PluginStruct = pluginStruct;
+        }
     }
 }

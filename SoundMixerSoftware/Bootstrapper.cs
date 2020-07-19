@@ -59,7 +59,7 @@ namespace SoundMixerSoftware
         /// </summary>
         public LocalManager LocalManager = new LocalManager(typeof(LocalContainer));
 
-        public static PluginLoader PluginLoader { get; } = new PluginLoader(LocalContainer.PluginFolder);
+        public static PluginLoader PluginLoader { get; } = new PluginLoader(LocalContainer.PluginFolder, LocalContainer.PluginCache);
 
         #endregion
         
@@ -110,10 +110,13 @@ namespace SoundMixerSoftware
             _container.Singleton<SettingsViewModel>();
             _container.Singleton<DevicesViewModel>();
             _container.Singleton<SlidersViewModel>();
+            _container.Singleton<PluginViewModel>();
             _container.Singleton<ButtonsViewModel>();
             
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ButtonAddViewModel>();
+
+            _container.PerRequest<PluginLoadViewModel>();
             
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();

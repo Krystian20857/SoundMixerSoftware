@@ -1,0 +1,31 @@
+﻿<Window x:Class="SoundMixerSoftware.Views.PluginLoadView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SoundMixerSoftware.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:cm="http://caliburnmicro.com"
+        mc:Ignorable="d"
+        Title="PluginLoadWindow" Height="175" Width="400" cm:Message.Attach="[Closed] = [CloseClicked]">
+    <Window.Resources>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel HorizontalAlignment="Center" Margin="10" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Stretch" Width="Auto">
+                <TextBox Margin="10, 0" Width="Auto" MinWidth="275" Text="{Binding Path=ZipPath, UpdateSourceTrigger=PropertyChanged, Mode = TwoWay}"/>
+                <Button Width="50" Content="{materialDesign:PackIcon FolderOpen}" ToolTip="Choose ZIP file" cm:Message.Attach="[Click] = [OpenZipClicked]"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                <TextBlock Foreground="{Binding Path=StatusColor, UpdateSourceTrigger=PropertyChanged}" Text="{Binding Path=ValidationStatus}" Width="Auto"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Style="{StaticResource BottomButtonBig}" Content="Load" ToolTip="Load" cm:Message.Attach="[Click] = [LoadClicked]"/>
+                <Button Style="{StaticResource BottomButtonBig}" Content="Cancel" ToolTip="Cancel" cm:Message.Attach="[Click] = [CancelClicked]"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>

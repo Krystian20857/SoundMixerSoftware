@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <DockPanel LastChildFill="False">
-            <Border DockPanel.Dock="Left" Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+            <Border DockPanel.Dock="Left" Style="{StaticResource DefaultBorder}">
                 <StackPanel Orientation="Horizontal">
                     <TextBox Margin="2" Width="100" materialDesign:HintAssist.Hint="Volume" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                         <TextBox.Text>
@@ -33,7 +33,7 @@
                     </TextBox>
                 </StackPanel>
             </Border>
-            <Border DockPanel.Dock="Left" Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+            <Border DockPanel.Dock="Left" Style="{StaticResource DefaultBorder}">
                 <ComboBox
                     Margin="5, 0"
                     ItemsSource="{Binding Path=Sliders}"

@@ -71,6 +71,7 @@ namespace SoundMixerSoftware.ViewModels
             Tabs.Add(IoC.Get<SlidersViewModel>());
             Tabs.Add(IoC.Get<ButtonsViewModel>());
             Tabs.Add(IoC.Get<DevicesViewModel>());
+            Tabs.Add(IoC.Get<PluginViewModel>());
             Tabs.Add(IoC.Get<SettingsViewModel>());
             
             RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);

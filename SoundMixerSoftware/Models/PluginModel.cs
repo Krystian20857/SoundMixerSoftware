@@ -1,0 +1,36 @@
+﻿using System.Windows.Media;
+using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Extensibility;
+using SoundMixerSoftware.Helpers.Utils;
+
+namespace SoundMixerSoftware.Models
+{
+    public class PluginModel
+    {
+        #region Public Properties
+        
+        public string Name { get; set; }
+        public ImageSource Image { get; set; }
+        public string Author { get; set; }
+        public string Version { get; set; }
+        public string PluginId { get; set; }
+        
+        #endregion
+        
+        #region Public Static Methods
+
+        public static PluginModel CreateModel(IPlugin plugin)
+        {
+            return new PluginModel
+            {
+                Name = plugin.Name,
+                Image = plugin.Image ?? ExtractedIcons.FailedIcon.ToImageSource(),
+                Author = plugin.Author,
+                Version = plugin.Version,
+                PluginId = plugin.PluginId
+            };
+        }
+        
+        #endregion
+    }
+}

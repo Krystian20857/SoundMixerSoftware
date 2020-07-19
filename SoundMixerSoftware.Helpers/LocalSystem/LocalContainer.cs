@@ -62,5 +62,11 @@ namespace SoundMixerSoftware.Helpers.LocalSystem
         /// </summary>
         [Path("plugin", true, FileAttributes.Directory)]
         public static readonly string PluginFolder = Path.Combine(AppData, "plugins");
+        /// <summary>
+        /// Plugins Cache folder.
+        /// key: plugincache
+        /// </summary>
+        [Path("plugincache", true, FileAttributes.Directory)]
+        public static readonly string PluginCache = Path.Combine(Cache, "plugins");
     }
 }

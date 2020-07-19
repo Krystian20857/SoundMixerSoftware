@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" HorizontalAlignment="Left">
-            <Border Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+            <Border Style="{StaticResource DefaultBorder}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Function" Margin="5, 5"/>
                     <ComboBox

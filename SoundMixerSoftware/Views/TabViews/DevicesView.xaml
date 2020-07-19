@@ -21,7 +21,7 @@
             <ItemsControl x:Name="Devices">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5" BorderBrush="DarkGray" BorderThickness="2" CornerRadius="5">
+                        <Border Style="{StaticResource DefaultBorder}">
                             <DockPanel Height="75" LastChildFill="False">
                                 <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
                                     <TextBlock Margin="5,1" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Text="{Binding Path=Name}" />

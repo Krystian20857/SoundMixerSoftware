@@ -17,8 +17,11 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel LastChildFill="False">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBox x:Name="CreatedProfile_ProfileName"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                          materialDesign:HintAssist.Hint="Profile Name"
@@ -42,7 +45,7 @@
                         </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBox Style="{StaticResource IntBoxStyle}"
                          materialDesign:HintAssist.Hint="Buttons Count">
                     <TextBox.Text>
@@ -68,10 +71,10 @@
                     </TextBox.Text>
                 </TextBox>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button Margin="10" Style="{StaticResource MaterialDesignFlatButton}" cal:Message.Attach="[Event Click] = [Action AddClick()]" Width="150" Content="Save" />
-                <Button Margin="10" Style="{StaticResource MaterialDesignFlatButton}" cal:Message.Attach="[Event Click] = [Action CancelClick()]" Width="150" Content="Cancel" />
+            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Style="{StaticResource BottomButtonBig}" cal:Message.Attach="[Event Click] = [Action AddClick()]" Content="Save" />
+                <Button Style="{StaticResource BottomButtonBig}" cal:Message.Attach="[Event Click] = [Action CancelClick()]" Content="Cancel" />
             </StackPanel>
-        </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>

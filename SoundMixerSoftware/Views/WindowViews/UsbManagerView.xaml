@@ -11,11 +11,18 @@
         Title="Usb Manager" Height="250" Width="400" Icon="{StaticResource SpeakerIcon}"
         cal:Message.Attach="[Shortcut Enter] = [Action Save()]">
     <Window.Resources>
+        <Style x:Key="IntBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Width" Value="100"/>
+        </Style>
         <converter:HexConverter x:Key="HexConverter"/>
     </Window.Resources>
     <Grid>
-        <StackPanel HorizontalAlignment="Center" Margin="10" Orientation="Vertical">
-            <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="5"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="10" LastChildFill="False">
+            <Border DockPanel.Dock="Top" BorderThickness="2" BorderBrush="DarkGray" CornerRadius="5"
                     cal:Message.Attach="[Shortcut Delete] = [Action Remove()]">
                 <ListView SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="100" HorizontalContentAlignment="Stretch" x:Name="USBIds">
                     <ListView.ItemTemplate>
@@ -32,35 +39,25 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Border>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <TextBox Margin="5"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBox Style="{StaticResource IntBoxStyle}"
                          Text="{Binding Path=Vid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
-                         materialDesign:HintAssist.Hint="VID(Hex)"
-                         Width="100" />
-                <TextBox Margin="5"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.Hint="VID(Hex)"/>
+                <TextBox Style="{StaticResource IntBoxStyle}"
                          Text="{Binding Path=Pid,Converter={StaticResource HexConverter}, Mode = TwoWay}"
-                         materialDesign:HintAssist.Hint="PID(Hex)"
-                         Width="100" />
+                         materialDesign:HintAssist.Hint="PID(Hex)"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Style="{StaticResource BottomButton}"
                         cal:Message.Attach="[Event Click] = [Action Save()]"
-                        Margin="5,0"
-                        Width="100"
                         Content="Save" />
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource BottomButton}"
                         cal:Message.Attach="[Event Click] = [Action Remove()]"
-                        Margin="5,0"
-                        Width="100"
                         Content="Remove" />
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource BottomButton}"
                         cal:Message.Attach="[Event Click] = [Action Close()]"
-                        Margin="5,0"
-                        Width="100"
                         Content="Close" />
             </StackPanel>
-        </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>
