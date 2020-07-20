@@ -15,8 +15,9 @@ namespace SoundMixerSoftware.Models
         public string Author { get; set; }
         public string Version { get; set; }
         public string PluginId { get; set; }
-
         public Uri WebPage { get; set; }
+        public object SettingsWindow { get; set; }
+        public bool SettingsVisible { get; set; }
 
         #endregion
         
@@ -32,6 +33,8 @@ namespace SoundMixerSoftware.Models
                 Version = plugin.Version,
                 PluginId = plugin.PluginId,
                 WebPage = plugin.WebPage,
+                SettingsWindow = plugin.SettingsWindow,
+                SettingsVisible = plugin.SettingsWindow != null
             };
         }
         

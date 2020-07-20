@@ -21,6 +21,7 @@ namespace SoundMixerSoftware.Extensibility
         public abstract string Version { get; set; }
         public abstract string PluginId { get; set; }
         public abstract Uri WebPage { get; set; }
+        public abstract object SettingsWindow { get; set; }
 
         #endregion
 

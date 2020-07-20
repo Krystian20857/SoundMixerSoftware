@@ -57,8 +57,8 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void AddClicked()
         {
-            SelectedTab.AddClicked(Index);
-            TryCloseAsync();
+            if(SelectedTab.AddClicked(Index))
+                TryCloseAsync();
         }
         
         #endregion

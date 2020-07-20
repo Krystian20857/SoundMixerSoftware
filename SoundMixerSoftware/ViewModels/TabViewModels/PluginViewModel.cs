@@ -79,10 +79,10 @@ namespace SoundMixerSoftware.ViewModels
             StarterHelper.RestartApp();
         }
 
-        public void NavigateRequest(object sender)
+        public void OpenPluginSettings(object sender)
         {
             var pluginModel = sender as PluginModel;
-            Process.Start(pluginModel.WebPage.ToString());
+            _windowManager.ShowDialogAsync(pluginModel.SettingsWindow);
         }
         
         #endregion

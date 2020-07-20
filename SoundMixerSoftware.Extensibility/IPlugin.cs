@@ -30,6 +30,10 @@ namespace SoundMixerSoftware.Extensibility
         /// </summary>
         Uri WebPage { get; set; }
         /// <summary>
+        /// Settings window of the plugin.
+        /// </summary>
+        object SettingsWindow { get; set; }
+        /// <summary>
         /// Occurs when plugin has loaded.
         /// </summary>
         void OnPluginLoaded();

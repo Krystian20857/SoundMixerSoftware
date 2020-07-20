@@ -7,6 +7,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cm="http://caliburnmicro.com"
              xmlns:controls="clr-namespace:SoundMixerSoftware.Controls"
+             xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -23,6 +24,7 @@
             <Setter Property="Margin" Value="2, 0" />
             <Setter Property="Foreground" Value="DarkGray" />
         </Style>
+        <converter:VisibilityConverter x:Key="VisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -65,8 +67,16 @@
                                         </controls:WebHyperLink>
                                     </TextBlock>
                                 </StackPanel>
-                                <StackPanel DockPanel.Dock="Right" Orientation="Vertical">
-                                    <Button cm:Message.Attach="[Click] = [OpenPluginFolder($this)]" Style="{StaticResource ButtonStyle}" Content="{materialDesign:PackIcon Folder}" ToolTip="Open plugin folder" />
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                    <Button cm:Message.Attach="[Click] = [OpenPluginFolder($this)]"
+                                            Style="{StaticResource ButtonStyle}"
+                                            Content="{materialDesign:PackIcon Folder}"
+                                            ToolTip="Open plugin folder" />
+                                    <Button cm:Message.Attach="[Click] = [OpenPluginSettings($this)]"
+                                            Style="{StaticResource ButtonStyle}"
+                                            Content="{materialDesign:PackIcon Cog}"
+                                            ToolTip="Open plugin settings"
+                                            Visibility="{Binding Path=SettingsVisible, Converter={StaticResource VisibilityConverter}}"/>
                                 </StackPanel>
                             </DockPanel>
                         </Border>

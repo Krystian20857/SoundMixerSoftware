@@ -188,7 +188,7 @@ namespace SoundMixerSoftware.Extensibility.Loader
         {
             var plugin = new PluginStruct(instance, assembly, pluginPath);
             LoadedPlugins.Add(id, plugin);
-            instance.OnViewLoaded();
+            instance.OnPluginLoaded();
             PluginLoaded?.Invoke(this, new PluginLoadedArgs(id, plugin));
             Logger.Debug($"Loaded {id} plugin.");
         }
