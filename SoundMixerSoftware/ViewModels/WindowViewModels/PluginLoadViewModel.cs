@@ -27,7 +27,7 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
-        public PluginLoader PluginLoader => Bootstrapper.PluginLoader;
+        public PluginLoader PluginLoader => Bootstrapper.Instance.PluginLoader;
 
         public string ZipPath
         {
@@ -132,6 +132,7 @@ namespace SoundMixerSoftware.ViewModels
             PluginLoader.LoadPreloadedZip(pluginCacheLocation, pluginPredictLocation);
             if(!string.IsNullOrEmpty(zipCacheContent))
                 PluginLoader.ClearCache(zipCacheContent);
+            Bootstrapper.Instance.ReloadAssembliesForView();
             TryCloseAsync();
         }
 

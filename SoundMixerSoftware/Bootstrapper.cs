@@ -37,10 +37,26 @@ namespace SoundMixerSoftware
         
         #region Public Static Properties
 
+        public static Bootstrapper Instance { get; private set; }
+
+        #endregion
+        
+        #region Public Properties
+
         /// <summary>
         /// Global application Tray.
         /// </summary>
-        public static TaskbarIcon TaskbarIcon { get; set; }
+        public TaskbarIcon TaskbarIcon { get; set; }
+        
+        /// <summary>
+        /// Plugin loader instance.
+        /// </summary>
+        public PluginLoader PluginLoader { get; } = new PluginLoader(LocalContainer.PluginFolder, LocalContainer.PluginCache);
+
+        /// <summary>
+        /// Current bootstrapper LocalManager.
+        /// </summary>
+        public LocalManager LocalManager { get; } = new LocalManager(typeof(LocalContainer));
 
         #endregion
         
@@ -52,19 +68,11 @@ namespace SoundMixerSoftware
 
         #endregion
         
-        #region Public Fields
+        #region Constructor
 
-        /// <summary>
-        /// Current bootstrapper LocalManager.
-        /// </summary>
-        public LocalManager LocalManager = new LocalManager(typeof(LocalContainer));
-
-        public static PluginLoader PluginLoader { get; } = new PluginLoader(LocalContainer.PluginFolder, LocalContainer.PluginCache);
-
-        #endregion
-        
         public Bootstrapper()
         {
+            Instance = this;
             LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
             RegisterExceptionHandler();
             
@@ -94,6 +102,10 @@ namespace SoundMixerSoftware
             PluginLoader.LoadAllPlugins();
             Initialize();
         }
+        
+        #endregion
+        
+        #region Overriden Methods
 
         protected override object GetInstance(Type service, string key) => _container.GetInstance(service, key);
 
@@ -141,6 +153,21 @@ namespace SoundMixerSoftware
         {
             return base.SelectAssemblies().Concat(PluginLoader.LoadedPlugins.Values.Select(x => x.Assembly));
         }
+        
+        #endregion
+        
+        #region Public Methods
+
+        public void ReloadAssembliesForView()
+        {
+            AssemblySource.Instance.Clear();
+            AssemblySource.Instance.AddRange(SelectAssemblies());
+            AssemblySource.Instance.Refresh();
+        }
+        
+        #endregion
+        
+        #region Private Methods
 
         /// <summary>
         /// Register unhandled exception "notifications".
@@ -157,5 +184,7 @@ namespace SoundMixerSoftware
                 Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
             };
         }
+        
+        #endregion
     }
 }

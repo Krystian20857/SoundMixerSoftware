@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Windows.Navigation;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.Application;
-using SoundMixerSoftware.Extensibility;
 using SoundMixerSoftware.Extensibility.Loader;
-using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels
@@ -24,7 +20,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public BindableCollection<PluginModel> Plugins { get; set; } = new BindableCollection<PluginModel>();
 
-        public PluginLoader PluginLoader => Bootstrapper.PluginLoader;
+        public PluginLoader PluginLoader => Bootstrapper.Instance.PluginLoader;
         
         #endregion
         
