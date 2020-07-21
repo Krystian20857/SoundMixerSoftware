@@ -15,6 +15,7 @@ using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
 using SoundMixerSoftware.Extensibility.Loader;
+using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Utils;
@@ -143,6 +144,7 @@ namespace SoundMixerSoftware
 
         protected override void OnExit(object sender, EventArgs e)
         {
+            DeviceHandlerGlobal.DeviceHandler.Dispose();
             _starter.Dispose();
             TaskbarIcon.Dispose();
             Logger.Info("App shutdown.");

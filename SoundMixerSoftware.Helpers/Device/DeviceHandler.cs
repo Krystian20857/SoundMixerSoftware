@@ -16,7 +16,7 @@ using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceiv
 
 namespace SoundMixerSoftware.Helpers.Device
 {
-    public class DeviceHandler
+    public class DeviceHandler : IDisposable
     {
         #region Current Class Logger
 
@@ -370,6 +370,15 @@ namespace SoundMixerSoftware.Helpers.Device
             _usbDevice.ProcessMessage((uint)e.Msg, e.WParam, e.LParam);
         }
 
+        #endregion
+        
+        #region Dispose
+
+        public void Dispose()
+        {
+            _serialConnection?.Dispose();
+        }
+        
         #endregion
     }
 }
