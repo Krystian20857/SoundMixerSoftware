@@ -225,7 +225,8 @@ namespace SoundMixerSoftware.Extensibility.Loader
             if (pluginInfo.LoadOrder.Count == 0)
             {
                 var dependencies = AssemblyLoader.LoadAssemblies(assemblyPath, ignoreList);
-                Logger.Debug($"Loaded plugin dependencies: {folderPath} -> {FormatAssemblies(dependencies)}");
+                if(dependencies.Any())
+                    Logger.Debug($"Loaded plugin dependencies: {folderPath} -> {FormatAssemblies(dependencies)}");
             }
             else
             {
@@ -241,12 +242,19 @@ namespace SoundMixerSoftware.Extensibility.Loader
                     Assembly.LoadFrom(assemblyFile);
                 }
             }
-            var pluginAssemblies = AssemblyLoader.LoadAssemblyFiles(assemblyPath, ignoreList);
-            Logger.Debug($"Loaded plugin assemblies: {folderPath} -> {FormatAssemblies(pluginAssemblies)}");
+            //var pluginAssemblies = AssemblyLoader.LoadAssemblyFiles(assemblyPath, ignoreList);
+            //Logger.Debug($"Loaded plugin assemblies: {folderPath} -> {FormatAssemblies(pluginAssemblies)}");
             foreach (var plugin in pluginInfo.Plugins)
             {
                 var pluginStorage = plugin.Value;
-                LoadSinglePlugin(pluginAssemblies, plugin.Key, pluginStorage.Class, assemblyPath);
+                var pluginAssemblyPath = Path.Combine(assemblyPath, pluginStorage.ModuleName);
+                if (!File.Exists(pluginAssemblyPath))
+                {
+                    throw new PluginLoadException($"Cannot find plugin assembly: {pluginAssemblyPath}");
+                }
+                var assembly = Assembly.LoadFrom(pluginAssemblyPath);
+                Logger.Debug($"Loaded {pluginStorage.ModuleName} assembly");
+                LoadSinglePlugin(assembly, plugin.Key, pluginStorage.Class, assemblyPath);
             }
         }
 
@@ -256,52 +264,45 @@ namespace SoundMixerSoftware.Extensibility.Loader
         /// <param name="assemblies"></param>
         /// <param name="id"></param>
         /// <param name="entryPoint"></param>
-        private void LoadSinglePlugin(IEnumerable<Assembly> assemblies, string id, string entryPoint, string pluginPath)
+        private void LoadSinglePlugin(Assembly assembly, string id, string entryPoint, string pluginPath)
         {
-            foreach (var assembly in assemblies)
+            var type = assembly.GetType(entryPoint, true, true);
+            if (!type.IsPublic || type.IsAbstract)
+                throw new PluginLoadException("Plugin class must be public and non-abstract.");
+            if (type.IsSubclassOf(typeof(AbstractPlugin)))
             {
-                foreach (var type in assembly.GetTypes())
+                if (LoadedPlugins.ContainsKey(id))
                 {
-                    if (!type.FullName?.Equals(entryPoint, StringComparison.InvariantCultureIgnoreCase) ?? false)
-                        continue;
-                    if(!type.IsPublic || type.IsAbstract)
-                        continue;
-                    if (type.IsSubclassOf(typeof(AbstractPlugin)))
+                    Logger.Warn($"Plugin with id: {id} is alredy loaded.");
+                }
+                else
+                {
+                    var instance = (AbstractPlugin) Activator.CreateInstance(type, new object[] {this, pluginPath});
+                    if (instance.PluginId.Equals(id))
+                        RegisterPlugin(instance, assembly, id, pluginPath);
+                    else
+                        Logger.Warn($"Id: {id} does not match real plugin id: {instance.PluginId}");
+                }
+            }
+            else if (type.GetInterfaces().Contains(typeof(IPlugin)))
+            {
+                if (LoadedPlugins.ContainsKey(id))
+                {
+                    Logger.Warn($"Plugin with id: {id} is alredy loaded.");
+                }
+                else
+                {
+                    if (type.GetConstructors().Any(x => x.GetParameters().Length != 0))
                     {
-                        if (LoadedPlugins.ContainsKey(id))
-                        {
-                            Logger.Warn($"Plugin with id: {id} is alredy loaded.");
-                        }
-                        else
-                        {
-                            var instance = (AbstractPlugin) Activator.CreateInstance(type, new object[] {this, pluginPath});
-                            if (instance.PluginId.Equals(id))
-                                RegisterPlugin(instance, assembly, id, pluginPath);
-                            else
-                                Logger.Warn($"Id: {id} does not match real plugin id: {instance.PluginId}");
-                        }
+                        Logger.Error($"Constructor of plugin with id: {id} must be blank.");
                     }
-                    else if (type.GetInterfaces().Contains(typeof(IPlugin)))
+                    else
                     {
-                        if (LoadedPlugins.ContainsKey(id))
-                        {
-                            Logger.Warn($"Plugin with id: {id} is alredy loaded.");
-                        }
+                        var instance = (IPlugin) Activator.CreateInstance(type);
+                        if (instance.PluginId.Equals(id))
+                            RegisterPlugin(instance, assembly, id, pluginPath);
                         else
-                        {
-                            if (type.GetConstructors().Any(x => x.GetParameters().Length != 0))
-                            {
-                                Logger.Error($"Constructor of plugin with id: {id} must be blank.");
-                            }
-                            else
-                            {
-                                var instance = (IPlugin) Activator.CreateInstance(type);
-                                if (instance.PluginId.Equals(id))
-                                    RegisterPlugin(instance, assembly, id, pluginPath);
-                                else
-                                    Logger.Warn($"Id: {id} does not match real plugin id: {instance.PluginId}");
-                            }
-                        }
+                            Logger.Warn($"Id: {id} does not match real plugin id: {instance.PluginId}");
                     }
                 }
             }

@@ -1,15 +1,23 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Microsoft.Win32;
+using NLog;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Extensibility.Loader;
+using SoundMixerSoftware.Helpers.Utils;
+using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
 {
     public class PluginLoadViewModel : Screen
     {
+        #region Current Class Logger
+
+        public static Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Properties
         
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
@@ -127,12 +135,19 @@ namespace SoundMixerSoftware.ViewModels
 
         public void LoadClicked()
         {
-            if (string.IsNullOrEmpty(pluginCacheLocation) || string.IsNullOrEmpty(pluginPredictLocation) || !status)
-                return;
-            PluginLoader.LoadPreloadedZip(pluginCacheLocation, pluginPredictLocation);
-            if(!string.IsNullOrEmpty(zipCacheContent))
-                PluginLoader.ClearCache(zipCacheContent);
-            Bootstrapper.Instance.ReloadAssembliesForView();
+            try
+            {
+                if (string.IsNullOrEmpty(pluginCacheLocation) || string.IsNullOrEmpty(pluginPredictLocation) || !status)
+                    return;
+                PluginLoader.LoadPreloadedZip(pluginCacheLocation, pluginPredictLocation);
+                if (!string.IsNullOrEmpty(zipCacheContent))
+                    PluginLoader.ClearCache(zipCacheContent);
+                Bootstrapper.Instance.ReloadAssembliesForView();
+            }
+            catch (PluginLoadException ex)
+            {
+                ExceptionHandler.HandleException(Logger, "Something went wrong while loading plugin.", ex);
+            }
             TryCloseAsync();
         }
 
