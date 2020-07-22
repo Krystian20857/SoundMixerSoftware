@@ -51,7 +51,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         }
 
         /// <summary>
-        /// Set top layer window opticality.
+        /// Set top layer window opacity.
         /// </summary>
         /// <param name="windowHandle">handle to window</param>
         /// <param name="alpha">byte alpha value</param>

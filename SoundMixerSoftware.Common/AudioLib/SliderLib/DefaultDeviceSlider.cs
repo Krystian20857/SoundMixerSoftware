@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Timers;
+﻿using System.Windows.Threading;
 using NAudio.CoreAudioApi;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
@@ -9,23 +7,30 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
     {
         #region Private Fields
         
-        private readonly Timer _update;
-        private readonly MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
+        private MMDevice _device;
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
         private readonly DataFlow _dataFlow;
-        
-        private float _lastVolume;
-        private bool _lastMute;
 
         #endregion
 
         #region Public Properties
 
-        public float Volume { get; set; }
-        public bool IsMute { get; set; }
+        public float Volume
+        {
+            get => _dispatcher.Invoke(()=> _device.AudioEndpointVolume.MasterVolumeLevelScalar);
+            set => SetVolumeInternal(value);
+        }
+
+        public bool IsMute
+        {
+            get => _dispatcher.Invoke(()=> _device.AudioEndpointVolume.Mute);
+            set => SetMuteInternal(value);
+        }
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
         public bool IsDefaultOutput { get; }
-        public string DeviceID { get; }
+        public string DeviceID => _dispatcher.Invoke(() => _device.ID);
 
         #endregion
 
@@ -36,44 +41,49 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
             IsDefaultOutput = isDefaultOutput;
             _dataFlow = isDefaultOutput ? DataFlow.Render : DataFlow.Capture;
             SliderType = isDefaultOutput ? SliderType.MASTER_RENDER : SliderType.MASTER_CAPTURE;
-            
-            Volume = _lastVolume;
-            
-            IsMute = _lastMute;
-            
-            _update = new Timer();
-            _update.Elapsed += UpdateOnElapsed;
-            _update.Interval = 10;
-            _update.AutoReset = true;
-            _update.Start();
-        }
 
-        private void UpdateOnElapsed(object sender, ElapsedEventArgs e)
-        {
-            if (Math.Abs(Volume - _lastVolume) >= SliderUtils.CHANGE_DIFF)
+            _dispatcher.Invoke(() =>
             {
-                var device = _deviceEnumerator.GetDefaultAudioEndpoint(_dataFlow, Role.Multimedia);
-                
-                _lastVolume = Volume;
-
-                device.AudioEndpointVolume.MasterVolumeLevelScalar = _lastVolume;
-                device.Dispose();
-            }
-
-            if (IsMute != _lastMute)
+                _device = _deviceEnumerator.GetDefaultEndpoint(_dataFlow, Role.Multimedia);
+            });
+            _deviceEnumerator.DefaultDeviceChange += (sender, args) =>
             {
-                var device = _deviceEnumerator.GetDefaultAudioEndpoint(_dataFlow, Role.Multimedia);
-                
-                _lastMute = IsMute;
-                
-                device.AudioEndpointVolume.Mute = _lastMute;
-                device.Dispose();
-            }
+                if (args.DataFlow != _dataFlow)
+                    return;
+                _dispatcher.Invoke(() =>
+                {
+                    _device = _deviceEnumerator.GetDeviceById(sender as string);
+                });
+            };
         }
 
         #endregion
 
-        #region Private Events
+        #region Private Methods
+
+        internal void SetVolumeInternal(float volume)
+        {
+            _dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    _device.AudioEndpointVolume.MasterVolumeLevelScalar = volume;
+                }
+                finally { }
+            });
+        }
+
+        internal void SetMuteInternal(bool mute)
+        {
+            _dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    _device.AudioEndpointVolume.Mute = mute;
+                }
+                finally { }
+            });
+        }
 
         #endregion
 
@@ -81,7 +91,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public void Dispose()
         {
-            _update.Dispose();
+            _device?.Dispose();
         }
 
         #endregion
