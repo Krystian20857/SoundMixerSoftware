@@ -182,7 +182,7 @@ namespace SoundMixerSoftware.Helpers.Device
         /// </summary>
         internal void RegisterTypes()
         {
-            RegisterType(0x03, typeof(DeviceIdResponse));
+            RegisterType((byte)Command.DEVICE_RESPONSE_COMMAND, typeof(DeviceIdResponse));
         }
         
         private void SerialConnectionOnExceptionOccurs(object sender, Exception e)
@@ -241,7 +241,7 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <returns></returns>
         private DeviceIdRequest CreateDeviceRequest(DeviceProperties properties, bool isOnStartup)
         {
-            var request = new DeviceIdRequest {command = 0x02};
+            var request = new DeviceIdRequest {command = Command.DEVICE_REQUEST_COMMAND};
             byte flag = 0x01;
             while (_requestFlags.ContainsKey(flag) && _flagsOnStartup.Contains(flag) && flag < 254)
                 flag++;

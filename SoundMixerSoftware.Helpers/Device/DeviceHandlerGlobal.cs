@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
 using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
@@ -39,7 +32,7 @@ namespace SoundMixerSoftware.Helpers.Device
         /// <summary>
         /// Global Device Handler.
         /// </summary>
-        public static DeviceHandler DeviceHandler { get; }
+        public static DeviceHandler Instance { get; }
 
         /// <summary>
         /// Currently connected devices.
@@ -55,10 +48,10 @@ namespace SoundMixerSoftware.Helpers.Device
 
         static DeviceHandlerGlobal()
         {
-            DeviceHandler = new DeviceHandler();
-            DeviceHandler.DeviceConnected += DeviceHandlerOnDeviceConnected;
-            DeviceHandler.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
-            DeviceHandler.DataReceived += DeviceHandlerOnDataReceived;
+            Instance = new DeviceHandler();
+            Instance.DeviceConnected += DeviceHandlerOnDeviceConnected;
+            Instance.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
+            Instance.DataReceived += DeviceHandlerOnDataReceived;
             
             ButtonOffsetManager.OffsetChanged += ButtonOffsetManagerOnOffsetChanged;
             SliderOffsetManager.OffsetChanged += SliderOffsetManagerOnOffsetChanged;
@@ -75,6 +68,10 @@ namespace SoundMixerSoftware.Helpers.Device
             RegisterTypes();
         }
 
+        #endregion
+        
+        #region Events
+        
         private static void SliderOffsetManagerOnOffsetChanged(object sender, OffsetChangedArgs e)
         {
             var deviceId = e.DeviceId;
@@ -92,10 +89,6 @@ namespace SoundMixerSoftware.Helpers.Device
             DeviceSettingsManager.SetSettings(deviceId, settings);
             ConfigHandler.SaveConfig();
         }
-
-        #endregion
-        
-        #region Events
 
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
@@ -173,8 +166,8 @@ namespace SoundMixerSoftware.Helpers.Device
 
         private static void RegisterTypes()
         {
-            DeviceHandler.RegisterType(0x01, typeof(SliderStruct));
-            DeviceHandler.RegisterType(0x02, typeof(ButtonStruct));
+            Instance.RegisterType((byte)Command.SLIDER_COMMAND, typeof(SliderStruct));
+            Instance.RegisterType((byte)Command.BUTTON_COMMAND, typeof(ButtonStruct));
         }
         
         #endregion

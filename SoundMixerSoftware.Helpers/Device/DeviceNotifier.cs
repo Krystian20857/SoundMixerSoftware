@@ -35,7 +35,7 @@ namespace SoundMixerSoftware.Helpers.Device
             {
                 if (DeviceHandlerGlobal.ConnectedDevice.TryGetValue(comport, out var result))
                 {
-                    var deviceHandler = DeviceHandlerGlobal.DeviceHandler;
+                    var deviceHandler = DeviceHandlerGlobal.Instance;
                     var buttons = result.DeviceResponse.button_count;
                     for (byte n = 0; n < buttons; n++)
                     {
@@ -108,11 +108,11 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             var structure = new LedStruct()
             {
-                command = 0x01,
+                command = Command.LED_COMMAND,
                 led = button,
                 state = (byte) (state ? 0x01 : 0x00)
             };
-            DeviceHandlerGlobal.DeviceHandler.SendData(comport, structure);
+            DeviceHandlerGlobal.Instance.SendData(comport, structure);
         }
 
         #endregion

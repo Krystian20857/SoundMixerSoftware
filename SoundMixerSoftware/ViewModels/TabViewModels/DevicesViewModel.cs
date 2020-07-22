@@ -62,8 +62,8 @@ namespace SoundMixerSoftware.ViewModels
 
             RuntimeHelpers.RunClassConstructor(typeof(DeviceHandlerGlobal).TypeHandle);
             
-            DeviceHandlerGlobal.DeviceHandler.DeviceConnected += DeviceHandlerOnDeviceConnected;
-            DeviceHandlerGlobal.DeviceHandler.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
+            DeviceHandlerGlobal.Instance.DeviceConnected += DeviceHandlerOnDeviceConnected;
+            DeviceHandlerGlobal.Instance.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
         }
 
         /// <summary>
