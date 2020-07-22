@@ -1,21 +1,13 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Threading;
+﻿
+
 using System.Windows;
-using System.Windows.Threading;
-using Caliburn.Micro;
-using SoundMixerSoftware.Helpers.LocalSystem;
-using SoundMixerSoftware.Views;
+using System.Windows.Input;
 
 namespace SoundMixerSoftware.ViewModels
 {
     public class TaskbarIconViewModel
     {
         #region Private Fields
-        
-        private IWindowManager _windowManager = new WindowManager();
         
         #endregion
         
@@ -32,11 +24,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void ShowWindow()
         {
-            var mainWindow = MainViewModel.Instance;
-            if(!mainWindow.IsActive)
-                _windowManager.ShowWindowAsync(mainWindow);
-            else
-                (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
+            Bootstrapper.Instance.BringToFront();
         }
 
         public void ExitApp()

@@ -21,11 +21,11 @@ namespace SoundMixerSoftware.Common.Extension
         /// <param name="process"></param>
         /// <param name="buffer">buffer size default: 1024</param>
         /// <returns></returns>
-        public static string GetFileName(this Process process, int buffer = 1024)
+        public static string GetFileName(this Process process, int buffer = 260) //260 -> max windows path length
         {
             var nameBuilder = new StringBuilder(buffer);
             var bufferLength = nameBuilder.Capacity + 1;
-            return Kernel32.QueryFullProcessImageName(process.Handle, 0, nameBuilder, ref bufferLength) ? nameBuilder.ToString() : null;
+            return Kernel32.QueryFullProcessImageName(process.Handle, 0, nameBuilder, ref bufferLength) ? nameBuilder.ToString() : string.Empty;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns>icon</returns>
         public static Icon GetMainWindowIcon(this Process process)
         {
-            var handle = FindSimilar(process).FirstOrDefault(x => x.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle ?? IntPtr.Zero;
+            var handle = process.MainWindowHandle;
             if (handle == IntPtr.Zero)
                 return GetIcon(process);
             return WindowWrapper.GetWindowIcon(handle);
@@ -58,28 +58,30 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns>string description.</returns>
         public static string GetPreciseName(this Process process)
         {
-            var label = string.Empty;
+            /*Order:
+             *  - name from apps folder
+             *  - main window title
+             *  - exe file description
+             *  - exe file name
+             */
+            var displayName = AppWrapper.GetAppName((uint) process.Id);
+            if (!string.IsNullOrEmpty(displayName)) return displayName;
+
+            var handle = process.MainWindowHandle;
+            if (handle != IntPtr.Zero) return WindowWrapper.GetWindowTitle(handle);
+
             try
             {
-                label = FileVersionInfo.GetVersionInfo(process.GetFileName()).FileDescription;
+                displayName = FileVersionInfo.GetVersionInfo(process.GetFileName()).FileDescription;
             }
-            catch (Win32Exception win32Exception)
+            catch (Win32Exception win32exception)
             {
-                //Win32 hresult for access denied: dec: -2147467259 hex: 0x80004005
-                //if (win32Exception.ErrorCode == 0x80004005)
-                    //label = process.ProcessName;
+                if ((uint)win32exception.ErrorCode == 0x80004005)
+                    return process.ProcessName;
             }
-            if (!string.IsNullOrWhiteSpace(label)) return label;
-            var handle = FindSimilar(process).FirstOrDefault(x => x.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle ?? IntPtr.Zero;
-            return handle == IntPtr.Zero ? process.ProcessName : WindowWrapper.GetWindowTitle(handle);
+
+            return string.IsNullOrEmpty(displayName) ? process.ProcessName : displayName;
         }
 
-        /// <summary>
-        /// Find processes with same name.
-        /// </summary>
-        /// <param name="process">target process.</param>
-        /// <returns>List of matched processes.</returns>
-        public static IEnumerable<Process> FindSimilar(this Process process) => Process.GetProcesses().Where(x => x.ProcessName.Equals(process.ProcessName));
-        
     }
 }

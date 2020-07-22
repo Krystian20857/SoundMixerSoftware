@@ -9,21 +9,36 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              cal:Message.Attach="[Initialized] = [ViewInitialized]">
+    <UserControl.Resources>
+        <Style x:Key="SettingBorder" TargetType="{x:Type Border}">
+            <Setter Property="Margin" Value="0, 5"/>
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-            <StackPanel Grid.Row="0" HorizontalAlignment="Stretch">
+            <StackPanel HorizontalAlignment="Stretch">
                 <GroupBox Margin="5" Header="Application Settings">
                     <StackPanel Orientation="Vertical">
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left">Run with windows</TextBlock>
                                 <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=AutoRun, Mode=TwoWay}" />
                             </DockPanel>
                         </Border>
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
+                            <DockPanel LastChildFill="False">
+                                <TextBlock DockPanel.Dock="Left">Hide to tray on startup</TextBlock>
+                                <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=HideOnStartup, Mode=TwoWay}" />
+                            </DockPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Starting Tab</TextBlock>
                                 <ComboBox DockPanel.Dock="Right"
@@ -40,7 +55,7 @@
                                 </ComboBox>
                             </DockPanel>
                         </Border>
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Theme</TextBlock>
                                 <ComboBox DockPanel.Dock="Right"
@@ -58,7 +73,7 @@
                                 </ComboBox>
                             </DockPanel>
                         </Border>
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Logs Folder</TextBlock>
                                 <Button DockPanel.Dock="Right" Width="150" Height="30" Content="Open" cal:Message.Attach="[Click] = [LogsFolderOpenClick()]" />
@@ -68,13 +83,13 @@
                 </GroupBox>
                 <GroupBox Margin="5" Header="Notification Settings">
                     <StackPanel Orientation="Vertical">
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left">Enable Notifications</TextBlock>
                                 <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=EnableNotify, Mode=TwoWay}" />
                             </DockPanel>
                         </Border>
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel HorizontalAlignment="Stretch" LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Notification Show Time</TextBlock>
                                 <Slider DockPanel.Dock="Right"
@@ -98,13 +113,13 @@
                 </GroupBox>
                 <GroupBox Margin="5" Header="Overlay Settings">
                     <StackPanel Orientation="Vertical">
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left">Enable Overlay</TextBlock>
                                 <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=EnableOverlay, Mode=TwoWay}" />
                             </DockPanel>
                         </Border>
-                        <Border Margin="0,5" BorderBrush="DarkGray" CornerRadius="3" BorderThickness="1" Padding="5">
+                        <Border Style="{StaticResource SettingBorder}">
                             <DockPanel HorizontalAlignment="Stretch" LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Overlay Fade Time</TextBlock>
                                 <Slider DockPanel.Dock="Right"

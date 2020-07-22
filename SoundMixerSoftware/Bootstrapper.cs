@@ -85,18 +85,9 @@ namespace SoundMixerSoftware
                 Logger.Info("Main view started.");
                 PluginLoader.ViewLoadedEvent();
             };
-            
-            _starter.BringWindowToFront += (sender, args) =>
-            {
-                var mainWindow = MainViewModel.Instance;
-                if (mainWindow == null)
-                    return;
-                if (!mainWindow.IsActive)
-                    _windowManager.ShowWindowAsync(mainWindow);
-                else
-                    (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
-            };
-            
+
+            _starter.BringWindowToFront += (sender, args) => BringToFront();
+
             _starter.ExitApplication += (sender, args) => Application.Shutdown(0x04);
             
             LocalManager.ResolveLocal();
@@ -166,7 +157,18 @@ namespace SoundMixerSoftware
             AssemblySource.Instance.AddRange(SelectAssemblies());
             AssemblySource.Instance.Refresh();
         }
-        
+
+        public void BringToFront()
+        {
+            var mainWindow = MainViewModel.Instance;
+            if (mainWindow == null)
+                return;
+            if (!mainWindow.IsActive)
+                _windowManager.ShowWindowAsync(mainWindow);
+            else
+                (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
+        }
+
         #endregion
         
         #region Private Methods

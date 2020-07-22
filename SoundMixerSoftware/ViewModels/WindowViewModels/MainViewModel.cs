@@ -75,7 +75,7 @@ namespace SoundMixerSoftware.ViewModels
             Tabs.Add(IoC.Get<SettingsViewModel>());
             
             RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);
-            RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle); ;
         }
 
         #endregion
@@ -84,6 +84,9 @@ namespace SoundMixerSoftware.ViewModels
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
         {
+            if (ConfigHandler.ConfigStruct.Application.HideOnStartup)
+                TryCloseAsync();
+            
             var configTab = ConfigHandler.ConfigStruct.Application.SelectedTab;
             SelectedTab = Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? Tabs[0];
 

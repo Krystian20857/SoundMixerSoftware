@@ -36,6 +36,7 @@ namespace SoundMixerSoftware.ViewModels
         private bool _autoRun;
         private bool _enableNotify;
         private bool _enableOverlay;
+        private bool _hideOnStartup;
         private int _overlayFadeTime;
         private int _notificationShowTime;
 
@@ -120,6 +121,18 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
+        public bool HideOnStartup
+        {
+            get => _hideOnStartup;
+            set
+            {
+                ConfigHandler.ConfigStruct.Application.HideOnStartup = value;
+                if(!LockConfig)
+                    _debounceDispatcher.Debounce(300, param => ConfigHandler.SaveConfig());
+                _hideOnStartup = value;
+            }
+        }
+
         public ThemeModel SelectedTheme
         {
             get => _selectedTheme;
@@ -186,6 +199,7 @@ namespace SoundMixerSoftware.ViewModels
             EnableOverlay = ConfigHandler.ConfigStruct.Overlay.EnableOverlay;
             OverlayFadeTime = ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
             NotificationShowTime = ConfigHandler.ConfigStruct.Notification.NotificationShowTime;
+            HideOnStartup = ConfigHandler.ConfigStruct.Application.HideOnStartup;
             
             LoadThemes();
             LoadTabs();

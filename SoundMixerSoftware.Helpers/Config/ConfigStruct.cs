@@ -39,7 +39,8 @@ namespace SoundMixerSoftware.Helpers.Config
                 ThemeName = "Red",
                 ProfilesOrder = new List<Guid>(),
                 SelectedProfile = Guid.Empty,
-                SelectedTab = Guid.Empty
+                SelectedTab = Guid.Empty,
+                HideOnStartup = true
             },
             Notification = new NotificationSettings()
             {
@@ -181,13 +182,20 @@ namespace SoundMixerSoftware.Helpers.Config
         public Guid SelectedProfile { get; set; }
         public List<Guid> ProfilesOrder { get; set; }
         public string ThemeName { get; set; }
-        [YamlMember(Alias = "SelectedTab")]
         public Guid SelectedTab { get; set; }
+
+        public bool? HideOnStartupNullable { get; set; }
 
         #endregion
         
-        #region Non-null Types;
-        
+        #region Non-null Types
+
+        public bool HideOnStartup
+        {
+            get => HideOnStartupNullable ?? false;
+            set => HideOnStartupNullable = value;
+        }
+
         #endregion
     }
 
