@@ -68,6 +68,8 @@
       <Compile Include="LocalSystem\PropertyAttribute.cs" />
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Property\IProperties.cs" />
+      <Compile Include="Threading\Com\ComTaskScheduler.cs" />
+      <Compile Include="Threading\Com\ComThread.cs" />
       <Compile Include="Utils\Application\AppUtils.cs" />
       <Compile Include="Utils\Application\AutoRunHandle.cs" />
       <Compile Include="Utils\ArrayUtils.cs" />

@@ -1,5 +1,5 @@
-﻿using System.Windows.Threading;
-using NAudio.CoreAudioApi;
+﻿using NAudio.CoreAudioApi;
+using SoundMixerSoftware.Common.Threading.Com;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
@@ -8,8 +8,6 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         #region Private Fields
 
         private AudioSessionControl _session;
-        
-        private Dispatcher _dispatcher =Dispatcher.CurrentDispatcher;
 
         #endregion
 
@@ -17,54 +15,49 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public float Volume
         {
-            get => _dispatcher.Invoke(()=> _session.SimpleAudioVolume.Volume);
+            get => ComThread.Invoke(() => _session.SimpleAudioVolume.Volume);
             set => SetVolumeInternal(value);
         }
 
         public bool IsMute
         {
-            get => _dispatcher.Invoke(()=> _session.SimpleAudioVolume.Mute);
+            get => ComThread.Invoke(() => _session.SimpleAudioVolume.Mute);
             set => SetMuteInternal(value);
         }
+
         public bool IsMasterVolume => false;
-        public SliderType SliderType => SliderType.SESSION;
-        public string SessionID => _dispatcher.Invoke(() => _session.GetSessionIdentifier);
+        public SliderType SliderType { get; }
+
+        public string SessionID => ComThread.Invoke(() => _session.GetSessionIdentifier);
 
         #endregion
 
         #region Constructor
 
-        public SessionSlider(AudioSessionControl sessionControl)
+        public SessionSlider(AudioSessionControl session)
         {
-            _session = sessionControl;
+            _session = session;
+            SliderType = SliderType.SESSION;
         }
-        
+
         #endregion
 
-        #region Private Events
+        #region Private Methods
 
         internal void SetVolumeInternal(float volume)
         {
-            _dispatcher.Invoke(() =>
+            try
             {
-                try
-                {
-                    _session.SimpleAudioVolume.Volume = volume;
-                }
-                finally { }
-            });
+                ComThread.BeginInvoke(() => _session.SimpleAudioVolume.Volume = volume);
+            }finally{}
         }
 
         internal void SetMuteInternal(bool mute)
         {
-            _dispatcher.Invoke(() =>
+            try
             {
-                try
-                {
-                    _session.SimpleAudioVolume.Mute = mute;
-                }
-                finally { }
-            });
+                ComThread.BeginInvoke(() => _session.SimpleAudioVolume.Mute = mute);
+            }finally{}
         }
 
         #endregion

@@ -167,7 +167,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 case SessionMode.Device:
                     try
                     {
-                        slider = new DeviceSlider(DeviceEnumerator.GetDeviceById(session.ID));
+                        slider = new DeviceSlider(session.ID);
                     }
                     catch
                     {

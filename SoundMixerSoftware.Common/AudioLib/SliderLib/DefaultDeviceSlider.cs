@@ -1,5 +1,8 @@
-﻿using System.Windows.Threading;
+﻿using System;
+using System.Diagnostics;
+using System.Timers;
 using NAudio.CoreAudioApi;
+using SoundMixerSoftware.Common.Threading.Com;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
@@ -8,7 +11,6 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         #region Private Fields
         
         private MMDevice _device;
-        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
         private readonly DataFlow _dataFlow;
 
@@ -18,19 +20,19 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public float Volume
         {
-            get => _dispatcher.Invoke(()=> _device.AudioEndpointVolume.MasterVolumeLevelScalar);
+            get => ComThread.Invoke(() => _device.AudioEndpointVolume.MasterVolumeLevelScalar);
             set => SetVolumeInternal(value);
         }
 
         public bool IsMute
         {
-            get => _dispatcher.Invoke(()=> _device.AudioEndpointVolume.Mute);
+            get => ComThread.Invoke(() => _device.AudioEndpointVolume.Mute);
             set => SetMuteInternal(value);
         }
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
         public bool IsDefaultOutput { get; }
-        public string DeviceID => _dispatcher.Invoke(() => _device.ID);
+        public string DeviceID => ComThread.Invoke(() => _device.ID);
 
         #endregion
 
@@ -42,19 +44,14 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
             _dataFlow = isDefaultOutput ? DataFlow.Render : DataFlow.Capture;
             SliderType = isDefaultOutput ? SliderType.MASTER_RENDER : SliderType.MASTER_CAPTURE;
 
-            _dispatcher.Invoke(() =>
-            {
-                _device = _deviceEnumerator.GetDefaultEndpoint(_dataFlow, Role.Multimedia);
-            });
-            _deviceEnumerator.DefaultDeviceChange += (sender, args) =>
+            _device = ComThread.Invoke(() => _deviceEnumerator.GetDefaultEndpoint(_dataFlow, Role.Multimedia));
+            _deviceEnumerator.DefaultDeviceChange += (sender, args) => ComThread.Invoke(() =>
             {
                 if (args.DataFlow != _dataFlow)
                     return;
-                _dispatcher.Invoke(() =>
-                {
-                    _device = _deviceEnumerator.GetDeviceById(sender as string);
-                });
-            };
+                var deviceId = sender as string;
+                _device = _deviceEnumerator.GetDeviceById(deviceId);
+            });
         }
 
         #endregion
@@ -63,26 +60,20 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         internal void SetVolumeInternal(float volume)
         {
-            _dispatcher.Invoke(() =>
+            try
             {
-                try
-                {
-                    _device.AudioEndpointVolume.MasterVolumeLevelScalar = volume;
-                }
-                finally { }
-            });
+                ComThread.BeginInvoke(() => _device.AudioEndpointVolume.MasterVolumeLevelScalar = volume);
+            }
+            finally { }
         }
 
         internal void SetMuteInternal(bool mute)
         {
-            _dispatcher.Invoke(() =>
+            try
             {
-                try
-                {
-                    _device.AudioEndpointVolume.Mute = mute;
-                }
-                finally { }
-            });
+                ComThread.BeginInvoke(() => _device.AudioEndpointVolume.Mute = mute);
+            }
+            finally { }
         }
 
         #endregion

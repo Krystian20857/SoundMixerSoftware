@@ -1,6 +1,5 @@
-﻿using System.Timers;
-using System.Windows.Threading;
-using NAudio.CoreAudioApi;
+﻿using NAudio.CoreAudioApi;
+using SoundMixerSoftware.Common.Threading.Com;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
@@ -9,7 +8,6 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         #region Private Fields
 
         private MMDevice _device;
-        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         #endregion
 
@@ -17,55 +15,48 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 
         public float Volume
         {
-            get => _dispatcher.Invoke(()=> _device.AudioEndpointVolume.MasterVolumeLevelScalar);
+            get => ComThread.Invoke(() => _device.AudioEndpointVolume.MasterVolumeLevelScalar);
             set => SetVolumeInternal(value);
         }
 
         public bool IsMute
         {
-            get => _dispatcher.Invoke(()=> _device.AudioEndpointVolume.Mute);
+            get => ComThread.Invoke(() => _device.AudioEndpointVolume.Mute);
             set => SetMuteInternal(value);
         }
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
-        public string DeviceID => _dispatcher.Invoke(() => _device.ID);
+        public string DeviceID => _device.ID;
 
         #endregion
 
         #region Constructor
 
-        public DeviceSlider(MMDevice device)
+        public DeviceSlider(string deviceId)
         {
-            _device = device;
-            SliderType = device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER;
+            _device = ComThread.Invoke(() => new MMDeviceEnumerator().GetDevice(deviceId));
+            SliderType = ComThread.Invoke(() => _device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER);
+                
         }
 
         #endregion
 
-        #region Private Events
-        
+        #region Private Methods
+
         internal void SetVolumeInternal(float volume)
         {
-            _dispatcher.Invoke(() =>
+            try
             {
-                try
-                {
-                    _device.AudioEndpointVolume.MasterVolumeLevelScalar = volume;
-                }
-                finally { }
-            });
+                ComThread.BeginInvoke(() => _device.AudioEndpointVolume.MasterVolumeLevelScalar = volume);
+            }finally { }
         }
-
+        
         internal void SetMuteInternal(bool mute)
         {
-            _dispatcher.Invoke(() =>
+            try
             {
-                try
-                {
-                    _device.AudioEndpointVolume.Mute = mute;
-                }
-                finally { }
-            });
+                ComThread.BeginInvoke(() => _device.AudioEndpointVolume.Mute = mute);
+            }finally { }
         }
 
         #endregion
