@@ -1,4 +1,5 @@
-﻿using NAudio.CoreAudioApi;
+﻿using System;
+using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.Threading.Com;
 
 namespace SoundMixerSoftware.Common.AudioLib.SliderLib
@@ -26,7 +27,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         }
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
-        public string DeviceID => _device.ID;
+        public string DeviceID => ComThread.Invoke(() => _device.ID);
 
         #endregion
 
@@ -36,7 +37,6 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         {
             _device = ComThread.Invoke(() => new MMDeviceEnumerator().GetDevice(deviceId));
             SliderType = ComThread.Invoke(() => _device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER);
-                
         }
 
         #endregion

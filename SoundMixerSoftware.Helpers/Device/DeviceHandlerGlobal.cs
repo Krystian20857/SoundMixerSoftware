@@ -131,34 +131,27 @@ namespace SoundMixerSoftware.Helpers.Device
                 return;
             switch (e.Command)
             {
-                case 0x01:
+                case (byte)Command.SLIDER_COMMAND:
                     SliderStruct sliderStruct = e.Data;
-                    var sliderIndex = sliderStruct.slider + (byte)SliderOffsetManager.GetOrCreateOffset(deviceId);
-                    if (sliderIndex >= SessionHandler.Sliders.Count)
-                    {
-                        Logger.Warn("Slider receive index mismatch.");
-                        return;
-                    }
-
+                    
+                    var sliderIndex = GetSliderIndex(sliderStruct.slider, deviceId);
+                    
                     var value = (int)ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
                     SessionHandler.SetVolume(sliderIndex, value / 100.0F, false);
                     if(SessionHandler.Sliders[sliderIndex].Count > 0)
                         OverlayHandler.ShowVolume(value);
+                    
                     break;
-                case 0x02:
+                case (byte)Command.BUTTON_COMMAND:
                     ButtonStruct buttonStruct = e.Data;
-                    var buttonIndex = buttonStruct.button + (byte)ButtonOffsetManager.GetOrCreateOffset(deviceId);
-                    var profile = ProfileHandler.SelectedProfile;
-                    if (buttonIndex >= profile.ButtonCount)
-                    {
-                        Logger.Warn("Button receive index mismatch.");
-                        return;
-                    }
+
+                    var buttonIndex = GetButtonIndex(buttonStruct.button, deviceId);
                     
                     if (buttonStruct.state == 0x00) 
                         ButtonHandler.HandleKeyDown(buttonIndex);
                     else if(buttonStruct.state == 0x01)
                         ButtonHandler.HandleKeyUp(buttonIndex);
+                    
                     break;
             }
         }
@@ -171,6 +164,33 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             Instance.RegisterType((byte)Command.SLIDER_COMMAND, typeof(SliderStruct));
             Instance.RegisterType((byte)Command.BUTTON_COMMAND, typeof(ButtonStruct));
+        }
+
+        private static int GetSliderIndex(int index, DeviceId deviceId)
+        {
+            
+            var sliderIndex = index + (byte)SliderOffsetManager.GetOrCreateOffset(deviceId);
+            var sliderCount = SessionHandler.Sliders.Count;
+            if (sliderIndex >= sliderCount)
+            {
+                Logger.Warn("Slider receive index mismatch.");
+                return sliderCount - 1;
+            }
+
+            return sliderIndex;
+        }
+        
+        private static int GetButtonIndex(int index, DeviceId deviceId)
+        {
+            var buttonIndex = index + (byte)ButtonOffsetManager.GetOrCreateOffset(deviceId);
+            var buttonCount = ButtonHandler.Buttons.Count;
+            if (buttonIndex >= buttonCount)
+            {
+                Logger.Warn("Button receive index mismatch.");
+                return buttonCount - 1;
+            }
+
+            return buttonIndex;
         }
         
         #endregion

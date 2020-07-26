@@ -167,11 +167,19 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 case SessionMode.Device:
                     try
                     {
-                        slider = new DeviceSlider(session.ID);
+                        var deviceSlider = new DeviceSlider(session.ID);
+                        var deviceId = deviceSlider.DeviceID;
+                        if (DeviceEnumerator.AllDevices.All(x => x.ID != deviceId))
+                        {
+                            SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.DeviceNotDetected));
+                            return true;
+                        }
+
+                        slider = deviceSlider;
                     }
                     catch
                     {
-                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.Disconnected));
+                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.DeviceNotDetected));
                         return true;
                     }
                     break;
