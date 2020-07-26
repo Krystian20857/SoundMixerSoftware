@@ -143,14 +143,14 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
 
         private void SetShowTimer(int showTime)
         {
-            var fadeTickTime = (int) (showTime * 0.1F) / 50;
             _showTimer = new Timer { Interval = showTime };
             _showTimer.Elapsed += (sender, args) =>
             {
                 var fadeThread = new Thread(() =>
                 {
+                    var fadeTickTime = (int) (showTime * 0.1F) / 50;
                     _fadeThreadRunning = true;
-                    while (_opacity > 25 && _fadeThreadRunning)
+                    while (_opacity > 5 && _fadeThreadRunning)
                     {
                         WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
                         _opacity--;
