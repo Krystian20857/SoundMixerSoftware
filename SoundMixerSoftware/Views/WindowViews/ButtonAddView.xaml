@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:cal="http://caliburnmicro.com"
         mc:Ignorable="d"
-        Title="ButtonAddView" Height="350" Width="600"
+        Title="Add Button" Height="350" Width="600"
         cal:Message.Attach="[Shortcut Enter] = [AddClicked()]">
     <Grid>
         <Grid.RowDefinitions>

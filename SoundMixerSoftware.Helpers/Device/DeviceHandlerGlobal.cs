@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NLog;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
@@ -23,7 +24,6 @@ namespace SoundMixerSoftware.Helpers.Device
         #region Private Static Fields
 
         private static Dictionary<string, DeviceConnectedEventArgs> _connectedDevices = new Dictionary<string, DeviceConnectedEventArgs>();
-        private static DeviceNotification _deviceNotification = new DeviceNotification();
 
         #endregion
         
@@ -42,6 +42,19 @@ namespace SoundMixerSoftware.Helpers.Device
         public static OffsetManager ButtonOffsetManager { get; } = new OffsetManager();
         public static OffsetManager SliderOffsetManager { get; } = new OffsetManager();
 
+        #endregion
+        
+        #region Events
+
+        /// <summary>
+        /// Occurs when new device has connected.
+        /// </summary>
+        public static event EventHandler<DeviceConnectedEventArgs> DeviceConnected;
+        /// <summary>
+        /// Occurs when device has disconnected.
+        /// </summary>
+        public static event EventHandler<DeviceConnectedEventArgs> DeviceDisconnected;
+        
         #endregion
         
         #region constructor
@@ -94,13 +107,8 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             if (string.IsNullOrWhiteSpace(e.Device.COMPort) || _connectedDevices.ContainsKey(e.Device.COMPort))
                 return;
+            DeviceConnected?.Invoke(null, e);
             _connectedDevices.Add(e.Device.COMPort, e);
-            if (!e.DetectedOnStartup && ConfigHandler.ConfigStruct.Notification.EnableNotifications)
-            {
-                _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
-                _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);
-                _deviceNotification.Show();
-            }
         }
 
         private static void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
@@ -108,13 +116,8 @@ namespace SoundMixerSoftware.Helpers.Device
             var comPort = e.DeviceProperties.COMPort;
             if (_connectedDevices.TryGetValue(comPort, out var device))
             {
+                DeviceDisconnected?.Invoke(null, device);
                 _connectedDevices.Remove(comPort);
-                if (ConfigHandler.ConfigStruct.Notification.EnableNotifications)
-                {
-                    _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, device);
-                    _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Disconnected);
-                    _deviceNotification.Show();
-                }
             }
             else
                 Logger.Warn($"Device: {e.DeviceProperties.COMPort} not present.");

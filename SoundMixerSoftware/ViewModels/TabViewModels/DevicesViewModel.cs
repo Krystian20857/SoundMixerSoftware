@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Device;
+using SoundMixerSoftware.Helpers.NotifyWrapper;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Win32.USBLib;
@@ -26,6 +27,7 @@ namespace SoundMixerSoftware.ViewModels
         private IWindowManager _windowManager =  new WindowManager();
         
         private BindableCollection<DeviceModel> _devices = new BindableCollection<DeviceModel>();
+        private INotification<object> _deviceNotification = new DeviceNotification(); 
 
         #endregion
         
@@ -62,8 +64,8 @@ namespace SoundMixerSoftware.ViewModels
 
             RuntimeHelpers.RunClassConstructor(typeof(DeviceHandlerGlobal).TypeHandle);
             
-            DeviceHandlerGlobal.Instance.DeviceConnected += DeviceHandlerOnDeviceConnected;
-            DeviceHandlerGlobal.Instance.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
+            DeviceHandlerGlobal.DeviceConnected += DeviceHandlerOnDeviceConnected;
+            DeviceHandlerGlobal.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
         }
 
         /// <summary>
@@ -71,16 +73,23 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
+        private void DeviceHandlerOnDeviceDisconnected(object sender, DeviceConnectedEventArgs e)
         {
             //This type of action need to be handled in main thread.
+            var comPort = e.Device.COMPort;
             Execute.OnUIThread(() =>
             {
-                var device = Devices.FirstOrDefault(x => x.ComPort.Equals(e.DeviceProperties.COMPort, StringComparison.InvariantCultureIgnoreCase));
+                var device = Devices.FirstOrDefault(x => x.ComPort.Equals(comPort, StringComparison.InvariantCultureIgnoreCase));
                 var deviceIndex = Devices.IndexOf(device);
                 if(deviceIndex >= 0)
                     Devices.RemoveAt(deviceIndex);
             });
+            if (ConfigHandler.ConfigStruct.Notification.EnableNotifications)
+            {
+                _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
+                _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Disconnected);
+                _deviceNotification.Show();
+            }
         }
 
         /// <summary>
@@ -95,6 +104,12 @@ namespace SoundMixerSoftware.ViewModels
             {
                 Devices.Add(DeviceModel.CreateModel(e));
             });
+            if (!e.DetectedOnStartup && ConfigHandler.ConfigStruct.Notification.EnableNotifications)
+            {
+                _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
+                _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);
+                _deviceNotification.Show();
+            }
         }
 
         #endregion
