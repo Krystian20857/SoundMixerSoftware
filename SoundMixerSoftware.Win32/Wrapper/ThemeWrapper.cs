@@ -6,13 +6,19 @@ using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Win32.Wrapper
 {
-    public class ThemeWrapper : NativeWindowWrapper
+    public class ThemeWrapper : IDisposable
     {
         #region Const
         
         private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x320;
         private const int WM_DWMCOMPOSITIONCHANGED = 0x31E;
         private const int WM_THEMECHANGED = 0x031A;
+        
+        #endregion
+        
+        #region Private Fields
+        
+        private NativeWindowWrapper _windowWrapper = new NativeWindowWrapper();
         
         #endregion
         
@@ -29,7 +35,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
 
         public ThemeWrapper()
         {
-            MessageReceived += OnMessageReceived;
+            _windowWrapper.MessageReceived += OnMessageReceived;
         }
         
         #endregion
@@ -67,6 +73,11 @@ namespace SoundMixerSoftware.Win32.Wrapper
         }
         
         #endregion
+
+        public void Dispose()
+        {
+            _windowWrapper.DestroyHandle();
+        }
     }
 
     public class ThemeColorChangedArgs : EventArgs

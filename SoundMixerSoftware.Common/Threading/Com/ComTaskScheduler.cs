@@ -33,11 +33,10 @@ namespace SoundMixerSoftware.Common.Threading.Com
                 {
                     TryExecuteTask(task);
                 }
-                
+
                 Thread.CurrentThread.Join(1);
-            });
+            }) {Priority = ThreadPriority.Highest, IsBackground = true};
             _thread.SetApartmentState(ApartmentState.STA);
-            _thread.IsBackground = true;
             _thread.Name = "ComThread";
             
             _thread.Start();

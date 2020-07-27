@@ -73,6 +73,7 @@
       <Compile Include="Utils\Application\AppUtils.cs" />
       <Compile Include="Utils\Application\AutoRunHandle.cs" />
       <Compile Include="Utils\ArrayUtils.cs" />
+      <Compile Include="Utils\ColorUtils.cs" />
       <Compile Include="Utils\DebounceDispatcher.cs" />
       <Compile Include="Utils\EnumUtils\EnumNameConverter.cs" />
       <Compile Include="Utils\EnumUtils\EnumUtils.cs" />

@@ -65,7 +65,7 @@
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <DockPanel LastChildFill="False">
-                                                <Rectangle Margin="5, 0" Width="35" Height="15" Fill="{Binding Path=PrimaryColor}" />
+                                                <Rectangle Margin="5, 0" Width="35" Height="15" Fill="{Binding Path=PrimaryColor, UpdateSourceTrigger=PropertyChanged}" />
                                                 <TextBlock Margin="5, 0" Text="{Binding Path=ThemeName}" />
                                             </DockPanel>
                                         </DataTemplate>

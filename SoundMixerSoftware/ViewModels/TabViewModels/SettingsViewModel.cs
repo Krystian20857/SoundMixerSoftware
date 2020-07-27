@@ -16,6 +16,7 @@ using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Views;
+using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
@@ -142,7 +143,15 @@ namespace SoundMixerSoftware.ViewModels
                 ConfigHandler.ConfigStruct.Application.ThemeName = value.ThemeName;
                 if(!LockConfig)
                     ConfigHandler.SaveConfig();
-                ThemeManager.SetTheme(value.ThemeName);
+                if (value is SystemThemeModel)
+                {
+                    ThemeManager.UseImmersiveTheme = true;
+                }
+                else
+                {
+                    ThemeManager.UseImmersiveTheme = false;
+                    ThemeManager.SetTheme(value.ThemeName);
+                }
             }
         }
 
@@ -218,6 +227,9 @@ namespace SoundMixerSoftware.ViewModels
 
         private void LoadThemes()
         {
+            if(SystemVersion.IsWin8OrHigher())
+                Themes.Add(new SystemThemeModel());
+            
             foreach (var theme in  SwatchHelper.Swatches)
                 Themes.Add(new ThemeModel(new SolidColorBrush(theme.Hues.Last()), theme.Name));
 

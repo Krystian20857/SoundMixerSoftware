@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace SoundMixerSoftware.Win32.Wrapper
 {
-    public class NativeWindowWrapper : NativeWindow
+    public sealed class NativeWindowWrapper : NativeWindow, IDisposable
     {
         #region Events
 
@@ -17,7 +17,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         {
             CreateHandle(new CreateParams());
         }
-        
+
         #endregion
         
         #region Window Message Proc
@@ -28,6 +28,20 @@ namespace SoundMixerSoftware.Win32.Wrapper
             base.WndProc(ref m);
         }
 
+        #endregion
+
+        #region Dispose
+
+        ~NativeWindowWrapper()
+        {
+            DestroyHandle();
+        }
+        
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+        
         #endregion
     }
 }

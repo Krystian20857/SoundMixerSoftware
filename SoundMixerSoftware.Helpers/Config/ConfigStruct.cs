@@ -29,14 +29,15 @@ namespace SoundMixerSoftware.Helpers.Config
                     DataBits = 8,
                     Parity = Parity.None,
                     StopBits = StopBits.One,
-                    Timeout = 30000
+                    Timeout = 30000,
+                    DtsEnable = true,
+                    RtsEnable = true
                 },
-                TerminatorNullable = 0xFF,
+                Terminator = 0xFF,
                 DeviceSettings = new Dictionary<string, DeviceSettings>()
             },
             Application = new ApplicationSettings()
             {
-                ThemeName = "Red",
                 ProfilesOrder = new List<Guid>(),
                 SelectedProfile = Guid.Empty,
                 SelectedTab = Guid.Empty,
@@ -44,13 +45,13 @@ namespace SoundMixerSoftware.Helpers.Config
             },
             Notification = new NotificationSettings()
             {
-                EnableNotificationsNullable = true,
-                NotificationShowTimeNullable = 7000,
+                EnableNotifications = true,
+                NotificationShowTime = 7000,
             },
             Overlay = new OverlaySettings()
             {
-                EnableOverlayNullable = true,
-                OverlayFadeTimeNullable = 2500
+                EnableOverlay = true,
+                OverlayFadeTime = 2500
             }
         };
         
@@ -183,13 +184,14 @@ namespace SoundMixerSoftware.Helpers.Config
         public List<Guid> ProfilesOrder { get; set; }
         public string ThemeName { get; set; }
         public Guid SelectedTab { get; set; }
-
+        [YamlMember(Alias = nameof(HideOnStartup))]
         public bool? HideOnStartupNullable { get; set; }
 
         #endregion
         
         #region Non-null Types
-
+        
+        [YamlIgnore]
         public bool HideOnStartup
         {
             get => HideOnStartupNullable ?? false;
