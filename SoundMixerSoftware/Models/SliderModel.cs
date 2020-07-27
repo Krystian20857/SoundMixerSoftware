@@ -197,6 +197,11 @@ namespace SoundMixerSoftware.Models
         /// <param name="e"></param>
         private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
         {
+            if (change)
+            {
+                change = false;
+                return;
+            }
             //Device invocation can only happen in thread where COM instance happened otherwise exception occurs and a lot of weird stuff happen.
             Execute.OnUIThread(() =>
             {
@@ -232,25 +237,32 @@ namespace SoundMixerSoftware.Models
         /// <param name="e"></param>
         private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
         {
-            var sessionControl = sender as AudioSessionControl;
-                if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
-                {
-                    var volume = (int) Math.Round(e.Volume * 100.0F);
-                    
-                    if (volume != _lastVolume)
-                    {
-                        change = false;
-                        Volume = volume;
-                        _lastVolume = volume;
-                    }
+            if (change)
+            {
+                change = false;
+                return;
+            }
 
-                    if (e.Mute != _lastMute)
-                    {
-                        change = false;
-                        Mute = e.Mute;
-                        _lastMute = e.Mute;
-                    }
+            var sessionControl = sender as AudioSessionControl;
+            if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
+            {
+                var volume = (int) Math.Round(e.Volume * 100.0F);
+
+                if (volume != _lastVolume)
+                {
+                    change = false;
+                    Volume = volume;
+                    _lastVolume = volume;
                 }
+
+                if (e.Mute != _lastMute)
+                {
+                    change = false;
+                    Mute = e.Mute;
+                    _lastMute = e.Mute;
+                }
+            }
+
         }
 
         #endregion
