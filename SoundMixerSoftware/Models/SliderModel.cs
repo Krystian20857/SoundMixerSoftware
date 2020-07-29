@@ -1,15 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
 using NLog;
-using NLog.Fluent;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Device;
@@ -41,8 +38,6 @@ namespace SoundMixerSoftware.Models
         private string _name;
         private bool _logScale;
 
-        private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
-
         #endregion
         
         #region Events
@@ -54,6 +49,9 @@ namespace SoundMixerSoftware.Models
         
         #region Public Properties
 
+        /// <summary>
+        /// Input volume control. Set volume for view.
+        /// </summary>
         public int VolumeIn
         {
             get => _volumeIn;
@@ -66,6 +64,9 @@ namespace SoundMixerSoftware.Models
             }
         }
 
+        /// <summary>
+        /// Output volume control. Set actual volume.
+        /// </summary>
         public int VolumeOut
         {
             get => _volumeIn;
@@ -79,8 +80,14 @@ namespace SoundMixerSoftware.Models
             }
         }
 
+        /// <summary>
+        /// Return current volume value;
+        /// </summary>
         public int VolumeLabel => _volumeIn;
 
+        /// <summary>
+        /// Input mute control. Set mute for view.
+        /// </summary>
         public bool MuteIn
         {
             get => _muteIn;
@@ -93,6 +100,9 @@ namespace SoundMixerSoftware.Models
             }
         }
 
+        /// <summary>
+        /// Output mute control. Set actual mute.
+        /// </summary>
         public bool MuteOut
         {
             get => _muteIn;
@@ -106,6 +116,9 @@ namespace SoundMixerSoftware.Models
             }
         }
 
+        /// <summary>
+        /// Return current mute state;
+        /// </summary>
         public bool MuteLabel => _muteIn;
 
         /// <summary>
@@ -220,7 +233,7 @@ namespace SoundMixerSoftware.Models
             {
                 var device = sender as MMDevice;
                 var deviceID = string.Copy(device.ID);
-                if (Applications.Any(x => x.ID == deviceID ||
+                if (Applications.OptimizedAny(x => x.ID == deviceID ||
                                           (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInputID) ||
                                           (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutputID)))
                 {
@@ -238,7 +251,7 @@ namespace SoundMixerSoftware.Models
         private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
         {
             var sessionControl = sender as AudioSessionControl;
-            if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
+            if (Applications.OptimizedAny(x => x.ID == sessionControl.GetSessionIdentifier))
             {
                 VolumeIn = (int) Math.Round(e.Volume * 100.0F);
                 MuteIn = e.Mute;

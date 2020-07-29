@@ -2,7 +2,7 @@
 
 namespace SoundMixerSoftware.Common.Extension
 {
-    public static class ICollectionExtension
+    public static class CollectionExtension
     {
         /// <summary>
         /// Convert collection content to object array.
