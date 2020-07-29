@@ -303,7 +303,7 @@ namespace SoundMixerSoftware.ViewModels
         public void MuteClick(object sender)
         {
             var model = sender as SliderModel;
-            model.Mute = !model.Mute;
+            model.MuteOut = !model.MuteOut;
         }
 
         public void EditNameClicked(object sender)

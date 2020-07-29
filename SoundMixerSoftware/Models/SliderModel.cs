@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -33,18 +34,12 @@ namespace SoundMixerSoftware.Models
         
         #region Private Fields
 
-        private bool _mute;
-        private int _volume;
+        private int _volumeIn;
+        private bool _muteIn;
+        
         private bool _isEditing;
         private string _name;
         private bool _logScale;
-
-        private int _lastVolume;
-        private bool _lastMute;
-        /// <summary>
-        /// When true volume changed can happen.
-        /// </summary>
-        private bool change;
 
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
 
@@ -58,38 +53,60 @@ namespace SoundMixerSoftware.Models
         #endregion
         
         #region Public Properties
-        
-        /// <summary>
-        /// Mute of current session.
-        /// </summary>
-        public int Volume
+
+        public int VolumeIn
         {
-            get => _volume;
+            get => _volumeIn;
             set
             {
-                _volume = value;
-                if (change)
-                    SessionHandler.SetVolume(Index, (float)Math.Round(_volume / 100.0F,2), true);
-                change = true;
-                OnPropertyChanged(nameof(Volume));
+                _volumeIn = value;
+                
+                OnPropertyChanged(nameof(VolumeIn));
+                OnPropertyChanged(nameof(VolumeLabel));
             }
         }
 
-        /// <summary>
-        /// Mute state of current session.
-        /// </summary>
-        public bool Mute
+        public int VolumeOut
         {
-            get => _mute;
+            get => _volumeIn;
             set
             {
-                _mute = value;
-                if (change)
-                    SessionHandler.SetMute(Index, _mute, true);
-                change = true;
-                OnPropertyChanged(nameof(Mute));
+                _volumeIn = value;
+                SessionHandler.SetVolume(Index, (float)Math.Round(_volumeIn / 100.0F, 2), true);
+                
+                OnPropertyChanged(nameof(VolumeOut));
+                OnPropertyChanged(nameof(VolumeLabel));
             }
         }
+
+        public int VolumeLabel => _volumeIn;
+
+        public bool MuteIn
+        {
+            get => _muteIn;
+            set
+            {
+                _muteIn = value;
+                
+                OnPropertyChanged(nameof(MuteIn));
+                OnPropertyChanged(nameof(MuteLabel));
+            }
+        }
+
+        public bool MuteOut
+        {
+            get => _muteIn;
+            set
+            {
+                _muteIn = value;
+                
+                SessionHandler.SetMute(Index, value, true);
+                OnPropertyChanged(nameof(MuteOut));
+                OnPropertyChanged(nameof(MuteLabel));
+            }
+        }
+
+        public bool MuteLabel => _muteIn;
 
         /// <summary>
         /// Index of current slider.
@@ -169,6 +186,7 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
+            VolumeIn = 55;
             foreach (var sessionEnum in SessionHandler.SessionEnumerators)
                 sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
 
@@ -185,7 +203,7 @@ namespace SoundMixerSoftware.Models
                 {
                     var buttonIndexList = MuteFunction.SliderMute[sliderIndex];
                     foreach(var buttonIndex in buttonIndexList)
-                        DeviceNotifier.LightButton(unchecked((byte)buttonIndex), sliderModel.Mute);
+                        DeviceNotifier.LightButton(unchecked((byte)buttonIndex), sliderModel.MuteLabel);
                 }
             };
         }
@@ -197,11 +215,6 @@ namespace SoundMixerSoftware.Models
         /// <param name="e"></param>
         private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
         {
-            if (change)
-            {
-                change = false;
-                return;
-            }
             //Device invocation can only happen in thread where COM instance happened otherwise exception occurs and a lot of weird stuff happen.
             Execute.OnUIThread(() =>
             {
@@ -211,21 +224,8 @@ namespace SoundMixerSoftware.Models
                                           (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInputID) ||
                                           (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutputID)))
                 {
-                    var volume = (int) Math.Round(e.Volume * 100.0F);
-
-                    if (volume != _lastVolume)
-                    {
-                        change = false;
-                        Volume = volume;
-                        _lastVolume = volume;
-                    }
-
-                    if (e.Mute != _lastMute)
-                    {
-                        change = false;
-                        Mute = e.Mute;
-                        _lastMute = e.Mute;
-                    }
+                    VolumeIn = (int) Math.Round(e.Volume * 100.0F);
+                    MuteIn = e.Mute;
                 }
             });
         }
@@ -237,32 +237,12 @@ namespace SoundMixerSoftware.Models
         /// <param name="e"></param>
         private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
         {
-            if (change)
-            {
-                change = false;
-                return;
-            }
-
             var sessionControl = sender as AudioSessionControl;
             if (Applications.Any(x => x.ID == sessionControl.GetSessionIdentifier))
             {
-                var volume = (int) Math.Round(e.Volume * 100.0F);
-
-                if (volume != _lastVolume)
-                {
-                    change = false;
-                    Volume = volume;
-                    _lastVolume = volume;
-                }
-
-                if (e.Mute != _lastMute)
-                {
-                    change = false;
-                    Mute = e.Mute;
-                    _lastMute = e.Mute;
-                }
+                VolumeIn = (int) Math.Round(e.Volume * 100.0F);
+                MuteIn = e.Mute;
             }
-
         }
 
         #endregion
@@ -280,11 +260,11 @@ namespace SoundMixerSoftware.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             switch (propertyName)
             {
-                case nameof(Volume):
-                    VolumeChanged?.Invoke(this, new VolumeChangedArgs(Volume, Mute, false));
+                case nameof(VolumeIn):
+                    VolumeChanged?.Invoke(this, new VolumeChangedArgs(VolumeIn, MuteIn, false));
                     break;
-                case nameof(Mute):
-                    MuteChanged?.Invoke(this, new VolumeChangedArgs(Volume, Mute, false));
+                case nameof(MuteIn):
+                    MuteChanged?.Invoke(this, new VolumeChangedArgs(VolumeIn, MuteIn, false));
                     break;
             }
         }

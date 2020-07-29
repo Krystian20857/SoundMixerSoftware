@@ -1,7 +1,10 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Text;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using GregsStack.InputSimulatorStandard.Native;
+using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Common.Utils
@@ -13,14 +16,14 @@ namespace SoundMixerSoftware.Common.Utils
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static VirtualKeyCode ConvertKey(Key key) => (VirtualKeyCode)KeyInterop.VirtualKeyFromKey(key);
+        public static VirtualKeyCode ConvertKey(Key key) => (VirtualKeyCode) KeyInterop.VirtualKeyFromKey(key);
 
         /// <summary>
         /// Convert win32 keyboard key implementation to wpf key implementation.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static Key ConvertKey(VirtualKeyCode key) => KeyInterop.KeyFromVirtualKey((int)key);
+        public static Key ConvertKey(VirtualKeyCode key) => KeyInterop.KeyFromVirtualKey((int) key);
 
         /// <summary>
         /// Convert array of wpf keyboard key implementation to array win32 key implementation.
@@ -34,7 +37,7 @@ namespace SoundMixerSoftware.Common.Utils
                 keyArray[n] = ConvertKey(keys[n]);
             return keyArray;
         }
-        
+
         /// <summary>
         /// Convert array of win32 keyboard key implementation to array wpf key implementation.
         /// </summary>
@@ -48,6 +51,11 @@ namespace SoundMixerSoftware.Common.Utils
             return keyArray;
         }
 
+        /// <summary>
+        /// Apply proper naming to key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static string GetKeyName(Key key)
         {
             switch (key)
@@ -68,6 +76,56 @@ namespace SoundMixerSoftware.Common.Utils
                     return KeyWrapper.GetChars(ConvertKey(key), out var result) ? result.ToUpper() : PascalNamingConverter.ApplySpacing(key.ToString());
             }
         }
-        
+
+        /// <summary>
+        /// Format key with modifiers.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="modifiers"></param>
+        /// <returns></returns>
+        public static string FormatKeys(Key key, Key[] modifiers)
+        {
+            var keyBuilder = new StringBuilder();
+            for (var n = 0; n < modifiers.Length; n++)
+            {
+                keyBuilder.Append(GetKeyName(modifiers[n]));
+                if (n != modifiers.Length - 1)
+                    keyBuilder.Append(" + ");
+            }
+
+            if (key != default)
+            {
+                if (modifiers.Length > 0)
+                    keyBuilder.Append(" + ");
+                keyBuilder.Append(GetKeyName(key));
+            }
+
+            return keyBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Check if key is modifer.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool IsModifierKey(Key key)
+        {
+            switch (key)
+            {
+                case Key.LeftShift:
+                case Key.RightShift:
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                case Key.LWin:
+                case Key.RWin:
+                case Key.LeftAlt:
+                case Key.RightAlt:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
     }
 }

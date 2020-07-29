@@ -150,28 +150,9 @@ namespace SoundMixerSoftware.ViewModels
 
         public void DisplayKeystroke()
         {
-            KeystrokeText = KeystrokeFunction.FormatKeys(Key, Modifiers.ToArray());
+            KeystrokeText = KeyUtils.FormatKeys(Key, Modifiers.ToArray());
         }
 
-        public static bool IsModifierKey(Key key)
-        {
-            switch (key)
-            {
-                case Key.LeftShift:
-                case Key.RightShift:
-                case Key.LeftCtrl:
-                case Key.RightCtrl:
-                case Key.LWin:
-                case Key.RWin:
-                case Key.LeftAlt: 
-                case Key.RightAlt:
-                    return true;
-                
-                default:
-                    return false;
-            }
-        }
-        
         #endregion
         
         #region Private Events
@@ -181,7 +162,7 @@ namespace SoundMixerSoftware.ViewModels
             var pressedKey = eventArgs.Key == Key.System ? eventArgs.SystemKey : eventArgs.Key;
             if (pressedKey == Key.LWin || pressedKey == Key.RWin)
                 eventArgs.Handled = false;
-            if (IsModifierKey(pressedKey))
+            if (KeyUtils.IsModifierKey(pressedKey))
             {
                 if (!Modifiers.Contains(pressedKey))
                     Modifiers.Add(pressedKey);

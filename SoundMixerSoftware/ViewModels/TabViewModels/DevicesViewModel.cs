@@ -71,7 +71,7 @@ namespace SoundMixerSoftware.ViewModels
         }
 
         /// <summary>
-        /// Occurs when new device has succesfully cnnected.
+        /// Occurs when new device has successfully connected.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -138,25 +138,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         #region Public Static Methods
 
-        public static string FormatKeys(Key key, Key[] modifiers)
-        {
-            var keyBuilder = new StringBuilder();
-            for (var n = 0; n < modifiers.Length; n++)
-            {
-                keyBuilder.Append(KeyUtils.GetKeyName(modifiers[n]));
-                if (n != modifiers.Length - 1)
-                    keyBuilder.Append(" + ");
-            }
-            
-            if (key != default)
-            {
-                if(modifiers.Length > 0)
-                    keyBuilder.Append(" + ");
-                keyBuilder.Append(KeyUtils.GetKeyName(key));
-            }
-            
-            return keyBuilder.ToString();
-        }
+
         
         #endregion
         
@@ -167,7 +149,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             switch (KeystrokeMode)
             {
                 case KeystrokeMode.KeyPress:
-                    return $"Key: {FormatKeys(KeyUtils.ConvertKey(Keystroke), KeyUtils.ConvertKeys(ModifierKeys))}";
+                    return $"Key: {KeyUtils.FormatKeys(KeyUtils.ConvertKey(Keystroke), KeyUtils.ConvertKeys(ModifierKeys))}";
                 case KeystrokeMode.TextMode:
                     return $"Text: {Text}";
                 default:
