@@ -74,7 +74,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                         {
                             ID = sessionControlID,
                             Name = name,
-                            SessionMode = SessionMode.Session
+                            SessionMode = SessionMode.SESSION
                         }, n, SessionState.Disconnected));
                         RequestedSliders[n].Add(sessionControl.GetSessionIdentifier);
                     }
@@ -164,7 +164,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             IVirtualSlider slider = null;
             switch (session.SessionMode)
             {
-                case SessionMode.Device:
+                case SessionMode.DEVICE:
                     try
                     {
                         var deviceSlider = new DeviceSlider(session.ID);
@@ -183,7 +183,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                         return true;
                     }
                     break;
-                case SessionMode.Session:
+                case SessionMode.SESSION:
                     //var audioSession = SessionEnumerator.GetById(session.ID);
                     var deviceID = Identifier.GetDeviceId(session.ID);
                     if (!SessionEnumerators.ContainsKey(deviceID))
@@ -200,11 +200,11 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                         return true;
                     }
                     break;
-                case SessionMode.DefaultInputDevice:
-                    slider = new DefaultDeviceSlider(false);
+                case SessionMode.DEFAULT_MULTIMEDIA:
+                    slider = new DefaultDeviceSlider(SliderType.DEFAULT_MULTIMEDIA, session.DataFlow);
                     break;
-                case SessionMode.DefaultOutputDevice:
-                    slider =  new DefaultDeviceSlider(true);
+                case SessionMode.DEFAULT_COMMUNICATION:
+                    slider = new DefaultDeviceSlider(SliderType.DEFAULT_COMMUNICATION, session.DataFlow);
                     break;
             }
             Sliders[index].Add(slider);
@@ -222,7 +222,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 DataFlow = DataFlow.All,
                 ID = audioSession.GetSessionIdentifier,
                 Name = Process.GetProcessById((int) audioSession.GetProcessID).ProcessName,
-                SessionMode = SessionMode.Session
+                SessionMode = SessionMode.SESSION
             };
             Sliders[index].Add(slider);
             return session;
@@ -233,7 +233,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             var sliders = Sliders[index];
             switch (session.SessionMode)
             {
-                case SessionMode.Device:
+                case SessionMode.DEVICE:
                     TransformSlider<DeviceSlider>(index, (slider, sliderIndex) =>
                     {
                         if (slider.DeviceID == session.ID)
@@ -241,7 +241,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     });
                     break;
                 
-                case SessionMode.Session:
+                case SessionMode.SESSION:
                 {
                     TransformSlider<SessionSlider>(index, (slider, sliderIndex) =>
                     {
@@ -250,20 +250,20 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     });
                     break;
                 }
-                case SessionMode.DefaultInputDevice:
+                case SessionMode.DEFAULT_MULTIMEDIA:
                 {
                     TransformSlider<DefaultDeviceSlider>(index, (slider, sliderIndex) =>
                     {
-                        if (!slider.IsDefaultOutput)
+                        if (slider.SliderType == SliderType.DEFAULT_MULTIMEDIA && slider.DataFlow == session.DataFlow)
                             sliders.RemoveAt(sliderIndex);
                     });
                     break;
                 }
-                case SessionMode.DefaultOutputDevice:
+                case SessionMode.DEFAULT_COMMUNICATION:
                 {
                     TransformSlider<DefaultDeviceSlider>(index, (slider, sliderIndex) =>
                     {
-                        if (slider.IsDefaultOutput)
+                        if (slider.SliderType == SliderType.DEFAULT_COMMUNICATION && slider.DataFlow == session.DataFlow)
                             sliders.RemoveAt(sliderIndex);
                     });
 

@@ -1,12 +1,13 @@
 ﻿namespace SoundMixerSoftware.Common.AudioLib.SliderLib
 {
     /// <summary>
-    /// Enum represents islider type.
+    /// Enum represents slider type.
     /// </summary>
     public enum SliderType
     {
-        MASTER_CAPTURE,
-        MASTER_RENDER,
+        DEFAULT_COMMUNICATION,
+        DEFAULT_MULTIMEDIA,
+        DEVICE,
         SESSION,
     }
 }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
+using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
@@ -162,7 +163,7 @@ namespace SoundMixerSoftware.ViewModels
                             Image = process.GetMainWindowIcon().ToImageSource(),
                             SessionState = SessionState.Active,
                             Name = $"{process.GetPreciseName()} - {device.FriendlyName}",
-                            SessionMode = SessionMode.Session
+                            SessionMode = SessionMode.SESSION
                         });
                     }
                 }
@@ -196,14 +197,14 @@ namespace SoundMixerSoftware.ViewModels
 
             if(e.SessionState == SessionState.Active)
             {
-                if (session.SessionMode == SessionMode.Device)
+                if (session.SessionMode == SessionMode.DEVICE)
                 {
                     var device = SessionHandler.DeviceEnumerator.GetDeviceById(session.ID);
                     model.Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource();
                     model.Name = device.FriendlyName;
                     device.Dispose();
                 }
-                else if (session.SessionMode == SessionMode.Session)
+                else if (session.SessionMode == SessionMode.SESSION)
                 {
                     var deviceID = Identifier.GetDeviceId(session.ID);
                     if (!SessionHandler.SessionEnumerators.ContainsKey(deviceID))
@@ -219,15 +220,31 @@ namespace SoundMixerSoftware.ViewModels
                     audioSession.Dispose();
                     device.Dispose();
                 }
-                else if (session.SessionMode == SessionMode.DefaultInputDevice)
+                else if (session.SessionMode == SessionMode.DEFAULT_MULTIMEDIA)
                 {
-                    model.Name = "Default Microphone";
-                    model.Image = ExtractedIcons.MicIcon.ToImageSource();
+                    if (session.DataFlow == DataFlow.Capture)
+                    {
+                        model.Name = "Default Microphone";
+                        model.Image = ExtractedIcons.MicIcon.ToImageSource();
+                    }
+                    else
+                    {
+                        model.Name = "Default Speaker";
+                        model.Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                    }
                 }
-                else if (session.SessionMode == SessionMode.DefaultOutputDevice)
+                else if (session.SessionMode == SessionMode.DEFAULT_COMMUNICATION)
                 {
-                    model.Name = "Default Speaker";
-                    model.Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                    if (session.DataFlow == DataFlow.Capture)
+                    {
+                        model.Name = "Default Communication Microphone";
+                        model.Image = ExtractedIcons.MicIcon.ToImageSource();
+                    }
+                    else
+                    {
+                        model.Name = "Default Communication Speaker";
+                        model.Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                    }
                 }
             }
             else if(e.SessionState == SessionState.Disconnected)
@@ -286,12 +303,16 @@ namespace SoundMixerSoftware.ViewModels
                 Name = session.Name
             });
             var apps = ProfileHandler.SelectedProfile.Sliders[model.Index].Applications;
-            if(session.SessionMode == SessionMode.Session || session.SessionMode == SessionMode.Device)
+            if(session.SessionMode == SessionMode.SESSION || session.SessionMode == SessionMode.DEVICE)
                 apps.Remove(apps.First(x=> x.ID == session.ID));
-            else if (session.SessionMode == SessionMode.DefaultInputDevice)
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DefaultInputDevice));
-            else if (session.SessionMode == SessionMode.DefaultOutputDevice)
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DefaultOutputDevice));
+            else if (session.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && session.DataFlow == DataFlow.Render)
+                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Render));
+            else if (session.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && session.DataFlow == DataFlow.Capture)
+                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Capture));
+            else if (session.SessionMode == SessionMode.DEFAULT_COMMUNICATION && session.DataFlow == DataFlow.Render)
+                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Render));
+            else if (session.SessionMode == SessionMode.DEFAULT_COMMUNICATION && session.DataFlow == DataFlow.Capture)
+                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Capture));
             ProfileHandler.ProfileManager.Save(ProfileHandler.SelectedGuid);
             model.Applications.Remove(session);
         }

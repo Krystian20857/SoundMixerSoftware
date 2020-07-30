@@ -49,8 +49,10 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         public MMDevice DefaultInput => _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
 
-        public string DefaultInputID;
-        public string DefaultOutputID;
+        public string DefaultCommunicationRenderID;
+        public string DefaultCommunicationCaptureID;
+        public string DefaultMultimediaRenderID;
+        public string DefaultMultimediaCaptureID;
 
         /// <summary>
         /// Gets all devices.
@@ -98,8 +100,10 @@ namespace SoundMixerSoftware.Common.AudioLib
             _deviceEnumerator.RegisterEndpointNotificationCallback(this);
             foreach (var device in AllDevices)
                 RegisterEvents(device);
-            DefaultInputID = DefaultInput.ID;
-            DefaultOutputID = DefaultOutput.ID;
+            DefaultMultimediaCaptureID = DefaultInput.ID;
+            DefaultMultimediaRenderID = DefaultOutput.ID;
+            DefaultCommunicationCaptureID = GetDefaultEndpoint(DataFlow.Capture, Role.Communications).ID;
+            DefaultCommunicationRenderID = GetDefaultEndpoint(DataFlow.Render, Role.Communications).ID;
         }
 
         #endregion
@@ -166,10 +170,31 @@ namespace SoundMixerSoftware.Common.AudioLib
         
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            if (flow == DataFlow.Render)
-                DefaultOutputID = string.Copy(defaultDeviceId);
-            else if (flow == DataFlow.Capture)
-                DefaultInputID = string.Copy(defaultDeviceId);
+            switch (flow)
+            {
+                case DataFlow.Capture:
+                    switch (role)
+                    {
+                        case Role.Communications:
+                            DefaultCommunicationCaptureID = defaultDeviceId;
+                            break;
+                        case Role.Multimedia:
+                            DefaultMultimediaCaptureID = defaultDeviceId;
+                            break;
+                    }
+                    break;
+                case DataFlow.Render:
+                    switch (role)
+                    {
+                        case Role.Communications:
+                            DefaultCommunicationRenderID = defaultDeviceId;
+                            break;
+                        case Role.Multimedia:
+                            DefaultMultimediaRenderID = defaultDeviceId;
+                            break;
+                    }
+                    break;
+            }
             DefaultDeviceChange?.Invoke(defaultDeviceId, new DefaultDeviceChangedArgs(flow, role));
         }
 

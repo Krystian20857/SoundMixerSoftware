@@ -113,7 +113,7 @@ namespace SoundMixerSoftware.ViewModels
                     Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
                     Name = device.FriendlyName,
                     ID = device.ID,
-                    SessionMode = SessionMode.Device,
+                    SessionMode = SessionMode.DEVICE,
                     DataFlow = device.DataFlow
                 });
             }
@@ -127,7 +127,7 @@ namespace SoundMixerSoftware.ViewModels
                     Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
                     Name = $"{device.FriendlyName} - ({(device.DataFlow == DataFlow.Capture ? "Input" : "Output")})",
                     ID = device.ID,
-                    SessionMode = SessionMode.Device,
+                    SessionMode = SessionMode.DEVICE,
                     DataFlow = device.DataFlow
                 });
             }
@@ -174,21 +174,40 @@ namespace SoundMixerSoftware.ViewModels
             Execute.OnUIThread( () =>
             {
                 DefaultDevices.Clear();
+                
                 DefaultDevices.Add(new SessionModel
                 {
                     Image = IconExtractor.ExtractFromIndex(_deviceEnumerator.DefaultOutput.IconPath).ToImageSource(),
-                    Name = _deviceEnumerator.DefaultOutput.FriendlyName,
-                    SessionMode = SessionMode.DefaultOutputDevice,
-                    ID = _deviceEnumerator.DefaultOutput.ID,
+                    Name = $"Default Speaker({_deviceEnumerator.GetDeviceById(_deviceEnumerator.DefaultMultimediaRenderID).FriendlyName})",
+                    SessionMode = SessionMode.DEFAULT_MULTIMEDIA,
+                    ID = SessionMode.DEFAULT_MULTIMEDIA.CreateUUIDString(DataFlow.Render),
                     DataFlow = DataFlow.Render
                 });
 
                 DefaultDevices.Add(new SessionModel
                 {
                     Image = IconExtractor.ExtractFromIndex(_deviceEnumerator.DefaultInput.IconPath).ToImageSource(),
-                    Name = _deviceEnumerator.DefaultInput.FriendlyName,
-                    SessionMode = SessionMode.DefaultInputDevice,
-                    ID = _deviceEnumerator.DefaultInput.ID,
+                    Name = $"Default Microphone({_deviceEnumerator.GetDeviceById(_deviceEnumerator.DefaultMultimediaCaptureID).FriendlyName})",
+                    SessionMode = SessionMode.DEFAULT_MULTIMEDIA,
+                    ID = SessionMode.DEFAULT_MULTIMEDIA.CreateUUIDString(DataFlow.Capture),
+                    DataFlow = DataFlow.Capture
+                });
+                
+                DefaultDevices.Add(new SessionModel
+                {
+                    Image = IconExtractor.ExtractFromIndex(_deviceEnumerator.DefaultOutput.IconPath).ToImageSource(),
+                    Name = $"Default Communication Speaker({_deviceEnumerator.GetDeviceById(_deviceEnumerator.DefaultCommunicationRenderID).FriendlyName})",
+                    SessionMode = SessionMode.DEFAULT_COMMUNICATION,
+                    ID = SessionMode.DEFAULT_COMMUNICATION.CreateUUIDString(DataFlow.Render),
+                    DataFlow = DataFlow.Render
+                });
+
+                DefaultDevices.Add(new SessionModel
+                {
+                    Image = IconExtractor.ExtractFromIndex(_deviceEnumerator.DefaultInput.IconPath).ToImageSource(),
+                    Name = $"Default Communication Microphone({_deviceEnumerator.GetDeviceById(_deviceEnumerator.DefaultCommunicationCaptureID).FriendlyName})",
+                    SessionMode = SessionMode.DEFAULT_COMMUNICATION,
+                    ID = SessionMode.DEFAULT_COMMUNICATION.CreateUUIDString(DataFlow.Capture),
                     DataFlow = DataFlow.Capture
                 });
             });
@@ -263,8 +282,8 @@ namespace SoundMixerSoftware.ViewModels
                         Name = SelectedSession.Name,
                         ID = SelectedSession.ID
                     };
-                    if (session.SessionMode == SessionMode.DefaultOutputDevice || session.SessionMode == SessionMode.DefaultInputDevice)
-                        session.ID = string.Empty;
+                    //if (session.SessionMode != SessionMode.DEVICE && session.SessionMode != SessionMode.SESSION)
+                        //session.ID = session.SessionMode.CreateUUID().ToString();
                     SessionHandler.AddSlider(_sliderIndex, session);
                     slider.Applications.Add(session);
                     ProfileHandler.ProfileManager.SaveAll();

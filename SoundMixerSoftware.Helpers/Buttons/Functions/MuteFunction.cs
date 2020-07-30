@@ -204,8 +204,8 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                 }
                 else
                     SetLastMute(deviceId, e.Mute);
-                var defaultInputID = SessionHandler.DeviceEnumerator.DefaultInputID;
-                var defaultOutputID = SessionHandler.DeviceEnumerator.DefaultOutputID;
+                var defaultInputID = SessionHandler.DeviceEnumerator.DefaultMultimediaCaptureID;
+                var defaultOutputID = SessionHandler.DeviceEnumerator.DefaultMultimediaRenderID;
                 
                 if (deviceId == defaultInputID)
                     for (var n = 0; n < _micMute.Count; n++)

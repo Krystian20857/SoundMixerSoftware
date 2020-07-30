@@ -26,7 +26,7 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
             set => SetMuteInternal(value);
         }
         public bool IsMasterVolume => true;
-        public SliderType SliderType { get; }
+        public SliderType SliderType { get; } = SliderType.SESSION;
         public string DeviceID => ComThread.Invoke(() => _device.ID);
 
         #endregion
@@ -36,7 +36,6 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
         public DeviceSlider(string deviceId)
         {
             _device = ComThread.Invoke(() => new MMDeviceEnumerator().GetDevice(deviceId));
-            SliderType = ComThread.Invoke(() => _device.DataFlow == DataFlow.Capture ? SliderType.MASTER_CAPTURE : SliderType.MASTER_RENDER);
         }
 
         #endregion

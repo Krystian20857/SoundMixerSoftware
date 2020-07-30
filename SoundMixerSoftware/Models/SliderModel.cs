@@ -199,7 +199,6 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
-            VolumeIn = 55;
             foreach (var sessionEnum in SessionHandler.SessionEnumerators)
                 sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
 
@@ -234,8 +233,10 @@ namespace SoundMixerSoftware.Models
                 var device = sender as MMDevice;
                 var deviceID = string.Copy(device.ID);
                 if (Applications.OptimizedAny(x => x.ID == deviceID ||
-                                          (x.SessionMode == SessionMode.DefaultInputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultInputID) ||
-                                          (x.SessionMode == SessionMode.DefaultOutputDevice && deviceID == SessionHandler.DeviceEnumerator.DefaultOutputID)))
+                                          (x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Capture && deviceID == SessionHandler.DeviceEnumerator.DefaultMultimediaCaptureID) ||
+                                          (x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Render && deviceID == SessionHandler.DeviceEnumerator.DefaultMultimediaRenderID) ||
+                                          (x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Capture && deviceID == SessionHandler.DeviceEnumerator.DefaultCommunicationCaptureID) ||
+                                          (x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Render && deviceID == SessionHandler.DeviceEnumerator.DefaultCommunicationRenderID)))
                 {
                     VolumeIn = (int) Math.Round(e.Volume * 100.0F);
                     MuteIn = e.Mute;

@@ -9,10 +9,9 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
     public class DefaultDeviceSlider : IVirtualSlider
     {
         #region Private Fields
-        
+
         private MMDevice _device;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
-        private readonly DataFlow _dataFlow;
 
         #endregion
 
@@ -29,25 +28,30 @@ namespace SoundMixerSoftware.Common.AudioLib.SliderLib
             get => ComThread.Invoke(() => _device.AudioEndpointVolume.Mute);
             set => SetMuteInternal(value);
         }
+
         public bool IsMasterVolume => true;
         public SliderType SliderType { get; }
-        public bool IsDefaultOutput { get; }
+
+        public DataFlow DataFlow { get; set; }
+
         public string DeviceID => ComThread.Invoke(() => _device.ID);
 
         #endregion
 
         #region Constructor
 
-        public DefaultDeviceSlider(bool isDefaultOutput)
+        public DefaultDeviceSlider(SliderType sliderType, DataFlow dataFlow)
         {
-            IsDefaultOutput = isDefaultOutput;
-            _dataFlow = isDefaultOutput ? DataFlow.Render : DataFlow.Capture;
-            SliderType = isDefaultOutput ? SliderType.MASTER_RENDER : SliderType.MASTER_CAPTURE;
+            if (sliderType != SliderType.DEFAULT_MULTIMEDIA && SliderType != SliderType.DEFAULT_COMMUNICATION)
+                throw new ArgumentException($"Cannot create default slider with: {sliderType} slider type.");
+            
+            DataFlow = dataFlow;
+            SliderType = sliderType;
 
-            _device = ComThread.Invoke(() => _deviceEnumerator.GetDefaultEndpoint(_dataFlow, Role.Multimedia));
+            _device = ComThread.Invoke(() => _deviceEnumerator.GetDefaultEndpoint(DataFlow, SliderType == SliderType.DEFAULT_MULTIMEDIA ? Role.Multimedia : Role.Communications));
             _deviceEnumerator.DefaultDeviceChange += (sender, args) => ComThread.Invoke(() =>
             {
-                if (args.DataFlow != _dataFlow)
+                if (args.DataFlow != DataFlow)
                     return;
                 var deviceId = sender as string;
                 _device = _deviceEnumerator.GetDeviceById(deviceId);
