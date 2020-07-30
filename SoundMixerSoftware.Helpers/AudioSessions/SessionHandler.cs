@@ -48,11 +48,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
         {
-            Task.Factory.StartNew(() =>
-            {
-                var device = DeviceEnumerator.GetDeviceById(sender as string);
-                Debug.WriteLine($"Default Device Changed: {device.FriendlyName}");
-            });
+            //nothing nop
         }
 
         private static void SessionEnumeratorOnSessionExited(object sender, string e)
