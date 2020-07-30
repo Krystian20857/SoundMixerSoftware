@@ -3,9 +3,12 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using NAudio.Wave;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Win32.Interop.Constant;
+using SoundMixerSoftware.Win32.Interop.Method;
 using Screen = Caliburn.Micro.Screen;
 
 namespace SoundMixerSoftware.ViewModels
@@ -75,7 +78,10 @@ namespace SoundMixerSoftware.ViewModels
             Tabs.Add(IoC.Get<SettingsViewModel>());
             
             RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);
-            RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle); ;
+            RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle);
+
+            if(ConfigHandler.ConfigStruct.Application.HideOnStartup)
+                User32.ShowWindow(Bootstrapper.Instance.MainWindowHandle, SW.SW_HIDE);
         }
 
         #endregion
@@ -84,9 +90,7 @@ namespace SoundMixerSoftware.ViewModels
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
         {
-            if (ConfigHandler.ConfigStruct.Application.HideOnStartup)
-                TryCloseAsync();
-            
+
             var configTab = ConfigHandler.ConfigStruct.Application.SelectedTab;
             SelectedTab = Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? Tabs[0];
 

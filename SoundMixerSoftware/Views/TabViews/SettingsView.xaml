@@ -34,7 +34,7 @@
                         </Border>
                         <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
-                                <TextBlock DockPanel.Dock="Left">Hide to tray on startup</TextBlock>
+                                <TextBlock DockPanel.Dock="Left">Hide on startup</TextBlock>
                                 <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=HideOnStartup, Mode=TwoWay}" />
                             </DockPanel>
                         </Border>

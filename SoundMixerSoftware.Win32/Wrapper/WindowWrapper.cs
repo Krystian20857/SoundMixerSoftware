@@ -23,19 +23,6 @@ namespace SoundMixerSoftware.Win32.Wrapper
         public static Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Returns false when process not contains main window.</returns>
-        public static bool SetCurrentProcessForeground()
-        {
-            var currentProcess = Process.GetCurrentProcess();
-            var windowHandle = currentProcess.MainWindowHandle;
-            if (windowHandle == IntPtr.Zero)
-                return false;
-            return User32.SetForegroundWindow(windowHandle);
-        }
 
         /// <summary>
         /// Gets windows title.

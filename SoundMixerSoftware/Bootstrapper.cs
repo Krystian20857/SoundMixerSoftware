@@ -21,6 +21,8 @@ using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Views;
+using SoundMixerSoftware.Win32.Interop.Method;
+using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware
@@ -43,6 +45,8 @@ namespace SoundMixerSoftware
         #endregion
         
         #region Public Properties
+
+        public IntPtr MainWindowHandle => new WindowInteropHelper(Application.Current.MainWindow ?? throw new NullReferenceException("Application has not associated window.")).Handle;
 
         /// <summary>
         /// Global application Tray.
@@ -163,11 +167,14 @@ namespace SoundMixerSoftware
             var mainWindow = MainViewModel.Instance;
             if (mainWindow == null)
                 return;
-            if (!mainWindow.IsActive)
-                _windowManager.ShowWindowAsync(mainWindow);
-            else
+            if (mainWindow.IsActive)
                 (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
+            else
+                _windowManager.ShowWindowAsync(mainWindow);
+            
+            User32.BringWindowToTop(MainWindowHandle);
         }
+        
 
         #endregion
         

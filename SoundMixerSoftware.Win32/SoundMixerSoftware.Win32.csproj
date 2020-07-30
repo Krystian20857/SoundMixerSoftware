@@ -42,6 +42,7 @@
       <Compile Include="Interop\Constant\KF.cs" />
       <Compile Include="Interop\Constant\LWA.cs" />
       <Compile Include="Interop\Constant\PropertyKeys.cs" />
+      <Compile Include="Interop\Constant\SW.cs" />
       <Compile Include="Interop\Constant\WM.cs" />
       <Compile Include="Interop\Enum\DICS_FLAG.cs" />
       <Compile Include="Interop\Enum\DIGCF.cs" />
