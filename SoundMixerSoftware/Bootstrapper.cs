@@ -139,9 +139,9 @@ namespace SoundMixerSoftware
 
         protected override void OnExit(object sender, EventArgs e)
         {
-            DeviceHandlerGlobal.Instance.Dispose();
-            _starter.Dispose();
-            TaskbarIcon.Dispose();
+            DeviceHandlerGlobal.Instance?.Dispose();
+            _starter?.Dispose();
+            TaskbarIcon?.Dispose();
             Logger.Info("App shutdown.");
             base.OnExit(sender, e);
         }
