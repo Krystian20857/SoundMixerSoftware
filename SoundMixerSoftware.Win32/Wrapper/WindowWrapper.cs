@@ -102,5 +102,10 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// <returns></returns>
         public static int GetScreenHeight() => User32.GetSystemMetrics(SystemMetric.SM_CYSCREEN);
 
+        public static bool SetWindowPos(IntPtr handle, int x, int y)
+        {
+            return User32.SetWindowPos(handle, IntPtr.Zero, x, y, 0, 0, (uint)(SWP.NOSIZE | SWP.NOZORDER | SWP.SHOWWINDOW));
+        }
+
     }
 }

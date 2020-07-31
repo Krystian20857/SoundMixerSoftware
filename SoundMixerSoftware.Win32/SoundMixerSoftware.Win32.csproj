@@ -54,6 +54,7 @@
       <Compile Include="Interop\Enum\SICHINT.cs" />
       <Compile Include="Interop\Enum\SIGDN.cs" />
       <Compile Include="Interop\Enum\SPDRP.cs" />
+      <Compile Include="Interop\Enum\SWP.cs" />
       <Compile Include="Interop\Enum\SystemMetrics.cs" />
       <Compile Include="Interop\Enum\WinErrors.cs" />
       <Compile Include="Interop\Interface\IApplicationResolver.cs" />

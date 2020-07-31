@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading;
-using System.Windows.Input;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
-using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Win32.Wrapper;
 using Timer = System.Timers.Timer;
 
@@ -161,8 +159,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
                         HideWindow();
                     _opacity = 255;
                     WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
-                });
-                fadeThread.IsBackground = true;
+                }) { IsBackground = true };
                 fadeThread.Start();
             };
         }
@@ -187,6 +184,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
                 _window.Unpause();
             }
             _showTimer.Start();
+            WindowWrapper.SetWindowPos(_window.Handle, PaddingX, PaddingY);
         }
 
         public void HideWindow()
