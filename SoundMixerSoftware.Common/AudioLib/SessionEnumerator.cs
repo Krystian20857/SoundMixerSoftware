@@ -4,10 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
+using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Win32.Threading;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -75,6 +78,8 @@ namespace SoundMixerSoftware.Common.AudioLib
                 }
             }
         }
+
+        public IProcessWatcher ProcessWatcher { get; }
 
         #endregion
 
@@ -154,8 +159,9 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <summary>
         /// Create instance of Session Enumerator with specified device;
         /// </summary>
-        public SessionEnumerator(MMDevice device)
+        public SessionEnumerator(MMDevice device, IProcessWatcher processWatcher)
         {
+            ProcessWatcher = processWatcher;
             SetDevice(device);
         }
 
@@ -252,7 +258,7 @@ namespace SoundMixerSoftware.Common.AudioLib
             eventClient.IconPathChanged += EventClientOnIconPathChanged;
             session.RegisterEventClient(eventClient);
             _registeredSessions.Add(session);
-            var exitHandler = new ExitHandler(session.GetProcessID, session.GetSessionIdentifier);
+            var exitHandler = new ExitHandler((int)session.GetProcessID, session.GetSessionIdentifier, ProcessWatcher);
             exitHandler.SessionExited += (exitSender, id) =>
             {
                 SessionExited?.Invoke(session, id);
@@ -287,18 +293,42 @@ namespace SoundMixerSoftware.Common.AudioLib
 
     public class ExitHandler
     {
-        private readonly string _id;
-        private readonly Process _process;
-        public event EventHandler<string> SessionExited;
+        #region Public Properties
 
-        public ExitHandler(uint pid, string id)
+        public int ProcessId { get; }
+        public string SessionId { get; }
+
+        public IProcessWatcher ProcessWatcher { get; }
+
+        #endregion
+        
+        #region Events
+        
+        public event EventHandler<string> SessionExited;
+        
+        #endregion
+        
+        #region Constructor
+
+        public ExitHandler(int pid, string id, IProcessWatcher processWatcher)
         {
             if (pid == 0)
                 return;
-            _id = id;
-            _process = Process.GetProcessById((int) pid);
-            Task.Factory.StartNew(() => _process.WaitForExit()).ContinueWith(task => SessionExited?.Invoke(this, _id));
+            
+            ProcessId = pid;
+            SessionId = id;
+
+            ProcessWatcher = processWatcher;
+            
+            ProcessWatcher.AttachProcessWait(pid, processExitId =>
+            {
+                if(processExitId == ProcessId)
+                    SessionExited?.Invoke(this, SessionId);
+            });
+            
         }
+        
+        #endregion
     }
     
 }

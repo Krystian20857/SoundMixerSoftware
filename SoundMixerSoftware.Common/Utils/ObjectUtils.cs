@@ -28,6 +28,8 @@ namespace SoundMixerSoftware.Common.Utils
             var type = typeof(T);
             foreach (var property in type.GetProperties())
             {
+                if(source == null)
+                    continue;
                 var valueSource = property.GetValue(source);
                 var valueDest = property.GetValue(dest);
                 if (valueSource == null)

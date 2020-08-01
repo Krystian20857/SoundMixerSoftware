@@ -8,6 +8,7 @@ using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.AudioLib.SliderLib;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Helpers.Threading;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions
 {
@@ -282,7 +283,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
             foreach (var device in DeviceEnumerator.OutputDevices)
             {
-                var sessionEnum = new SessionEnumerator(device);
+                var sessionEnum = new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher);
                 sessionEnum.SessionCreated += SessionEnumeratorOnSessionCreated;
                 sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
                 SessionEnumerators.Add(device.ID, sessionEnum);

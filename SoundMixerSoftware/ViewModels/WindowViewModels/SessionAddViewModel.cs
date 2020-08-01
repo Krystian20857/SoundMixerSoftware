@@ -12,6 +12,7 @@ using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Helpers.Threading;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
@@ -245,7 +246,7 @@ namespace SoundMixerSoftware.ViewModels
             }
 
             Sessions.Clear();
-            _sessionEnumerator = new SessionEnumerator(_deviceEnumerator.GetDeviceById(deviceId));
+            _sessionEnumerator = new SessionEnumerator(_deviceEnumerator.GetDeviceById(deviceId), ProcessWatcher.DefaultProcessWatcher);
                 
             var sessions = _sessionEnumerator.AudioSessions;
             for (var n = 0; n < sessions.Count; n++)

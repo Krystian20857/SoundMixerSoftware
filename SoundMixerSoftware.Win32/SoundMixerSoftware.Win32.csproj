@@ -39,6 +39,7 @@
       <Compile Include="Interop\Constant\GCL.cs" />
       <Compile Include="Interop\Constant\GUID_DEVINTERFACE.cs" />
       <Compile Include="Interop\Constant\ICON.cs" />
+      <Compile Include="Interop\Constant\Kernel32Const.cs" />
       <Compile Include="Interop\Constant\KF.cs" />
       <Compile Include="Interop\Constant\LWA.cs" />
       <Compile Include="Interop\Constant\PropertyKeys.cs" />
@@ -49,6 +50,7 @@
       <Compile Include="Interop\Enum\DIREG.cs" />
       <Compile Include="Interop\Enum\GPS.cs" />
       <Compile Include="Interop\Enum\GWL.cs" />
+      <Compile Include="Interop\Enum\ProcessAccessFlags.cs" />
       <Compile Include="Interop\Enum\REGKEYSECURITY.cs" />
       <Compile Include="Interop\Enum\SFGAO.cs" />
       <Compile Include="Interop\Enum\SICHINT.cs" />
@@ -72,6 +74,8 @@
       <Compile Include="Interop\Struct\PROPERTYKEY.cs" />
       <Compile Include="Interop\Struct\PropVariant.cs" />
       <Compile Include="Interop\Struct\SP_DEVINFO_DATA.cs" />
+      <Compile Include="Threading\IProcessWatcher.cs" />
+      <Compile Include="Threading\ProcessWatcher.cs" />
       <Compile Include="USBLib\EventArgs.cs" />
       <Compile Include="USBLib\USBDescriptor.cs" />
       <Compile Include="USBLib\USBDevice.cs" />

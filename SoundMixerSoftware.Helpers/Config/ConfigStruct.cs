@@ -52,7 +52,12 @@ namespace SoundMixerSoftware.Helpers.Config
             {
                 EnableOverlay = true,
                 OverlayFadeTime = 2500
+            },
+            Interop = new InteropSettings
+            {
+                WatcherWait = 5000,
             }
+
         };
         
         #endregion
@@ -76,6 +81,8 @@ namespace SoundMixerSoftware.Helpers.Config
         public OverlaySettings Overlay { get; set; }
         [Recursion]
         public NotificationSettings Notification { get; set; }
+        [Recursion]
+        public InteropSettings Interop { get; set; }
 
         #endregion
         
@@ -205,5 +212,26 @@ namespace SoundMixerSoftware.Helpers.Config
     {
         public int SliderOffset { get; set; }
         public int ButtonOffset { get; set; }
+    }
+
+    public class InteropSettings
+    {
+        #region Base Type
+
+        [YamlMember(Alias="WatcherWait")]
+        public int? WatcherWaitNullable { get; set; }
+
+        #endregion
+        
+        #region Non-null Types
+
+        [YamlIgnore]
+        public int WatcherWait
+        {
+            get => WatcherWaitNullable ?? 1;
+            set => WatcherWaitNullable = value;
+        }
+
+        #endregion
     }
 }
