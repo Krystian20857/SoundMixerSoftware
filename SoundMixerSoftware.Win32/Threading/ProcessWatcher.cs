@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using NLog;
 using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.Interop.Enum;
@@ -14,6 +15,12 @@ namespace SoundMixerSoftware.Win32.Threading
     /// </summary>
     public class ProcessWatcher : IProcessWatcher
     {
+        #region Logger
+
+        public static Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Fields
 
         private Dictionary<int, ProcessWatcherModel> _watchers = new Dictionary<int, ProcessWatcherModel>();
@@ -74,7 +81,7 @@ namespace SoundMixerSoftware.Win32.Threading
 
                                 if (model == default)
                                 {
-                                    Console.WriteLine($"Error while getting process watcher data: {handle}");        // <--- Logger here
+                                    Logger.Debug($"Error while getting process watcher data: {handle}");
                                     break; 
                                 }
                                 
@@ -112,7 +119,7 @@ namespace SoundMixerSoftware.Win32.Threading
             var processHandle = Kernel32.OpenProcess(ProcessAccessFlags.Synchronize, false, processId);
             if (processHandle == IntPtr.Zero || Kernel32.WaitForSingleObject(processHandle, 0) != Kernel32Const.WAIT_TIMEOUT)
             {
-                Console.WriteLine($"Unable to watch process: {processHandle}.");           //<--- Logger here
+                Logger.Debug($"Unable to watch process: {processHandle}.");
                 return;
             }
             
