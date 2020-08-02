@@ -64,6 +64,19 @@ namespace SoundMixerSoftware.Extensibility.Loader
             _directoryManager = new DirectoryManager(pluginsPath);
             _infoManager = new YamlPluginInfoManager(_directoryManager.PluginPath);
             CacheLocation = cacheLocation;
+
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                foreach (var pluginPath in _directoryManager.GetPluginFolders(false))
+                {
+                    var fileName = new AssemblyName(args.Name).Name + ".dll";
+                    var assemblyPath = Path.Combine(pluginPath, fileName);
+                    if(File.Exists(assemblyPath))
+                        return Assembly.LoadFrom(assemblyPath);
+                }
+
+                return null;
+            };
         }
         
         #endregion
