@@ -59,8 +59,12 @@ namespace SoundMixerSoftware.Win32.Threading
             {
                 while (_isRunning)
                 {
-                    var handles = _watchers.Select(x => x.Value.ProcessHandle).ToArray();
-                    
+                    var handles = new IntPtr[0];
+                    lock (_lockObject)
+                    {
+                        handles = _watchers.Select(x => x.Value.ProcessHandle).ToArray();
+                    }
+
                     var result = Kernel32.WaitForMultipleObjects((uint)handles.Length, handles, false, (uint)waitPeriod.TotalMilliseconds);
 
                     switch (result)
@@ -122,20 +126,24 @@ namespace SoundMixerSoftware.Win32.Threading
                 Logger.Debug($"Unable to watch process: {processHandle}.");
                 return;
             }
-            
-            if (_watchers.ContainsKey(processId))
-            {
-                var watcherModel = _watchers[processId];
-                watcherModel.ExitActions.Add(processExited);
 
-                Kernel32.CloseHandle(processHandle);
-                return;
+            lock (_lockObject)
+            {
+
+                if (_watchers.ContainsKey(processId))
+                {
+                    var watcherModel = _watchers[processId];
+                    watcherModel.ExitActions.Add(processExited);
+
+                    Kernel32.CloseHandle(processHandle);
+                    return;
+                }
+
+                var model = new ProcessWatcherModel {ProcessId = processId, ProcessHandle = processHandle};
+                model.ExitActions.Add(processExited);
+                _watchers.Add(processId, model);
             }
 
-            var model = new ProcessWatcherModel { ProcessId = processId, ProcessHandle = processHandle};
-            model.ExitActions.Add(processExited);
-            _watchers.Add(processId, model);
-            
             StartWatcherThread();
         }
 
@@ -146,12 +154,15 @@ namespace SoundMixerSoftware.Win32.Threading
         /// <returns>Returns true when process watcher is attached.</returns>
         public bool DetachProcessWait(int processId)
         {
-            if (!_watchers.ContainsKey(processId))
-                return false;
-            var watcherToRemove = _watchers[processId];
-            Kernel32.CloseHandle(watcherToRemove.ProcessHandle);
-            _watchers.Remove(processId);
-            return true;
+            lock (_lockObject)
+            {
+                if (!_watchers.ContainsKey(processId))
+                    return false;
+                var watcherToRemove = _watchers[processId];
+                Kernel32.CloseHandle(watcherToRemove.ProcessHandle);
+                _watchers.Remove(processId);
+                return true;
+            }
         }
 
         /// <summary>
