@@ -110,6 +110,7 @@
     <Compile Include="Converter\HexConverter.cs" />
     <Compile Include="Converter\IconConverter.cs" />
     <Compile Include="Converter\DirectionConverter.cs" />
+    <Compile Include="Converter\NullVisibilityConverter.cs" />
     <Compile Include="Converter\VisibilityConverter.cs" />
     <Compile Include="Input\KeyFormatter.cs" />
     <Compile Include="Input\KeyTrigger.cs" />

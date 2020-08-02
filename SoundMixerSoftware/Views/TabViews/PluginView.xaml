@@ -25,6 +25,7 @@
             <Setter Property="Foreground" Value="DarkGray" />
         </Style>
         <converter:VisibilityConverter x:Key="VisibilityConverter"/>
+        <converter:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -60,7 +61,7 @@
                                             <Run Text="{Binding Path=Version}" />
                                         </TextBlock>
                                     </StackPanel>
-                                    <TextBlock Style="{StaticResource MidTextBlock}">
+                                    <TextBlock Style="{StaticResource MidTextBlock}" Visibility="{Binding Path=WebPage, Converter={StaticResource NullVisibilityConverter}}">
                                         <Run Text="Web Page: "/>
                                         <controls:WebHyperLink NavigateUri="{Binding Path=WebPage}">
                                             <Run Text="{Binding Path=WebPage}"/>

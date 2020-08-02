@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -200,6 +201,12 @@ namespace SoundMixerSoftware.Extensibility.Loader
         public void RegisterPlugin(IPlugin instance, Assembly assembly, string id, string pluginPath)
         {
             var plugin = new PluginStruct(instance, assembly, pluginPath);
+            
+            //Assert for id, version and author
+            Debug.Assert(!string.IsNullOrWhiteSpace(instance.PluginId), "Plugin ID cannot be null, empty or white spaced");
+            Debug.Assert(!string.IsNullOrWhiteSpace(instance.Version), "Plugin version cannot be null, empty or white spaced");
+            Debug.Assert(!string.IsNullOrWhiteSpace(instance.Author), "Plugin author cannot be null, empty or white spaced");
+
             LoadedPlugins.Add(id, plugin);
             instance.OnPluginLoaded();
             PluginLoaded?.Invoke(this, new PluginLoadedArgs(id, plugin));
