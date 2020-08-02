@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
@@ -150,7 +151,16 @@ namespace SoundMixerSoftware
         {
             return base.SelectAssemblies().Concat(PluginLoader.LoadedPlugins.Values.Select(x => x.Assembly));
         }
-        
+
+        protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            if (e.Handled)
+                return;
+            ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!!!" , e.Exception);
+            Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
+            base.OnUnhandledException(sender, e);
+        }
+
         #endregion
         
         #region Public Methods
@@ -189,13 +199,15 @@ namespace SoundMixerSoftware
             {
                 var exceptionObject = args.ExceptionObject;
                 if (exceptionObject is Exception exception)
-                    ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!!!" ,exception);
+                    ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!!!" , exception);
                 else
                     Logger.Error(exceptionObject.ToString());
                 Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
             };
+
+            Application.Current.DispatcherUnhandledException += OnUnhandledException;
         }
-        
+
         #endregion
     }
 }
