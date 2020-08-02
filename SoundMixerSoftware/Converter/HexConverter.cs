@@ -19,8 +19,11 @@ namespace SoundMixerSoftware.Converter
         {
             var hex = value.ToString();
             if (hex.StartsWith("0x"))
+            {
                 hex = hex.Remove(0, 2);
-            return !uint.TryParse(hex, out var result) ? 0 : result;
+                return int.TryParse(hex, NumberStyles.HexNumber, null, out var result1) ? result1 : value;
+            }
+            return !uint.TryParse(hex, out var result2) ? 0 : result2;
         }
     }
 }
