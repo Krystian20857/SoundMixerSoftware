@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Win32.USBLib;
 
@@ -83,12 +82,8 @@ namespace SoundMixerSoftware.ViewModels
         public void Save()
         {
             var usbIds = ConfigHandler.ConfigStruct.Hardware.UsbIDs;
-            var usbId = new USBID
-            {
-                Pid = Pid,
-                Vid = Vid
-            };
-            if (usbIds.Any(x => x.Pid == usbId.Pid && x.Vid == usbId.Vid)) return;
+            var usbId = new USBID { Pid = Pid, Vid = Vid };
+            if (usbIds.Contains(usbId)) return;
             USBIds.Add(usbId);
             usbIds.Add(usbId);
             ConfigHandler.SaveConfig();
