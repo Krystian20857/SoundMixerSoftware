@@ -82,7 +82,9 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
             
             ConverterHandler.CreateConverters();
-
+            
+            foreach(var slider in Sliders)
+                slider.Dispose();
             Sliders.Clear();
             
             var sliders = ProfileHandler.SelectedProfile.Sliders;

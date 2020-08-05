@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NAudio.CoreAudioApi;
@@ -21,7 +20,7 @@ namespace SoundMixerSoftware.Models
     /// <summary>
     /// Model use to handling Sliders.
     /// </summary>
-    public class SliderModel : INotifyPropertyChanged
+    public class SliderModel : INotifyPropertyChanged, IDisposable
     {
         #region Logger
 
@@ -219,6 +218,7 @@ namespace SoundMixerSoftware.Models
                 }
             };
         }
+        
 
         /// <summary>
         /// On device volume change.
@@ -261,7 +261,14 @@ namespace SoundMixerSoftware.Models
 
         #endregion
         
-        #region Private Methods
+        #region Dispose
+        
+        public void Dispose()
+        {
+            foreach (var sessionEnum in SessionHandler.SessionEnumerators)
+                sessionEnum.Value.VolumeChanged -= SessionEnumeratorOnVolumeChanged;
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
         
@@ -284,6 +291,5 @@ namespace SoundMixerSoftware.Models
         }
 
         #endregion
-        
     }
 }

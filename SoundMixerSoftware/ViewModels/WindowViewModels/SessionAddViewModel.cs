@@ -7,7 +7,6 @@ using SoundMixerSoftware.Models;
 using System.Linq;
 using NAudio.CoreAudioApi;
 using NLog;
-using NLog.Fluent;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
@@ -110,31 +109,14 @@ namespace SoundMixerSoftware.ViewModels
 
             foreach (var device in _deviceEnumerator.AllDevices)
             {
-                Devices.Add(new SessionModel
-                {
-                    Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
-                    Name = device.FriendlyName,
-                    ID = device.ID,
-                    SessionMode = SessionMode.DEVICE,
-                    DataFlow = device.DataFlow
-                });
+                AddDevice(device);
             }
             
             _deviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
+            _deviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
+            _deviceEnumerator.DeviceRemoved += DeviceEnumeratorOnDeviceRemoved;
 
-            foreach (var device in _deviceEnumerator.AllDevices)
-            {
-                DeviceSessions.Add(new SessionModel
-                {
-                    Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
-                    Name = $"{device.FriendlyName} - ({(device.DataFlow == DataFlow.Capture ? "Input" : "Output")})",
-                    ID = device.ID,
-                    SessionMode = SessionMode.DEVICE,
-                    DataFlow = device.DataFlow
-                });
-            }
-
-            SelectedDevice = DeviceSessions.First(x => x.ID == _deviceEnumerator.DefaultOutput.ID);
+            SelectedDevice = DeviceSessions.First(x => x.ID == _deviceEnumerator.DefaultMultimediaRenderID);
         }
 
         #endregion
@@ -170,6 +152,18 @@ namespace SoundMixerSoftware.ViewModels
         private void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)
         {
             Execute.OnUIThread(() => { AddSession(e); });
+        }
+        
+        private void DeviceEnumeratorOnDeviceRemoved(object sender, EventArgs e)
+        {
+            var deviceId = sender as string;
+            Devices.Remove(Devices.First(x => x.ID == deviceId));
+            DeviceSessions.Remove(DeviceSessions.First(x => x.ID == deviceId));
+        }
+
+        private void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
+        {
+            Execute.OnUIThread(() => { AddDevice(_deviceEnumerator.GetDeviceById(sender as string)); });
         }
 
         #endregion
@@ -258,6 +252,26 @@ namespace SoundMixerSoftware.ViewModels
 
             _sessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
             _sessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
+        }
+
+        private void AddDevice(MMDevice device)
+        {
+            Devices.Add(new SessionModel
+            {
+                Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
+                Name = device.FriendlyName,
+                ID = device.ID,
+                SessionMode = SessionMode.DEVICE,
+                DataFlow = device.DataFlow
+            });
+            DeviceSessions.Add(new SessionModel
+            {
+                Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
+                Name = $"{device.FriendlyName} - ({(device.DataFlow == DataFlow.Capture ? "Input" : "Output")})",
+                ID = device.ID,
+                SessionMode = SessionMode.DEVICE,
+                DataFlow = device.DataFlow
+            });
         }
 
         /// <summary>

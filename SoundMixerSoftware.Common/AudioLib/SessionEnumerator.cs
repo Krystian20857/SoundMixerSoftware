@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
 using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Common.Utils;
-using SoundMixerSoftware.Win32.Threading;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -29,6 +26,7 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         private MMDevice _device;
         private List<AudioSessionControl> _registeredSessions = new List<AudioSessionControl>();
+        private List<AudioSessionEventClient> _eventClients = new List<AudioSessionEventClient>();
         private List<ExitHandler> _exitHandlers = new List<ExitHandler>();
 
         #endregion
@@ -177,12 +175,15 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void SetDevice(MMDevice device)
         {
             _device = device;
-            _device.AudioSessionManager.OnSessionCreated += OnSessionCreated;
-            for (var n = 0; n < AudioSessions.Count; n++)
+            var audioSessions = _device.AudioSessionManager.Sessions;
+            for (var n = 0; n < audioSessions.Count; n++)
             {
-                var session = AudioSessions[n];
+                var session = audioSessions[n];
+                if(session.GetSessionIdentifier.Contains("#%b"))
+                    continue;
                 RegisterEvents(session);
             }
+            _device.AudioSessionManager.OnSessionCreated += OnSessionCreated;
         }
         
 
@@ -198,9 +199,10 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public AudioSessionControl GetById(string sessionId)
         {
-            for (var n = 0; n < AudioSessions.Count; n++)
+            var sessions = AudioSessions;
+            for (var n = 0; n < sessions.Count; n++)
             {
-                var session = AudioSessions[n];
+                var session = sessions[n];
                 try
                 {
                     if (!ProcessUtils.IsAlive((int) session.GetProcessID))
@@ -245,7 +247,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         #endregion
         
         #region Private Methods
- 
+
         private void RegisterEvents(AudioSessionControl session)
         {
             var eventClient = new AudioSessionEventClient(session);
@@ -258,14 +260,11 @@ namespace SoundMixerSoftware.Common.AudioLib
             eventClient.IconPathChanged += EventClientOnIconPathChanged;
             session.RegisterEventClient(eventClient);
             _registeredSessions.Add(session);
-            var exitHandler = new ExitHandler((int)session.GetProcessID, session.GetSessionIdentifier, ProcessWatcher);
-            exitHandler.SessionExited += (exitSender, id) =>
-            {
-                SessionExited?.Invoke(session, id);
-            };
+            var exitHandler = new ExitHandler((int) session.GetProcessID, session.GetSessionIdentifier, ProcessWatcher);
+            exitHandler.SessionExited += (exitSender, id) => { SessionExited?.Invoke(session, id); };
             _exitHandlers.Add(exitHandler);
+
         }
-        
 
         private void OnSessionCreated(object sender, IAudioSessionControl newsession)
         {
@@ -278,6 +277,8 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void Dispose()
         {
 
+            foreach(var eventClient in _eventClients)
+                eventClient.Dispose();
             foreach (var session in _registeredSessions)
             {
                 session.UnRegisterEventClient(null);
@@ -285,6 +286,8 @@ namespace SoundMixerSoftware.Common.AudioLib
             }
 
             _registeredSessions.Clear();
+            
+            _device.AudioSessionManager.Dispose();
 
             _device.Dispose();
             GC.SuppressFinalize(this);

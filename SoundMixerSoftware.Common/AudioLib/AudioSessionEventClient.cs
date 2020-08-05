@@ -4,7 +4,7 @@ using NAudio.CoreAudioApi.Interfaces;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
-    public class AudioSessionEventClient : IAudioSessionEventsHandler
+    public class AudioSessionEventClient : IAudioSessionEventsHandler, IDisposable
     {
         #region Private Fields
 
@@ -99,5 +99,10 @@ namespace SoundMixerSoftware.Common.AudioLib
         }
         
         #endregion
+
+        public void Dispose()
+        {
+            _session?.Dispose();
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
+using SoundMixerSoftware.Common.Threading.Com;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -151,21 +152,39 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-            var device = _deviceEnumerator.GetDevice(deviceId);
-            DeviceStateChanged?.Invoke(device, new DeviceStateChangedArgs(newState));
+            switch (newState)
+            {
+                case DeviceState.Active:
+                    OnDeviceAdded(deviceId);
+                    break;
+                case DeviceState.Disabled:
+                    break;
+                case DeviceState.NotPresent:
+                    break;
+                case DeviceState.Unplugged:
+                    OnDeviceRemoved(deviceId);
+                    break;
+                case DeviceState.All:
+                    break;
+            }
+            DeviceStateChanged?.Invoke(deviceId, new DeviceStateChangedArgs(newState));
         }
 
         public void OnDeviceAdded(string pwstrDeviceId)
         {
-            var device = _deviceEnumerator.GetDevice(pwstrDeviceId);
-            RegisterEvents(device);
-            DeviceAdded?.Invoke(device, new EventArgs());
+            ComThread.Invoke(() => 
+            {
+                var device = _deviceEnumerator.GetDevice(pwstrDeviceId); 
+                RegisterEvents(device); 
+            });
+            DeviceAdded?.Invoke(pwstrDeviceId, EventArgs.Empty);
         }
 
         public void OnDeviceRemoved(string deviceId)
         {
-            var device = _deviceEnumerator.GetDevice(deviceId);
-            DeviceRemoved?.Invoke(device, new EventArgs());
+            if (_volumeHandlers.ContainsKey(deviceId))
+                _volumeHandlers.Remove(deviceId);
+            DeviceRemoved?.Invoke(deviceId, EventArgs.Empty);
         }
         
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
