@@ -91,7 +91,8 @@ namespace SoundMixerSoftware.ViewModels
         public void RemoveClick(object sender)
         {
             var buttonModel = sender as ButtonModel;
-            
+            if(buttonModel.SelectedFunction == null)
+                return;
             var functions = ProfileHandler.SelectedProfile.Buttons[buttonModel.Index].Functions;
             var functionsObjects = ButtonHandler.Buttons[buttonModel.Index];
             var functionToRemove = functionsObjects.IndexOf(buttonModel.SelectedFunction);
