@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -35,7 +36,10 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns>System Drawing Icon</returns>
         public static Icon GetIcon(this Process process)
         {
-            return Icon.ExtractAssociatedIcon(process.GetFileName());
+            var processFile = process.GetFileName();
+            if (!File.Exists(processFile))
+                return null;
+            return Icon.ExtractAssociatedIcon(processFile);
         }
         
         /// <summary>
@@ -74,10 +78,11 @@ namespace SoundMixerSoftware.Common.Extension
             {
                 displayName = FileVersionInfo.GetVersionInfo(process.GetFileName()).FileDescription;
             }
-            catch (Win32Exception win32exception)
+            catch (Exception exception)
             {
-                if ((uint)win32exception.ErrorCode == 0x80004005)
-                    return process.ProcessName;
+                if(exception is Win32Exception win32exception)
+                    if ((uint)win32exception.ErrorCode == 0x80004005)
+                        return process.ProcessName;
             }
 
             return string.IsNullOrEmpty(displayName) ? process.ProcessName : displayName;
