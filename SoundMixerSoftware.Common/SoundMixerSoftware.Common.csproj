@@ -36,12 +36,6 @@
       <Compile Include="AudioLib\EventArgs.cs" />
       <Compile Include="AudioLib\Identifier.cs" />
       <Compile Include="AudioLib\SessionEnumerator.cs" />
-      <Compile Include="AudioLib\SliderLib\DefaultDeviceSlider.cs" />
-      <Compile Include="AudioLib\SliderLib\IVirtualSlider.cs" />
-      <Compile Include="AudioLib\SliderLib\DeviceSlider.cs" />
-      <Compile Include="AudioLib\SliderLib\SessionSlider.cs" />
-      <Compile Include="AudioLib\SliderLib\SliderType.cs" />
-      <Compile Include="AudioLib\SliderLib\SliderUtils.cs" />
       <Compile Include="Cache\ICache.cs" />
       <Compile Include="Cache\IconCache.cs" />
       <Compile Include="Cache\NativeCache.cs" />

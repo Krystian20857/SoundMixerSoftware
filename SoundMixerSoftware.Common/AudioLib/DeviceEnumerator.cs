@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Threading;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
-using NLog;
 using SoundMixerSoftware.Common.Threading.Com;
 
 namespace SoundMixerSoftware.Common.AudioLib
@@ -23,6 +24,8 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// </summary>
         private MMDeviceEnumerator _deviceEnumerator = new MMDeviceEnumerator();
         private Dictionary<string, VolumeHandler> _volumeHandlers = new Dictionary<string, VolumeHandler>();
+
+        private Dispatcher _dispatcher = Application.Current.Dispatcher;
         
         #endregion
 
@@ -126,6 +129,18 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <param name="id">Device id</param>
         /// <returns>MMDevice</returns>
         public MMDevice GetDeviceById(string id) => _deviceEnumerator.GetDevice(id);
+        
+        public MMDevice GetDeviceNull(string id)
+        {
+            try
+            { 
+                return GetDeviceById(id); 
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         #endregion
         
@@ -172,7 +187,7 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void OnDeviceAdded(string pwstrDeviceId)
         {
-            ComThread.Invoke(() => 
+            _dispatcher.Invoke(() => 
             {
                 var device = _deviceEnumerator.GetDevice(pwstrDeviceId); 
                 RegisterEvents(device); 
@@ -183,7 +198,11 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void OnDeviceRemoved(string deviceId)
         {
             if (_volumeHandlers.ContainsKey(deviceId))
+            {
+                _volumeHandlers[deviceId].Dispose();
                 _volumeHandlers.Remove(deviceId);
+            }
+
             DeviceRemoved?.Invoke(deviceId, EventArgs.Empty);
         }
         
@@ -263,8 +282,6 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void Dispose()
         {
             Device.AudioEndpointVolume.OnVolumeNotification -= AudioEndpointVolumeOnOnVolumeNotification;
-            //Device?.Dispose();
-            //GC.SuppressFinalize(this);
         }
     }
 }

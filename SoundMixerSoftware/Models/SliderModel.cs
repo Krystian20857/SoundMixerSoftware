@@ -183,11 +183,11 @@ namespace SoundMixerSoftware.Models
         /// <summary>
         /// Session Collection.
         /// </summary>
-        public BindableCollection<SessionModel> Applications { get; set; } = new BindableCollection<SessionModel>();
+        public BindableCollection<IVirtualSession> Applications { get; set; } = new BindableCollection<IVirtualSession>();
         /// <summary>
         /// Current Selected Session.
         /// </summary>
-        public SessionModel SelectedApp { get; set; }
+        public IVirtualSession SelectedApp { get; set; }
         
         #endregion
         
@@ -198,11 +198,41 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
-            foreach (var sessionEnum in SessionHandler.SessionEnumerators)
-                sessionEnum.Value.VolumeChanged += SessionEnumeratorOnVolumeChanged;
+            foreach (var session in Applications)
+            {
+                session.VolumeChange += SessionOnVolumeChange;
+                session.MuteChanged += SessionOnMuteChanged;
+            }
 
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
+            SessionHandler.SessionCreated += (sender, args) =>
+            {
+                if(args.Index != Index)
+                    return;
+                var session = args.Session;
+                session.VolumeChange += SessionOnVolumeChange;
+                session.MuteChanged += SessionOnMuteChanged;
+            };
+            
+            SessionHandler.SessionRemoved += (sender, args) =>
+            {
+                if (args.Index != Index)
+                    return;
+                var session = args.Session;
+                session.VolumeChange -= SessionOnVolumeChange;
+                session.MuteChanged -= SessionOnMuteChanged;
+            };
         }
+
+        private void SessionOnMuteChanged(object sender, MuteChangedArgs e)
+        {
+            MuteIn = e.Mute;
+        }
+
+        private void SessionOnVolumeChange(object sender, Helpers.AudioSessions.VolumeChangedArgs e)
+        {
+            VolumeIn = (int)Math.Round(e.Volume * 100);
+        }
+
 
         static SliderModel()
         {
@@ -219,54 +249,12 @@ namespace SoundMixerSoftware.Models
             };
         }
         
-
-        /// <summary>
-        /// On device volume change.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
-        {
-            //Device invocation can only happen in thread where COM instance happened otherwise exception occurs and a lot of weird stuff happen.
-            Execute.OnUIThread(() =>
-            {
-                var device = sender as MMDevice;
-                var deviceID = string.Copy(device.ID);
-                if (Applications.OptimizedAny(x => x.ID == deviceID ||
-                                          (x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Capture && deviceID == SessionHandler.DeviceEnumerator.DefaultMultimediaCaptureID) ||
-                                          (x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Render && deviceID == SessionHandler.DeviceEnumerator.DefaultMultimediaRenderID) ||
-                                          (x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Capture && deviceID == SessionHandler.DeviceEnumerator.DefaultCommunicationCaptureID) ||
-                                          (x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Render && deviceID == SessionHandler.DeviceEnumerator.DefaultCommunicationRenderID)))
-                {
-                    VolumeIn = (int) Math.Round(e.Volume * 100.0F);
-                    MuteIn = e.Mute;
-                }
-            });
-        }
-
-        /// <summary>
-        /// On session volume change
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SessionEnumeratorOnVolumeChanged(object sender, VolumeChangedArgs e)
-        {
-            var sessionControl = sender as AudioSessionControl;
-            if (Applications.OptimizedAny(x => x.ID == sessionControl.GetSessionIdentifier))
-            {
-                VolumeIn = (int) Math.Round(e.Volume * 100.0F);
-                MuteIn = e.Mute;
-            }
-        }
-
         #endregion
         
         #region Dispose
         
         public void Dispose()
         {
-            foreach (var sessionEnum in SessionHandler.SessionEnumerators)
-                sessionEnum.Value.VolumeChanged -= SessionEnumeratorOnVolumeChanged;
             GC.SuppressFinalize(this);
         }
 

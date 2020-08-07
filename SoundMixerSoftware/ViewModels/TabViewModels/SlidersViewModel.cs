@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Common.AudioLib;
-using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.SliderConverter;
 using SoundMixerSoftware.Helpers.SliderConverter.Converters;
-using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Models;
-using SoundMixerSoftware.Win32.Wrapper;
 using ThemeManager = SoundMixerSoftware.Overlay.Resource.ThemeManager;
 
 namespace SoundMixerSoftware.ViewModels
@@ -62,6 +56,9 @@ namespace SoundMixerSoftware.ViewModels
             Name = "Sliders";
             Icon = PackIconKind.VolumeSource;
             
+            SessionHandler.RegisterCreator(VirtualSession.KEY, new VirtualSessionCreator());
+            SessionHandler.RegisterCreator(DeviceSession.KEY, new DeviceSessionCreator());
+            
             ConverterHandler.RegisterCreator("log_converter", new LogConverterCreator());
 
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
@@ -76,11 +73,10 @@ namespace SoundMixerSoftware.ViewModels
 
         private void UpdateProfile()
         {
-            SessionHandler.ReloadSessionHandler();
-            SessionHandler.SessionAdded -= SessionHandlerOnSessionAdded;
-            SessionHandler.SessionActive -= SessionHandlerOnSessionActive;
-            SessionHandler.SessionDisconnected -= SessionHandlerOnSessionDisconnected;
-            
+            SessionHandler.SessionCreated -= SessionHandlerOnSessionCreated;
+            SessionHandler.SessionRemoved -= SessionHandlerOnSessionRemoved;
+            SessionHandler.ReloadAll();
+
             ConverterHandler.CreateConverters();
             
             foreach(var slider in Sliders)
@@ -116,162 +112,36 @@ namespace SoundMixerSoftware.ViewModels
             
             if(modified)
                 ProfileHandler.SaveSelectedProfile();
-
-            SessionHandler.SessionAdded += SessionHandlerOnSessionAdded;
-            SessionHandler.SessionActive += SessionHandlerOnSessionActive;
-            SessionHandler.SessionDisconnected += SessionHandlerOnSessionDisconnected;
-            SessionHandler.CreateSliders();
+            
+            SessionHandler.SessionCreated += SessionHandlerOnSessionCreated;
+            SessionHandler.SessionRemoved += SessionHandlerOnSessionRemoved;
+            SessionHandler.CreateSessions();
         }
 
-        private void SessionHandlerOnSessionDisconnected(object sender, SliderAddedArgs e)
+        private void SessionHandlerOnSessionRemoved(object sender, SessionArgs e)
         {
-            var apps = Sliders[e.Index].Applications;
-            for (var n = 0; n < apps.Count; n++)
-            {
-                var n1 = n;
-                Execute.OnUIThread(() =>
-                {
-                    var app = apps[n1];
-                    if (app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        if (apps.ElementAt(n1) != null)
-                        {
-                            apps.RemoveAt(n1);
-                            apps.Add(TranslateModel(e));
-                        }
-                    }
-                });
-            }
+            var index = e.Index;
+            if (index >= Sliders.Count)
+                return;
+            var slider = Sliders[index];
+            slider.Applications.Remove(e.Session);
         }
 
-        private void SessionHandlerOnSessionActive(object sender, SessionActiveArgs e)
+        private void SessionHandlerOnSessionCreated(object sender, SessionArgs e)
         {
-            Execute.OnUIThread(() =>
-            {
-                var apps = Sliders[e.Index].Applications;
-                for (var n = 0; n < apps.Count; n++)
-                {
-                    var app = apps[n];
-                    if (app.SessionState == SessionState.Disconnected && app.ID.Equals(e.Session.ID, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(e.Session.ID));
-                        if (apps.ElementAt(n) == null)
-                            continue;
-                        apps.RemoveAt(n);
-                        var process = Process.GetProcessById((int) e.SessionControl.GetProcessID);
-                        apps.Add(new SessionModel
-                        {
-                            ID = e.Session.ID,
-                            Image = process.GetMainWindowIcon().ToImageSource(),
-                            SessionState = SessionState.Active,
-                            Name = $"{process.GetPreciseName()} - {device.FriendlyName}",
-                            SessionMode = SessionMode.SESSION
-                        });
-                    }
-                }
-            });
+            var index = e.Index;
+            if (index >= Sliders.Count)
+                return;
+            var slider = Sliders[index];
+            slider.Applications.Add(e.Session);
         }
+
 
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
             UpdateProfile();
         }
         
-        private void SessionHandlerOnSessionAdded(object sender, SliderAddedArgs e)
-        {
-            Execute.OnUIThread(() =>{
-                if(Sliders[e.Index].Applications.Any(x => x.ID == e.Session.ID))
-                    return;
-                Sliders[e.Index].Applications.Add(TranslateModel(e));
-            });
-        }
-
-        private SessionModel TranslateModel(SliderAddedArgs e)
-        {
-            var session = e.Session;
-            var model = new SessionModel
-            {
-                DataFlow = session.DataFlow,
-                ID = session.ID,
-                SessionState = e.SessionState,
-                SessionMode = session.SessionMode
-            };
-
-            if(e.SessionState == SessionState.Active)
-            {
-                if (session.SessionMode == SessionMode.DEVICE)
-                {
-                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(session.ID);
-                    model.Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource();
-                    model.Name = device.FriendlyName;
-                    device.Dispose();
-                }
-                else if (session.SessionMode == SessionMode.SESSION)
-                {
-                    var deviceID = Identifier.GetDeviceId(session.ID);
-                    if (!SessionHandler.SessionEnumerators.ContainsKey(deviceID))
-                    {
-                        model.Image = ExtractedIcons.FailedIcon.ToImageSource();
-                        model.Name = $"{session.Name}(Device not available)";
-                    }
-                    var audioSession = SessionHandler.SessionEnumerators[deviceID].GetById(session.ID);
-                    var process = Process.GetProcessById((int)audioSession.GetProcessID);
-                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(deviceID);
-                    model.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
-                    model.Name = $"{process.GetPreciseName()} - {device.FriendlyName}";
-                    audioSession.Dispose();
-                    device.Dispose();
-                }
-                else if (session.SessionMode == SessionMode.DEFAULT_MULTIMEDIA)
-                {
-                    if (session.DataFlow == DataFlow.Capture)
-                    {
-                        model.Name = "Default Microphone";
-                        model.Image = ExtractedIcons.MicIcon.ToImageSource();
-                    }
-                    else
-                    {
-                        model.Name = "Default Speaker";
-                        model.Image = ExtractedIcons.SpeakerIcon.ToImageSource();
-                    }
-                }
-                else if (session.SessionMode == SessionMode.DEFAULT_COMMUNICATION)
-                {
-                    if (session.DataFlow == DataFlow.Capture)
-                    {
-                        model.Name = "Default Communication Microphone";
-                        model.Image = ExtractedIcons.MicIcon.ToImageSource();
-                    }
-                    else
-                    {
-                        model.Name = "Default Communication Speaker";
-                        model.Image = ExtractedIcons.SpeakerIcon.ToImageSource();
-                    }
-                }
-            }
-            else if(e.SessionState == SessionState.Disconnected)
-            {
-                try
-                {
-                    var device = SessionHandler.DeviceEnumerator.GetDeviceById(Identifier.GetDeviceId(session.ID));
-                    model.Image = ExtractedIcons.FailedIcon.ToImageSource();
-                    model.Name = $"{session.Name} - {device.FriendlyName}(Not Active)";
-                }
-                catch
-                {
-                    model.Image = ExtractedIcons.FailedIcon.ToImageSource();
-                    model.Name = $"{session.Name} - (Unknown device)";
-                }
-            }            
-            else if(e.SessionState == SessionState.DeviceNotDetected)
-            {
-                model.Image = ExtractedIcons.FailedIcon.ToImageSource();
-                model.Name = $"{session.Name} - (Unknown device)";
-            }
-
-            return model;
-        }
-
         /// <summary>
         /// Occurs when Add Button has clicked.
         /// </summary>
@@ -297,26 +167,12 @@ namespace SoundMixerSoftware.ViewModels
             var session = model.SelectedApp;
             if (session == null)
                 return;
-            SessionHandler.RemoveSlider(model.Index, new Session()
-            {
-                SessionMode = session.SessionMode,
-                DataFlow = session.DataFlow,
-                ID = session.ID,
-                Name = session.Name
-            });
-            var apps = ProfileHandler.SelectedProfile.Sliders[model.Index].Applications;
-            if(session.SessionMode == SessionMode.SESSION || session.SessionMode == SessionMode.DEVICE)
-                apps.Remove(apps.First(x=> x.ID == session.ID));
-            else if (session.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && session.DataFlow == DataFlow.Render)
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Render));
-            else if (session.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && session.DataFlow == DataFlow.Capture)
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_MULTIMEDIA && x.DataFlow == DataFlow.Capture));
-            else if (session.SessionMode == SessionMode.DEFAULT_COMMUNICATION && session.DataFlow == DataFlow.Render)
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Render));
-            else if (session.SessionMode == SessionMode.DEFAULT_COMMUNICATION && session.DataFlow == DataFlow.Capture)
-                apps.Remove(apps.First(x => x.SessionMode == SessionMode.DEFAULT_COMMUNICATION && x.DataFlow == DataFlow.Capture));
-            ProfileHandler.ProfileManager.Save(ProfileHandler.SelectedGuid);
-            model.Applications.Remove(session);
+            var sliders = ProfileHandler.SelectedProfile.Sliders[session.Index].Sessions;
+            var sessions = SessionHandler.Sessions[session.Index];
+            var sessionToRemove = sessions.IndexOf(session);
+            sliders.RemoveAt(sessionToRemove);
+            ProfileHandler.SaveSelectedProfile();
+            SessionHandler.RemoveSession(session.Index, session);
         }
 
         /// <summary>

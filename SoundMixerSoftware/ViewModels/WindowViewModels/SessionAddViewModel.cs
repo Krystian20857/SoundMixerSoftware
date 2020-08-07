@@ -10,6 +10,7 @@ using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
+using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.Threading;
 using SoundMixerSoftware.Helpers.Utils;
@@ -20,7 +21,7 @@ namespace SoundMixerSoftware.ViewModels
 {
     /// <summary>
     /// View model of session Add Window.
-    /// </summary>
+    /// </summary>z
     public class SessionAddViewModel : Screen
     {
         #region Logger
@@ -34,12 +35,12 @@ namespace SoundMixerSoftware.ViewModels
         private SessionEnumerator _sessionEnumerator;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
         private readonly int _sliderIndex;
-        private SessionModel _selectedDevice;
-        private BindableCollection<SessionModel> _deviceSessions = new BindableCollection<SessionModel>();
+        private ISessionModel _selectedDevice;
+        private BindableCollection<AudioDeviceModel> _deviceSessions = new BindableCollection<AudioDeviceModel>();
 
-        private BindableCollection<SessionModel> _sessions = new BindableCollection<SessionModel>();
-        private BindableCollection<SessionModel> _defaultDevices = new BindableCollection<SessionModel>();
-        private BindableCollection<SessionModel> _devices = new BindableCollection<SessionModel>();
+        private BindableCollection<AudioSessionModel> _sessions = new BindableCollection<AudioSessionModel>();
+        private BindableCollection<DefaultDeviceModel> _defaultDevices = new BindableCollection<DefaultDeviceModel>();
+        private BindableCollection<AudioDeviceModel> _devices = new BindableCollection<AudioDeviceModel>();
 
         #endregion
 
@@ -48,7 +49,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Audio session collection.
         /// </summary>
-        public BindableCollection<SessionModel> Sessions
+        public BindableCollection<AudioSessionModel> Sessions
         {
             get => _sessions;
             set => _sessions = value;
@@ -57,7 +58,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Default devices connection.
         /// </summary>
-        public BindableCollection<SessionModel> DefaultDevices
+        public BindableCollection<DefaultDeviceModel> DefaultDevices
         {
             get => _defaultDevices;
             set => _defaultDevices = value;
@@ -66,7 +67,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Device collection
         /// </summary>
-        public BindableCollection<SessionModel> Devices
+        public BindableCollection<AudioDeviceModel> Devices
         {
             get => _devices;
             set => _devices = value;
@@ -75,15 +76,15 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Currently Selected Audio Session
         /// </summary>
-        public SessionModel SelectedSession { get; set; }// = new SessionModel();
+        public ISessionModel SelectedSession { get; set; }// = new SessionModel();
 
-        public BindableCollection<SessionModel> DeviceSessions
+        public BindableCollection<AudioDeviceModel> DeviceSessions
         {
             get => _deviceSessions;
             set => _deviceSessions = value;
         }
 
-        public SessionModel SelectedDevice
+        public ISessionModel SelectedDevice
         {
             get => _selectedDevice;
             set
@@ -130,10 +131,10 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="e"></param>
         private void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
         {
-            var sessionMode = e.Role == Role.Communications ? SessionMode.DEFAULT_COMMUNICATION : SessionMode.DEFAULT_MULTIMEDIA;
+            var sessionMode = e.Role == Role.Communications ? DefaultDeviceMode.DEFAULT_COMMUNICATION : DefaultDeviceMode.DEFAULT_MULTIMEDIA;
             Execute.BeginOnUIThread(() =>
             {
-                var deviceToRemove = DefaultDevices.FirstOrDefault(x => x.DataFlow == e.DataFlow && x.SessionMode == sessionMode);
+                var deviceToRemove = DefaultDevices.FirstOrDefault(x => x.DataFlow == e.DataFlow && x.Mode == sessionMode);
                 if (deviceToRemove == default)
                     return;
                 DefaultDevices.Remove(deviceToRemove);
@@ -144,7 +145,7 @@ namespace SoundMixerSoftware.ViewModels
         private void SessionEnumeratorOnSessionExited(object sender, string sessionId)
         {
             var sessionToRemove = Sessions.FirstOrDefault(x => x.ID == sessionId);
-            if (sessionToRemove == default(SessionModel) || !Sessions.Contains(sessionToRemove))
+            if (sessionToRemove == default || !Sessions.Contains(sessionToRemove))
                 return;
             Sessions.Remove(sessionToRemove);
         }
@@ -177,19 +178,19 @@ namespace SoundMixerSoftware.ViewModels
         {
             Execute.OnUIThread(() =>
             {
-                CreateDefaultDevice(SessionMode.DEFAULT_MULTIMEDIA, DataFlow.Render, _deviceEnumerator.DefaultMultimediaRenderID);
-                CreateDefaultDevice(SessionMode.DEFAULT_MULTIMEDIA, DataFlow.Capture, _deviceEnumerator.DefaultMultimediaCaptureID);
-                CreateDefaultDevice(SessionMode.DEFAULT_COMMUNICATION, DataFlow.Render, _deviceEnumerator.DefaultCommunicationRenderID);
-                CreateDefaultDevice(SessionMode.DEFAULT_COMMUNICATION, DataFlow.Capture, _deviceEnumerator.DefaultCommunicationCaptureID);
+                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_MULTIMEDIA, DataFlow.Render, _deviceEnumerator.DefaultMultimediaRenderID);
+                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_MULTIMEDIA, DataFlow.Capture, _deviceEnumerator.DefaultMultimediaCaptureID);
+                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_COMMUNICATION, DataFlow.Render, _deviceEnumerator.DefaultCommunicationRenderID);
+                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_COMMUNICATION, DataFlow.Capture, _deviceEnumerator.DefaultCommunicationCaptureID);
             });
         }
         
-        private void CreateDefaultDevice(SessionMode sessionMode, DataFlow dataFlow, string deviceId)
+        private void CreateDefaultDevice(DefaultDeviceMode sessionMode, DataFlow dataFlow, string deviceId)
         {
             var name = string.Empty;
             switch (sessionMode)
             {
-                case SessionMode.DEFAULT_MULTIMEDIA:
+                case DefaultDeviceMode.DEFAULT_MULTIMEDIA:
                     switch (dataFlow)
                     {
                         case DataFlow.Render:
@@ -200,7 +201,7 @@ namespace SoundMixerSoftware.ViewModels
                             break;
                     }
                     break;
-                case SessionMode.DEFAULT_COMMUNICATION:
+                case DefaultDeviceMode.DEFAULT_COMMUNICATION:
                     switch (dataFlow)
                     {
                         case DataFlow.Render:
@@ -215,12 +216,12 @@ namespace SoundMixerSoftware.ViewModels
             try
             {
                 var device = _deviceEnumerator.GetDeviceById(deviceId);
-                DefaultDevices.Add(new SessionModel
+                DefaultDevices.Add(new DefaultDeviceModel()
                 {
                     Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
                     Name = $"{name}({device.FriendlyName})",
-                    SessionMode = sessionMode,
-                    ID = sessionMode.CreateUUIDString(dataFlow),
+                    Mode = sessionMode,
+                    ID = sessionMode.CreateStringUUID(dataFlow),
                     DataFlow = dataFlow
                 });
             }
@@ -256,20 +257,18 @@ namespace SoundMixerSoftware.ViewModels
 
         private void AddDevice(MMDevice device)
         {
-            Devices.Add(new SessionModel
+            Devices.Add(new AudioDeviceModel()
             {
                 Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
                 Name = device.FriendlyName,
                 ID = device.ID,
-                SessionMode = SessionMode.DEVICE,
                 DataFlow = device.DataFlow
             });
-            DeviceSessions.Add(new SessionModel
+            DeviceSessions.Add(new AudioDeviceModel
             {
                 Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
                 Name = $"{device.FriendlyName} - ({(device.DataFlow == DataFlow.Capture ? "Input" : "Output")})",
                 ID = device.ID,
-                SessionMode = SessionMode.DEVICE,
                 DataFlow = device.DataFlow
             });
         }
@@ -285,7 +284,7 @@ namespace SoundMixerSoftware.ViewModels
                 return;
             var process = Process.GetProcessById((int) session.GetProcessID);
 
-            Sessions.Add(new SessionModel()
+            Sessions.Add(new AudioSessionModel
             {
                 Name = process.GetPreciseName(),
                 Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource(),
@@ -310,19 +309,24 @@ namespace SoundMixerSoftware.ViewModels
 
             try
             {
-                var slider = profile.Sliders[_sliderIndex];
-                if (slider.Applications.All(x => x.ID != SelectedSession.ID))
+                var slider = SessionHandler.Sessions[_sliderIndex];
+                if (slider.Any(x => x.ID == SelectedSession.ID))
                 {
-                    var session = new Session
-                    {
-                        SessionMode = SelectedSession.SessionMode,
-                        DataFlow = SelectedSession.DataFlow,
-                        Name = SelectedSession.Name,
-                        ID = SelectedSession.ID
-                    };
-                    SessionHandler.AddSlider(_sliderIndex, session);
-                    slider.Applications.Add(session);
-                    ProfileHandler.ProfileManager.SaveAll();
+                    TryCloseAsync();
+                    return;
+                }
+
+                if (SelectedSession is AudioSessionModel audioSessionModel)
+                {
+                    var session = SessionHandler.AddSession(_sliderIndex, new VirtualSession(_sliderIndex, audioSessionModel.ID, audioSessionModel.Name, Guid.NewGuid()));
+                    profile.Sliders[_sliderIndex].Sessions.Add(session);
+                    ProfileHandler.SaveSelectedProfile();
+                }
+                else if (SelectedSession is AudioDeviceModel audioDeviceModel)
+                {
+                    var session = SessionHandler.AddSession(_sliderIndex, new DeviceSession(_sliderIndex, audioDeviceModel.ID, audioDeviceModel.Name, Guid.NewGuid()));
+                    profile.Sliders[_sliderIndex].Sessions.Add(session);
+                    ProfileHandler.SaveSelectedProfile();
                 }
             }
             catch (Exception exception)

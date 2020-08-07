@@ -138,7 +138,7 @@ namespace SoundMixerSoftware.Helpers.Device
                     
                     var value = (int)ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
                     SessionHandler.SetVolume(sliderIndex, value / 100.0F, false);
-                    if(SessionHandler.Sliders[sliderIndex].Count > 0)
+                    if(SessionHandler.HasActiveSession(sliderIndex))
                         OverlayHandler.ShowVolume(value);
                     
                     break;
@@ -170,7 +170,7 @@ namespace SoundMixerSoftware.Helpers.Device
         {
             
             var sliderIndex = index + (byte)SliderOffsetManager.GetOrCreateOffset(deviceId);
-            var sliderCount = SessionHandler.Sliders.Count;
+            var sliderCount = SessionHandler.Sessions.Count;
             if (sliderIndex >= sliderCount)
             {
                 Logger.Warn("Slider receive index mismatch.");

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
-using SoundMixerSoftware.Common.AudioLib.SliderLib;
-using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.Threading;
 
@@ -15,335 +11,205 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
     public static class SessionHandler
     {
         #region Private Fields
-
-        #endregion
-
-        #region Public Fields
-
-        public static DeviceEnumerator DeviceEnumerator { get; private set; } = new DeviceEnumerator();
-        public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; } = new Dictionary<string, SessionEnumerator>();
-        public static List<List<IVirtualSlider>> Sliders { get; } = new List<List<IVirtualSlider>>();
-        public static List<List<string>> RequestedSliders { get; } = new List<List<string>>();
-        private static DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
-
-        #endregion
-
-        #region Events
-
-        public static event EventHandler<SliderAddedArgs> SessionAdded;
-        public static event EventHandler<SessionActiveArgs> SessionActive;
-        public static event EventHandler<SliderAddedArgs> SessionDisconnected;
-        public static event EventHandler<VolumeChangedArgs> VolumeChange; 
-        public static event EventHandler<MuteChangedArgs> MuteChanged;
-
-        #endregion
-
-        #region Constructor
-
-        static SessionHandler()
-        {
-            ReloadSessionHandler();
-        }
         
         #endregion
+        
+        #region Public Properties
 
-        private static void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
-        {
-            //nothing nop
-        }
+        public static List<List<IVirtualSession>> Sessions { get; private set; } = new List<List<IVirtualSession>>();
+        public static Dictionary<string, IVirtualSessionCreator> Creators { get; } = new Dictionary<string, IVirtualSessionCreator>();
 
-        private static void SessionEnumeratorOnSessionExited(object sender, string e)
-        {
-            var sessionControl = sender as AudioSessionControl;
-            for (var n = 0; n < Sliders.Count; n++)
-            {
-                var sliders = Sliders[n];
-                for (var x = 0; x < sliders.Count; x++)
-                {
-                    var slidertmp = sliders[x];
-                    if (!(slidertmp is SessionSlider slider)) continue;
-                    if (slider.SessionID == sessionControl.GetSessionIdentifier)
-                    {
-                        var sessionControlID = sessionControl.GetSessionIdentifier;
-                        var name = ProfileHandler.SelectedProfile.Sliders[n].Applications.First(session => session.ID.Equals(sessionControlID)).Name;
-                        sliders.RemoveAt(x);
-                        SessionDisconnected?.Invoke(null, new SliderAddedArgs(slider, new Session
-                        {
-                            ID = sessionControlID,
-                            Name = name,
-                            SessionMode = SessionMode.SESSION
-                        }, n, SessionState.Disconnected));
-                        RequestedSliders[n].Add(sessionControl.GetSessionIdentifier);
-                    }
-                }
-            }
-        }
+        public static DeviceEnumerator DeviceEnumerator { get; private set; } = new DeviceEnumerator();
+        public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; private set; } = new Dictionary<string, SessionEnumerator>();
 
-        #region Private Events
+        #endregion
+        
+        #region Events
 
-        private static void OnSessionAdded(object sender, SliderAddedArgs e)
-        {
-            if(e.SessionState == SessionState.Disconnected || e.SessionState == SessionState.DeviceNotDetected)
-                RequestedSliders[e.Index].Add(e.Session.ID);
-        }
-
-        private static void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)
-        {
-            for (var n = 0; n < RequestedSliders.Count; n++)
-            {
-                var ids = RequestedSliders[n];
-                for (var x = 0; x < ids.Count; x++)
-                {
-                    var id = ids[x];
-                    if (id.Equals(e.GetSessionIdentifier, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        RequestedSliders[n].RemoveAt(x);
-
-                        var session = AddSlider(n, e);
-                        if(session != null)
-                            SessionActive?.Invoke(null, new SessionActiveArgs(session, n, e));
-                    }
-                }
-            }
-            
-        }
+        public static event EventHandler<SessionArgs> SessionCreated;
+        public static event EventHandler<SessionArgs> SessionRemoved;
+        
+        #endregion
+        
+        #region Constructor
+        
         
         #endregion
         
         #region Public Methods
+        
+        public static void ReloadAll(){
 
-        public static void SetVolume(int index, float volume, bool selfInvoke)
-        {
-            if (index >= Sliders.Count)
-                return;
-            var sliders = Sliders[index];
-            for (var n = 0; n < sliders.Count; n++)
-                sliders[n].Volume = volume;
-            VolumeChange?.Invoke(null, new VolumeChangedArgs(volume, selfInvoke, index));
-        }
+            foreach(var sessionEnum in SessionEnumerators)
+                sessionEnum.Value.Dispose();
+            SessionEnumerators.Clear();
+            
+            DeviceEnumerator.Dispose();
+            DeviceEnumerator = new DeviceEnumerator();
 
-        public static void SetMute(int index, bool mute, bool selfInvoke)
-        {
-            if (index >= Sliders.Count)
-                return;
-            var sliders = Sliders[index];
-            for (var n = 0; n < sliders.Count; n++)
-                sliders[n].IsMute = mute;
-
-            MuteChanged?.Invoke(null, new MuteChangedArgs(mute, selfInvoke, index));
-        }
-
-        public static void CreateSliders()
-        {
-            Sliders.Clear();
-            RequestedSliders.Clear();
-            for (var n = 0; n < ProfileHandler.SelectedProfile.SliderCount; n++)
+            foreach (var device in DeviceEnumerator.AllDevices)
             {
-                Sliders.Add(new List<IVirtualSlider>());
-                RequestedSliders.Add(new List<string>());
+                var sessionEnum = new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher);
+                SessionEnumerators.Add(device.ID, sessionEnum);
             }
 
+            DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
+            DeviceEnumerator.DeviceRemoved += DeviceEnumeratorOnDeviceRemoved;
+        }
+
+        public static void CreateSessions()
+        {
+            Sessions.Clear();
+            var sliderCount = ProfileHandler.SelectedProfile.SliderCount;
+            Sessions.Capacity = sliderCount;
+            for (var n = 0; n < sliderCount; n++)
+                Sessions.Add(new List<IVirtualSession>());
             var sliders = ProfileHandler.SelectedProfile.Sliders;
             for (var n = 0; n < sliders.Count; n++)
             {
                 var slider = sliders[n];
-                foreach (var session in slider.Applications)
+                if (n >= sliderCount)
+                    continue;
+                if (slider.Sessions == null)
+                    slider.Sessions = new List<Session>();
+                for (var x = 0; x < slider.Sessions.Count; x++)
                 {
-                    AddSlider(n, session);
+                    var session = slider.Sessions[x];
+                    AddSession(n, session);
                 }
             }
         }
 
-        public static bool AddSlider(int index, Session session)
+        public static Session AddSession(int index, IVirtualSession session)
         {
-            if (Sliders.Count <= index)
-                return false;
-            IVirtualSlider slider = null;
-            switch (session.SessionMode)
+            Sessions[index].Add(session);
+            SessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
+            return new Session
             {
-                case SessionMode.DEVICE:
-                    try
-                    {
-                        var deviceSlider = new DeviceSlider(session.ID);
-                        var deviceId = deviceSlider.DeviceID;
-                        if (DeviceEnumerator.AllDevices.All(x => x.ID != deviceId))
-                        {
-                            SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.DeviceNotDetected));
-                            return true;
-                        }
-
-                        slider = deviceSlider;
-                    }
-                    catch
-                    {
-                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.DeviceNotDetected));
-                        return true;
-                    }
-                    break;
-                case SessionMode.SESSION:
-                    //var audioSession = SessionEnumerator.GetById(session.ID);
-                    var deviceID = Identifier.GetDeviceId(session.ID);
-                    if (!SessionEnumerators.ContainsKey(deviceID))
-                    {
-                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.DeviceNotDetected));
-                        return false;
-                    }
-                    var audioSession = SessionEnumerators[deviceID].GetById(session.ID);
-                    if(audioSession != null)
-                        slider = new SessionSlider(audioSession);
-                    else
-                    {
-                        SessionAdded?.Invoke(null, new SliderAddedArgs(null, session, index, SessionState.Disconnected));
-                        return true;
-                    }
-                    break;
-                case SessionMode.DEFAULT_MULTIMEDIA:
-                    slider = new DefaultDeviceSlider(SliderType.DEFAULT_MULTIMEDIA, session.DataFlow);
-                    break;
-                case SessionMode.DEFAULT_COMMUNICATION:
-                    slider = new DefaultDeviceSlider(SliderType.DEFAULT_COMMUNICATION, session.DataFlow);
-                    break;
-            }
-            Sliders[index].Add(slider);
-            SessionAdded?.Invoke(null, new SliderAddedArgs(slider, session, index, SessionState.Active));
-            return true;
-        }
-
-        public static Session AddSlider(int index, AudioSessionControl audioSession)
-        {
-            if (Sliders.Count <= index)
-                return null;
-            var slider = new SessionSlider(audioSession);
-            var session = new Session()
-            {
-                DataFlow = DataFlow.All,
-                ID = audioSession.GetSessionIdentifier,
-                Name = Process.GetProcessById((int) audioSession.GetProcessID).ProcessName,
-                SessionMode = SessionMode.SESSION
+                Container = session.Save(),
+                UUID = session.UUID,
+                Key = session.Key
             };
-            Sliders[index].Add(slider);
-            return session;
+        }
+
+        public static IVirtualSession AddSession(int index, Session session){
+            if (!Creators.ContainsKey(session.Key) || string.IsNullOrEmpty(session.Key))
+                return null;
+            var creator = Creators[session.Key];
+            var virtualSession = creator.CreateSession(index, session.Container, session.UUID);
+            Sessions[index].Add(virtualSession);
+            SessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(virtualSession), virtualSession));
+            return virtualSession;
         }
         
-        public static void RemoveSlider(int index, Session session)
+        public static void RemoveSession(int index, int internalIndex)
         {
-            var sliders = Sliders[index];
-            switch (session.SessionMode)
-            {
-                case SessionMode.DEVICE:
-                    TransformSlider<DeviceSlider>(index, (slider, sliderIndex) =>
-                    {
-                        if (slider.DeviceID == session.ID)
-                            sliders.RemoveAt(sliderIndex);
-                    });
-                    break;
-                
-                case SessionMode.SESSION:
-                {
-                    TransformSlider<SessionSlider>(index, (slider, sliderIndex) =>
-                    {
-                        if (slider.SessionID == session.ID)
-                            sliders.RemoveAt(sliderIndex);
-                    });
-                    break;
-                }
-                case SessionMode.DEFAULT_MULTIMEDIA:
-                {
-                    TransformSlider<DefaultDeviceSlider>(index, (slider, sliderIndex) =>
-                    {
-                        if (slider.SliderType == SliderType.DEFAULT_MULTIMEDIA && slider.DataFlow == session.DataFlow)
-                            sliders.RemoveAt(sliderIndex);
-                    });
-                    break;
-                }
-                case SessionMode.DEFAULT_COMMUNICATION:
-                {
-                    TransformSlider<DefaultDeviceSlider>(index, (slider, sliderIndex) =>
-                    {
-                        if (slider.SliderType == SliderType.DEFAULT_COMMUNICATION && slider.DataFlow == session.DataFlow)
-                            sliders.RemoveAt(sliderIndex);
-                    });
+            var session = Sessions[index][internalIndex];
+            SessionRemoved?.Invoke(null, new SessionArgs(index, internalIndex, session));
+            Sessions[index].RemoveAt(internalIndex);
+            
+        }
+        
+        public static void RemoveSession(int index, IVirtualSession session)
+        {
+            SessionRemoved?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
+            Sessions[index].Remove(session);
+        }
+        
+        public static void RegisterCreator(string key, IVirtualSessionCreator creator1)
+        {
+            if (Creators.ContainsKey(key))
+                return;
+            Creators.Add(key, creator1);
+        }
+        
+        public static void UnregisterCreator(string key)
+        {
+            if (Creators.ContainsKey(key))
+                Creators.Remove(key);
+        }
 
-                    break;
-                }
+        /// <summary>
+        /// Sets volume of all sliders in specified index.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="volume"></param>
+        /// <param name="selfInvoke"></param>
+        public static void SetVolume(int index, float volume, bool selfInvoke)
+        {
+            if (index >= Sessions.Count)
+                return;
+            foreach (var slider in Sessions[index])
+            {
+                slider.Volume = volume;
             }
         }
         
         /// <summary>
-        /// Reload entire session handler.
+        /// Sets mute of all sliders in specified index.
         /// </summary>
-        public static void ReloadSessionHandler()
+        /// <param name="index"></param>
+        /// <param name="mute"></param>
+        /// <param name="selfInvoke"></param>
+        public static void SetMute(int index, bool mute, bool selfInvoke)
         {
-            foreach (var sessionEnumerator in SessionEnumerators)
-                sessionEnumerator.Value.Dispose();
-            SessionEnumerators.Clear();
-
-            DeviceEnumerator.Dispose();
-            DeviceEnumerator = new DeviceEnumerator();
-
-            foreach (var device in DeviceEnumerator.OutputDevices)
+            if (index >= Sessions.Count)
+                return;
+            foreach (var slider in Sessions[index])
             {
-                var sessionEnum = new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher);
-                sessionEnum.SessionCreated += SessionEnumeratorOnSessionCreated;
-                sessionEnum.SessionExited += SessionEnumeratorOnSessionExited;
-                SessionEnumerators.Add(device.ID, sessionEnum);
+                slider.IsMute = mute;
             }
-
-            SessionAdded += OnSessionAdded;
-            DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
         }
         
-        #endregion
-        
-        #region Private Methods
-
         /// <summary>
-        /// Find sliders in specified index and type.
+        /// Checks whatever is there any active slider in specified index.
         /// </summary>
-        /// <param name="index">Index in sliders array.</param>
-        /// <typeparam name="T">Type of slider.</typeparam>
-        /// <returns>List of sliders.</returns>
-        private static void TransformSlider<T>(int index, Action<T, int> action) where T : IVirtualSlider
-        {
-            var sliders = Sliders[index];
-            for (var n = 0; n < sliders.Count; n++)
-            {
-                var slider = sliders[n];
-                if (slider is T virtualSlider)
-                    action.Invoke(virtualSlider, n);
-            }
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static bool HasActiveSession(int index){
+            if (index >= Sessions.Count)
+                return false;
+            return Sessions[index].All(slider => slider.State == SessionState.ACTIVE);
         }
         
         #endregion
-    }
+        
+        #region Private Events
 
-    public class SliderAddedArgs : EventArgs
-    {
-        public IVirtualSlider Slider { get; set; }
-        public Session Session { get; set; }
-        public int Index { get; set; }
-        public SessionState SessionState { get; set; }
-
-        public SliderAddedArgs(IVirtualSlider slider, Session session, int index, SessionState sessionState)
+        private static void DeviceEnumeratorOnDeviceRemoved(object sender, EventArgs e)
         {
-            Slider = slider;
-            Session = session;
-            Index = index;
-            SessionState = sessionState;
+            var deviceId = sender as string;
+            if (!SessionEnumerators.ContainsKey(deviceId)) return;
+            ComThread.Invoke(() => SessionEnumerators[deviceId].Dispose());
+            SessionEnumerators.Remove(deviceId);
         }
+
+        private static void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
+        {
+            var deviceId = sender as string;
+            if (SessionEnumerators.ContainsKey(deviceId)) return;
+            ComThread.Invoke(() =>
+            {
+                var device =DeviceEnumerator.GetDeviceById(deviceId);
+                 SessionEnumerators.Add(deviceId, new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher));
+            });
+            
+        }
+
+        #endregion
     }
 
-    public class SessionActiveArgs : EventArgs
+    public class SessionArgs : EventArgs
     {
-        public AudioSessionControl SessionControl { get; set; }
-        public Session Session { get; set; }
         public int Index { get; set; }
+        public int SessionIndex { get; set; }
+        public IVirtualSession Session { get; set; }
 
-        public SessionActiveArgs(Session session, int index, AudioSessionControl sessionControl)
+        public SessionArgs(int index, int sessionIndex, IVirtualSession session)
         {
-            Session = session;
             Index = index;
-            SessionControl = sessionControl;
+            SessionIndex = sessionIndex;
+            Session = session;
         }
     }
     

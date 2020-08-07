@@ -19,46 +19,15 @@ namespace SoundMixerSoftware.Helpers.Profile
     public class SliderStruct
     {
         public string Name { get; set; }
-        public List<Session> Applications { get; set; } = new List<Session>();
+        public List<Session> Sessions { get; set; } = new List<Session>();
         public List<ConverterStruct> Converters { get; set; } = new List<ConverterStruct>();
     }
 
     public class Session
     {
-        public string Name { get; set; }
-        public string ID { get; set; }
-        
-        [YamlIgnore]
-        public SessionMode SessionMode { get; set; }
-        
-        [YamlMember(Alias = "SessionMode")]
-        public string SessionModeString
-        {
-            get => SessionMode.ToString();
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                    SessionMode = default;
-                else
-                    SessionMode = Enum.TryParse<SessionMode>(value, out var result) ? result : default;
-            }
-        }
-        
-        [YamlIgnore]
-        public DataFlow DataFlow { get; set; }
-        
-        [YamlMember(Alias = "DataFlow")]
-        public string DataFlowString
-        {
-            get => DataFlow.ToString();
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                    DataFlow = default;
-                else
-                    DataFlow = Enum.TryParse<DataFlow>(value, out var result) ? result : default;
-            }
-        }
+        public string Key { get; set; }
+        public Dictionary<object, object> Container { get; set; }
+        public Guid UUID { get; set; }
     }
     
     public class ButtonStruct

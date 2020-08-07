@@ -1,9 +1,11 @@
-﻿namespace SoundMixerSoftware.Helpers.AudioSessions
+﻿using System;
+
+namespace SoundMixerSoftware.Helpers.AudioSessions
 {
+    [Flags]
     public enum SessionState
     {
-        Active,
-        Disconnected,
-        DeviceNotDetected
+        ACTIVE,
+        EXITED
     }
 }

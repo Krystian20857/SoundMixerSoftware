@@ -35,9 +35,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Annotations.cs" />
+    <Compile Include="AudioSessions\IVirtualSession.cs" />
+    <Compile Include="AudioSessions\IVirtualSessionCreator.cs" />
     <Compile Include="AudioSessions\SessionHandler.cs" />
-    <Compile Include="AudioSessions\SessionMode.cs" />
     <Compile Include="AudioSessions\SessionState.cs" />
+    <Compile Include="AudioSessions\VirtualSessions\DefaultDeviceMode.cs" />
+    <Compile Include="AudioSessions\VirtualSessions\DeviceSession.cs" />
+    <Compile Include="AudioSessions\VirtualSessions\VirtualSession.cs" />
     <Compile Include="Buttons\ButtonHandler.cs" />
     <Compile Include="Buttons\Functions\KeystrokeFunction.cs" />
     <Compile Include="Buttons\Functions\MediaFunction.cs" />

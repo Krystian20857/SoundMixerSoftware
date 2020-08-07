@@ -121,7 +121,7 @@
     <Compile Include="Models\ITabModel.cs" />
     <Compile Include="Models\PluginModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
-    <Compile Include="Models\SessionModel.cs" />
+    <Compile Include="Models\ISessionModel.cs" />
     <Compile Include="Models\SliderModel.cs" />
     <Compile Include="Models\SystemThemeModel.cs" />
     <Compile Include="Models\TabModel.cs" />
