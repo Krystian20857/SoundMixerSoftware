@@ -34,7 +34,6 @@ namespace SoundMixerSoftware.ViewModels
 
         private SessionEnumerator _sessionEnumerator;
         private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
-        private readonly int _sliderIndex;
         private ISessionModel _selectedDevice;
         private BindableCollection<AudioDeviceModel> _deviceSessions = new BindableCollection<AudioDeviceModel>();
 
@@ -45,6 +44,8 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
 
         #region Public Properties
+
+        public int SliderIndex { get; set; }
 
         /// <summary>
         /// Audio session collection.
@@ -101,11 +102,8 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Create session add view-model.
         /// </summary>
-        /// <param name="sliderIndex"></param>
-        public SessionAddViewModel(int sliderIndex)
+        public SessionAddViewModel()
         {
-            _sliderIndex = sliderIndex;
-
             CreateDefault();
 
             foreach (var device in _deviceEnumerator.AllDevices)
@@ -303,13 +301,13 @@ namespace SoundMixerSoftware.ViewModels
 
             if(profile.Sliders == null)
                 profile.Sliders = new List<SliderStruct>();
-            if(profile.Sliders.Count <= _sliderIndex)
-                for(var n = profile.Sliders.Count; n < _sliderIndex + 1; n++)
+            if(profile.Sliders.Count <= SliderIndex)
+                for(var n = profile.Sliders.Count; n < SliderIndex + 1; n++)
                     profile.Sliders.Add(new SliderStruct());
 
             try
             {
-                var slider = SessionHandler.Sessions[_sliderIndex];
+                var slider = SessionHandler.Sessions[SliderIndex];
                 if (slider.Any(x => x.ID == SelectedSession.ID))
                 {
                     TryCloseAsync();
@@ -318,14 +316,20 @@ namespace SoundMixerSoftware.ViewModels
 
                 if (SelectedSession is AudioSessionModel audioSessionModel)
                 {
-                    var session = SessionHandler.AddSession(_sliderIndex, new VirtualSession(_sliderIndex, audioSessionModel.ID, audioSessionModel.Name, Guid.NewGuid()));
-                    profile.Sliders[_sliderIndex].Sessions.Add(session);
+                    var session = SessionHandler.AddSession(SliderIndex, new VirtualSession(SliderIndex, audioSessionModel.ID, audioSessionModel.Name, Guid.NewGuid()));
+                    profile.Sliders[SliderIndex].Sessions.Add(session);
                     ProfileHandler.SaveSelectedProfile();
                 }
                 else if (SelectedSession is AudioDeviceModel audioDeviceModel)
                 {
-                    var session = SessionHandler.AddSession(_sliderIndex, new DeviceSession(_sliderIndex, audioDeviceModel.ID, audioDeviceModel.Name, Guid.NewGuid()));
-                    profile.Sliders[_sliderIndex].Sessions.Add(session);
+                    var session = SessionHandler.AddSession(SliderIndex, new DeviceSession(SliderIndex, audioDeviceModel.ID, audioDeviceModel.Name, Guid.NewGuid()));
+                    profile.Sliders[SliderIndex].Sessions.Add(session);
+                    ProfileHandler.SaveSelectedProfile();
+                }
+                else if (SelectedSession is DefaultDeviceModel defaultDeviceModel)
+                {
+                    var session = SessionHandler.AddSession(SliderIndex, new DefaultDeviceSession(SliderIndex, defaultDeviceModel.Mode, defaultDeviceModel.DataFlow, Guid.NewGuid()));
+                    profile.Sliders[SliderIndex].Sessions.Add(session);
                     ProfileHandler.SaveSelectedProfile();
                 }
             }

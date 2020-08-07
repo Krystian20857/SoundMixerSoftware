@@ -58,6 +58,7 @@ namespace SoundMixerSoftware.ViewModels
             
             SessionHandler.RegisterCreator(VirtualSession.KEY, new VirtualSessionCreator());
             SessionHandler.RegisterCreator(DeviceSession.KEY, new DeviceSessionCreator());
+            SessionHandler.RegisterCreator(DefaultDeviceSession.KEY, new DefaultDeviceSessionCreator());
             
             ConverterHandler.RegisterCreator("log_converter", new LogConverterCreator());
 
@@ -149,7 +150,8 @@ namespace SoundMixerSoftware.ViewModels
         public void AddClick(object sender)
         {
             var model = sender as SliderModel;
-            var addViewModel = new SessionAddViewModel(model.Index);
+            var addViewModel = IoC.Get<SessionAddViewModel>();
+            addViewModel.SliderIndex = model.Index;
             _windowManager.ShowDialogAsync(addViewModel);
         }
 

@@ -166,8 +166,11 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static bool HasActiveSession(int index){
+        public static bool HasActiveSession(int index)
+        {
             if (index >= Sessions.Count)
+                return false;
+            if (Sessions[index].Count == 0)
                 return false;
             return Sessions[index].All(slider => slider.State == SessionState.ACTIVE);
         }
