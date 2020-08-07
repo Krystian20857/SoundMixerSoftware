@@ -42,7 +42,7 @@ Currently software has some annoying bug which will be fixed in future. About kn
 **More detailed information about each project can be found inside corresponding foler.**
 
 ## Known Issues
-* Adding/removing device will not refresh sessions(Not implemented/issues with implementation)
+* ~~Adding/removing device will not refresh sessions(Not implemented/issues with implementation)~~ - fixed
 
 ## Screenshots
 ![Sound Mixer Software Profiles](./github/images/software_profiles.png)
