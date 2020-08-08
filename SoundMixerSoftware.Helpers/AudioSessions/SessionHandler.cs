@@ -172,7 +172,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 return false;
             if (Sessions[index].Count == 0)
                 return false;
-            return Sessions[index].All(slider => slider.State == SessionState.ACTIVE);
+            return Sessions[index].Any(slider => slider.State == SessionState.ACTIVE);
         }
         
         #endregion

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -132,21 +133,26 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             _dispatcher.Invoke(() =>
             {
-                if (State == SessionState.ACTIVE)
+                try
                 {
-                    using (var process = Process.GetProcessById((int) SessionControl.GetProcessID))
-                        Image = process.GetIcon().ToImageSource();
-                    DisplayName = $"{RawName} - {DeviceName}";
+                    if (State == SessionState.ACTIVE && SessionControl != null)
+                    {
+                        using (var process = Process.GetProcessById((int) SessionControl.GetProcessID))
+                            Image = process.GetMainWindowIcon().ToImageSource();
+                        DisplayName = $"{RawName} - {DeviceName}";
+                    }
+                    else
+                    {
+                        Image = ExtractedIcons.FailedIcon.ToImageSource();
+                        DisplayName = $"{RawName} - {DeviceName}(Not Active)";
+                        State = SessionState.EXITED;
+                    }
                 }
-                else
+                finally
                 {
-                    Image = ExtractedIcons.FailedIcon.ToImageSource();
-                    DisplayName = $"{RawName} - {DeviceName}(Not Active)";
-                    State = SessionState.ACTIVE;
+                    OnPropertyChanged(nameof(Image));
+                    OnPropertyChanged(nameof(DisplayName));
                 }
-
-                OnPropertyChanged(nameof(Image));
-                OnPropertyChanged(nameof(DisplayName));
             });
         }
 
@@ -192,12 +198,12 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             var sessionEnum = SessionHandler.SessionEnumerators[deviceId];
 
-            SessionControl = sessionEnum.GetById(ID);
-            
             sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
             sessionEnum.SessionExited += SessionEnumOnSessionExited;
             sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
-            
+
+            SessionControl = sessionEnum.GetById(ID);
+
             State = SessionState.ACTIVE;
             UpdateDescription();
         }

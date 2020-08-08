@@ -174,7 +174,7 @@ namespace SoundMixerSoftware.Win32.USBLib
                     var disconnectedDevice = default(DeviceProperties);
                     _connectedDevices = USBDescriptor.GetDescriptors(VidPid).ToList();
                         disconnectedDevice = _connectedDevices.Any()
-                                ? devices.Except(_connectedDevices).First()
+                                ? devices.Except(_connectedDevices).FirstOrDefault()
                                 : devices.FirstOrDefault();
                     DeviceRemove?.Invoke(this, new DeviceStateArgs(deviceTypeRemove, disconnectedDevice));
                     break;
