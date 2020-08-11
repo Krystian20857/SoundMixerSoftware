@@ -255,6 +255,8 @@ namespace SoundMixerSoftware.ViewModels
 
         private void AddDevice(MMDevice device)
         {
+            if (Devices.Any(x => x.ID == device.ID))
+                return;
             Devices.Add(new AudioDeviceModel()
             {
                 Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
