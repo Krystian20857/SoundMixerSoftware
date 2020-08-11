@@ -44,6 +44,7 @@
       <Compile Include="Interop\Constant\LWA.cs" />
       <Compile Include="Interop\Constant\PropertyKeys.cs" />
       <Compile Include="Interop\Constant\SW.cs" />
+      <Compile Include="Interop\Constant\WIN_EVENT.cs" />
       <Compile Include="Interop\Constant\WM.cs" />
       <Compile Include="Interop\Enum\DICS_FLAG.cs" />
       <Compile Include="Interop\Enum\DIGCF.cs" />
@@ -74,6 +75,7 @@
       <Compile Include="Interop\Struct\PROPERTYKEY.cs" />
       <Compile Include="Interop\Struct\PropVariant.cs" />
       <Compile Include="Interop\Struct\SP_DEVINFO_DATA.cs" />
+      <Compile Include="Threading\WindowWatcher.cs" />
       <Compile Include="Threading\IProcessWatcher.cs" />
       <Compile Include="Threading\ProcessWatcher.cs" />
       <Compile Include="USBLib\EventArgs.cs" />
