@@ -7,6 +7,7 @@ using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
 using SoundMixerSoftware.Common.Threading;
+using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Common.Utils;
 
 namespace SoundMixerSoftware.Common.AudioLib
@@ -25,8 +26,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         #region Private Fields
 
         private MMDevice _device;
-        private List<AudioSessionControl> _registeredSessions = new List<AudioSessionControl>();
-        private List<AudioSessionEventClient> _eventClients = new List<AudioSessionEventClient>();
+        private Dictionary<string, AudioSessionControl> _sessions = new Dictionary<string, AudioSessionControl>();
         private List<ExitHandler> _exitHandlers = new List<ExitHandler>();
 
         #endregion
@@ -250,6 +250,8 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         private void RegisterEvents(AudioSessionControl session)
         {
+            var sessionId = session.GetSessionIdentifier;
+            
             var eventClient = new AudioSessionEventClient(session);
             eventClient.SessionDisconnected += EventClientOnSessionDisconnected;
             eventClient.StateChanged += EventClientOnStateChanged;
@@ -259,9 +261,18 @@ namespace SoundMixerSoftware.Common.AudioLib
             eventClient.GroupingParamChanged += EventClientOnGroupingParamChanged;
             eventClient.IconPathChanged += EventClientOnIconPathChanged;
             session.RegisterEventClient(eventClient);
-            _registeredSessions.Add(session);
-            var exitHandler = new ExitHandler((int) session.GetProcessID, session.GetSessionIdentifier, ProcessWatcher);
-            exitHandler.SessionExited += (exitSender, id) => { SessionExited?.Invoke(session, id); };
+
+            if (_sessions.ContainsKey(sessionId))
+                _sessions[sessionId] = session;
+            _sessions.Add(sessionId, session);
+            
+            var exitHandler = new ExitHandler((int) session.GetProcessID, sessionId, ProcessWatcher);
+            exitHandler.SessionExited += (exitSender, id) =>
+            {
+                if (_sessions.ContainsKey(sessionId))
+                    _sessions.Remove(sessionId);
+                SessionExited?.Invoke(session, id);
+            };
             _exitHandlers.Add(exitHandler);
 
         }
@@ -276,16 +287,13 @@ namespace SoundMixerSoftware.Common.AudioLib
 
         public void Dispose()
         {
-
-            foreach(var eventClient in _eventClients)
-                eventClient.Dispose();
-            foreach (var session in _registeredSessions)
+            foreach (var session in _sessions)
             {
-                session.UnRegisterEventClient(null);
-                session.Dispose();
+                var sessionControl = session.Value;
+                sessionControl.Dispose();
             }
 
-            _registeredSessions.Clear();
+            _sessions.Clear();
             
             _device.AudioSessionManager.Dispose();
 

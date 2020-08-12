@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using NLog;
@@ -24,7 +25,7 @@ namespace SoundMixerSoftware.Win32.Threading
         #region Private Fields
 
         private Dictionary<int, ProcessWatcherModel> _watchers = new Dictionary<int, ProcessWatcherModel>();
-        private readonly Thread _thread;
+        private Thread _thread;
         private bool _isRunning = true;
         private readonly object _lockObject = new object();
 
@@ -40,7 +41,15 @@ namespace SoundMixerSoftware.Win32.Threading
         /// <summary>
         /// Check whatever watcher thread is running.
         /// </summary>
-        public bool IsRunning => _thread.IsAlive && _isRunning;
+        public bool IsRunning
+        {
+            get
+            {
+                if (_thread == null)
+                    return false;
+                return _thread.IsAlive && _isRunning;
+            }
+        }
 
         public TimeSpan WaitPeriod { get; }
 
@@ -55,58 +64,6 @@ namespace SoundMixerSoftware.Win32.Threading
         public ProcessWatcher(TimeSpan waitPeriod)
         {
             WaitPeriod = waitPeriod;
-            _thread = new Thread(() =>
-            {
-                while (_isRunning)
-                {
-                    var handles = new IntPtr[0];
-                    lock (_lockObject)
-                    {
-                        handles = _watchers.Select(x => x.Value.ProcessHandle).ToArray();
-                    }
-
-                    var result = Kernel32.WaitForMultipleObjects((uint)handles.Length, handles, false, (uint)waitPeriod.TotalMilliseconds);
-
-                    switch (result)
-                    {
-                        case Kernel32Const.WAIT_ABANDONED:
-                        case Kernel32Const.INFINITE:
-                            Thread.Sleep((int)WaitPeriod.TotalMilliseconds);
-                            break;
-                        case Kernel32Const.WAIT_TIMEOUT:
-                            break;
-                        
-                        default:
-                            lock (_lockObject)
-                            {
-                                var handle = handles[result];
-
-                                var model = _watchers.Values.FirstOrDefault(x => x.ProcessHandle == handle);
-
-                                if (model == default)
-                                {
-                                    Logger.Debug($"Error while getting process watcher data: {handle}");
-                                    break; 
-                                }
-                                
-                                foreach (var exitAction in model.ExitActions)
-                                {
-                                    exitAction(model.ProcessId);
-                                }
-
-                                _watchers.Remove(model.ProcessId);
-                                
-                                if(_watchers.Count == 0)
-                                    StopWatcherThread();
-                                Kernel32.CloseHandle(model.ProcessHandle);
-
-                            }
-                            break;
-                    }
-                }
-                
-            }) {IsBackground = true, Name = "Process Watcher Thread"};
-            _thread.SetApartmentState(ApartmentState.MTA);
         }
         
         #endregion
@@ -178,11 +135,63 @@ namespace SoundMixerSoftware.Win32.Threading
         /// </summary>
         public void StartWatcherThread()
         {
-            if(IsRunning) return;
+            if (IsRunning) return;
             _isRunning = true;
+            _thread = new Thread(() =>
+            {
+                while (_isRunning)
+                {
+                    var handles = new IntPtr[0];
+                    lock (_lockObject)
+                    {
+                        handles = _watchers.Select(x => x.Value.ProcessHandle).ToArray();
+                    }
+
+                    var result = Kernel32.WaitForMultipleObjects((uint)handles.Length, handles, false, (uint)WaitPeriod.TotalMilliseconds);
+
+                    switch (result)
+                    {
+                        case Kernel32Const.WAIT_ABANDONED:
+                        case Kernel32Const.INFINITE:
+                            Thread.Sleep((int)WaitPeriod.TotalMilliseconds);
+                            break;
+                        case Kernel32Const.WAIT_TIMEOUT:
+                            break;
+                        
+                        default:
+                            lock (_lockObject)
+                            {
+                                var handle = handles[result];
+
+                                var model = _watchers.Values.FirstOrDefault(x => x.ProcessHandle == handle);
+
+                                if (model == default)
+                                {
+                                    Logger.Debug($"Error while getting process watcher data: {handle}");
+                                    break; 
+                                }
+                                
+                                foreach (var exitAction in model.ExitActions)
+                                {
+                                    exitAction(model.ProcessId);
+                                }
+
+                                _watchers.Remove(model.ProcessId);
+                                
+                                if(_watchers.Count == 0)
+                                    StopWatcherThread();
+                                Kernel32.CloseHandle(model.ProcessHandle);
+
+                            }
+                            break;
+                    }
+                }
+                
+            }) {IsBackground = true, Name = "Process Watcher Thread"};
+            _thread.SetApartmentState(ApartmentState.MTA);
             _thread.Start();
         }
-        
+
         #endregion
         
         #region Private Methods
@@ -192,13 +201,9 @@ namespace SoundMixerSoftware.Win32.Threading
 
         #region Dispose
 
-        ~ProcessWatcher()
-        {
-            StopWatcherThread();
-        }
-        
         public void Dispose()
         {
+            StopWatcherThread();
             GC.SuppressFinalize(this);
         }
         
