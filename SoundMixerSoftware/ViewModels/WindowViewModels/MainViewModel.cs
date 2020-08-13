@@ -27,7 +27,7 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
-        public static MainViewModel Instance { get; private set; }
+        public static MainViewModel Instance => IoC.Get<MainViewModel>();
 
         /// <summary>
         /// Collection of tabs.
@@ -68,20 +68,11 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            Instance = this;
-            
-            Tabs.Add(IoC.Get<ManagerViewModel>());
-            Tabs.Add(IoC.Get<SlidersViewModel>());
-            Tabs.Add(IoC.Get<ButtonsViewModel>());
-            Tabs.Add(IoC.Get<DevicesViewModel>());
-            Tabs.Add(IoC.Get<PluginViewModel>());
-            Tabs.Add(IoC.Get<SettingsViewModel>());
+            if(ConfigHandler.ConfigStruct.Application.HideOnStartup)
+                User32.ShowWindow(Bootstrapper.Instance.MainWindowHandle, SW.SW_HIDE);
             
             RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle);
-
-            if(ConfigHandler.ConfigStruct.Application.HideOnStartup)
-                User32.ShowWindow(Bootstrapper.Instance.MainWindowHandle, SW.SW_HIDE);
         }
 
         #endregion
@@ -90,11 +81,17 @@ namespace SoundMixerSoftware.ViewModels
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
         {
-
+            Tabs.Add(IoC.Get<ManagerViewModel>());
+            Tabs.Add(IoC.Get<SlidersViewModel>());
+            Tabs.Add(IoC.Get<ButtonsViewModel>());
+            Tabs.Add(IoC.Get<DevicesViewModel>());
+            Tabs.Add(IoC.Get<PluginViewModel>());
+            Tabs.Add(IoC.Get<SettingsViewModel>());
+            
             var configTab = ConfigHandler.ConfigStruct.Application.SelectedTab;
             SelectedTab = Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? Tabs[0];
 
-            var settingsTab = IoC.Get<SettingsViewModel>();
+            var settingsTab = SettingsViewModel.Instance;
             settingsTab.SelectedTab = settingsTab.Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? settingsTab.Tabs[0];
             return base.OnInitializeAsync(cancellationToken);
         }

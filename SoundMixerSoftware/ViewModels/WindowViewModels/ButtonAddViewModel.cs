@@ -9,6 +9,8 @@ namespace SoundMixerSoftware.ViewModels
 
         #region Public Properties
 
+        public static ButtonAddViewModel Instance => IoC.Get<ButtonAddViewModel>();
+
         public int Index { get; set; }
         public IButtonAddModel SelectedTab { get; set; }
         public BindableCollection<IButtonAddModel> Tabs { get; set; } = new BindableCollection<IButtonAddModel>();
@@ -39,7 +41,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <exception cref="StackOverflowException">Using in ButtonAddViewModel constructor can cause this exception</exception>
         public static void AddViewStatic(IButtonAddModel viewModel)
         {
-            var addViewModel = IoC.Get<ButtonAddViewModel>();
+            var addViewModel = ButtonAddViewModel.Instance;
             addViewModel.Tabs.Add(viewModel);
         }
 

@@ -25,6 +25,8 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
         
         #region Public Propeties
+        
+        public static ButtonsViewModel Instance => IoC.Get<ButtonsViewModel>();
 
         public BindableCollection<ButtonModel> Buttons { get; set; } = new BindableCollection<ButtonModel>();
 
@@ -83,7 +85,7 @@ namespace SoundMixerSoftware.ViewModels
         public void AddClick(object sender)
         {
             var buttonModel = sender as ButtonModel;
-            var addViewModel = IoC.Get<ButtonAddViewModel>();
+            var addViewModel = ButtonAddViewModel.Instance;
             addViewModel.Index = buttonModel.Index;
             _windowManager.ShowDialogAsync(addViewModel);
         }

@@ -17,6 +17,8 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
         
         #region Public Properties
+        
+        public static PluginViewModel Instance => IoC.Get<PluginViewModel>();
 
         public BindableCollection<PluginModel> Plugins { get; set; } = new BindableCollection<PluginModel>();
 
@@ -66,7 +68,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void LoadZipClick()
         {
-            _windowManager.ShowDialogAsync(IoC.Get<PluginLoadViewModel>());
+            _windowManager.ShowDialogAsync(PluginLoadViewModel.Instance);
         }
 
         public void OpenFolderClick()

@@ -32,6 +32,8 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
         
         #region Public Properties
+        
+        public static DevicesViewModel Instance => IoC.Get<DevicesViewModel>();
 
         /// <summary>
         /// Collection of device models.

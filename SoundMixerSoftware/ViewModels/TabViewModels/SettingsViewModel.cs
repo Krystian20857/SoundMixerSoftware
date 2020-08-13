@@ -54,6 +54,8 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
+        public static SettingsViewModel Instance => IoC.Get<SettingsViewModel>();
+
         public bool AutoRun
         {
             get => _autoRun;

@@ -42,6 +42,8 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
         
         #region Public Properties
+        
+        public static ManagerViewModel Instance => IoC.Get<ManagerViewModel>();
 
         /// <summary>
         /// Collection of profiles.

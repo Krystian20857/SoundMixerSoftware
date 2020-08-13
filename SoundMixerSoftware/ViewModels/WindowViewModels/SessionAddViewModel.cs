@@ -44,6 +44,8 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
 
         #region Public Properties
+        
+        public static SessionAddViewModel Instance => IoC.Get<SessionAddViewModel>();
 
         public int SliderIndex { get; set; }
 

@@ -35,6 +35,8 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
+        public static PluginLoadViewModel Instance => IoC.Get<PluginLoadViewModel>();
+
         public PluginLoader PluginLoader => Bootstrapper.Instance.PluginLoader;
 
         public string ZipPath

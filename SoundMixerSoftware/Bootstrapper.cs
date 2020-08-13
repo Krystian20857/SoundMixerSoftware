@@ -123,7 +123,7 @@ namespace SoundMixerSoftware
             _container.Singleton<ButtonAddViewModel>();
 
             _container.PerRequest<PluginLoadViewModel>();
-            
+
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();
         }

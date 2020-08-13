@@ -52,8 +52,6 @@ namespace SoundMixerSoftware.ViewModels
         
         public SlidersViewModel()
         {
-            throw new Exception("Haha ez exception");
-            
             ThemeManager.Initialize();
             Name = "Sliders";
             Icon = PackIconKind.VolumeSource;
@@ -152,7 +150,7 @@ namespace SoundMixerSoftware.ViewModels
         public void AddClick(object sender)
         {
             var model = sender as SliderModel;
-            var addViewModel = IoC.Get<SessionAddViewModel>();
+            var addViewModel = SessionAddViewModel.Instance;
             addViewModel.SliderIndex = model.Index;
             _windowManager.ShowDialogAsync(addViewModel);
         }
