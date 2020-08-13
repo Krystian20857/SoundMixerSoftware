@@ -234,6 +234,8 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="ImageDictionary.xaml" />
+    <Page Include="Style\CategoryStyle.xaml" />
+    <Page Include="Style\DefaultStyle.xaml" />
     <Page Include="TaskbarResource.xaml" />
     <Page Include="Views\ButtonViews\KeystrokeFunctionView.xaml" />
     <Page Include="Views\ButtonViews\MediaButtonView.xaml" />

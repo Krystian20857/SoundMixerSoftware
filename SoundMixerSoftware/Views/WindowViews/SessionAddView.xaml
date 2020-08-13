@@ -3,48 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:cal="http://www.caliburnproject.org"
-        xmlns:models="clr-namespace:SoundMixerSoftware.Models"
         mc:Ignorable="d"
         Title="Session Add" Height="500" Width="700" Icon="{StaticResource SpeakerIcon}"
         cal:Message.Attach="[Shortcut Enter] = [AddClick()]">
-    <Window.Resources>
-        <Style x:Key="ListViewItems" TargetType="{x:Type ListView}">
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ItemContainerStyle">
-                <Setter.Value>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="ToolTip" Value="{Binding Path=Name}" />
-                    </Style>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <DockPanel Margin="4" LastChildFill="False">
-                            <Border DockPanel.Dock="Top" CornerRadius="3" BorderThickness="2" BorderBrush="DarkGray">
-                                <Image Height="30" Width="30" Source="{Binding Path=Image}" />
-                            </Border>
-                            <TextBlock TextAlignment="Center" DockPanel.Dock="Top" MaxWidth="50" Text="{Binding Path=Name}" />
-                        </DockPanel>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsFocused" Value="False">
-                    <Setter Property="SelectedItem" Value="null"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
