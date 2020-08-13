@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="StarterHelper.cs" />
     <Compile Include="Utils\BindingProxy.cs" />
+    <Compile Include="Utils\ExtendedContainer.cs" />
     <Compile Include="Utils\ParserHelper.cs" />
     <Compile Include="Validation\IntegerValidation.cs" />
     <Compile Include="Validation\OffsetValidation.cs" />

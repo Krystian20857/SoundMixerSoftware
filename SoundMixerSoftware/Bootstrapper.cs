@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
@@ -23,7 +19,6 @@ using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Views;
 using SoundMixerSoftware.Win32.Interop.Method;
-using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware
@@ -68,7 +63,7 @@ namespace SoundMixerSoftware
         
         #region Private Fields
         
-        private readonly SimpleContainer _container = new SimpleContainer();
+        private readonly ExtendedContainer _container = new ExtendedContainer();
         private StarterHelper _starter = new StarterHelper();
         private IWindowManager _windowManager = new WindowManager();
 
@@ -152,15 +147,6 @@ namespace SoundMixerSoftware
             return base.SelectAssemblies().Concat(PluginLoader.LoadedPlugins.Values.Select(x => x.Assembly));
         }
 
-        protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            if (e.Handled)
-                return;
-            ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!!!" , e.Exception);
-            Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
-            base.OnUnhandledException(sender, e);
-        }
-
         #endregion
         
         #region Public Methods
@@ -195,17 +181,20 @@ namespace SoundMixerSoftware
         /// </summary>
         private void RegisterExceptionHandler()
         {
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-            {
-                var exceptionObject = args.ExceptionObject;
-                if (exceptionObject is Exception exception)
-                    ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!!!" , exception);
-                else
-                    Logger.Error(exceptionObject.ToString());
-                Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
-            };
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => NotifyUnhandledException(args.ExceptionObject);
 
-            Application.Current.DispatcherUnhandledException += OnUnhandledException;
+            Application.Current.DispatcherUnhandledException += (sender, args) => NotifyUnhandledException(args.Exception);
+
+            _container.OnException += (sender, args) => NotifyUnhandledException(args.ExceptionObject);
+        }
+
+        private void NotifyUnhandledException(object exceptionObject)
+        {
+            if (exceptionObject is Exception exception)
+                ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!" , exception);
+            else
+                Logger.Error(exceptionObject);
+            Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
         }
 
         #endregion

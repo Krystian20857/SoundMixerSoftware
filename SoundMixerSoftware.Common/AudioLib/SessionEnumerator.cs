@@ -264,7 +264,8 @@ namespace SoundMixerSoftware.Common.AudioLib
 
             if (_sessions.ContainsKey(sessionId))
                 _sessions[sessionId] = session;
-            _sessions.Add(sessionId, session);
+            else
+                _sessions.Add(sessionId, session);
             
             var exitHandler = new ExitHandler((int) session.GetProcessID, sessionId, ProcessWatcher);
             exitHandler.SessionExited += (exitSender, id) =>
