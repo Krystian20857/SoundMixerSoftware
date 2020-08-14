@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using SoundMixerSoftware.Models;
 
@@ -19,31 +21,11 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Constructor
 
-        public ButtonAddViewModel()
-        {
-            AddView(new MediaButtonViewModel());
-            AddView(new MuteButtonViewModel());
-            AddView(new VolumeButtonViewModel());
-            AddView(new KeystrokeFunctionViewModel());
-
-            if (Tabs.Count > 0)
-                SelectedTab = Tabs[0];
-        }
+        public ButtonAddViewModel() { }
         
         #endregion
         
         #region Public Methods
-
-        /// <summary>
-        /// Add button add view and viewModel using IoC container.
-        /// </summary>
-        /// <param name="viewModel"></param>
-        /// <exception cref="StackOverflowException">Using in ButtonAddViewModel constructor can cause this exception</exception>
-        public static void AddViewStatic(IButtonAddModel viewModel)
-        {
-            var addViewModel = ButtonAddViewModel.Instance;
-            addViewModel.Tabs.Add(viewModel);
-        }
 
         public void AddView(IButtonAddModel viewModel)
         {
@@ -53,6 +35,19 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
         
         #region Private Events
+
+        protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+        {
+            AddView(new MediaButtonViewModel());
+            AddView(new MuteButtonViewModel());
+            AddView(new VolumeButtonViewModel());
+            AddView(new KeystrokeFunctionViewModel());
+            
+            if (Tabs.Count > 0)
+                SelectedTab = Tabs[0];
+            
+            return base.OnInitializeAsync(cancellationToken);
+        }
 
         /// <summary>
         /// Occurs when global add button has clicked.

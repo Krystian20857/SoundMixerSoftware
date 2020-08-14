@@ -318,28 +318,20 @@ namespace SoundMixerSoftware.ViewModels
                     return;
                 }
 
-                if (SelectedSession is AudioSessionModel audioSessionModel)
+                var virtualSession = SelectedSession.CreateSession(SliderIndex);
+                if (virtualSession == default)
                 {
-                    var session = SessionHandler.AddSession(SliderIndex, new VirtualSession(SliderIndex, audioSessionModel.ID, audioSessionModel.Name, Guid.NewGuid()));
-                    profile.Sliders[SliderIndex].Sessions.Add(session);
-                    ProfileHandler.SaveSelectedProfile();
+                    TryCloseAsync();
+                    return;
                 }
-                else if (SelectedSession is AudioDeviceModel audioDeviceModel)
-                {
-                    var session = SessionHandler.AddSession(SliderIndex, new DeviceSession(SliderIndex, audioDeviceModel.ID, audioDeviceModel.Name, Guid.NewGuid()));
-                    profile.Sliders[SliderIndex].Sessions.Add(session);
-                    ProfileHandler.SaveSelectedProfile();
-                }
-                else if (SelectedSession is DefaultDeviceModel defaultDeviceModel)
-                {
-                    var session = SessionHandler.AddSession(SliderIndex, new DefaultDeviceSession(SliderIndex, defaultDeviceModel.Mode, defaultDeviceModel.DataFlow, Guid.NewGuid()));
-                    profile.Sliders[SliderIndex].Sessions.Add(session);
-                    ProfileHandler.SaveSelectedProfile();
-                }
+                
+                var session = SessionHandler.AddSession(SliderIndex, virtualSession);
+                profile.Sliders[SliderIndex].Sessions.Add(session);
+                ProfileHandler.SaveSelectedProfile();
             }
             catch (Exception exception)
             {
-                ExceptionHandler.HandleException(Logger, exception.Message,exception);
+                ExceptionHandler.HandleException(Logger, exception.Message, exception);
             }
 
             TryCloseAsync();
