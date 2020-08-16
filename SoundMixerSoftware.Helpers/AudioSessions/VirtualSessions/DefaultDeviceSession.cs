@@ -15,7 +15,7 @@ using SoundMixerSoftware.Helpers.Utils;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 {
-    public class DefaultDeviceSession : IVirtualSession
+    public class DefaultDeviceSession : IVirtualSession, INotifyPropertyChanged
     {
         #region Constant
 
@@ -84,10 +84,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
             Mode = mode;
             DataFlow = dataFlow;
-            
-            UpdateDescription();
 
             Device = ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDefaultEndpoint(DataFlow, ERole));
+
+            UpdateDescription();
             
             SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
             SessionHandler.DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
@@ -150,6 +150,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                         }
                         break;
                 }
+                
+                DisplayName += $"({ComThread.Invoke(() => Device.FriendlyName)})";
                 OnPropertyChanged(nameof(DisplayName));
                 OnPropertyChanged(nameof(Image));
             });
@@ -224,6 +226,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             if (e.Role != ERole || e.DataFlow != DataFlow)
                 return;
             Device = ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDeviceNull(deviceId));
+            UpdateDescription();
         }
 
         #endregion
