@@ -12,6 +12,7 @@ using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
 using SoundMixerSoftware.Extensibility.Loader;
+using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.LocalSystem;
 using SoundMixerSoftware.Helpers.Utils;
@@ -81,7 +82,10 @@ namespace SoundMixerSoftware
             {
                 PluginLoader.ViewLoadingEvent();
                 TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
-                DisplayRootViewFor<MainViewModel>();
+                if (ConfigHandler.ConfigStruct.Application.HideOnStartup)
+                    IoC.Get<MainViewModel>();
+                else
+                    DisplayRootViewFor<MainViewModel>();
                 Logger.Info("Main view started.");
                 PluginLoader.ViewLoadedEvent();
             };
@@ -118,7 +122,7 @@ namespace SoundMixerSoftware
             _container.Singleton<SlidersViewModel>();
             _container.Singleton<PluginViewModel>();
             _container.Singleton<ButtonsViewModel>();
-            
+
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ExtensionAddViewModel>();
             _container.Singleton<ButtonAddViewModel>();
