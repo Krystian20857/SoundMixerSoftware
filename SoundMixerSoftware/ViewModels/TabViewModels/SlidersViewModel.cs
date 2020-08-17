@@ -155,6 +155,14 @@ namespace SoundMixerSoftware.ViewModels
             _windowManager.ShowDialogAsync(addViewModel);
         }
 
+        public void AddExtensionClick(object sender)
+        {
+            var model = sender as SliderModel;
+            var extensionViewModel = ExtensionAddViewModel.Instance;
+            extensionViewModel.SliderIndex = model.Index;
+            _windowManager.ShowDialogAsync(extensionViewModel);
+        }
+
         /// <summary>
         /// Occurs when Remove Button has Clicked.
         /// </summary>

@@ -122,6 +122,7 @@
     <Compile Include="Models\PluginModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\ISessionModel.cs" />
+    <Compile Include="Models\SectionModel.cs" />
     <Compile Include="Models\SliderModel.cs" />
     <Compile Include="Models\SystemThemeModel.cs" />
     <Compile Include="Models\TabModel.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="ViewModels\TaskbarIconViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ButtonAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\DeviceSettingsViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\ExtensionAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\PluginLoadViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
@@ -192,6 +194,9 @@
     </Compile>
     <Compile Include="Views\WindowViews\DeviceSettingsView.xaml.cs">
       <DependentUpon>DeviceSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowViews\ExtensionAddView.xaml.cs">
+      <DependentUpon>ExtensionAddView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowViews\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -249,6 +254,7 @@
     <Page Include="Views\TabViews\SlidersView.xaml" />
     <Page Include="Views\WindowViews\ButtonAddView.xaml" />
     <Page Include="Views\WindowViews\DeviceSettingsView.xaml" />
+    <Page Include="Views\WindowViews\ExtensionAddView.xaml" />
     <Page Include="Views\WindowViews\MainView.xaml" />
     <Page Include="Views\WindowViews\PluginLoadView.xaml" />
     <Page Include="Views\WindowViews\ProfileAddView.xaml" />

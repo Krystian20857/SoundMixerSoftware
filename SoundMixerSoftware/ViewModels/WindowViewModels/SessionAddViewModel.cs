@@ -301,39 +301,7 @@ namespace SoundMixerSoftware.ViewModels
         {
             if (SelectedSession == null)
                 return;
-            var profile = ProfileHandler.SelectedProfile;
-
-            if(profile.Sliders == null)
-                profile.Sliders = new List<SliderStruct>();
-            if(profile.Sliders.Count <= SliderIndex)
-                for(var n = profile.Sliders.Count; n < SliderIndex + 1; n++)
-                    profile.Sliders.Add(new SliderStruct());
-
-            try
-            {
-                var slider = SessionHandler.Sessions[SliderIndex];
-                if (slider.Any(x => x.ID == SelectedSession.ID))
-                {
-                    TryCloseAsync();
-                    return;
-                }
-
-                var virtualSession = SelectedSession.CreateSession(SliderIndex);
-                if (virtualSession == default)
-                {
-                    TryCloseAsync();
-                    return;
-                }
-                
-                var session = SessionHandler.AddSession(SliderIndex, virtualSession);
-                profile.Sliders[SliderIndex].Sessions.Add(session);
-                ProfileHandler.SaveSelectedProfile();
-            }
-            catch (Exception exception)
-            {
-                ExceptionHandler.HandleException(Logger, exception.Message, exception);
-            }
-
+            SessionUtils.AddSession(SliderIndex, SelectedSession.CreateSession(SliderIndex));
             TryCloseAsync();
         }
 

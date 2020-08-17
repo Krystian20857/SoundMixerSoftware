@@ -120,6 +120,7 @@ namespace SoundMixerSoftware
             _container.Singleton<ButtonsViewModel>();
             
             _container.Singleton<SessionAddViewModel>();
+            _container.Singleton<ExtensionAddViewModel>();
             _container.Singleton<ButtonAddViewModel>();
 
             _container.PerRequest<PluginLoadViewModel>();

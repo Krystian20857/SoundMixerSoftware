@@ -73,7 +73,7 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Padding="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="3">
-                                                    <Image Source="{Binding Path=Image}" ToolTip="{Binding Path=DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                                                    <Image Source="{Binding Path=Image}" ToolTip="{Binding Path=DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Border>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -101,6 +101,9 @@
                                         <Button cal:Message.Attach="[Click] = [Action AddClick($this)]"
                                                 Margin="5,2" Content="{materialDesign:PackIcon PencilPlus}"
                                                 ToolTip="Add" />
+                                        <Button cal:Message.Attach="[Click] = [Action AddExtensionClick($this)]"
+                                                Margin="5,2" Content="{materialDesign:PackIcon PencilPlusOutline}"
+                                                ToolTip="Add Extension" />
                                         <Button cal:Message.Attach="[Click] = [Action RemoveClick($this)]"
                                                 Margin="5,2"
                                                 Content="{materialDesign:PackIcon FlaskEmptyRemoveOutline}"

@@ -81,6 +81,7 @@
     <Compile Include="Threading\ProcessWatcherHandler.cs" />
     <Compile Include="Utils\ExceptionHandler.cs" />
     <Compile Include="Utils\ExtractedIcons.cs" />
+    <Compile Include="Utils\SessionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
