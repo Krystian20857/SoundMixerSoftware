@@ -2,9 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tb="http://www.hardcodet.net/taskbar"
                     xmlns:viewModels="clr-namespace:SoundMixerSoftware.ViewModels"
-                    xmlns:cal="http://www.caliburnproject.org">
+                    xmlns:cal="http://www.caliburnproject.org"
+                    xmlns:soundMixerSoftware="clr-namespace:SoundMixerSoftware">
     <tb:TaskbarIcon x:Key="TaskbarIcon" Style="{x:Null}" IconSource="{StaticResource SpeakerIcon}">
-        <tb:TaskbarIcon.TrayToolTip >
+        <tb:TaskbarIcon.TrayToolTip>
             <Border BorderBrush="#4f4f4f" Background="#4f4f4f" BorderThickness="3" CornerRadius="3">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="GhostWhite">Sound Mixer Software</TextBlock>
             </Border>
@@ -13,24 +14,46 @@
             <ContextMenu Style="{x:Null}">
                 <MenuItem Style="{x:Null}" Header="Show Window" cal:Message.Attach="ShowWindow">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="{StaticResource ListImage}"/>
+                        <Image Width="16" Height="16" Source="{StaticResource ListImage}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator></Separator>
+                
+                <MenuItem StaysOpenOnClick="True" Style="{x:Null}" Header="{Binding Path=ProfileName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=Profiles}">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ProfileImage}" />
+                    </MenuItem.Icon>
+                    <MenuItem.ContextMenu>
+                        <ContextMenu Style="{x:Null}" ItemsSource="{Binding Path=Profiles}">
+                        </ContextMenu>
+                    </MenuItem.ContextMenu>
+                    
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <MenuItem IsCheckable="true" Style="{x:Null}"
+                                    Header="{Binding Path=ProfileName, UpdateSourceTrigger=PropertyChanged}"
+                                    IsChecked="{Binding Path=Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            </MenuItem>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
+                
+                <Separator/>
                 <MenuItem Style="{x:Null}" Header="Restart App" cal:Message.Attach="RestartApp">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="{StaticResource RestartImage}"/>
+                        <Image Width="16" Height="16" Source="{StaticResource RestartImage}" />
                     </MenuItem.Icon>
                 </MenuItem>
+                
                 <MenuItem Style="{x:Null}" Header="Exit App" cal:Message.Attach="ExitApp">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="{StaticResource ExitImage}"/>
+                        <Image Width="16" Height="16" Source="{StaticResource ExitImage}" />
                     </MenuItem.Icon>
                 </MenuItem>
+                
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>
         <tb:TaskbarIcon.DataContext>
-            <viewModels:TaskbarIconViewModel/>
+            <viewModels:TaskbarIconViewModel />
         </tb:TaskbarIcon.DataContext>
     </tb:TaskbarIcon>
 </ResourceDictionary>

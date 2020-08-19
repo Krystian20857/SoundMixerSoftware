@@ -43,6 +43,7 @@
     <Compile Include="AudioSessions\VirtualSessions\DefaultDeviceMode.cs" />
     <Compile Include="AudioSessions\VirtualSessions\DefaultDeviceSession.cs" />
     <Compile Include="AudioSessions\VirtualSessions\DeviceSession.cs" />
+    <Compile Include="AudioSessions\VirtualSessions\ForegroundSession.cs" />
     <Compile Include="AudioSessions\VirtualSessions\VirtualSession.cs" />
     <Compile Include="Buttons\ButtonHandler.cs" />
     <Compile Include="Buttons\Functions\KeystrokeFunction.cs" />

@@ -81,6 +81,7 @@ namespace SoundMixerSoftware
             _starter.StartApplication += (sender, args) =>
             {
                 PluginLoader.ViewLoadingEvent();
+                IoC.Get<TaskbarIconViewModel>();
                 TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
                 if (ConfigHandler.ConfigStruct.Application.HideOnStartup)
                     IoC.Get<MainViewModel>();
@@ -122,12 +123,15 @@ namespace SoundMixerSoftware
             _container.Singleton<SlidersViewModel>();
             _container.Singleton<PluginViewModel>();
             _container.Singleton<ButtonsViewModel>();
-
+            
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ExtensionAddViewModel>();
             _container.Singleton<ButtonAddViewModel>();
 
+            _container.Singleton<ProfileAddViewModel>();
+            _container.PerRequest<DeviceSettingsViewModel>();
             _container.PerRequest<PluginLoadViewModel>();
+            _container.PerRequest<UsbManagerViewModel>();
 
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();

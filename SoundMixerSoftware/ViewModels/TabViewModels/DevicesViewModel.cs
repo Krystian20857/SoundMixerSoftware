@@ -125,7 +125,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void ManagerClick()
         {
-            var usbManager = new UsbManagerViewModel();
+            var usbManager = UsbManagerViewModel.Instance;
             _windowManager.ShowDialogAsync(usbManager);
         }
 
@@ -144,7 +144,7 @@ namespace SoundMixerSoftware.ViewModels
         public void SettingsClick(object sender)
         {
             var deviceModel = sender as DeviceModel;
-            var settingsManager = new DeviceSettingsViewModel();
+            var settingsManager = DeviceSettingsViewModel.Instance;
             settingsManager.Device = deviceModel;
             _windowManager.ShowDialogAsync(settingsManager);
         }

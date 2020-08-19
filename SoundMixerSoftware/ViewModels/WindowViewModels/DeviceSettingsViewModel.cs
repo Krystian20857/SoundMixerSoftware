@@ -16,6 +16,8 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
+        public static DeviceSettingsViewModel Instance => IoC.Get<DeviceSettingsViewModel>();
+
         public DeviceModel Device
         {
             get => _device;

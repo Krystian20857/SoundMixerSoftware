@@ -18,6 +18,8 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Public Properties
 
+        public static UsbManagerViewModel Instance = IoC.Get<UsbManagerViewModel>();
+
         /// <summary>
         /// Available USB ids(vid, pid)
         /// </summary>

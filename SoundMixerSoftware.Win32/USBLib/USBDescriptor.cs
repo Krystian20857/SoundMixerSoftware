@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using NLog;
-using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Enum;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Interop.Struct;
@@ -165,7 +164,7 @@ namespace SoundMixerSoftware.Win32.USBLib
 
                                         var data = new StringBuilder(BUFFER_SIZE);
                                         var size = (uint) data.Capacity;
-                                        var result = Setupapi.RegQueryValueEx(deviceRegKey, "PortName", 0,
+                                        var result = Advapi.RegQueryValueEx(deviceRegKey, "PortName", 0,
                                             out var type, data, ref size);
                                         if ((WinErrors) result == WinErrors.ERROR_SUCCESS)
                                         {

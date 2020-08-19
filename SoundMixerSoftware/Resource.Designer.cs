@@ -83,6 +83,16 @@ namespace SoundMixerSoftware {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ProfileImage {
+            get {
+                object obj = ResourceManager.GetObject("ProfileImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap RestartImage {
             get {
                 object obj = ResourceManager.GetObject("RestartImage", resourceCulture);

@@ -13,8 +13,8 @@ namespace SoundMixerSoftware.Models
     {
         #region Private Fields
 
-        private bool _selected = false;
-        
+        private bool _selected;
+
         #endregion
         
         #region Public Properties
@@ -46,10 +46,24 @@ namespace SoundMixerSoftware.Models
             set
             {
                 _selected = value;
+                ProfileHandler.OnProfileChanged(Guid);
                 OnPropertyChanged(nameof(Selected));
             }
         }
 
+        #endregion
+        
+        #region Constructor
+
+        public ProfileModel()
+        {
+            ProfileHandler.ProfileChanged += (sender, args) =>
+            {
+                _selected = args.Uuid == Guid;
+                OnPropertyChanged(nameof(Selected));
+            };
+        }
+        
         #endregion
         
         #region Public Methods

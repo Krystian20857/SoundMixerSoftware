@@ -24,7 +24,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
                 var shellItem = Shell32.SHCreateItemInKnownFolder(FolderId.AppsFolderUUID, KF.KF_FLAG_DONT_VERITY, appId, typeof(IShellItem2).GUID);
                 return shellItem.GetString(ref PropertyKeys.PKEY_ItemNameDisplay);
             }
-            catch (COMException)
+            catch (Exception)
             {
                 return string.Empty;
             }

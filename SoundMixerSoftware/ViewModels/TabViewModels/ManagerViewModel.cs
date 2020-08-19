@@ -103,8 +103,8 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="e"></param>
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
-            foreach (var profile in Profiles)
-                profile.Selected = profile.Guid == e.Uuid;
+            //foreach (var profile in Profiles)
+                //profile.Selected = profile.Guid == e.Uuid;
         }
         
         /// <summary>
@@ -114,7 +114,8 @@ namespace SoundMixerSoftware.ViewModels
         public void SelectClick(object sender)
         {
             var model = sender as ProfileModel;
-            ProfileHandler.OnProfileChanged(model.Guid);
+            if (!model.Selected)
+                model.Selected = true;
         }
         
         /// <summary>
@@ -139,6 +140,7 @@ namespace SoundMixerSoftware.ViewModels
             var model = sender as ProfileModel;
             Profiles.Remove(model);
             ProfileHandler.ProfileManager.Remove(model.Guid);
+            ProfileHandler.OnProfileRemoved(model.Guid);
             ConfigHandler.ConfigStruct.Application.ProfilesOrder.Remove(model.Guid);
             ConfigHandler.SaveConfig();
         }
@@ -155,6 +157,7 @@ namespace SoundMixerSoftware.ViewModels
             if (model.IsInitialized())
             {
                 Profiles.Add(model);
+                ProfileHandler.OnProfileCreated(model.Guid);
                 ConfigHandler.ConfigStruct.Application.ProfilesOrder.Add(model.Guid);
                 ConfigHandler.SaveConfig();
             }

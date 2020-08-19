@@ -4,4 +4,5 @@
     <BitmapImage x:Key="RestartImage" UriSource="../Resources/RestartImage.png"/>
     <BitmapImage x:Key="ExitImage" UriSource="../Resources/ExitImage.png"/>
     <BitmapImage x:Key="ListImage" UriSource="../Resources/ListImage.png"/>
+    <BitmapImage x:Key="ProfileImage" UriSource="../Resources/ProfileImage.png"/>
 </ResourceDictionary>

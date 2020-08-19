@@ -27,7 +27,10 @@ namespace SoundMixerSoftware.Helpers.Profile
         /// Occurs when selected profile has changed.
         /// </summary>
         public static event EventHandler<ProfileChangedEventArgs> ProfileChanged;
-        
+
+        public static event EventHandler<ProfileChangedEventArgs> ProfileCreated;
+        public static event EventHandler<ProfileChangedEventArgs> ProfileRemoved;
+
         private static void OnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
             SelectedGuid = e.Uuid;
@@ -35,7 +38,7 @@ namespace SoundMixerSoftware.Helpers.Profile
             ConfigHandler.ConfigStruct.Application.SelectedProfile = e.Uuid;
             ConfigHandler.SaveConfig();
         }
-        
+
         #endregion
         
         #region Constructor
@@ -58,6 +61,16 @@ namespace SoundMixerSoftware.Helpers.Profile
         {
             SelectedGuid = uuid;
             ProfileChanged?.Invoke(null, new ProfileChangedEventArgs(uuid));
+        }
+
+        public static void OnProfileCreated(Guid uuid)
+        {
+            ProfileCreated?.Invoke(null, new ProfileChangedEventArgs(uuid));
+        }
+        
+        public static void OnProfileRemoved(Guid uuid)
+        {
+            ProfileRemoved?.Invoke(null, new ProfileChangedEventArgs(uuid));
         }
 
         /// <summary>
