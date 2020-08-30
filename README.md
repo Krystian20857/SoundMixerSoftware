@@ -14,6 +14,7 @@ Currently software has some annoying bug which will be fixed in future. About kn
 ## Features
 * Full volume control of application, devices, and default devices.
 * Fully customizable volume sliders.
+* Volume control of currently focused window with audio session.
 * Profile system.
 * Multiple buttons functions as: muting, media functions, keystroke, textentry.
 * Multiple device support.
