@@ -51,7 +51,9 @@
       <Compile Include="Interop\Enum\DIREG.cs" />
       <Compile Include="Interop\Enum\GPS.cs" />
       <Compile Include="Interop\Enum\GWL.cs" />
+      <Compile Include="Interop\Enum\NtStatus.cs" />
       <Compile Include="Interop\Enum\ProcessAccessFlags.cs" />
+      <Compile Include="Interop\Enum\PROCESSINFOCLASS.cs" />
       <Compile Include="Interop\Enum\REGKEYSECURITY.cs" />
       <Compile Include="Interop\Enum\SFGAO.cs" />
       <Compile Include="Interop\Enum\SICHINT.cs" />
@@ -66,12 +68,16 @@
       <Compile Include="Interop\Method\Advapi.cs" />
       <Compile Include="Interop\Method\Gdi32.cs" />
       <Compile Include="Interop\Method\Kernel32.cs" />
+      <Compile Include="Interop\Method\Ntdll.cs" />
+      <Compile Include="Interop\Method\Psapi.cs" />
       <Compile Include="Interop\Method\Setupapi.cs" />
       <Compile Include="Interop\Method\Shell32.cs" />
       <Compile Include="Interop\Method\User32.cs" />
       <Compile Include="Interop\Method\UxTheme.cs" />
       <Compile Include="Interop\Struct\DEV_BROADCASR_HDR.cs" />
       <Compile Include="Interop\Struct\DEV_BROADCAST_DEVICEINTERFACE.cs" />
+      <Compile Include="Interop\Struct\PROCESS_BASIC_INFORMATION.cs" />
+      <Compile Include="Interop\Struct\PROCESS_EXTENDED_BASIC_INFORMATION.cs" />
       <Compile Include="Interop\Struct\PROPERTYKEY.cs" />
       <Compile Include="Interop\Struct\PropVariant.cs" />
       <Compile Include="Interop\Struct\SP_DEVINFO_DATA.cs" />
@@ -87,6 +93,7 @@
       <Compile Include="Wrapper\KeyWrapper.cs" />
       <Compile Include="Wrapper\MediaControl.cs" />
       <Compile Include="Wrapper\NativeWindowWrapper.cs" />
+      <Compile Include="Wrapper\ProcessWrapper.cs" />
       <Compile Include="Wrapper\SystemVersion.cs" />
       <Compile Include="Wrapper\ThemeWrapper.cs" />
       <Compile Include="Wrapper\WindowWrapper.cs" />

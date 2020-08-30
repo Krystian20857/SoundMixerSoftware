@@ -59,6 +59,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.RegisterCreator(VirtualSession.KEY, new VirtualSessionCreator());
             SessionHandler.RegisterCreator(DeviceSession.KEY, new DeviceSessionCreator());
             SessionHandler.RegisterCreator(DefaultDeviceSession.KEY, new DefaultDeviceSessionCreator());
+            SessionHandler.RegisterCreator(ForegroundSession.KEY, new ForegroundSessionCreator());
             
             ConverterHandler.RegisterCreator("log_converter", new LogConverterCreator());
 

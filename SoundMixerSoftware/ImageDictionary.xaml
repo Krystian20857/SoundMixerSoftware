@@ -5,4 +5,5 @@
     <BitmapImage x:Key="ExitImage" UriSource="../Resources/ExitImage.png"/>
     <BitmapImage x:Key="ListImage" UriSource="../Resources/ListImage.png"/>
     <BitmapImage x:Key="ProfileImage" UriSource="../Resources/ProfileImage.png"/>
+    <BitmapImage x:Key="CogIcon" UriSource="../Resources/CogIcon.png"/>
 </ResourceDictionary>

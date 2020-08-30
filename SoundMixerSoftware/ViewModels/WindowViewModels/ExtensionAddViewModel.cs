@@ -24,11 +24,13 @@ namespace SoundMixerSoftware.ViewModels
 
         public ExtensionAddViewModel()
         {
-            AddSection(new SectionModel
+            var defaultSection = new SectionModel
             {
                 Id = "default",
                 Name = "Default Extension"
-            });
+            };
+            defaultSection.Sessions.Add(new ForegroundSessionModel());
+            AddSection(defaultSection);
         }
 
         #endregion

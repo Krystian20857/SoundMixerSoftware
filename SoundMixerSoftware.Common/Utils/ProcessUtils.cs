@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System;
+using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Common.Utils
 {
@@ -12,7 +12,7 @@ namespace SoundMixerSoftware.Common.Utils
         /// <returns></returns>
         public static bool IsAlive(int pid)
         {
-            return Process.GetProcesses().Any(x => x.Id == pid);
+            return Array.Exists(ProcessWrapper.EnumProcesses(), u => u == pid);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Helpers.Profile;
@@ -173,6 +174,20 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             if (Sessions[index].Count == 0)
                 return false;
             return Sessions[index].Any(slider => slider.State == SessionState.ACTIVE);
+        }
+    
+        /// <summary>
+        /// Gets all session from devices.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<AudioSessionControl> GetAllSessions()
+        {
+            foreach (var sessionEnum in SessionEnumerators.Values)
+            {
+                var sessions = sessionEnum.AudioSessions;
+                for (var n = 0; n < sessions.Count; n++)
+                    yield return sessions[n];
+            }
         }
         
         #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 using NAudio.CoreAudioApi;
+using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
 
@@ -90,6 +91,17 @@ namespace SoundMixerSoftware.Models
         }
         
         #endregion
+    }
+    
+    public class ForegroundSessionModel : ISessionModel
+    {
+        public string ID { get; set; } = "B0BA17A8-0CC4-458E-90F4-385794DE41FC";
+        public string Name { get; set; } = "Foreground Session";
+        public ImageSource Image { get; set; } = Resource.CogIcon.ToImageSource();
+        public IVirtualSession CreateSession(int sliderIndex)
+        {
+            return new ForegroundSession(sliderIndex, Guid.NewGuid());
+        }
     }
     
 }

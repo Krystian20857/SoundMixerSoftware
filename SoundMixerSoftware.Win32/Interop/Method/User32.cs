@@ -122,5 +122,7 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         
         [DllImport("user32.dll")]
         public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
     }
 }

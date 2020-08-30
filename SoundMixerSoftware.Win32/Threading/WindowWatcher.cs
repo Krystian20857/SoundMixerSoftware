@@ -1,19 +1,23 @@
-﻿using System;
-using System.Linq;
-using System.Net.Mime;
-using System.Reflection;
-using System.Windows.Forms;
-using SoundMixerSoftware.Win32.Interop.Constant;
+﻿﻿using System;
+ using NLog;
+ using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.Interop.Method;
-using SoundMixerSoftware.Win32.Wrapper;
+ using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Win32.Threading
+ namespace SoundMixerSoftware.Win32.Threading
 {
     public class WindowWatcher: IDisposable
     {
+        #region Logger
+
+        public static Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Fields
         
-        private IntPtr hookPtr;
+        private readonly IntPtr hookPtr;
+        private readonly User32.WinEventDelegate _winEventDelegate;
         
         #endregion
         
@@ -23,6 +27,10 @@ namespace SoundMixerSoftware.Win32.Threading
         /// Occurs when foreground window has changed.
         /// </summary>
         public event EventHandler<WindowChangedArgs> ForegroundWindowChanged;
+        /// <summary>
+        /// Occurs when window name has changed.
+        /// </summary>
+        public event EventHandler<WindowNameChangedArgs> WindowNameChanged;
 
         #endregion
         
@@ -30,8 +38,12 @@ namespace SoundMixerSoftware.Win32.Threading
 
         public WindowWatcher()
         {
-            hookPtr = User32.SetWinEventHook(WIN_EVENT.EVENT_SYSTEM_FOREGROUND, WIN_EVENT.EVENT_SYSTEM_FOREGROUND,
-                IntPtr.Zero, WinEvent, 0, 0, WIN_EVENT.WINEVENT_OUTOFCONTEXT);
+            _winEventDelegate = new User32.WinEventDelegate(WinEvent);   
+            //fixes null exception in application message loop. turning off code optimization will work either.
+            GC.KeepAlive(_winEventDelegate);                                
+            
+            hookPtr = User32.SetWinEventHook(WIN_EVENT.EVENT_OBJECT_FOCUS, WIN_EVENT.EVENT_OBJECT_NAMECHANGE,
+                IntPtr.Zero, _winEventDelegate, 0, 0, WIN_EVENT.WINEVENT_OUTOFCONTEXT);
         }
         
         #endregion
@@ -40,13 +52,16 @@ namespace SoundMixerSoftware.Win32.Threading
 
         private void WinEvent(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if (hWinEventHook != hookPtr)
+            if(hWinEventHook != hookPtr)
                 return;
+            var threadId = (int) User32.GetWindowThreadProcessId(hwnd, out var processId);
             switch (eventType)
             {
-                case WIN_EVENT.EVENT_SYSTEM_FOREGROUND:
-                    var threadId = (int)User32.GetWindowThreadProcessId(hwnd, out var processId);
+                case WIN_EVENT.EVENT_OBJECT_FOCUS:
                     ForegroundWindowChanged?.Invoke(this, new WindowChangedArgs(hwnd, processId, threadId));
+                    break;
+                case WIN_EVENT.EVENT_OBJECT_NAMECHANGE:
+                    WindowNameChanged?.Invoke(this, new WindowNameChangedArgs(hwnd, processId, threadId, WindowWrapper.GetWindowTitle(hwnd)));
                     break;
             }
         }
@@ -75,6 +90,20 @@ namespace SoundMixerSoftware.Win32.Threading
             Handle = handle;
             ProcessId = processId;
             ThreadId = threadId;
+        }
+    }
+
+    public class WindowNameChangedArgs : WindowChangedArgs
+    {
+        public string WindowName { get; set; }
+
+        public WindowNameChangedArgs(IntPtr handle, int processId, int threadId) : base(handle, processId, threadId)
+        {
+        }
+
+        public WindowNameChangedArgs(IntPtr handle, int processId, int threadId, string windowName) : base(handle, processId, threadId)
+        {
+            WindowName = windowName;
         }
     }
 }
