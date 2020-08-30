@@ -42,7 +42,11 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public int Index { get; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
-        public SessionState State { get; set; }
+        public SessionState State
+        {
+            get => HasActiveSession ? SessionState.ACTIVE : SessionState.EXITED; 
+            set { }
+        }
 
         public float Volume
         {
@@ -85,8 +89,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             WindowWatcherOnForegroundWindowChanged(_windowWatcher, new WindowChangedArgs(window, processId, (int)threadId));
 
             foreach (var sessionEnum in SessionHandler.SessionEnumerators.Values)
+            {
                 sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
-            
+            }
+
             SessionHandler.DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
             _windowWatcher.ForegroundWindowChanged += WindowWatcherOnForegroundWindowChanged;
             _windowWatcher.WindowNameChanged += WindowWatcherOnWindowNameChanged;
@@ -160,7 +166,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 UpdateDescription();
             }
         }
-        
+
         #endregion
         
         #region Private Methods
@@ -193,6 +199,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                     for (var n = 0; n < Sessions.Count; n++)
                         Sessions[n].SimpleAudioVolume.Volume = volume;
                 });
+                if (HasActiveSession)
+                    VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
             }finally{}
         }
         
@@ -205,6 +213,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                     for (var n = 0; n < Sessions.Count; n++)
                         Sessions[n].SimpleAudioVolume.Mute = mute;
                 });
+                if (HasActiveSession)
+                    MuteChanged?.Invoke(this, new MuteChangedArgs(mute, false, Index));
             }finally{}
         }
 
