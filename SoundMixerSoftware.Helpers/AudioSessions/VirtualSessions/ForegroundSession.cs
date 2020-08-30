@@ -64,7 +64,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Public Properties
 
-        public List<AudioSessionControl> Sessions { get; private set; }
+        public List<AudioSessionControl> Sessions { get; private set; } = new List<AudioSessionControl>();
         public IntPtr WindowHandle { get; private set; }
         public bool HasActiveSession => Sessions.Count > 0;
 
@@ -139,9 +139,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var window = User32.GetForegroundWindow();
             var processId = e.GetProcessID;
-            Debug.WriteLine($"Audio processId: {processId}");
             var windowThreadId = User32.GetWindowThreadProcessId(window, out var windowProcessId);
-            Debug.WriteLine($"Window process Id: {windowProcessId}");
 
             if (ProcessWrapper.GetParentProcess(processId) == windowProcessId || windowProcessId == processId)
             {
@@ -149,7 +147,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 Sessions.Add(e);
                 UpdateDescription();
             }
-            Debug.WriteLine("Done");
         }
         
         private void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)

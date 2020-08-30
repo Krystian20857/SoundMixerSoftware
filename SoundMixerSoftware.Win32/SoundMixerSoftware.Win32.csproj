@@ -81,6 +81,7 @@
       <Compile Include="Interop\Struct\PROPERTYKEY.cs" />
       <Compile Include="Interop\Struct\PropVariant.cs" />
       <Compile Include="Interop\Struct\SP_DEVINFO_DATA.cs" />
+      <Compile Include="Properties\AssemblyInfo.cs" />
       <Compile Include="Threading\WindowWatcher.cs" />
       <Compile Include="Threading\IProcessWatcher.cs" />
       <Compile Include="Threading\ProcessWatcher.cs" />
