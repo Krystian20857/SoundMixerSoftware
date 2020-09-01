@@ -282,15 +282,20 @@ namespace SoundMixerSoftware.ViewModels
         /// <param name="session"></param>
         private void AddSession(AudioSessionControl session)
         {
-            if (!ProcessUtils.IsAlive((int) session.GetProcessID))
+            var sessionId = session.GetSessionIdentifier;
+            if(Sessions.Any(x => x.ID == sessionId))
                 return;
-            var process = Process.GetProcessById((int) session.GetProcessID);
+
+            var processId = (int)session.GetProcessID;
+            if (!ProcessUtils.IsAlive(processId))
+                return;
+            var process = Process.GetProcessById(processId);
 
             Sessions.Add(new AudioSessionModel
             {
                 Name = process.GetPreciseName(),
                 Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource(),
-                ID = session.GetSessionIdentifier,
+                ID = sessionId,
             });
         }
 

@@ -203,26 +203,23 @@ namespace SoundMixerSoftware.Common.AudioLib
             for (var n = 0; n < sessions.Count; n++)
             {
                 var session = sessions[n];
-                try
-                {
-                    if (!ProcessUtils.IsAlive((int) session.GetProcessID))
-                    {
-                        session.Dispose();
-                        continue;
-                    }
 
-                    if (session.GetSessionIdentifier.Equals(sessionId, StringComparison.InvariantCultureIgnoreCase))
-                        return session;
-                }
-                catch (Exception exception)
-                {
-                    if(exception is COMException)
-                        Logger.Error($"Last win32 error:{Marshal.GetLastWin32Error()}");
-                    Logger.Error(exception);
-                }
+                if (session.GetSessionIdentifier == sessionId)
+                    return session;
             }
 
             return null;
+        }
+
+        public IEnumerable<AudioSessionControl> GetSessions(string sessionId)
+        {
+            var sessions = AudioSessions;
+            for (var n = 0; n < sessions.Count; n++)
+            {
+                var session = sessions[n];
+                if (session.GetSessionIdentifier == sessionId)
+                    yield return session;
+            }
         }
 
         /// <summary>

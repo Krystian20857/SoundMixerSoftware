@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -11,8 +11,10 @@ using NAudio.CoreAudioApi;
 using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Threading.Com;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 {
@@ -43,7 +45,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public int Index { get; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
-        public SessionState State { get; set; }
+
+        public SessionState State
+        {
+            get => Sessions.Count > 0 ? SessionState.ACTIVE : SessionState.EXITED;
+            set{}
+        }
+
         public float Volume
         {
             get => GetVolumeInternal();
@@ -63,7 +71,18 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public string DeviceId { get; }
         public string RawName { get; set; }
         public string DeviceName { get; set; }
-        public AudioSessionControl SessionControl { get; set; }
+        
+        public List<AudioSessionControl> Sessions { get; } = new List<AudioSessionControl>();
+        //we assume volume of all sessions is the same and host process also.
+        //this part is a bit tricky... audio sessions with the same id can be(but dont have to) hosted by the same process if process exits exit event of session occurs multiple times.
+        //application would think tah audio process exits multiple times. UpdateDescription methods uses State property witch is defined by count of session controls in
+        //Sessions collection. it means that UpdateDescription will think that session process is still alive and try to get image which can throw exception.
+        //checking is 'main' audio session process is alive each time we want to get information may be quite inefficient but at this time i cannot solve this issue by other methods.
+        //***IsAlive methods uses native methods to enumerate and determine is process is alive. I decided to use this only because of that.
+        //
+        //USE THIS PROPERTY ONLY IF IT IS NECESSARY 
+        //
+        public AudioSessionControl FirstSession => Sessions.FirstOrDefault(x => ProcessUtils.IsAlive((int)x.GetProcessID));
 
         #endregion
         
@@ -91,20 +110,18 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             if (SessionHandler.SessionEnumerators.ContainsKey(DeviceId))
             {
                 var sessionEnum = SessionHandler.SessionEnumerators[DeviceId];
-                SessionControl = sessionEnum.GetById(sessionId);
+                Sessions.AddRange(sessionEnum.GetSessions(sessionId));
                 sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
                 sessionEnum.SessionExited += SessionEnumOnSessionExited;
             
                 sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
             }
 
-            if (SessionControl == null)
-                State = SessionState.EXITED;
-            else
+            if (State == SessionState.ACTIVE)
             {
-                State = SessionState.ACTIVE;
-                lastMute = SessionControl.SimpleAudioVolume.Mute;
-                lastVolume = SessionControl.SimpleAudioVolume.Volume;
+                var session = FirstSession;
+                lastMute = session.SimpleAudioVolume.Mute;
+                lastVolume = session.SimpleAudioVolume.Volume;
             }
 
             UpdateDescription();
@@ -135,9 +152,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             {
                 try
                 {
-                    if (State == SessionState.ACTIVE && SessionControl != null)
+                    var session = FirstSession;
+                    if (State == SessionState.ACTIVE && session != default)
                     {
-                        using (var process = Process.GetProcessById((int) SessionControl.GetProcessID))
+                        using (var process = Process.GetProcessById((int) session.GetProcessID))
                             Image = process.GetMainWindowIcon().ToImageSource();
                         DisplayName = $"{RawName} - {DeviceName}";
                     }
@@ -165,8 +183,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             var sessionId = e.GetSessionIdentifier;
             if(sessionId != ID)
                 return;
-            SessionControl = e;
-            State = SessionState.ACTIVE;
+            Sessions.Add(e);
             UpdateDescription();
         }
         
@@ -174,8 +191,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             if(sessionId != ID)
                 return;
-            SessionControl = null;
-            State = SessionState.EXITED;
+            RemoveSession(sender as AudioSessionControl);
             UpdateDescription();
         }
         
@@ -184,7 +200,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             var deviceId = sender as string;
             if (deviceId != DeviceId)
                 return;
-            State = SessionState.EXITED;
+            Sessions.Clear();
             UpdateDescription();
         }
 
@@ -202,7 +218,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             sessionEnum.SessionExited += SessionEnumOnSessionExited;
             sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
 
-            SessionControl = sessionEnum.GetById(ID);
+            Sessions.Clear();
+            Sessions.AddRange(sessionEnum.GetSessions(ID));
 
             State = SessionState.ACTIVE;
             UpdateDescription();
@@ -236,38 +253,58 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         internal void SetVolumeInternal(float volume)
         {
-            if(State != SessionState.ACTIVE || SessionControl == null)
+            if(State != SessionState.ACTIVE)
                 return;
             try
             {
-                ComThread.BeginInvoke(() => SessionControl.SimpleAudioVolume.Volume = volume);
+                ComThread.BeginInvoke(() => ForAll(x => x.SimpleAudioVolume.Volume = volume));
             }
             finally { }
         }
 
         internal void SetMuteInternal(bool mute)
         {
-            if(State != SessionState.ACTIVE || SessionControl == null)
+            if(State != SessionState.ACTIVE)
                 return;
             try
             {
-                ComThread.BeginInvoke(() => SessionControl.SimpleAudioVolume.Mute = mute);
+                ComThread.BeginInvoke(() => ForAll(x => x.SimpleAudioVolume.Mute = mute));
             }
             finally { }
         }
 
         internal float GetVolumeInternal()
         {
-            if(State != SessionState.ACTIVE || SessionControl == null)
-                return 0;
-            return ComThread.Invoke(() => SessionControl.SimpleAudioVolume.Volume);
+            return ComThread.Invoke(() =>
+            {
+                if(State != SessionState.ACTIVE)
+                    return 0;
+                return Sessions[0].SimpleAudioVolume.Volume;
+            });
         }
 
         internal bool GetMuteInternal()
         {
-            if(State != SessionState.ACTIVE || SessionControl == null)
-                return false;
-            return ComThread.Invoke(() => SessionControl.SimpleAudioVolume.Mute);
+            return ComThread.Invoke(() =>
+            {
+                if(State != SessionState.ACTIVE)
+                    return false;
+                return Sessions[0].SimpleAudioVolume.Mute;
+            });
+        }
+        
+        private void RemoveSession(AudioSessionControl session)
+        {
+            var instanceId = session.GetSessionInstanceIdentifier;
+            var itemToRemove = Sessions.FirstOrDefault(x => x.GetSessionInstanceIdentifier == instanceId);
+            if (itemToRemove == default) return;
+            Sessions.Remove(itemToRemove);
+        }
+
+        private void ForAll(Action<AudioSessionControl> session)
+        {
+            for (var n = 0; n < Sessions.Count; n++)
+                session(Sessions[n]);
         }
         
         #endregion
