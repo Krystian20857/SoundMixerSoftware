@@ -30,6 +30,9 @@
       <WarningLevel>4</WarningLevel>
       <OutputPath>bin\Debug\</OutputPath>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
+      <OutputPath>bin\BuildInstaller\</OutputPath>
+    </PropertyGroup>
     <ItemGroup>
       <Compile Include="AudioLib\AudioSessionEventClient.cs" />
       <Compile Include="AudioLib\DeviceEnumerator.cs" />

@@ -35,6 +35,22 @@
     <OutputPath>bin\Debug\</OutputPath>
     <Prefer32bit>true</Prefer32bit>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)installer/release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32bit>true</Prefer32bit>
+    <AllowedReferenceRelatedFileExtensions>-</AllowedReferenceRelatedFileExtensions>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <Target Name="BuildInstaller" AfterTargets="AfterBuild" Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
+    <Exec WorkingDirectory="$(SolutionDir)installer" Command="cmd /c $(SolutionDir)installer\make-installer.cmd"/>
+  </Target>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources/SpeakerIcon.ico</ApplicationIcon>

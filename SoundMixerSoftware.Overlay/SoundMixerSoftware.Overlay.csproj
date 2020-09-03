@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
     <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
+    <OutputPath>bin\BuildInstaller\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GameOverlay, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\GameOverlay.Net.4.2.0\lib\net47\GameOverlay.dll</HintPath>

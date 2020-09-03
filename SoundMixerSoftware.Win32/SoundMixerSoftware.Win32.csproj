@@ -31,6 +31,9 @@
       <WarningLevel>4</WarningLevel>
       <OutputPath>bin\Debug\</OutputPath>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
+      <OutputPath>bin\BuildInstaller\</OutputPath>
+    </PropertyGroup>
     <ItemGroup>
       <Compile Include="Interop\Constant\DBTDEVTYPE.cs" />
       <Compile Include="Interop\Constant\DBTEVENT.cs" />
