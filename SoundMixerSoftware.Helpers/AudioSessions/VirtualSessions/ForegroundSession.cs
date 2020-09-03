@@ -191,11 +191,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             try
             {
-                ComThread.BeginInvoke(() =>
-                {
-                    for (var n = 0; n < Sessions.Count; n++)
-                        Sessions[n].SimpleAudioVolume.Volume = volume;
-                });
+                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume));
                 if (HasActiveSession)
                     VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
             }finally{}
@@ -205,11 +201,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             try
             {
-                ComThread.BeginInvoke(() =>
-                {
-                    for (var n = 0; n < Sessions.Count; n++)
-                        Sessions[n].SimpleAudioVolume.Mute = mute;
-                });
+                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute));
                 if (HasActiveSession)
                     MuteChanged?.Invoke(this, new MuteChangedArgs(mute, false, Index));
             }finally{}

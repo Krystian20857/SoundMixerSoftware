@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -14,7 +15,6 @@ using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
-using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 {
@@ -230,7 +230,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             var session = sender as AudioSessionControl;
             if (session.GetSessionIdentifier != ID)
                 return;
-            
+
             var volume = e.Volume;
             var mute = e.Mute;
             
@@ -257,7 +257,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             try
             {
-                ComThread.BeginInvoke(() => ForAll(x => x.SimpleAudioVolume.Volume = volume));
+                ComThread.Invoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume));
             }
             finally { }
         }
@@ -268,7 +268,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             try
             {
-                ComThread.BeginInvoke(() => ForAll(x => x.SimpleAudioVolume.Mute = mute));
+                ComThread.Invoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute));
             }
             finally { }
         }
@@ -301,12 +301,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             Sessions.Remove(itemToRemove);
         }
 
-        private void ForAll(Action<AudioSessionControl> session)
-        {
-            for (var n = 0; n < Sessions.Count; n++)
-                session(Sessions[n]);
-        }
-        
         #endregion
         
         #region Property Changed

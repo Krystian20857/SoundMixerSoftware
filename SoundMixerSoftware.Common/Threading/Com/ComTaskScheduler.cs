@@ -29,15 +29,18 @@ namespace SoundMixerSoftware.Common.Threading.Com
         {
             _thread = new Thread(() =>
             {
+                //Thread.BeginCriticalRegion();
                 foreach (var task in _tasks.GetConsumingEnumerable())
                 {
                     TryExecuteTask(task);
                 }
+                //Thread.EndCriticalRegion();
 
                 Thread.CurrentThread.Join(1);
             }) {Priority = ThreadPriority.Highest, IsBackground = true};
             _thread.SetApartmentState(ApartmentState.STA);
             _thread.Name = "ComThread";
+            _thread.DisableComObjectEagerCleanup();
             
             _thread.Start();
         }
