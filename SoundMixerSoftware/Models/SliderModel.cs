@@ -255,6 +255,12 @@ namespace SoundMixerSoftware.Models
         
         public void Dispose()
         {
+            foreach (var session in Applications)
+            {
+                session.VolumeChange -= SessionOnVolumeChange;
+                session.MuteChanged -= SessionOnMuteChanged;
+                session.Dispose();
+            }
             GC.SuppressFinalize(this);
         }
 

@@ -242,6 +242,17 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         }
         
         #endregion
+
+        #region Dispose
+        
+        public void Dispose()
+        {
+            SessionHandler.DeviceEnumerator.DeviceVolumeChanged -= DeviceEnumeratorOnDeviceVolumeChanged;
+            SessionHandler.DeviceEnumerator.DefaultDeviceChange -= DeviceEnumeratorOnDefaultDeviceChange;
+            Device?.Dispose();
+        }
+        
+        #endregion
     }
 
     public class DefaultDeviceSessionCreator : IVirtualSessionCreator

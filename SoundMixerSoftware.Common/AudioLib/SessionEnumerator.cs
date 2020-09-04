@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
 using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Common.Threading.Com;
-using SoundMixerSoftware.Common.Utils;
 
 namespace SoundMixerSoftware.Common.AudioLib
 {
@@ -267,8 +265,12 @@ namespace SoundMixerSoftware.Common.AudioLib
             var exitHandler = new ExitHandler((int) session.GetProcessID, sessionId, ProcessWatcher);
             exitHandler.SessionExited += (exitSender, id) =>
             {
-                if (_sessions.ContainsKey(sessionId))
+                if (_sessions.TryGetValue(sessionId, out var session1))
+                {
                     _sessions.Remove(sessionId);
+                    session1.Dispose();
+                }
+
                 SessionExited?.Invoke(session, id);
             };
             _exitHandlers.Add(exitHandler);
@@ -278,7 +280,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         private void OnSessionCreated(object sender, IAudioSessionControl newsession)
         {
             var session = new AudioSessionControl(newsession);
-            RegisterEvents(session);
+            ComThread.Invoke(() => RegisterEvents(session));
             SessionCreated?.Invoke(_device, session);
         }
         #endregion
@@ -294,7 +296,6 @@ namespace SoundMixerSoftware.Common.AudioLib
             _sessions.Clear();
             
             _device.AudioSessionManager.Dispose();
-
             _device.Dispose();
             GC.SuppressFinalize(this);
         }

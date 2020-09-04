@@ -257,7 +257,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             try
             {
-                ComThread.Invoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume));
+                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume));
             }
             finally { }
         }
@@ -268,7 +268,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             try
             {
-                ComThread.Invoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute));
+                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute));
             }
             finally { }
         }
@@ -311,6 +311,27 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
+        #endregion
+        
+        #region Dispose
+
+        public void Dispose()
+        {
+            foreach (var session in Sessions)
+            {
+                session.Dispose();
+            }
+            
+            var device = SessionHandler.DeviceEnumerator.GetDeviceNull(DeviceId);
+            if (device == null)
+                return;
+            var sessionEnum = SessionHandler.SessionEnumerators[DeviceId];
+
+            sessionEnum.SessionCreated -= SessionEnumOnSessionCreated;
+            sessionEnum.SessionExited -= SessionEnumOnSessionExited;
+            sessionEnum.VolumeChanged -= SessionEnumOnVolumeChanged;
         }
         
         #endregion

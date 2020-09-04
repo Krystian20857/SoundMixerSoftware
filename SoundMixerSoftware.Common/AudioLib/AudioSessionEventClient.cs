@@ -11,7 +11,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         /// <summary>
         /// Current session.
         /// </summary>
-        private readonly AudioSessionControl _session;
+        private AudioSessionControl _session;
         
         #endregion
         
@@ -65,36 +65,50 @@ namespace SoundMixerSoftware.Common.AudioLib
         
         public void OnVolumeChanged(float volume, bool isMuted)
         {
+            if(_session == null)
+                return;
             VolumeChanged?.Invoke(_session, new VolumeChangedArgs(volume, isMuted, false));
         }
 
         public void OnDisplayNameChanged(string displayName)
         {
+            if(_session == null)
+                return;
             DisplayNameChanged?.Invoke(_session, displayName);
         }
 
         public void OnIconPathChanged(string iconPath)
         {
+            if(_session == null)
+                return;
             IconPathChanged?.Invoke(_session, iconPath);
         }
 
         public void OnChannelVolumeChanged(uint channelCount, IntPtr newVolumes, uint channelIndex)
         {
+            if(_session == null)
+                return;
             ChannelVolumeChanged?.Invoke(_session, new ChannelVolumeChangedArgs(channelCount, newVolumes, channelIndex));
         }
 
         public void OnGroupingParamChanged(ref Guid groupingId)
         {
+            if(_session == null)
+                return;
             GroupingParamChanged?.Invoke(_session, groupingId);
         }
 
         public void OnStateChanged(AudioSessionState state)
         {
+            if(_session == null)
+                return;
             StateChanged?.Invoke(_session, state);
         }
 
         public void OnSessionDisconnected(AudioSessionDisconnectReason disconnectReason)
         {
+            if(_session == null)
+                return;
             SessionDisconnected?.Invoke(_session, disconnectReason);
         }
         
@@ -103,6 +117,7 @@ namespace SoundMixerSoftware.Common.AudioLib
         public void Dispose()
         {
             _session?.Dispose();
+            _session = null;
         }
     }
 }

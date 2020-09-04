@@ -1,4 +1,6 @@
 ﻿﻿using System;
+ using System.Diagnostics;
+ using System.Runtime.CompilerServices;
  using NLog;
  using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.Interop.Method;
@@ -42,7 +44,7 @@ using SoundMixerSoftware.Win32.Interop.Method;
             //fixes null exception in application message loop. turning off code optimization will work either.
             GC.KeepAlive(_winEventDelegate);                                
             
-            hookPtr = User32.SetWinEventHook(WIN_EVENT.EVENT_OBJECT_FOCUS, WIN_EVENT.EVENT_OBJECT_NAMECHANGE,
+            hookPtr = User32.SetWinEventHook(WIN_EVENT.EVENT_SYSTEM_FOREGROUND, WIN_EVENT.EVENT_OBJECT_NAMECHANGE,
                 IntPtr.Zero, _winEventDelegate, 0, 0, WIN_EVENT.WINEVENT_OUTOFCONTEXT);
         }
         
@@ -52,12 +54,13 @@ using SoundMixerSoftware.Win32.Interop.Method;
 
         private void WinEvent(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if(hWinEventHook != hookPtr)
+            if(hWinEventHook != hookPtr || hwnd == IntPtr.Zero)
                 return;
             var threadId = (int) User32.GetWindowThreadProcessId(hwnd, out var processId);
             switch (eventType)
             {
                 case WIN_EVENT.EVENT_OBJECT_FOCUS:
+                case WIN_EVENT.EVENT_SYSTEM_FOREGROUND:
                     ForegroundWindowChanged?.Invoke(this, new WindowChangedArgs(hwnd, processId, threadId));
                     break;
                 case WIN_EVENT.EVENT_OBJECT_NAMECHANGE:

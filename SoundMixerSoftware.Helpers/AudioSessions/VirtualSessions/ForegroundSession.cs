@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Common.AudioLib;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Helpers.Annotations;
@@ -31,6 +30,9 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
         private WindowWatcher _windowWatcher = new WindowWatcher();
+        
+        private float lastVolume;                                               //for detecting volume/mute change
+        private bool lastMute;
 
         #endregion
         
@@ -69,7 +71,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public bool HasActiveSession => Sessions.Count > 0;
 
         #endregion
-        
+
         #region Implemented Events
         
         public event EventHandler<VolumeChangedArgs> VolumeChange;
@@ -91,6 +93,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             foreach (var sessionEnum in SessionHandler.SessionEnumerators.Values)
             {
                 sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
+                sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
             }
 
             SessionHandler.DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
@@ -119,19 +122,17 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var processId = (uint)e.ProcessId;
             var childProcesses = ProcessWrapper.GetChildProcesses(processId).ToList();
-            var audioSessions = new List<AudioSessionControl>();
 
+            Sessions.Clear();
             foreach (var session in SessionHandler.GetAllSessions())
             {
                 var sessionProcessId = session.GetProcessID;
                 if (childProcesses.Contains(sessionProcessId))
-                    audioSessions.Add(session);
+                    Sessions.Add(session);
             }
             
             WindowHandle = e.Handle;
-            
-            Sessions = audioSessions;
-            
+
             UpdateDescription();
         }
         
@@ -153,6 +154,30 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var sessionEnum = SessionHandler.SessionEnumerators[sender as string];
             sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
+            sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
+        }
+
+        private void SessionEnumOnVolumeChanged(object sender, Common.AudioLib.VolumeChangedArgs e)
+        {
+            var session = sender as AudioSessionControl;
+            var sessionId = session.GetSessionIdentifier;
+            if(Sessions.All(x => x.GetSessionIdentifier != sessionId))
+                return;
+            
+            var volume = e.Volume;
+            var mute = e.Mute;
+            
+            if (Math.Abs(volume - lastVolume) > 0.005)
+            {
+                VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
+                lastVolume = volume;
+            }
+
+            if (mute != lastMute)
+            {
+                MuteChanged?.Invoke(this, new MuteChangedArgs(e.Mute, false, Index));
+                lastMute = mute;
+            }
         }
         
         private void WindowWatcherOnWindowNameChanged(object sender, WindowNameChangedArgs e)
@@ -217,6 +242,15 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
+        #endregion
+        
+        #region Dispose
+
+        public void Dispose()
+        {
+            _windowWatcher?.Dispose();
         }
         
         #endregion

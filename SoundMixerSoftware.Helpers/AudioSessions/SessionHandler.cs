@@ -41,6 +41,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         
         public static void ReloadAll(){
 
+            foreach (var session in Sessions.SelectMany(x => x.ToList()))
+                session.Dispose();
             foreach(var sessionEnum in SessionEnumerators)
                 sessionEnum.Value.Dispose();
             SessionEnumerators.Clear();
@@ -106,6 +108,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static void RemoveSession(int index, int internalIndex)
         {
             var session = Sessions[index][internalIndex];
+            session.Dispose();
             SessionRemoved?.Invoke(null, new SessionArgs(index, internalIndex, session));
             Sessions[index].RemoveAt(internalIndex);
             
@@ -113,6 +116,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         
         public static void RemoveSession(int index, IVirtualSession session)
         {
+            session.Dispose();
             SessionRemoved?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
             Sessions[index].Remove(session);
         }

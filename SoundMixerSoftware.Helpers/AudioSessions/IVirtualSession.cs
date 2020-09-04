@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions
 {
-    public interface IVirtualSession
+    public interface IVirtualSession : IDisposable
     {
         /// <summary>
         /// Key for identifying slider.
