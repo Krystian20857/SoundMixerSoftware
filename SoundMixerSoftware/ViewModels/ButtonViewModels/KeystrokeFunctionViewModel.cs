@@ -14,6 +14,7 @@ using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Utils;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace SoundMixerSoftware.ViewModels
@@ -93,15 +94,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public KeystrokeFunctionViewModel()
         {
-            var enumNames = Enum.GetNames(typeof(KeystrokeMode));
-            foreach (var enumName in enumNames)
-            {
-                var mediaModel = new EnumDisplayModel<KeystrokeMode>()
-                {
-                    EnumValue = (KeystrokeMode)Enum.Parse(typeof(KeystrokeMode), enumName)
-                };
-                Functions.Add(mediaModel);
-            }
+            EnumDisplayHelper.AddItems(Functions);
 
             SelectedFunction = Functions[0];
         }

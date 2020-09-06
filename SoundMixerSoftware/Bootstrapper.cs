@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -38,6 +37,12 @@ namespace SoundMixerSoftware
         #region Public Static Properties
 
         public static Bootstrapper Instance { get; private set; }
+#if DEBUG
+        //running small node server with hosted files and github-like release files.
+        public const string RELEASES_URL = "http://localhost:3000/debug_releases.json";                
+#else
+        public const string RELEASES_URL = "https://api.github.com/repos/Krystian20857/SoundMixerSoftware/releases";
+#endif
 
         #endregion
         
@@ -59,6 +64,8 @@ namespace SoundMixerSoftware
         /// Current bootstrapper LocalManager.
         /// </summary>
         public LocalManager LocalManager { get; } = new LocalManager(typeof(LocalContainer));
+
+        public Updater.Updater Updater { get; } = new Updater.Updater(Assembly.GetExecutingAssembly().GetName().Version, RELEASES_URL, LocalContainer.InstallerDownloadCache,starter => Application.Current.Shutdown());
 
         #endregion
         
@@ -94,7 +101,7 @@ namespace SoundMixerSoftware
             _starter.BringWindowToFront += (sender, args) => BringToFront();
 
             _starter.ExitApplication += (sender, args) => Application.Shutdown(0x04);
-            
+
             LocalManager.ResolveLocal();
             PluginLoader.LoadAllPlugins();
             Initialize();
@@ -132,6 +139,7 @@ namespace SoundMixerSoftware
             _container.PerRequest<DeviceSettingsViewModel>();
             _container.PerRequest<PluginLoadViewModel>();
             _container.PerRequest<UsbManagerViewModel>();
+            _container.PerRequest<UpdateViewModel>();
 
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();

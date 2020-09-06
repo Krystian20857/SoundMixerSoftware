@@ -5,6 +5,7 @@ using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Updater;
 using SoundMixerSoftware.Win32.USBLib;
 using YamlDotNet.Serialization;
 
@@ -56,6 +57,10 @@ namespace SoundMixerSoftware.Helpers.Config
             Interop = new InteropSettings
             {
                 WatcherWait = 5000,
+            },
+            Updater = new UpdateConfig
+            {
+                Mode = UpdateMode.NORMAL
             }
 
         };
@@ -83,6 +88,9 @@ namespace SoundMixerSoftware.Helpers.Config
         public NotificationSettings Notification { get; set; }
         [Recursion]
         public InteropSettings Interop { get; set; }
+        [Recursion]
+        [YamlMember(Alias = "Updater")]
+        public UpdateConfig Updater { get; set; }
 
         #endregion
         
@@ -230,6 +238,27 @@ namespace SoundMixerSoftware.Helpers.Config
         {
             get => WatcherWaitNullable ?? 1;
             set => WatcherWaitNullable = value;
+        }
+
+        #endregion
+    }
+
+    public class UpdateConfig
+    {
+        #region BaseTypes
+        
+        [YamlMember(Alias = "Mode")]
+        public UpdateMode? ModeNullable { get; set; }
+
+        #endregion
+        
+        #region Non-null Types
+
+        [YamlIgnore]
+        public UpdateMode Mode
+        {
+            get => ModeNullable ?? UpdateMode.NORMAL;
+            set => ModeNullable = value;
         }
 
         #endregion

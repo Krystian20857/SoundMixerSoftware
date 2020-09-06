@@ -68,5 +68,11 @@ namespace SoundMixerSoftware.Helpers.LocalSystem
         /// </summary>
         [Path("plugincache", true, FileAttributes.Directory)]
         public static readonly string PluginCache = Path.Combine(Cache, "plugins");
+        /// <summary>
+        /// Installer download cache.
+        /// key: installercache.
+        /// </summary>
+        [Path("installercache", true, FileAttributes.Directory)]
+        public static readonly string InstallerDownloadCache = Path.Combine(Cache, "installer");
     }
 }

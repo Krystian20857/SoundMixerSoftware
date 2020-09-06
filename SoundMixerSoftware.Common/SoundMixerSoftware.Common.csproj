@@ -82,6 +82,10 @@
       <Compile Include="Utils\ProcessUtils.cs" />
       <Compile Include="Utils\RecursionAttribute.cs" />
       <Compile Include="Utils\StructUtils.cs" />
+      <Compile Include="Web\EventArgs.cs" />
+      <Compile Include="Web\FileDownloader.cs" />
+      <Compile Include="Web\SpeedConverter.cs" />
+      <Compile Include="Web\WebUserAgent.cs" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">

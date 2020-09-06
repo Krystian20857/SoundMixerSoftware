@@ -6,6 +6,7 @@ using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Utils;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -39,15 +40,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public MediaButtonViewModel()
         {
-            var enumNames = Enum.GetNames(typeof(MediaTask));
-            foreach (var enumName in enumNames)
-            {
-                var mediaModel = new EnumDisplayModel<MediaTask>()
-                {
-                    EnumValue = (MediaTask)Enum.Parse(typeof(MediaTask), enumName)
-                };
-                Functions.Add(mediaModel);
-            }
+            EnumDisplayHelper.AddItems(Functions);
 
             SelectedFunction = Functions[0];
         }

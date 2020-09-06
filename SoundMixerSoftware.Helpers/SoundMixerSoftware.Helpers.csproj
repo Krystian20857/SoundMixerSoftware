@@ -70,6 +70,7 @@
     <Compile Include="NotifyWrapper\DeviceNotificationState.cs" />
     <Compile Include="NotifyWrapper\ExceptionNotification.cs" />
     <Compile Include="NotifyWrapper\INotification.cs" />
+    <Compile Include="NotifyWrapper\NewVersionNotification.cs" />
     <Compile Include="Overlay\OverlayHandler.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />
     <Compile Include="Profile\ProfileStruct.cs" />
@@ -142,6 +143,10 @@
     <ProjectReference Include="..\SoundMixerSoftware.Overlay\SoundMixerSoftware.Overlay.csproj">
       <Project>{38345ef4-a142-4dd5-bdf4-4e0bf74600df}</Project>
       <Name>SoundMixerSoftware.Overlay</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj">
+      <Project>{22448347-5dde-4901-9e0f-4d9f84038729}</Project>
+      <Name>SoundMixerSoftware.Updater</Name>
     </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj">
       <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>

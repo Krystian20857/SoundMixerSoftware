@@ -16,8 +16,7 @@ namespace SoundMixerSoftware.ViewModels
         #region Private Fields
 
         private string _profileName;
-        private bool _lock;
-        
+
         #endregion
         
         #region Public Properties

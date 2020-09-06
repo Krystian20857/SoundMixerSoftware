@@ -7,6 +7,7 @@ using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Utils;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -56,15 +57,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public MuteButtonViewModel()
         {
-            var enumNames = Enum.GetNames(typeof(MuteTask));
-            foreach (var enumName in enumNames)
-            {
-                var mediaModel = new EnumDisplayModel<MuteTask>
-                {
-                    EnumValue = (MuteTask)Enum.Parse(typeof(MuteTask), enumName)
-                };
-                Functions.Add(mediaModel);
-            }
+            EnumDisplayHelper.AddItems(Functions);
 
             SelectedFunction = Functions[0];
             ProfileHandler.ProfileChanged += (sender, args) => Initialize();
@@ -119,8 +112,7 @@ namespace SoundMixerSoftware.ViewModels
         }
         
         #endregion
-        
-        
+
         #region Property Changed 
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:SoundMixerSoftware.Views"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              cal:Message.Attach="[Initialized] = [ViewInitialized]">
@@ -17,6 +18,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="5"/>
         </Style>
+        <converter:VisibilityConverter x:Key="VisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,6 +26,48 @@
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
             <StackPanel HorizontalAlignment="Stretch">
+                <GroupBox Margin="5" Header="Update">
+                    <StackPanel Orientation="Vertical">
+                        <DockPanel VerticalAlignment="Center" LastChildFill="False">
+                            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" Margin="5" FontSize="16">
+                                <Run Text="Status: "></Run>
+                                <Run Foreground="{Binding Path=UpdateStatusColor}" Text="{Binding Path=UpdateStatus, UpdateSourceTrigger=PropertyChanged}"></Run>
+                            </TextBlock>
+                            <DockPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Stretch" LastChildFill="False">
+                                <Button DockPanel.Dock="Left"
+                                        Margin="5"
+                                        Width="150"
+                                        cal:Message.Attach="[Click] =[CheckForUpdateClick]">
+                                    Check For Update
+                                </Button>
+                                <Button DockPanel.Dock="Left"
+                                        Margin="5"
+                                        Width="150"
+                                        Visibility="{Binding Path=HasNewVersion, Converter={StaticResource VisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                        cal:Message.Attach="[Click] =[InstallUpdateClick]">
+                                    Install Update
+                                </Button>
+                            </DockPanel>
+                        </DockPanel>
+                        
+                        <Border Style="{StaticResource SettingBorder}">
+                            <DockPanel LastChildFill="False">
+                                <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left">Update Silent</TextBlock>
+                                <ComboBox VerticalAlignment="Center" DockPanel.Dock="Right"
+                                          Margin="5, 0"
+                                          MinWidth="100"
+                                          ItemsSource="{Binding Path=UpdateModes}"
+                                          SelectedItem="{Binding Path=UpdateRunModeEnum, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Path=Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </DockPanel>
+                        </Border>
+                    </StackPanel>
+                </GroupBox>
                 <GroupBox Margin="5" Header="Application Settings">
                     <StackPanel Orientation="Vertical">
                         <Border Style="{StaticResource SettingBorder}">

@@ -147,7 +147,7 @@
 #include "scripts\products\sql2008express.iss"
 #endif
 
-#define MyAppName "SoundMixerSoftware"
+#define MyAppName "Sound Mixer Software"
 #define MyAppVersion GetFileVersion("release/SoundMixerSoftware.exe")
 #define MyAppPublisher "I Love u too"
 #define MyAppURL "https://github.com/krystian20857/SoundMixerSoftware"

@@ -49,7 +49,7 @@
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <Target Name="BuildInstaller" AfterTargets="AfterBuild" Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
-    <Exec WorkingDirectory="$(SolutionDir)installer" Command="cmd /c $(SolutionDir)installer\make-installer.cmd"/>
+    <Exec WorkingDirectory="$(SolutionDir)installer" Command="cmd /c $(SolutionDir)installer\make-installer.cmd" />
   </Target>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -129,6 +129,7 @@
     <Compile Include="Converter\DirectionConverter.cs" />
     <Compile Include="Converter\NullVisibilityConverter.cs" />
     <Compile Include="Converter\VisibilityConverter.cs" />
+    <Compile Include="Converter\WebSpeedConverter.cs" />
     <Compile Include="Input\KeyFormatter.cs" />
     <Compile Include="Input\KeyTrigger.cs" />
     <Compile Include="Models\ButtonModel.cs" />
@@ -153,6 +154,7 @@
     </Compile>
     <Compile Include="StarterHelper.cs" />
     <Compile Include="Utils\BindingProxy.cs" />
+    <Compile Include="Utils\EnumDisplayHelper.cs" />
     <Compile Include="Utils\ExtendedContainer.cs" />
     <Compile Include="Utils\ParserHelper.cs" />
     <Compile Include="Validation\IntegerValidation.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="ViewModels\WindowViewModels\PluginLoadViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
+    <Compile Include="ViewModels\WindowViewModels\UpdateViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\UsbManagerViewModel.cs" />
     <Compile Include="Views\ButtonViews\KeystrokeFunctionView.xaml.cs">
       <DependentUpon>KeystrokeFunctionView.xaml</DependentUpon>
@@ -227,6 +230,9 @@
     <Compile Include="Views\WindowViews\SessionAddView.xaml.cs">
       <DependentUpon>SessionAddView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WindowViews\UpdateView.xaml.cs">
+      <DependentUpon>UpdateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WindowViews\UsbManagerView.xaml.cs">
       <DependentUpon>UsbManagerView.xaml</DependentUpon>
     </Compile>
@@ -276,6 +282,7 @@
     <Page Include="Views\WindowViews\PluginLoadView.xaml" />
     <Page Include="Views\WindowViews\ProfileAddView.xaml" />
     <Page Include="Views\WindowViews\SessionAddView.xaml" />
+    <Page Include="Views\WindowViews\UpdateView.xaml" />
     <Page Include="Views\WindowViews\UsbManagerView.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -294,6 +301,10 @@
     <ProjectReference Include="..\SoundMixerSoftware.Overlay\SoundMixerSoftware.Overlay.csproj">
       <Project>{38345ef4-a142-4dd5-bdf4-4e0bf74600df}</Project>
       <Name>SoundMixerSoftware.Overlay</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj">
+      <Project>{22448347-5dde-4901-9e0f-4d9f84038729}</Project>
+      <Name>SoundMixerSoftware.Updater</Name>
     </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj">
       <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
