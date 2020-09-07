@@ -81,7 +81,7 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
             {
                 content.Message = "New version has been released click to update.";
             }
-            _manager.Show(content);
+            _manager.Show(content, onClick: Clicked, onClose: Closed);
         }
 
         #endregion

@@ -18,6 +18,7 @@ using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Updater;
 using SoundMixerSoftware.Utils;
+using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 using Timer = System.Threading.Timer;
@@ -47,6 +48,7 @@ namespace SoundMixerSoftware.ViewModels
         private int _overlayFadeTime;
         private int _notificationShowTime;
         private EnumDisplayModel<UpdateMode> _updateRunMode;
+        private bool _autoUpdate;
 
         private ThemeModel _selectedTheme;
         private BindableCollection<ThemeModel> _themes = new BindableCollection<ThemeModel>();
@@ -107,6 +109,19 @@ namespace SoundMixerSoftware.ViewModels
                     ConfigHandler.SaveConfig();
                 Logger.Trace($"Changed update mode setting to: {value}");
                 OnPropertyChanged(nameof(UpdateRunModeEnum));
+            }
+        }
+
+        public bool AutoUpdate
+        {
+            get => _autoUpdate;
+            set
+            {
+                ConfigHandler.ConfigStruct.Updater.AutoUpdate = value;
+                if(!LockConfig)
+                    ConfigHandler.SaveConfig();
+                Logger.Trace($"Changed enable-autoupdate setting to: {value}");
+                _autoUpdate = value;
             }
         }
 
@@ -265,6 +280,7 @@ namespace SoundMixerSoftware.ViewModels
             OverlayFadeTime = ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
             NotificationShowTime = ConfigHandler.ConfigStruct.Notification.NotificationShowTime;
             HideOnStartup = ConfigHandler.ConfigStruct.Application.HideOnStartup;
+            AutoUpdate = ConfigHandler.ConfigStruct.Updater.AutoUpdate;
 
             LoadThemes();
             LoadTabs();
@@ -327,7 +343,12 @@ namespace SoundMixerSoftware.ViewModels
                     UpdateStatusColor = new SolidColorBrush(Colors.LimeGreen);
                     OnPropertyChanged(nameof(HasNewVersion));
                 });
-                if (ConfigHandler.ConfigStruct.Notification.EnableNotifications)//&& Bootstrapper.Instance.MainWindowHandle != User32.GetForegroundWindow())
+                var autoUpdate = ConfigHandler.ConfigStruct.Updater.AutoUpdate;
+                if (autoUpdate)
+                {
+                    Updater.DownloadUpdate();
+                }
+                if (ConfigHandler.ConfigStruct.Notification.EnableNotifications && Bootstrapper.Instance.MainWindowHandle != User32.GetForegroundWindow() && !autoUpdate)
                 {
                     _updateNotification.SetValue(NewVersionNotification.VERSION_KEY, args);
                     _updateNotification.Show();
@@ -354,6 +375,14 @@ namespace SoundMixerSoftware.ViewModels
                     UpdateStatusColor = new SolidColorBrush(Colors.IndianRed);
                     OnPropertyChanged(nameof(HasNewVersion));
                 });
+            };
+
+            Updater.FileDownloaded += (sender, args) =>
+            {
+                if (ConfigHandler.ConfigStruct.Updater.AutoUpdate)
+                {
+                    Updater.RunInstaller();
+                }
             };
 
             _updateNotification.Clicked += InstallUpdateClick;

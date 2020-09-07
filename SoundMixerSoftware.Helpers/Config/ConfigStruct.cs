@@ -60,7 +60,8 @@ namespace SoundMixerSoftware.Helpers.Config
             },
             Updater = new UpdateConfig
             {
-                Mode = UpdateMode.NORMAL
+                Mode = UpdateMode.NORMAL,
+                AutoUpdate = false
             }
 
         };
@@ -250,6 +251,9 @@ namespace SoundMixerSoftware.Helpers.Config
         [YamlMember(Alias = "Mode")]
         public UpdateMode? ModeNullable { get; set; }
 
+        [YamlMember(Alias = "AutoUpdate")]
+        public bool? AutoUpdateNullable { get; set; }
+
         #endregion
         
         #region Non-null Types
@@ -259,6 +263,13 @@ namespace SoundMixerSoftware.Helpers.Config
         {
             get => ModeNullable ?? UpdateMode.NORMAL;
             set => ModeNullable = value;
+        }
+
+        [YamlIgnore]
+        public bool AutoUpdate
+        {
+            get => AutoUpdateNullable ?? false;
+            set => AutoUpdateNullable = value;
         }
 
         #endregion

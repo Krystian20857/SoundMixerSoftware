@@ -24,7 +24,7 @@ namespace SoundMixerSoftware.Updater.Installer
 
         public void RunInstaller(UpdateMode mode)
         {
-            var args = " ";
+            var args = "";
             switch (mode)
             {
                 case UpdateMode.SILENT:
@@ -39,9 +39,14 @@ namespace SoundMixerSoftware.Updater.Installer
                 Logger.Error("Cannot find installer file.");
                 return;
             }
-
-            Process.Start(FileName, args);
-            //AppExit.Invoke(this);
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/C ping 127.0.0.1 -n 1 && \"{FileName}\" {args}",
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            Process.Start(startInfo);
+            AppExit.Invoke(this);
         }
         
         #endregion

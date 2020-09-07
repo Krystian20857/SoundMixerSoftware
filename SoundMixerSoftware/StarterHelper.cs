@@ -19,7 +19,7 @@ namespace SoundMixerSoftware
         #region Constant
         
         public const int WM_SETFOREGROUND = 0xDD64;
-        public static readonly Guid APP_UUID = new Guid("F3F46984-70BC-428B-AAC2-F8CFB4499407");
+        public static readonly Guid APP_UUID = new Guid("F3F46984-70BC-428B-AAC2-F8CFB4499407");            //lower case: f3f46984-70bc-428b-aac2-f8cfb4499407 <-- mutex name
 
         #endregion
         
@@ -110,7 +110,7 @@ namespace SoundMixerSoftware
         
         public void Dispose()
         {
-            _mutex.Close();
+            _mutex?.Close();
             _mutex?.Dispose();
         }
         

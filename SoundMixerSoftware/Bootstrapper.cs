@@ -65,7 +65,7 @@ namespace SoundMixerSoftware
         /// </summary>
         public LocalManager LocalManager { get; } = new LocalManager(typeof(LocalContainer));
 
-        public Updater.Updater Updater { get; } = new Updater.Updater(Assembly.GetExecutingAssembly().GetName().Version, RELEASES_URL, LocalContainer.InstallerDownloadCache,starter => Application.Current.Shutdown());
+        public Updater.Updater Updater { get; protected set; }
 
         #endregion
         
@@ -87,6 +87,11 @@ namespace SoundMixerSoftware
             
             _starter.StartApplication += (sender, args) =>
             {
+                Updater = new Updater.Updater(Assembly.GetExecutingAssembly().GetName().Version, RELEASES_URL, LocalContainer.InstallerDownloadCache, starter =>
+                {
+                    _starter.Dispose();
+                    Application.Current.Shutdown();
+                });
                 PluginLoader.ViewLoadingEvent();
                 IoC.Get<TaskbarIconViewModel>();
                 TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;

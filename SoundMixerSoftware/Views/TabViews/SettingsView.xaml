@@ -66,6 +66,12 @@
                                 </ComboBox>
                             </DockPanel>
                         </Border>
+                        <Border Style="{StaticResource SettingBorder}">
+                            <DockPanel LastChildFill="False">
+                                <TextBlock DockPanel.Dock="Left">Auto-update</TextBlock>
+                                <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=AutoUpdate, Mode=TwoWay}" />
+                            </DockPanel>
+                        </Border>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Margin="5" Header="Application Settings">

@@ -166,10 +166,10 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={userappdata}\SoundMixerSoftware\bin
 DisableProgramGroupPage=yes
-;PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
+PrivilegesRequired=lowest
+;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=out
 OutputBaseFilename=SoundMixerSoftware {#MyAppVersion}
 SetupIconFile=../SoundMixerSoftware/Resources/SpeakerIcon.ico
@@ -177,6 +177,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 SourceDir=.
+AppMutex=f3f46984-70bc-428b-aac2-f8cfb4499407
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -194,7 +195,7 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall
 
 [CustomMessages]
 DependenciesDir=MyProgramDependencies
