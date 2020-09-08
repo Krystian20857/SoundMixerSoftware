@@ -48,7 +48,15 @@ namespace SoundMixerSoftware
         
         #region Public Properties
 
-        public IntPtr MainWindowHandle => new WindowInteropHelper(Application.Current.MainWindow ?? throw new NullReferenceException("Application has not associated window.")).Handle;
+        public IntPtr MainWindowHandle
+        {
+            get
+            {
+                var mainWindow = Application.Current.MainWindow;
+                if(mainWindow == null) return IntPtr.Zero;
+                return new WindowInteropHelper(mainWindow).Handle;
+            }
+        } 
 
         /// <summary>
         /// Global application Tray.
