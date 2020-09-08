@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using NAudio.CoreAudioApi;
+using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Helpers.Annotations;
@@ -23,6 +25,12 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #region Const
 
         public const string KEY = "foreground-session";
+        
+        #endregion
+        
+        #region Logger
+
+        public static Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
         
@@ -117,25 +125,29 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #endregion
         
         #region Private Events
-        
+
         private void WindowWatcherOnForegroundWindowChanged(object sender, WindowChangedArgs e)
         {
-            var processId = (uint)e.ProcessId;
+            var processId = (uint) e.ProcessId;
             var childProcesses = ProcessWrapper.GetChildProcesses(processId).ToList();
 
             Sessions.Clear();
             foreach (var session in SessionHandler.GetAllSessions())
             {
-                var sessionProcessId = session.GetProcessID;
-                if (childProcesses.Contains(sessionProcessId))
-                    Sessions.Add(session);
+                try
+                {
+                    var sessionProcessId = session.GetProcessID;
+                    if (childProcesses.Contains(sessionProcessId))
+                        Sessions.Add(session);
+                }
+                catch(COMException){}//Usually it does not matter...
             }
-            
+
             WindowHandle = e.Handle;
 
             UpdateDescription();
         }
-        
+
         private void SessionEnumOnSessionCreated(object sender, AudioSessionControl e)
         {
             var window = User32.GetForegroundWindow();

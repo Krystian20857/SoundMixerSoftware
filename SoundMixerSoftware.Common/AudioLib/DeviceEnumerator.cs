@@ -173,9 +173,7 @@ namespace SoundMixerSoftware.Common.AudioLib
                     OnDeviceAdded(deviceId);
                     break;
                 case DeviceState.Disabled:
-                    break;
                 case DeviceState.NotPresent:
-                    break;
                 case DeviceState.Unplugged:
                     OnDeviceRemoved(deviceId);
                     break;

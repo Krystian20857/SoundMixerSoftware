@@ -209,11 +209,14 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         private static void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
         {
             var deviceId = sender as string;
-            if (SessionEnumerators.ContainsKey(deviceId)) return;
             ComThread.Invoke(() =>
             {
-                var device =DeviceEnumerator.GetDeviceById(deviceId);
-                 SessionEnumerators.Add(deviceId, new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher));
+                var device = DeviceEnumerator.GetDeviceById(deviceId);
+                var sessionEnum = new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher);
+                if (SessionEnumerators.ContainsKey(deviceId))
+                    SessionEnumerators[deviceId] = sessionEnum;
+                else 
+                    SessionEnumerators.Add(deviceId, sessionEnum);
             });
             
         }
