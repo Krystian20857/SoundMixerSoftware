@@ -71,9 +71,12 @@ namespace SoundMixerSoftware.Common.Utils.Application
         /// Check if application is in startup.
         /// </summary>
         /// <returns></returns>
-        public bool CheckInstance()
+        public bool CheckInstance(bool setCurrentPath = true)
         {
-            return RunKey?.GetValue(AppName) != null;
+            var keyExists = RunKey?.GetValue(AppName) != null;
+            if(setCurrentPath && keyExists)
+                RunKey.SetValue(AppName, AppPath);
+            return keyExists;
         }
         
         /// <summary>

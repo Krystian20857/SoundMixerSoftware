@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -295,8 +296,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         private void RemoveSession(AudioSessionControl session)
         {
-            var instanceId = session.GetSessionInstanceIdentifier;
-            var itemToRemove = Sessions.FirstOrDefault(x => x.GetSessionInstanceIdentifier == instanceId);
+            var itemToRemove = (AudioSessionControl)null;
+            try
+            {
+                var instanceId = session.GetSessionInstanceIdentifier;
+                itemToRemove = Sessions.FirstOrDefault(x => x.GetSessionInstanceIdentifier == instanceId);
+            }
+            catch(Exception ex) when (ex is COMException) {}
             if (itemToRemove == default) return;
             Sessions.Remove(itemToRemove);
         }

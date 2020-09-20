@@ -1,5 +1,6 @@
 ﻿using System;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Win32.Interop.Enum;
+using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Common.Utils
 {
@@ -12,7 +13,10 @@ namespace SoundMixerSoftware.Common.Utils
         /// <returns></returns>
         public static bool IsAlive(int pid)
         {
-            return Array.Exists(ProcessWrapper.EnumProcesses(), u => u == pid);
-        }
+            var phandle = Kernel32.OpenProcess(ProcessAccessFlags.Synchronize, false, pid);
+            if (phandle == IntPtr.Zero)
+                return false;
+            return Kernel32.WaitForSingleObject(phandle, 0) != 0;
+         }
     }
 }
