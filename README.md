@@ -25,6 +25,7 @@ Currently software has some annoying bug which will be fixed in future. About kn
 * Wide application configuration.
 * Plugin system for simple extensibility.
 * Application theme can be synchronized with system theme.
+* Auto-Updater with github releases. Github API 🙏
 
 ## Namespaces
 ### SoundMixerSoftware.Win32
