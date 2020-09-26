@@ -283,10 +283,10 @@ namespace SoundMixerSoftware.ViewModels
         private void AddSession(AudioSessionControl session)
         {
             var sessionId = session.GetSessionIdentifier;
-            if(Sessions.Any(x => x.ID == sessionId))
+            if (Sessions.Any(x => x.ID == sessionId))
                 return;
 
-            var processId = (int)session.GetProcessID;
+            var processId = (int) session.GetProcessID;
             if (!ProcessUtils.IsAlive(processId))
                 return;
             var process = Process.GetProcessById(processId);

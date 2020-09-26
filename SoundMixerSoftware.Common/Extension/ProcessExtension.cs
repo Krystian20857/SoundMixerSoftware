@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
@@ -24,9 +25,7 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns></returns>
         public static string GetFileName(this Process process, int buffer = 260) //260 -> max windows path length
         {
-            var nameBuilder = new StringBuilder(buffer);
-            var bufferLength = nameBuilder.Capacity + 1;
-            return Kernel32.QueryFullProcessImageName(process.Handle, 0, nameBuilder, ref bufferLength) ? nameBuilder.ToString() : string.Empty;
+            return ProcessUtils.GetFileName(process.Id, buffer);
         }
 
         /// <summary>

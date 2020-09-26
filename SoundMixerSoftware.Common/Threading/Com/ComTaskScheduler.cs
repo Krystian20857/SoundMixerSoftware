@@ -40,8 +40,7 @@ namespace SoundMixerSoftware.Common.Threading.Com
             }) {Priority = ThreadPriority.Highest, IsBackground = true};
             _thread.SetApartmentState(ApartmentState.STA);
             _thread.Name = "ComThread";
-            _thread.DisableComObjectEagerCleanup();
-            
+
             _thread.Start();
         }
         
