@@ -112,9 +112,9 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             {
                 var sessionEnum = SessionHandler.SessionEnumerators[DeviceId];
                 Sessions.AddRange(sessionEnum.GetSessions(sessionId));
+                
                 sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
                 sessionEnum.SessionExited += SessionEnumOnSessionExited;
-            
                 sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
             }
 
@@ -258,9 +258,9 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             try
             {
-                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume));
+                Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume);
             }
-            finally { }
+            catch(Exception ex) when (ex is COMException) {}
         }
 
         internal void SetMuteInternal(bool mute)
@@ -269,31 +269,26 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                 return;
             try
             {
-                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute));
+                Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute);
             }
-            finally { }
+            catch(Exception ex) when (ex is COMException) {}
         }
 
         internal float GetVolumeInternal()
         {
-            return ComThread.Invoke(() =>
-            {
-                if(State != SessionState.ACTIVE)
-                    return 0;
-                return Sessions[0].SimpleAudioVolume.Volume;
-            });
+            if (State != SessionState.ACTIVE)
+                return 0;
+            return FirstSession.SimpleAudioVolume.Volume;
+
         }
 
         internal bool GetMuteInternal()
         {
-            return ComThread.Invoke(() =>
-            {
-                if(State != SessionState.ACTIVE)
-                    return false;
-                return Sessions[0].SimpleAudioVolume.Mute;
-            });
+            if (State != SessionState.ACTIVE)
+                return false;
+            return FirstSession.SimpleAudioVolume.Mute;
         }
-        
+
         private void RemoveSession(AudioSessionControl session)
         {
             var itemToRemove = (AudioSessionControl)null;
