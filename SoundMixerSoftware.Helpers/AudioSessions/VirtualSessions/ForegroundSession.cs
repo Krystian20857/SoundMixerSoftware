@@ -152,7 +152,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var window = User32.GetForegroundWindow();
             var processId = e.GetProcessID;
-            var windowThreadId = User32.GetWindowThreadProcessId(window, out var windowProcessId);
+            User32.GetWindowThreadProcessId(window, out var windowProcessId);
 
             if (ProcessWrapper.GetParentProcess(processId) == windowProcessId || windowProcessId == processId)
             {
@@ -228,20 +228,16 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             try
             {
-                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume));
-                if (HasActiveSession)
-                    VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
-            }finally{}
+                Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume);
+            }catch(Exception ex) when (ex is COMException) {}
         }
         
         internal void SetMute(bool mute)
         {
             try
             {
-                ComThread.BeginInvoke(() => Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute));
-                if (HasActiveSession)
-                    MuteChanged?.Invoke(this, new MuteChangedArgs(mute, false, Index));
-            }finally{}
+                Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute);
+            }catch(Exception ex) when (ex is COMException) {}
         }
 
         #endregion
