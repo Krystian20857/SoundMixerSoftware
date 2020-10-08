@@ -34,11 +34,6 @@
       <OutputPath>bin\BuildInstaller\</OutputPath>
     </PropertyGroup>
     <ItemGroup>
-      <Compile Include="AudioLib\AudioSessionEventClient.cs" />
-      <Compile Include="AudioLib\DeviceEnumerator.cs" />
-      <Compile Include="AudioLib\EventArgs.cs" />
-      <Compile Include="AudioLib\Identifier.cs" />
-      <Compile Include="AudioLib\SessionEnumerator.cs" />
       <Compile Include="Cache\ICache.cs" />
       <Compile Include="Cache\IconCache.cs" />
       <Compile Include="Cache\NativeCache.cs" />
@@ -67,8 +62,6 @@
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Properties\AssemblyInfo.cs" />
       <Compile Include="Property\IProperties.cs" />
-      <Compile Include="Threading\Com\ComTaskScheduler.cs" />
-      <Compile Include="Threading\Com\ComThread.cs" />
       <Compile Include="Utils\Application\AppUtils.cs" />
       <Compile Include="Utils\Application\AutoRunHandle.cs" />
       <Compile Include="Utils\ArrayUtils.cs" />
@@ -81,6 +74,7 @@
       <Compile Include="Utils\PascalNamingConverter.cs" />
       <Compile Include="Utils\ProcessUtils.cs" />
       <Compile Include="Utils\RecursionAttribute.cs" />
+      <Compile Include="Utils\RoleUtil.cs" />
       <Compile Include="Utils\StructUtils.cs" />
       <Compile Include="Web\EventArgs.cs" />
       <Compile Include="Web\FileDownloader.cs" />
@@ -88,6 +82,14 @@
       <Compile Include="Web\WebUserAgent.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Reference Include="AudioSwitcher.AudioApi, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
+        <HintPath>..\packages\AudioSwitcher.AudioApi.4.0.0-alpha5\lib\net45\AudioSwitcher.AudioApi.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
+      <Reference Include="AudioSwitcher.AudioApi.CoreAudio, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
+        <HintPath>..\packages\AudioSwitcher.AudioApi.CoreAudio.4.0.0-alpha5\lib\net45\AudioSwitcher.AudioApi.CoreAudio.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
       <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>..\packages\GregsStack.InputSimulatorStandard.1.2.0-beta0003\lib\netstandard2.0\GregsStack.InputSimulatorStandard.dll</HintPath>
         <Private>True</Private>
@@ -118,10 +120,6 @@
         <Private>True</Private>
       </Reference>
       <Reference Include="mscorlib" />
-      <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
-        <Private>True</Private>
-      </Reference>
       <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
         <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
         <Private>True</Private>

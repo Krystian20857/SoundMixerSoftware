@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Buttons;
-using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Helpers.Profile
 {

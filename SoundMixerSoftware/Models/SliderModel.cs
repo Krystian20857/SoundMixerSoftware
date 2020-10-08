@@ -2,10 +2,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
-using NAudio.CoreAudioApi;
 using NLog;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons.Functions;
 using SoundMixerSoftware.Helpers.Device;
@@ -13,7 +11,6 @@ using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.SliderConverter;
 using SoundMixerSoftware.Helpers.SliderConverter.Converters;
 using LogManager = NLog.LogManager;
-using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
 namespace SoundMixerSoftware.Models
 {
@@ -42,7 +39,7 @@ namespace SoundMixerSoftware.Models
         #region Events
 
         public static event EventHandler<VolumeChangedArgs> VolumeChanged; 
-        public static event EventHandler<VolumeChangedArgs> MuteChanged; 
+        public static event EventHandler<MuteChangedArgs> MuteChanged; 
         
         #endregion
         
@@ -72,7 +69,7 @@ namespace SoundMixerSoftware.Models
             set
             {
                 _volumeIn = value;
-                SessionHandler.SetVolume(Index, (float)Math.Round(_volumeIn / 100.0F, 2), true);
+                SessionHandler.SetVolume(Index, _volumeIn, true);
                 
                 OnPropertyChanged(nameof(VolumeOut));
                 OnPropertyChanged(nameof(VolumeLabel));
@@ -230,23 +227,7 @@ namespace SoundMixerSoftware.Models
 
         private void SessionOnVolumeChange(object sender, Helpers.AudioSessions.VolumeChangedArgs e)
         {
-            VolumeIn = (int)Math.Round(e.Volume * 100);
-        }
-
-
-        static SliderModel()
-        {
-            MuteChanged += (sender, args) =>
-            {
-                var sliderModel = sender as SliderModel;
-                var sliderIndex = sliderModel.Index;
-                if (MuteFunction.SliderMute.ContainsKey(sliderIndex))
-                {
-                    var buttonIndexList = MuteFunction.SliderMute[sliderIndex];
-                    foreach(var buttonIndex in buttonIndexList)
-                        DeviceNotifier.LightButton(unchecked((byte)buttonIndex), sliderModel.MuteLabel);
-                }
-            };
+            VolumeIn = (int)Math.Round(e.Volume);
         }
         
         #endregion
@@ -276,10 +257,10 @@ namespace SoundMixerSoftware.Models
             switch (propertyName)
             {
                 case nameof(VolumeIn):
-                    VolumeChanged?.Invoke(this, new VolumeChangedArgs(VolumeIn, MuteIn, false));
+                    VolumeChanged?.Invoke(this, new VolumeChangedArgs(VolumeIn, false, Index));
                     break;
                 case nameof(MuteIn):
-                    MuteChanged?.Invoke(this, new VolumeChangedArgs(VolumeIn, MuteIn, false));
+                    MuteChanged?.Invoke(this, new MuteChangedArgs(MuteIn,false, Index));
                     break;
             }
         }

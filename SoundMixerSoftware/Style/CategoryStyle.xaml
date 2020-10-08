@@ -21,9 +21,9 @@
                 <DataTemplate>
                     <DockPanel Margin="4" LastChildFill="False">
                         <Border DockPanel.Dock="Top" CornerRadius="3" BorderThickness="2" BorderBrush="DarkGray">
-                            <Image Height="30" Width="30" Source="{Binding Path=Image}" />
+                            <Image Height="30" Width="30" Source="{Binding Path=Image, UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
-                        <TextBlock TextAlignment="Center" DockPanel.Dock="Top" MaxWidth="50" Text="{Binding Path=Name}" />
+                        <TextBlock TextAlignment="Center" DockPanel.Dock="Top" MaxWidth="50" Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </DataTemplate>
             </Setter.Value>

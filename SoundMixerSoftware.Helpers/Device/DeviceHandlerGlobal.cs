@@ -136,8 +136,11 @@ namespace SoundMixerSoftware.Helpers.Device
                     
                     var sliderIndex = GetSliderIndex(sliderStruct.slider, deviceId);
                     
-                    var value = (int)ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
-                    SessionHandler.SetVolume(sliderIndex, value / 100.0F, false);
+                    var valueFloat = ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
+                    if(float.IsNaN(valueFloat))
+                        return;
+                    var value = (int) valueFloat;
+                    SessionHandler.SetVolume(sliderIndex, value, false);
                     if(SessionHandler.HasActiveSession(sliderIndex))
                         OverlayHandler.ShowVolume(value);
                     

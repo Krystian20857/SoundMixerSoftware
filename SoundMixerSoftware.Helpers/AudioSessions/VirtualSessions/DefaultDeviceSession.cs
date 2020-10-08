@@ -5,10 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Common.AudioLib;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Threading.Com;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
@@ -20,17 +20,22 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #region Constant
 
         public const string KEY = "default-device";
-        public const string ID_KEY = "id";
-        public const string DATAFLOW_KEY = "dataflow";
-        public const string MODE_KEY = "mode";
-        
+        public const string DEVICETYPE_KEY = "DevType";
+        public const string ROLE_KEY = "Role";
+
         #endregion
         
         #region Private Fields
 
+        private IAudioController _controller = SessionHandler.AudioController;
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
-        private float lastVolume;
-        private bool lastMute; 
+        
+        private IDevice _device;
+        private IDisposable _volumeCallback;
+        private IDisposable _muteCallback;
+
+        private bool isDefault;
+        private bool isDefaultCommuninication;
 
         #endregion
         
@@ -46,14 +51,16 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         public float Volume
         {
-            get => GetVolumeInternal();
-            set => SetVolumeInternal(value);
+            get => (float)_device.Volume;
+            set => _device.SetVolumeAsync(value);
         }
-        public bool IsMute {
-            get => GetMuteInternal();
-            set => SetMuteInternal(value);
+
+        public bool IsMute
+        {
+            get => _device.IsMuted;
+            set => _device.SetMuteAsync(value);
         }
-        
+
         #endregion
         
         #region Implemented Events
@@ -64,33 +71,39 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #endregion
         
         #region Public Properties
-        
-        public MMDevice Device { get; set; }
-        public string DeviceId => ComThread.Invoke(() => Device.ID);
 
-        public DefaultDeviceMode Mode { get; set; }
-        public DataFlow DataFlow { get; set; }
-        public Role ERole => Mode == DefaultDeviceMode.DEFAULT_COMMUNICATION ? Role.Communications : Role.Multimedia;
+        public DeviceType DeviceType { get; set; }
+        public Role Role { get; set; }
 
         #endregion
         
         #region Constructor
 
-        public DefaultDeviceSession(int index, DefaultDeviceMode mode, DataFlow dataFlow, Guid uuid)
+        public DefaultDeviceSession(int index, Role role, DeviceType deviceType, Guid uuid)
         {
             Index = index;
-            ID = mode.CreateStringUUID(dataFlow);
             UUID = uuid;
+            DeviceType = deviceType;
+            Role = role;
 
-            Mode = mode;
-            DataFlow = dataFlow;
+            RoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuninication);
+            _device = _controller.GetDefaultDevice(DeviceType, role);
 
-            Device = ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDefaultEndpoint(DataFlow, ERole));
+            _controller.AudioDeviceChanged.Subscribe(x =>
+            {
+                if (x.ChangedType != DeviceChangedType.DefaultChanged || x.Device.DeviceType != DeviceType)
+                    return;
+                var args = x as DefaultDeviceChangedArgs;
+                if (args.IsDefault && isDefault || args.IsDefaultCommunications && isDefaultCommuninication)
+                {
+                    _device = x.Device;
+                    RegisterCallbacks();
+                    UpdateDescription();
+                }
+            });
 
+            RegisterCallbacks();
             UpdateDescription();
-            
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
-            SessionHandler.DeviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
         }
 
         #endregion
@@ -100,8 +113,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public Dictionary<object, object> Save()
         {
             var result = new Dictionary<object, object>();
-            result.Add(DATAFLOW_KEY, DataFlow);
-            result.Add(MODE_KEY, Mode);
+            result.Add(DEVICETYPE_KEY, DeviceType);
+            result.Add(ROLE_KEY, Role);
             return result;
         }
         
@@ -109,125 +122,78 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Private Methods
 
+        private void RegisterCallbacks()
+        {
+            _volumeCallback?.Dispose();
+            _volumeCallback = _device.VolumeChanged.Subscribe(x =>
+            {
+                VolumeChange?.Invoke(this, new VolumeChangedArgs((float)x.Volume, false, Index));
+            });
+               
+            _muteCallback?.Dispose();
+            _muteCallback = _device.MuteChanged.Subscribe(x =>
+            {
+                MuteChanged?.Invoke(this, new MuteChangedArgs(x.IsMuted, false, Index));
+            });
+        }
+
         private void UpdateDescription()
         {
             _dispatcher.Invoke(() => 
             {
-                switch (Mode)
+                switch (Role)
                 {
-                    case DefaultDeviceMode.DEFAULT_MULTIMEDIA:
-                        switch (DataFlow)
+                    case Role.Multimedia:
+                        switch (DeviceType)
                         {
-                            case DataFlow.Render:
+                            case DeviceType.Playback:
                                 DisplayName = "Default Speaker";
                                 Image = ExtractedIcons.SpeakerIcon.ToImageSource();
                                 break;
-                            case DataFlow.Capture:
+                            case DeviceType.Capture:
                                 DisplayName = "Default Microphone";
                                 Image = ExtractedIcons.MicIcon.ToImageSource();
                                 break;
-                            case DataFlow.All:
-                                DisplayName = "Default Speaker/Microphone";
-                                Image = ExtractedIcons.SpeakerIcon.ToImageSource();
-                                break;
                         }
+
                         break;
-                    case DefaultDeviceMode.DEFAULT_COMMUNICATION:
-                        switch (DataFlow)
+                    case Role.Communications:
+                        switch (DeviceType)
                         {
-                            case DataFlow.Render:
+                            case DeviceType.Playback:
                                 DisplayName = "Default Communication Speaker";
                                 Image = ExtractedIcons.SpeakerIcon.ToImageSource();
                                 break;
-                            case DataFlow.Capture:
+                            case DeviceType.Capture:
                                 DisplayName = "Default Communication Microphone";
                                 Image = ExtractedIcons.MicIcon.ToImageSource();
                                 break;
-                            case DataFlow.All:
-                                DisplayName = "Default Communication Speaker/Microphone";
+                        }
+                        break;
+                    case Role.Console:
+                        switch (DeviceType)
+                        {
+                            case DeviceType.Playback:
+                                DisplayName = "Default Console Speaker";
                                 Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                break;
+                            case DeviceType.Capture:
+                                DisplayName = "Default Console Microphone";
+                                Image = ExtractedIcons.MicIcon.ToImageSource();
                                 break;
                         }
                         break;
                 }
-                
-                DisplayName += $"({ComThread.Invoke(() => Device.FriendlyName)})";
+
+                DisplayName += $"({_device.FullName})";
                 OnPropertyChanged(nameof(DisplayName));
                 OnPropertyChanged(nameof(Image));
             });
         }
-
-        internal void SetVolumeInternal(float volume)
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return;
-            try
-            {
-                ComThread.BeginInvoke(() => Device.AudioEndpointVolume.MasterVolumeLevelScalar = volume);
-            }finally{}
-        }
-
-        internal void SetMuteInternal(bool mute)
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return;
-            try
-            {
-                ComThread.BeginInvoke(() => Device.AudioEndpointVolume.Mute = mute);
-            }finally{}
-        }
-
-        internal float GetVolumeInternal()
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return 0;
-            return ComThread.Invoke(() => Device.AudioEndpointVolume.MasterVolumeLevelScalar);
-        }
-
-        internal bool GetMuteInternal()
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return true;
-            return ComThread.Invoke(() => Device.AudioEndpointVolume.Mute);
-        }
         
         #endregion
-        
+
         #region Private Events
-        
-        private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, Common.AudioLib.VolumeChangedArgs e)
-        {
-            var deviceId = _dispatcher.Invoke(() =>
-            {
-                var device = sender as MMDevice;
-                return string.Copy(device.ID);
-            });
-
-            if (deviceId != DeviceId)
-                return;
-            var volume = e.Volume;
-            if (Math.Abs(volume - lastVolume) > 0.005)
-            {
-                VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
-                lastVolume = volume;
-            }
-
-            var mute = e.Mute;
-            if (mute != lastMute)
-            {
-                MuteChanged?.Invoke(this, new MuteChangedArgs(mute, false, Index));
-                lastMute = mute;
-            }
-        }
-        
-        private void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
-        {
-            var deviceId = sender as string;
-            if (e.Role != ERole || e.DataFlow != DataFlow)
-                return;
-            Device = ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDeviceNull(deviceId));
-            UpdateDescription();
-        }
 
         #endregion
         
@@ -247,9 +213,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         public void Dispose()
         {
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged -= DeviceEnumeratorOnDeviceVolumeChanged;
-            SessionHandler.DeviceEnumerator.DefaultDeviceChange -= DeviceEnumeratorOnDefaultDeviceChange;
-            Device?.Dispose();
+            _muteCallback?.Dispose();
+            _volumeCallback?.Dispose();
         }
         
         #endregion
@@ -259,12 +224,16 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
     {
         public IVirtualSession CreateSession(int index, Dictionary<object, object> container, Guid uuid)
         {
-            //var id = container.ContainsKey(DefaultDeviceSession.ID_KEY) ? container[DefaultDeviceSession.ID_KEY] : default;
-            var dataFlowString = (container.ContainsKey(DefaultDeviceSession.DATAFLOW_KEY) ? container[DefaultDeviceSession.DATAFLOW_KEY] : default)?.ToString();
-            var modeString = (container.ContainsKey(DefaultDeviceSession.MODE_KEY) ? container[DefaultDeviceSession.MODE_KEY] : default)?.ToString();
-            var mode = EnumUtils.Parse<DefaultDeviceMode>(modeString);
-            var dataFlow = EnumUtils.Parse<DataFlow>(dataFlowString);
-            return new DefaultDeviceSession(index,mode ,dataFlow , uuid);
+            var roleString = (container.ContainsKey(DefaultDeviceSession.ROLE_KEY) ? container[DefaultDeviceSession.ROLE_KEY] : "")?.ToString();
+            var typeString = (container.ContainsKey(DefaultDeviceSession.DEVICETYPE_KEY) ? container[DefaultDeviceSession.DEVICETYPE_KEY] : "")?.ToString();
+            return new DefaultDeviceSession(index, EnumUtils.Parse(roleString, Role.Multimedia), EnumUtils.Parse(typeString, DeviceType.Playback), uuid);
+        }
+
+        public static Guid CreateUUID(Role role, DeviceType deviceType)
+        {
+            var a = (short)((short)role ^ short.MaxValue);
+            var b = (short)((short)deviceType ^ short.MaxValue);
+            return new Guid(0x45, a, b, new byte[]{0x66, 0x75, 0x6b, 0x75, 0x66, 0x61, 0x67, 0x67});    
         }
     }
 }

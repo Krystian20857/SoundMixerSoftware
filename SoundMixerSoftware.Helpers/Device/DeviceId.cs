@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
-using NAudio.MediaFoundation;
 using SoundMixerSoftware.Common.Utils;
 
 namespace SoundMixerSoftware.Helpers.Device

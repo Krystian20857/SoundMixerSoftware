@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using Caliburn.Micro;
-using SoundMixerSoftware.Common.AudioLib;
-using SoundMixerSoftware.Models;
 using System.Linq;
-using NAudio.CoreAudioApi;
+using System.Windows.Media;
+using Caliburn.Micro;
+using SoundMixerSoftware.Models;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.CoreAudio;
+using AudioSwitcher.AudioApi.Observables;
+using AudioSwitcher.AudioApi.Session;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
-using SoundMixerSoftware.Helpers.Profile;
-using SoundMixerSoftware.Helpers.Threading;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
@@ -32,8 +32,11 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Private Fields
 
-        private SessionEnumerator _sessionEnumerator;
-        private readonly DeviceEnumerator _deviceEnumerator = new DeviceEnumerator();
+        private IAudioSessionController _sessionController;
+        private IAudioController _controller => SessionHandler.AudioController;
+
+        private IDisposable _sessionCreateCallback;
+
         private ISessionModel _selectedDevice;
         private BindableCollection<AudioDeviceModel> _deviceSessions = new BindableCollection<AudioDeviceModel>();
 
@@ -93,7 +96,7 @@ namespace SoundMixerSoftware.ViewModels
             set
             {
                 _selectedDevice = value;
-                SetSessions(_selectedDevice.ID);
+                SetSessions(_selectedDevice.Guid);
             }
         }
 
@@ -106,198 +109,117 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public SessionAddViewModel()
         {
-            CreateDefault();
-
-            foreach (var device in _deviceEnumerator.AllDevices)
-            {
+            foreach (var device in _controller.GetDevices(DeviceState.Active))
                 AddDevice(device);
-            }
-            
-            _deviceEnumerator.DefaultDeviceChange += DeviceEnumeratorOnDefaultDeviceChange;
-            _deviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
-            _deviceEnumerator.DeviceRemoved += DeviceEnumeratorOnDeviceRemoved;
 
-            SelectedDevice = DeviceSessions.First(x => x.ID == _deviceEnumerator.DefaultMultimediaRenderID);
-        }
+            SessionHandler.DeviceAddedCallback += AddDevice;
+            SessionHandler.DeviceRemovedCallback += RemoveDevice;
 
-        #endregion
+            SessionHandler.SessionExited += (sender, args) => RemoveSession(args.Session.Id);
 
-        #region Private Events
+            DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Playback, Role.Multimedia));
+            DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Capture, Role.Multimedia));
+            DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Playback, Role.Communications));
+            DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Capture, Role.Communications));
 
-        /// <summary>
-        /// Occurs when default audio device has changed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeviceEnumeratorOnDefaultDeviceChange(object sender, DefaultDeviceChangedArgs e)
-        {
-            var sessionMode = e.Role == Role.Communications ? DefaultDeviceMode.DEFAULT_COMMUNICATION : DefaultDeviceMode.DEFAULT_MULTIMEDIA;
-            Execute.BeginOnUIThread(() =>
-            {
-                var deviceToRemove = DefaultDevices.FirstOrDefault(x => x.DataFlow == e.DataFlow && x.Mode == sessionMode);
-                if (deviceToRemove == default)
-                    return;
-                DefaultDevices.Remove(deviceToRemove);
-                CreateDefaultDevice(sessionMode, e.DataFlow, sender as string);
-            });
-        }
-
-        private void SessionEnumeratorOnSessionExited(object sender, string sessionId)
-        {
-            var sessionToRemove = Sessions.FirstOrDefault(x => x.ID == sessionId);
-            if (sessionToRemove == default || !Sessions.Contains(sessionToRemove))
-                return;
-            Sessions.Remove(sessionToRemove);
-        }
-
-        private void SessionEnumeratorOnSessionCreated(object sender, AudioSessionControl e)
-        {
-            Execute.OnUIThread(() => { AddSession(e); });
-        }
-        
-        private void DeviceEnumeratorOnDeviceRemoved(object sender, EventArgs e)
-        {
-            var deviceId = sender as string;
-            Devices.Remove(Devices.First(x => x.ID == deviceId));
-            DeviceSessions.Remove(DeviceSessions.First(x => x.ID == deviceId));
-        }
-
-        private void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
-        {
-            Execute.OnUIThread(() => { AddDevice(_deviceEnumerator.GetDeviceById(sender as string)); });
+            SelectedDevice = DeviceSessions.FirstOrDefault(x => x.Guid == _controller.DefaultPlaybackDevice.Id) ?? DeviceSessions.FirstOrDefault();
         }
 
         #endregion
 
         #region Private Methods
 
-        /// <summary>
-        /// Fill default devices tab with default devices.
-        /// </summary>
-        private void CreateDefault()
+        private void SetSessions(Guid selectedDeviceId)
         {
-            Execute.OnUIThread(() =>
-            {
-                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_MULTIMEDIA, DataFlow.Render, _deviceEnumerator.DefaultMultimediaRenderID);
-                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_MULTIMEDIA, DataFlow.Capture, _deviceEnumerator.DefaultMultimediaCaptureID);
-                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_COMMUNICATION, DataFlow.Render, _deviceEnumerator.DefaultCommunicationRenderID);
-                CreateDefaultDevice(DefaultDeviceMode.DEFAULT_COMMUNICATION, DataFlow.Capture, _deviceEnumerator.DefaultCommunicationCaptureID);
-            });
+            var device = _controller.GetDevice(selectedDeviceId, DeviceState.Active);
+            if(device == default)
+                return;
+            if(!device.HasCapability<IAudioSessionController>())
+                return;
+            _sessionController = SessionHandler.GetController(device);
+            _sessionCreateCallback?.Dispose();
+            _sessionCreateCallback = _sessionController.SessionCreated.Subscribe(AddSession);
+            
+            Sessions.Clear();
+            foreach (var session in _sessionController.All())
+                AddSession(session);
         }
-        
-        private void CreateDefaultDevice(DefaultDeviceMode sessionMode, DataFlow dataFlow, string deviceId)
+
+        private void AddDevice(IDevice device)
         {
-            var name = string.Empty;
-            switch (sessionMode)
+            var deviceId = device.Id;
+            if(Devices.Any(x => x.Guid == deviceId))
+                return;
+            var model = new AudioDeviceModel
             {
-                case DefaultDeviceMode.DEFAULT_MULTIMEDIA:
-                    switch (dataFlow)
-                    {
-                        case DataFlow.Render:
-                            name = "Default Speaker";
-                            break;
-                        case DataFlow.Capture:
-                            name = "Default Microphone";
-                            break;
-                    }
-                    break;
-                case DefaultDeviceMode.DEFAULT_COMMUNICATION:
-                    switch (dataFlow)
-                    {
-                        case DataFlow.Render:
-                            name = "Default Communication Speaker";
-                            break;
-                        case DataFlow.Capture:
-                            name = "Default Communication Microphone";
-                            break;
-                    }
-                    break;
-            }
-            try
+                Guid = deviceId,
+                Name = device.FullName,
+                Type = device.DeviceType
+            };
+
+            Execute.OnUIThread(() => model.Image = IconExtractor.ExtractFromIndex(device.IconPath)?.ToImageSource());
+
+            if (device is CoreAudioDevice coreDevice)
+                model.ID = coreDevice.RealId;
+
+            Execute.OnUIThread(() => Devices.Add(model));
+            
+            if(device.IsPlaybackDevice)
+                Execute.OnUIThread(() => DeviceSessions.Add(model));
+        }
+
+        private void AddSession(IAudioSession session)
+        {
+            var id = session.Id;
+            if(Sessions.Any(x => x.ID == id))
+                return;
+
+            var processId = session.ProcessId;
+            if(!ProcessUtils.IsAlive(processId))
+                return;
+
+            using (var process = Process.GetProcessById(processId))
             {
-                var device = _deviceEnumerator.GetDeviceById(deviceId);
-                DefaultDevices.Add(new DefaultDeviceModel()
+                var sessionModel = new AudioSessionModel
                 {
-                    Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
-                    Name = $"{name}({device.FriendlyName})",
-                    Mode = sessionMode,
-                    ID = sessionMode.CreateStringUUID(dataFlow),
-                    DataFlow = dataFlow
+                    ID = session.Id,
+                    Name = process.GetPreciseName()
+                };
+                Execute.OnUIThread(() =>
+                {
+                    sessionModel.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
+                    Sessions.Add(sessionModel);
                 });
             }
-            catch (Exception ex)
+        }
+        
+        private void RemoveDevice(IDevice device)
+        {
+            var deviceId = device.Id;
+            var deviceToRemove = Devices.FirstOrDefault(x => x.Guid == deviceId);
+            if (deviceToRemove != null)
+                Devices.Remove(deviceToRemove);
+            
+            deviceToRemove = DeviceSessions.FirstOrDefault(x => x.Guid == deviceId);
+            if (deviceToRemove != null)
             {
-                Logger.Warn("Error while creating default device for view:");
-                Logger.Warn(ex);
+                if(SelectedSession.Guid == deviceToRemove.Guid)
+                    SetSessions(_controller.DefaultPlaybackDevice.Id);
+                DeviceSessions.Remove(deviceToRemove);
             }
         }
 
-        private void SetSessions(string deviceId)
+        private void RemoveSession(string sessionId)
         {
-            if (_sessionEnumerator != null)
-            {
-                _sessionEnumerator.SessionCreated -= SessionEnumeratorOnSessionCreated;
-                _sessionEnumerator.SessionExited -= SessionEnumeratorOnSessionExited;
-            }
-
-            Sessions.Clear();
-            _sessionEnumerator = new SessionEnumerator(_deviceEnumerator.GetDeviceById(deviceId), ProcessWatcher.DefaultProcessWatcher);
-                
-            var sessions = _sessionEnumerator.AudioSessions;
-            for (var n = 0; n < sessions.Count; n++)
-            {
-                var session = sessions[n];
-                if(!session.IsSystemSoundsSession)
-                    AddSession(session);
-            }
-
-            _sessionEnumerator.SessionCreated += SessionEnumeratorOnSessionCreated;
-            _sessionEnumerator.SessionExited += SessionEnumeratorOnSessionExited;
+            var sessionModel = Sessions.FirstOrDefault(x => x.ID == sessionId);
+            if(sessionModel == default)
+                return;
+            Sessions.Remove(sessionModel);
         }
 
-        private void AddDevice(MMDevice device)
-        {
-            if (Devices.Any(x => x.ID == device.ID))
-                return;
-            Devices.Add(new AudioDeviceModel()
-            {
-                Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
-                Name = device.FriendlyName,
-                ID = device.ID,
-                DataFlow = device.DataFlow
-            });
-            DeviceSessions.Add(new AudioDeviceModel
-            {
-                Image = IconExtractor.ExtractFromIndex(device.IconPath).ToImageSource(),
-                Name = $"{device.FriendlyName} - ({(device.DataFlow == DataFlow.Capture ? "Input" : "Output")})",
-                ID = device.ID,
-                DataFlow = device.DataFlow
-            });
-        }
+        #endregion
 
-        /// <summary>
-        /// Add audio session to Sessions tab.
-        /// </summary>
-        /// <param name="process"></param>
-        /// <param name="session"></param>
-        private void AddSession(AudioSessionControl session)
-        {
-            var sessionId = session.GetSessionIdentifier;
-            if (Sessions.Any(x => x.ID == sessionId))
-                return;
-
-            var processId = (int) session.GetProcessID;
-            if (!ProcessUtils.IsAlive(processId))
-                return;
-            var process = Process.GetProcessById(processId);
-
-            Sessions.Add(new AudioSessionModel
-            {
-                Name = process.GetPreciseName(),
-                Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource(),
-                ID = sessionId,
-            });
-        }
+        #region Private Events
 
         /// <summary>
         /// Occurs when Add Button has clicked.

@@ -1,9 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Media;
-using NAudio.CoreAudioApi;
+using System.Windows.Threading;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.Observables;
+using Caliburn.Micro;
+using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
+using SoundMixerSoftware.Helpers.Utils;
 
 namespace SoundMixerSoftware.Models
 {
@@ -13,6 +23,10 @@ namespace SoundMixerSoftware.Models
         /// Id of session model for differentiation.
         /// </summary>
         string ID { get; set; }
+        /// <summary>
+        /// Unique identifier of model.
+        /// </summary>
+        Guid Guid { get; set; }
         /// <summary>
         /// Name of session model.
         /// </summary>
@@ -28,24 +42,129 @@ namespace SoundMixerSoftware.Models
         /// <returns></returns>
         IVirtualSession CreateSession(int sliderIndex);
     }
-    
-    public class DefaultDeviceModel : ISessionModel
+
+    public class DefaultDeviceModel : ISessionModel, INotifyPropertyChanged
     {
-        #region Implemented Properties
-        
-        public string ID { get; set; }
-        public string Name { get; set; }
-        public ImageSource Image { get; set; }
-        public DefaultDeviceMode Mode { get; set; }
-        public DataFlow DataFlow { get; set; }
+        #region Private Fields
+
+        private Dispatcher _dispatcher = Application.Current.Dispatcher;
+        private IAudioController _controller = SessionHandler.AudioController;
+        private IDevice _device;
+        private bool isDefault;
+        private bool isDefaultCommuncations;
         
         #endregion
         
+        #region Implemented Properties
+
+        public string ID { get; set; }
+        public Guid Guid { get; set; }
+
+        public string Name { get; set; }
+
+        public ImageSource Image { get; set; }
+        public DeviceType Type { get; set; }
+        public Role Role { get; set; }
+
+        #endregion
+        
+        #region Constructor
+        
+        public DefaultDeviceModel(DeviceType type, Role role)
+        {
+            Type = type;
+            Role = role;
+            UpdateView(_controller.GetDefaultDevice(type, role));
+            RoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuncations);
+            
+            _controller.AudioDeviceChanged.Subscribe(x =>
+            {
+               if(x.ChangedType != DeviceChangedType.DefaultChanged)
+                   return;
+               var args = x as DefaultDeviceChangedArgs;
+               if (args.IsDefault && isDefault || args.IsDefaultCommunications && isDefaultCommuncations)
+               {
+                   UpdateView(x.Device);
+               }
+            });
+        }
+
+        #endregion
+        
+        #region Private Methods
+
+        private void UpdateView(IDevice device)
+        {
+            if (device == null)
+                return;
+            if (device.DeviceType != Type)
+                return;
+            _device = device;
+            _dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    switch (Type)
+                    {
+                        case DeviceType.Playback:
+                            switch (Role)
+                            {
+                                case Role.Multimedia:
+                                    Name = $"Default Playback Device({device.FullName})";
+                                    Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                    break;
+                                case Role.Communications:
+                                    Name = $"Default Communication Playback Device({device.FullName})";
+                                    Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                    break;
+                            }
+
+                            break;
+                        case DeviceType.Capture:
+                            switch (Role)
+                            {
+                                case Role.Multimedia:
+                                    Name = $"Default Capture Device({device.FullName})";
+                                    Image = ExtractedIcons.MicIcon.ToImageSource();
+                                    break;
+                                case Role.Communications:
+                                    Name = $"Default Communication Device({device.FullName})";
+                                    Image = ExtractedIcons.MicIcon.ToImageSource();
+                                    break;
+                            }
+
+                            break;
+                    }
+                }
+                finally
+                {
+                    OnPropertyChanged(nameof(Name));
+                    OnPropertyChanged(nameof(Image));
+                }
+            });
+        }
+
+        #endregion
+
         #region Implemented Methods
         
         public IVirtualSession CreateSession(int sliderIndex)
         {
-            return new DefaultDeviceSession(sliderIndex, Mode, DataFlow, Guid.NewGuid());
+            if (_device == default || (!_device.IsDefaultDevice && !_device.IsDefaultCommunicationsDevice))
+                return null;
+            return new DefaultDeviceSession(sliderIndex, Role, Type, Guid.NewGuid());
+        }
+        
+        #endregion
+        
+        #region Property Change
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         
         #endregion
@@ -56,18 +175,18 @@ namespace SoundMixerSoftware.Models
         #region Implemented Properties
         
         public string ID { get; set; }
+        public Guid Guid { get; set; }
         public string Name { get; set; }
         public ImageSource Image { get; set; }
-        public DataFlow DataFlow { get; set; }
-        public Role Role { get; set; }
-        
+        public DeviceType Type { get; set; }
+
         #endregion
         
         #region Implemented Methods
         
         public IVirtualSession CreateSession(int sliderIndex)
         {
-            return new DeviceSession(sliderIndex, ID, Name, Guid.NewGuid());
+            return new DeviceSession(sliderIndex, Guid, Name, Guid.NewGuid());
         }
         
         #endregion
@@ -78,6 +197,7 @@ namespace SoundMixerSoftware.Models
         #region Implemented Properties
         
         public string ID { get; set; }
+        public Guid Guid { get; set; }
         public string Name { get; set; }
         public ImageSource Image { get; set; }
         
@@ -96,6 +216,7 @@ namespace SoundMixerSoftware.Models
     public class ForegroundSessionModel : ISessionModel
     {
         public string ID { get; set; } = "B0BA17A8-0CC4-458E-90F4-385794DE41FC";
+        public Guid Guid { get; set; } = Guid.Parse("B0BA17A8-0CC4-458E-90F4-385794DE41FC");
         public string Name { get; set; } = "Foreground Session";
         public ImageSource Image { get; set; } = Resource.CogIcon.ToImageSource();
         public IVirtualSession CreateSession(int sliderIndex)

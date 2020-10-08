@@ -23,6 +23,8 @@ namespace SoundMixerSoftware.Helpers.Utils
         /// <returns></returns>
         public static bool AddSession(int sliderIndex, IVirtualSession virtualSession)
         {
+            if (virtualSession == null)
+                return false;
             var profile = ProfileHandler.SelectedProfile;
 
             if(profile.Sliders == null)

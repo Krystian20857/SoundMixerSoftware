@@ -43,7 +43,6 @@
     <Compile Include="AudioSessions\IVirtualSessionCreator.cs" />
     <Compile Include="AudioSessions\SessionHandler.cs" />
     <Compile Include="AudioSessions\SessionState.cs" />
-    <Compile Include="AudioSessions\VirtualSessions\DefaultDeviceMode.cs" />
     <Compile Include="AudioSessions\VirtualSessions\DefaultDeviceSession.cs" />
     <Compile Include="AudioSessions\VirtualSessions\DeviceSession.cs" />
     <Compile Include="AudioSessions\VirtualSessions\ForegroundSession.cs" />
@@ -90,6 +89,14 @@
     <Compile Include="Utils\SessionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AudioSwitcher.AudioApi, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
+      <HintPath>..\packages\AudioSwitcher.AudioApi.4.0.0-alpha5\lib\net45\AudioSwitcher.AudioApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AudioSwitcher.AudioApi.CoreAudio, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
+      <HintPath>..\packages\AudioSwitcher.AudioApi.CoreAudio.4.0.0-alpha5\lib\net45\AudioSwitcher.AudioApi.CoreAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\GregsStack.InputSimulatorStandard.1.2.0-beta0003\lib\netstandard2.0\GregsStack.InputSimulatorStandard.dll</HintPath>
       <Private>True</Private>
@@ -103,10 +110,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>

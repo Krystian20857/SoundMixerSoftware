@@ -17,6 +17,20 @@ namespace SoundMixerSoftware.Common.Utils.EnumUtils
                 throw new ArgumentException("Type must be enum.");
             return Enum.TryParse<T>(input.ToString(), out var result) ? result : default;
         }
+        
+        /// <summary>
+        /// Parse enum value from string.
+        /// </summary>
+        /// <param name="input">input object</param>
+        /// <typeparam name="T">enum type</typeparam>
+        /// <returns></returns>
+        public static T Parse<T>(object input, T defaultValue) where T : struct
+        {
+            if(!typeof(T).IsEnum)
+                throw new ArgumentException("Type must be enum.");
+            return Enum.TryParse<T>(input.ToString(), out var result) ? result : defaultValue;
+        }
+
 
         /// <summary>
         /// Parse enum value enumerable type to from object enumerable type.

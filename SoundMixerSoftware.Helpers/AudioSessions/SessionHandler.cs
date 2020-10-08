@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NAudio.CoreAudioApi;
-using SoundMixerSoftware.Common.AudioLib;
-using SoundMixerSoftware.Common.Threading.Com;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.CoreAudio;
+using AudioSwitcher.AudioApi.Observables;
+using AudioSwitcher.AudioApi.Session;
+using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.Threading;
 
@@ -12,16 +14,19 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
     public static class SessionHandler
     {
         #region Private Fields
-        
+
+        private static IDisposable _changeCallback;
+        private static IProcessWatcher _processWatcher => ProcessWatcher.DefaultProcessWatcher;
+
         #endregion
         
         #region Public Properties
 
-        public static List<List<IVirtualSession>> Sessions { get; private set; } = new List<List<IVirtualSession>>();
+        public static List<List<IVirtualSession>> Sessions { get;} = new List<List<IVirtualSession>>();
         public static Dictionary<string, IVirtualSessionCreator> Creators { get; } = new Dictionary<string, IVirtualSessionCreator>();
 
-        public static DeviceEnumerator DeviceEnumerator { get; private set; } = new DeviceEnumerator();
-        public static Dictionary<string, SessionEnumerator> SessionEnumerators { get; private set; } = new Dictionary<string, SessionEnumerator>();
+        public static IAudioController AudioController { get;} = new CoreAudioController();
+        public static Dictionary<Guid, IAudioSessionController> SessionController { get;} = new Dictionary<Guid, IAudioSessionController>();
 
         #endregion
         
@@ -29,7 +34,12 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         public static event EventHandler<SessionArgs> SessionCreated;
         public static event EventHandler<SessionArgs> SessionRemoved;
-        
+        public static event EventHandler<SessionDisconnectedArgs> SessionExited;
+        public static event EventHandler<VolumeChangedArgs> SessionVolumeChanged;
+        public static event EventHandler<MuteChangedArgs> SessionMuteChanged;
+        public static event Action<IDevice> DeviceAddedCallback;
+        public static event Action<IDevice> DeviceRemovedCallback;
+
         #endregion
         
         #region Constructor
@@ -39,25 +49,42 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         
         #region Public Methods
         
-        public static void ReloadAll(){
-
+        public static void ReloadAll()
+        {
+            _changeCallback?.Dispose();
+            
             foreach (var session in Sessions.SelectMany(x => x.ToList()))
                 session.Dispose();
-            foreach(var sessionEnum in SessionEnumerators)
-                sessionEnum.Value.Dispose();
-            SessionEnumerators.Clear();
             
-            DeviceEnumerator.Dispose();
-            DeviceEnumerator = new DeviceEnumerator();
-
-            foreach (var device in DeviceEnumerator.AllDevices)
+            foreach(var device in AudioController.GetDevices(DeviceState.Active))
+                DeviceAdded(device);
+            
+            _changeCallback = AudioController.AudioDeviceChanged.Subscribe(x =>
             {
-                var sessionEnum = new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher);
-                SessionEnumerators.Add(device.ID, sessionEnum);
-            }
-
-            DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
-            DeviceEnumerator.DeviceRemoved += DeviceEnumeratorOnDeviceRemoved;
+                switch (x.ChangedType)
+                {
+                    case DeviceChangedType.DeviceAdded:
+                        DeviceAdded(x.Device);
+                        break;
+                    case DeviceChangedType.DeviceRemoved:
+                        DeviceRemove(x.Device);
+                        break;
+                    case DeviceChangedType.StateChanged:
+                        var state = x as DeviceStateChangedArgs;
+                        switch (state.State)
+                        {
+                            case DeviceState.Active:
+                                DeviceAdded(x.Device);
+                                break;
+                            case DeviceState.Disabled:
+                            case DeviceState.NotPresent:
+                            case DeviceState.Unplugged:
+                                DeviceRemove(x.Device);
+                                break;
+                        }
+                        break;
+                }
+            });
         }
 
         public static void CreateSessions()
@@ -142,11 +169,18 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         /// <param name="selfInvoke"></param>
         public static void SetVolume(int index, float volume, bool selfInvoke)
         {
-            if (index >= Sessions.Count)
-                return;
-            foreach (var slider in Sessions[index])
+            try
             {
-                slider.Volume = volume;
+                if (index >= Sessions.Count)
+                    return;
+                foreach (var slider in Sessions[index])
+                {
+                    slider.Volume = volume;
+                }
+            }
+            finally
+            {
+                SessionVolumeChanged?.Invoke(null, new VolumeChangedArgs(volume, selfInvoke, index));
             }
         }
         
@@ -158,11 +192,18 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         /// <param name="selfInvoke"></param>
         public static void SetMute(int index, bool mute, bool selfInvoke)
         {
-            if (index >= Sessions.Count)
-                return;
-            foreach (var slider in Sessions[index])
+            try
             {
-                slider.IsMute = mute;
+                if (index >= Sessions.Count)
+                    return;
+                foreach (var slider in Sessions[index])
+                {
+                    slider.IsMute = mute;
+                }
+            }
+            finally
+            {
+                SessionMuteChanged?.Invoke(null, new MuteChangedArgs(mute, selfInvoke, index));
             }
         }
         
@@ -184,41 +225,72 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         /// Gets all session from devices.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<AudioSessionControl> GetAllSessions()
+        public static IEnumerable<IAudioSession> GetAllSessions()
         {
-            foreach (var sessionEnum in SessionEnumerators.Values)
-            {
-                var sessions = sessionEnum.AudioSessions;
-                for (var n = 0; n < sessions.Count; n++)
-                    yield return sessions[n];
-            }
+            foreach (var sessionController in SessionController.Values)
+                return sessionController.All();
+            return Enumerable.Empty<IAudioSession>();
+        }
+        
+        /// <summary>
+        /// Gets cached controller whatever possible.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        public static IAudioSessionController GetController(IDevice device)
+        {
+            var deviceId = device.Id;
+            if (SessionController.TryGetValue(deviceId, out var controller))
+                return controller;
+            return device.GetCapability<IAudioSessionController>();
         }
         
         #endregion
         
         #region Private Events
 
-        private static void DeviceEnumeratorOnDeviceRemoved(object sender, EventArgs e)
+        private static void DeviceAdded(IDevice device)
         {
-            var deviceId = sender as string;
-            if (!SessionEnumerators.ContainsKey(deviceId)) return;
-            ComThread.Invoke(() => SessionEnumerators[deviceId].Dispose());
-            SessionEnumerators.Remove(deviceId);
+            try
+            {
+                var deviceId = device.Id;
+                if (SessionController.ContainsKey(deviceId))
+                    return;
+                var controller = device.GetCapability<IAudioSessionController>();
+                if (controller == default)
+                    return;
+                foreach (var session in controller.All())
+                    AttachProcessExit(session);
+                controller.SessionCreated.Subscribe(AttachProcessExit);
+                SessionController.Add(deviceId, controller);
+            }
+            finally
+            {
+                DeviceAddedCallback?.Invoke(device);
+            }
+        }
+        
+        private static void DeviceRemove(IDevice device)
+        {
+            try
+            {
+                var deviceId = device.Id;
+                if (!SessionController.ContainsKey(deviceId))
+                    return;
+                var controller = SessionController[deviceId];
+                foreach (var session in controller.All())
+                    _processWatcher.DetachProcessWait(session.ProcessId);
+                SessionController.Remove(deviceId);
+            }
+            finally
+            {
+                DeviceRemovedCallback?.Invoke(device);
+            }
         }
 
-        private static void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
+        private static void AttachProcessExit(IAudioSession audioSession)
         {
-            var deviceId = sender as string;
-            ComThread.Invoke(() =>
-            {
-                var device = DeviceEnumerator.GetDeviceById(deviceId);
-                var sessionEnum = new SessionEnumerator(device, ProcessWatcher.DefaultProcessWatcher);
-                if (SessionEnumerators.ContainsKey(deviceId))
-                    SessionEnumerators[deviceId] = sessionEnum;
-                else 
-                    SessionEnumerators.Add(deviceId, sessionEnum);
-            });
-            
+            _processWatcher.AttachProcessWait(audioSession.ProcessId, id => SessionExited?.Invoke(null, new SessionDisconnectedArgs(audioSession)));
         }
 
         #endregion

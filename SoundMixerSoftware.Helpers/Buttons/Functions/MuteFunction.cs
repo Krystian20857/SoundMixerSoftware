@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using NAudio.CoreAudioApi;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Helpers.Profile;
-using VolumeChangedArgs = SoundMixerSoftware.Common.AudioLib.VolumeChangedArgs;
 
 namespace SoundMixerSoftware.Helpers.Buttons.Functions
 {
@@ -24,36 +21,20 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         #endregion
         
-        #region Static Fields
-
-        private static IDictionary<string, bool> _lastMute =  new Dictionary<string, bool>();
-        private static List<MuteFunction> _speakerMute = new List<MuteFunction>();
-        private static List<MuteFunction> _micMute = new List<MuteFunction>();
-        private static IDictionary<int, bool> _sliderMute = new Dictionary<int, bool>();
-
-        #endregion
-        
-        #region Static Properties
-
-        public static Dictionary<int, List<int>> SliderMute { get; } = new Dictionary<int, List<int>>(); // int: index of slider, List<int>: indexes of assigned buttons
-
-        #endregion
-        
         #region Private Fields
 
+        private IAudioController _controller = SessionHandler.AudioController;
+        private IDevice _device;
+        private IDisposable _defaultVolumeCallback;
+
         private string _name;
+
+        private bool _lastSliderMute;
         
         #endregion
-        
-        #region Public Proeprties
 
-        public MuteTask MuteTask { get; set; }
-        public int SliderIndex { get; set; }
-
-        #endregion
-        
         #region Implemented Properties
-        
+
         public string Name
         {
             get
@@ -78,46 +59,83 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             set => _name = value;
         }
 
-        public string Key { get; } = "mute_func";
+        public string Key { get; } = "mute_func"; 
+        public int Index { get; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.MuteIcon.ToImageSource();
-        public int Index { get; }
-
+        
         #endregion
         
+        #region Public Properties
+
+        public int SliderIndex { get; }
+        public MuteTask MuteTask { get; }
+        public DeviceType DeviceType { get; set; }
+
+        #endregion
+       
+
         #region Constructor
 
-        public MuteFunction(int index, MuteTask muteTask, Guid uuid)
+        protected MuteFunction(MuteTask task)
         {
-            Index = index;
-            MuteTask = muteTask;
-            UUID = uuid;
+            MuteTask = task;
+            
+            switch (task)
+            {
+                case MuteTask.MuteDefaultSpeaker:
+                    DeviceType = DeviceType.Playback;
+                    DefaultDeviceChanged(new DefaultDeviceChangedArgs(_controller.DefaultPlaybackDevice));
+                    _device = _controller.DefaultPlaybackDevice;
+                    break;
+                case MuteTask.MuteDefaultMic:
+                    DeviceType = DeviceType.Capture;
+                    DefaultDeviceChanged(new DefaultDeviceChangedArgs(_controller.DefaultCaptureDevice));
+                    _device = _controller.DefaultCaptureDevice;
+                    break;
+            }
+
+            switch (task)
+            {
+                case MuteTask.MuteDefaultMic:
+                case MuteTask.MuteDefaultSpeaker:
+                    _controller.AudioDeviceChanged.Subscribe(x =>
+                    {
+                        if (x.ChangedType != DeviceChangedType.DefaultChanged)
+                            return;
+                        DefaultDeviceChanged(x as DefaultDeviceChangedArgs);
+                    });
+                    break;
+                case MuteTask.MuteSlider:
+                    SessionHandler.SessionMuteChanged += (sender, args) =>
+                    {
+                        var index = args.Index;
+                        if(index != SliderIndex)
+                            return;
+                        _lastSliderMute = args.Mute;
+                        DeviceNotifier.LightButton(unchecked( (byte)index ), _lastSliderMute); 
+                    };
+                    break;
+            }
         }
 
-        public MuteFunction(int index, int sliderIndex, Guid uuid)
+        public MuteFunction(int index, int sliderIndex, Guid uuid) : this(MuteTask.MuteSlider)
         {
-            MuteTask = MuteTask.MuteSlider;
             Index = index;
             SliderIndex = sliderIndex;
             UUID = uuid;
         }
-
-        static MuteFunction()
+        
+        public MuteFunction(int index, MuteTask muteTask, Guid uuid): this(muteTask)
         {
-            ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
-            Initialize(false);
-            
-        }
-
-        private static void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
-        {
-            Initialize(true);
+            Index = index;
+            UUID = uuid;
         }
 
         #endregion
         
         #region Implemented Methods
-        
+
         public Dictionary<object, object> Save()
         {
             var result = new Dictionary<object, object>();
@@ -135,14 +153,14 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         {
             switch (MuteTask)
             {
-                case MuteTask.MuteDefaultMic:
-                    HandleMute(SessionHandler.DeviceEnumerator.DefaultInput);
-                    break;
                 case MuteTask.MuteDefaultSpeaker:
-                    HandleMute(SessionHandler.DeviceEnumerator.DefaultOutput);
+                case MuteTask.MuteDefaultMic:
+                    _device.ToggleMuteAsync().ContinueWith(x => OverlayHandler.ShowMute(_device.IsMuted));
                     break;
                 case MuteTask.MuteSlider:
-                    HandleSliderMute(Index, SliderIndex);
+                    var mute = !_lastSliderMute;
+                    SessionHandler.SetMute(SliderIndex, mute, true);
+                    OverlayHandler.ShowMute(mute);
                     break;
             }
         }
@@ -154,186 +172,31 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         #endregion
         
-        #region Public Methods
+        #region Private Methods
 
-        /// <summary>
-        /// Handle mute for specified device.
-        /// </summary>
-        /// <param name="device"></param>
-        public static void HandleMute(MMDevice device)
+        private void DefaultDeviceChanged(DefaultDeviceChangedArgs x)
         {
-            var volumeEndpoint = device.AudioEndpointVolume;
-            var mute = !volumeEndpoint.Mute;
-            volumeEndpoint.Mute = mute;
-            OverlayHandler.ShowMute(mute);
-        }
-
-        /// <summary>
-        /// Handle current slider mute.
-        /// </summary>
-        /// <param name="sliderIndex"></param>
-        public static void HandleSliderMute(int buttonIndex, int sliderIndex)
-        {
-            if (!_sliderMute.ContainsKey(sliderIndex))
-                _sliderMute.Add(sliderIndex, false);
-            var mute = !_sliderMute[sliderIndex];
-            _sliderMute[sliderIndex] = mute;
-            SessionHandler.SetMute(sliderIndex, mute, true);
-            //DeviceNotifier.LightButton(unchecked((byte) buttonIndex), mute);
-            OverlayHandler.ShowMute(mute);
-        }
-
-        #endregion
-        
-        #region Private Events & Methods
-        
-        private static void DeviceEnumeratorOnDeviceVolumeChanged(object sender, VolumeChangedArgs e)
-        {
-            Application.Current.Dispatcher.Invoke(() => { 
-                var device = sender as MMDevice;
-
-                var deviceId = device.ID;
-                if (_lastMute.ContainsKey(deviceId))
+            var device = x.Device;
+            if (device.IsDefaultDevice && device.DeviceType == DeviceType)
+            {
+                _device = device;
+                _defaultVolumeCallback?.Dispose();
+                _defaultVolumeCallback = _device.MuteChanged.Subscribe(y =>
                 {
-                    if (_lastMute[deviceId] == e.Mute)
-                    {
-                        SetLastMute(deviceId, e.Mute);
-                        return;
-                    }
-                    SetLastMute(deviceId, e.Mute);
-                }
-                else
-                    SetLastMute(deviceId, e.Mute);
-                var defaultInputID = SessionHandler.DeviceEnumerator.DefaultMultimediaCaptureID;
-                var defaultOutputID = SessionHandler.DeviceEnumerator.DefaultMultimediaRenderID;
-                
-                if (deviceId == defaultInputID)
-                    for (var n = 0; n < _micMute.Count; n++)
-                        DeviceNotifier.LightButton(unchecked((byte)_micMute[n].Index), e.Mute);
-                else if (deviceId == defaultOutputID)
-                    for (var n = 0; n < _speakerMute.Count; n++)
-                        DeviceNotifier.LightButton(unchecked((byte)_speakerMute[n].Index), e.Mute);
-            });
-        }
-
-        private static void ButtonHandlerOnFunctionCreated(object sender, FunctionArgs e)
-        {
-            if (e.Button is MuteFunction muteFunction)
-                HandleFunctionAdd(muteFunction);
-        }
-
-        private static void ButtonHandlerOnFunctionRemoved(object sender, FunctionArgs e)
-        {
-            if(e.Button is MuteFunction muteFunction)
-                HandleFunctionRemove(muteFunction);
-        }
-
-        /// <summary>
-        /// Handle button function creation.
-        /// </summary>
-        /// <param name="muteFunction"></param>
-        private static void HandleFunctionAdd(MuteFunction muteFunction)
-        {
-            switch (muteFunction.MuteTask)
-            {
-                case MuteTask.MuteDefaultMic:
-                    _micMute.Add(muteFunction);
-                    break;
-                case MuteTask.MuteDefaultSpeaker:
-                    _speakerMute.Add(muteFunction);
-                    break;
-                case MuteTask.MuteSlider:
-                    var sliderIndex = muteFunction.SliderIndex;
-                    var buttonIndex = muteFunction.Index;
-                    if (SliderMute.ContainsKey(sliderIndex))
-                    {
-                        var buttonList = SliderMute[sliderIndex];
-                        if (!buttonList.Contains(buttonIndex))
-                            buttonList.Add(buttonIndex);
-                        SliderMute[buttonIndex] = buttonList;
-                    }
-                    else
-                    {
-                        var buttonList = new List<int>();
-                        buttonList.Add(buttonIndex);
-                        SliderMute.Add(sliderIndex, buttonList);
-                    }
-
-                    
-                    break;
+                    DeviceNotifier.LightButton(unchecked((byte) SliderIndex), y.IsMuted);
+                });
             }
         }
+        
+        #endregion 
+        
+        #region Destructor
 
-        /// <summary>
-        /// Handle button function removal.
-        /// </summary>
-        /// <param name="muteFunction"></param>
-        private static void HandleFunctionRemove(MuteFunction muteFunction)
+        ~MuteFunction()
         {
-            switch (muteFunction.MuteTask)
-            {
-                case MuteTask.MuteDefaultMic:
-                    _micMute.Remove(muteFunction);
-                    break;
-                case MuteTask.MuteDefaultSpeaker:
-                    _speakerMute.Remove(muteFunction);
-                    break;
-                case MuteTask.MuteSlider:
-                    var sliderIndex = muteFunction.SliderIndex;
-                    var buttonIndex = muteFunction.Index;
-                    if(!SliderMute.ContainsKey(sliderIndex))
-                        return;
-                    var buttonList = SliderMute[sliderIndex];
-                    if (buttonList.Count == 1 && buttonList.Contains(buttonIndex))
-                        SliderMute.Remove(sliderIndex);
-                    else if (buttonList.Count > 1)
-                    {
-                        if (buttonList.Contains(buttonIndex))
-                            buttonList.Remove(buttonIndex);
-                        SliderMute[sliderIndex] = buttonList;
-                    }
-                    break;
-            }
+            _defaultVolumeCallback?.Dispose();
         }
-
-        /// <summary>
-        /// Set last captured mute state for specified device.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="mute"></param>
-        private static void SetLastMute(string id, bool mute)
-        {
-            if (_lastMute.ContainsKey(id))
-                _lastMute[id] = mute;
-            else
-                _lastMute.Add(id, mute);
-        }
-
-        /// <summary>
-        /// Initialize global mute function handler.
-        /// </summary>
-        private static void Initialize(bool profileChange)
-        {
-            ButtonHandler.FunctionRemoved -= ButtonHandlerOnFunctionRemoved;
-            ButtonHandler.FunctionCreated -= ButtonHandlerOnFunctionCreated;
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged -= DeviceEnumeratorOnDeviceVolumeChanged;
-            
-
-            SliderMute.Clear();
-            _micMute.Clear();
-            _speakerMute.Clear();
-            _lastMute.Clear();
-            
-            foreach (var button in ButtonHandler.Buttons)
-                foreach (var func in button)
-                    if (func is MuteFunction mediaFunc)
-                        HandleFunctionAdd(mediaFunc);
-
-            ButtonHandler.FunctionRemoved += ButtonHandlerOnFunctionRemoved;
-            ButtonHandler.FunctionCreated += ButtonHandlerOnFunctionCreated;
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
-        }
-
+        
         #endregion
     }
 
@@ -343,9 +206,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
-            if(!container.ContainsKey(MuteFunction.MUTE_TASK_KEY))
-                throw new NotImplementedException($"Container does not contains: {MuteFunction.MUTE_TASK_KEY} key");
-            var muteTask = EnumUtils.Parse<MuteTask>(container[MuteFunction.MUTE_TASK_KEY].ToString());
+            var muteTask = container.ContainsKey(MuteFunction.MUTE_TASK_KEY) ? EnumUtils.Parse<MuteTask>(container[MuteFunction.MUTE_TASK_KEY].ToString()) : MuteTask.MuteDefaultSpeaker;
             switch (muteTask)
             {
                 case MuteTask.MuteSlider:

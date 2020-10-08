@@ -75,7 +75,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
 
         public void ButtonKeyDown(int index)
         {
-            SessionHandler.SetVolume(SliderIndex, Volume / 100.0F, true);
+            SessionHandler.SetVolume(SliderIndex, Volume, true);
         }
 
         public void ButtonKeyUp(int index)

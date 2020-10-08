@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using NAudio.CoreAudioApi;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.Observables; 
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Threading.Com;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
@@ -27,8 +27,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #region Private Fields
 
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
-        private float lastVolume;
-        private bool lastMute; 
+        private IAudioController _controller => SessionHandler.AudioController;
+        
+        private string _rawName;
+        private IDevice _device;
+
+        private IDisposable _volumeCallback;
+        private IDisposable _muteCallback;
 
         #endregion
         
@@ -40,18 +45,27 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public int Index { get; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
-        public SessionState State { get; set; }
+        public SessionState State
+        {
+            get => _device == default ? SessionState.EXITED : SessionState.ACTIVE;
+            set { }
+        }
 
         public float Volume
         {
-            get => GetVolumeInternal();
-            set => SetVolumeInternal(value);
+            get => (float)(_device?.Volume ?? -1);
+            set => _device?.SetVolumeAsync(value);
         }
         public bool IsMute {
-            get => GetMuteInternal();
-            set => SetMuteInternal(value);
+            get => _device?.IsMuted ?? false;
+            set => _device?.SetMuteAsync(value);
         }
         
+        #endregion
+        
+        #region Private Properties
+        private string Name => _device?.FullName ?? _rawName;
+
         #endregion
         
         #region Implemented Events
@@ -63,36 +77,31 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Public Properties
 
-        public string RawName { get; set; }
-        public MMDevice Device { get; set; }
+        public Guid DeviceID { get; }
 
         #endregion
         
         #region Constructor
 
-        public DeviceSession(int index, string deviceId, string rawName, Guid uuid)
+        public DeviceSession(int index, Guid deviceId, string rawName, Guid uuid)
         {
             Index = index;
-            ID = deviceId;
+            DeviceID = deviceId;
+            ID = deviceId.ToString();
             UUID = uuid;
-            RawName = rawName;
+            _rawName = rawName;
 
-            Device = ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDeviceNull(deviceId));
-            State = Device == null ? SessionState.EXITED : SessionState.ACTIVE; 
-            UpdateDescription();
-
-            if (Device != null)
-            {
-                ComThread.Invoke(() =>
-                {
-                    lastMute = Device.AudioEndpointVolume.Mute;
-                    lastVolume = Device.AudioEndpointVolume.MasterVolumeLevelScalar;
-                });
-            }
+            _device = _controller.GetDevice(deviceId, DeviceState.Active);
             
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged += DeviceEnumeratorOnDeviceVolumeChanged;
-            SessionHandler.DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
-            SessionHandler.DeviceEnumerator.DeviceRemoved += DeviceEnumeratorOnDeviceRemoved;
+            if (State == SessionState.ACTIVE)
+            {
+                RegisterCallbacks();
+            }
+
+            SessionHandler.DeviceAddedCallback += DeviceAdded;
+            SessionHandler.DeviceRemovedCallback += DeviceRemoved;
+
+            UpdateDescription();
         }
 
         #endregion
@@ -103,7 +112,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var result = new Dictionary<object, object>();
             result.Add(DEVICE_ID_KEY, ID);
-            result.Add(DEVICE_NAME_KEY, RawName);
+            result.Add(DEVICE_NAME_KEY, DisplayName);
             return result;
         }
         
@@ -113,16 +122,16 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         private void UpdateDescription()
         {
-            _dispatcher.Invoke(() => 
+            _dispatcher.Invoke(() =>
             {
                 if (State == SessionState.ACTIVE)
                 {
-                    DisplayName = $"{RawName}";
-                    Image = IconExtractor.ExtractFromIndex(ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDeviceById(ID).IconPath)).ToImageSource();
+                    DisplayName = $"{Name}";
+                    Image = IconExtractor.ExtractFromIndex(_device?.IconPath).ToImageSource();
                 }
                 else
                 {
-                    DisplayName = $"{RawName}(Not Active)";
+                    DisplayName = $"{Name}(Not Active)";
                     Image = ExtractedIcons.FailedIcon.ToImageSource();
                 }
                 OnPropertyChanged(nameof(DisplayName));
@@ -130,86 +139,40 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             });
         }
 
-        internal void SetVolumeInternal(float volume)
+        private void RegisterCallbacks()
         {
-            if (State != SessionState.ACTIVE || Device == null)
-                return;
-            try
+            _volumeCallback?.Dispose();
+            _volumeCallback = _device.VolumeChanged.Subscribe(x =>
             {
-                ComThread.BeginInvoke(() => Device.AudioEndpointVolume.MasterVolumeLevelScalar = volume);
-            }finally{}
-        }
-
-        internal void SetMuteInternal(bool mute)
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return;
-            try
+                VolumeChange?.Invoke(this, new VolumeChangedArgs((float)x.Volume, false, Index));
+            });
+               
+            _muteCallback?.Dispose();
+            _muteCallback = _device.MuteChanged.Subscribe(x =>
             {
-                ComThread.BeginInvoke(() => Device.AudioEndpointVolume.Mute = mute);
-            }finally{}
+                MuteChanged?.Invoke(this, new MuteChangedArgs(x.IsMuted, false, Index));
+            });
         }
 
-        internal float GetVolumeInternal()
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return 0;
-            return ComThread.Invoke(() => Device.AudioEndpointVolume.MasterVolumeLevelScalar);
-        }
-
-        internal bool GetMuteInternal()
-        {
-            if (State != SessionState.ACTIVE || Device == null)
-                return true;
-            return ComThread.Invoke(() => Device.AudioEndpointVolume.Mute);
-        }
-        
         #endregion
         
         #region Private Events
-        
-        private void DeviceEnumeratorOnDeviceVolumeChanged(object sender, Common.AudioLib.VolumeChangedArgs e)
-        {
-            var deviceId = _dispatcher.Invoke(() =>
-            {
-                var device = sender as MMDevice;
-                return string.Copy(device.ID);
-            });
 
-            if (deviceId != ID)
+        private void DeviceAdded(IDevice device)
+        {            
+            if(device.Id != DeviceID)
                 return;
-            var volume = e.Volume;
-            if (Math.Abs(volume - lastVolume) > 0.005)
-            {
-                VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
-                lastVolume = volume;
-            }
-
-            var mute = e.Mute;
-            if (mute != lastMute)
-            {
-                MuteChanged?.Invoke(this, new MuteChangedArgs(mute, false, Index));
-                lastMute = mute;
-            }
-        }
-        
-        private void DeviceEnumeratorOnDeviceRemoved(object sender, EventArgs e)
-        {
-            var deviceId = sender as string;
-            if (State != SessionState.ACTIVE || deviceId != ID)
-                return;
-            State = SessionState.EXITED;
+            _device = device;
+            RegisterCallbacks();
             UpdateDescription();
         }
 
-        private void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
+        private void DeviceRemoved(IDevice device)
         {
-            var deviceId = sender as string;
-            if (State != SessionState.EXITED || deviceId != ID)
+            if(device.Id != DeviceID)
                 return;
-            State = SessionState.ACTIVE;
+            _device = null;
             UpdateDescription();
-            Device = ComThread.Invoke(() => SessionHandler.DeviceEnumerator.GetDeviceNull(deviceId));
         }
         
         #endregion
@@ -230,10 +193,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         public void Dispose()
         {
-            SessionHandler.DeviceEnumerator.DeviceVolumeChanged -= DeviceEnumeratorOnDeviceVolumeChanged;
-            SessionHandler.DeviceEnumerator.DeviceAdded -= DeviceEnumeratorOnDeviceAdded;
-            SessionHandler.DeviceEnumerator.DeviceRemoved -= DeviceEnumeratorOnDeviceRemoved;
-            Device?.Dispose();
+            _muteCallback?.Dispose();
+            _volumeCallback?.Dispose();
         }
         
         #endregion
@@ -245,7 +206,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var id = container.ContainsKey(DeviceSession.DEVICE_ID_KEY) ? container[DeviceSession.DEVICE_ID_KEY] : string.Empty;
             var deviceName = container.ContainsKey(DeviceSession.DEVICE_NAME_KEY) ? container[DeviceSession.DEVICE_NAME_KEY] : string.Empty;
-            return new DeviceSession(index, id.ToString(), deviceName.ToString(), uuid);
+            var deviceId = Guid.TryParse(id.ToString(), out var var1) ? var1 : Guid.Empty;
+            return new DeviceSession(index, deviceId, deviceName.ToString(), uuid);
         }
     }
 }

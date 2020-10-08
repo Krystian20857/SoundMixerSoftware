@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
@@ -77,9 +78,8 @@ namespace SoundMixerSoftware.ViewModels
                     var sliderIndex = Sliders.IndexOf(SelectedSlider);
                     if (sliderIndex == -1)
                         break;
-                    if (MuteFunction.SliderMute.ContainsKey(sliderIndex))
-                        if (MuteFunction.SliderMute[sliderIndex].Contains(index))
-                            return false;
+                    if (ButtonHandler.Buttons[index].Any(x => (x is MuteFunction muteFunction) && muteFunction.SliderIndex == sliderIndex))
+                        return false;
                     function = new MuteFunction(index, sliderIndex, Guid.NewGuid());
                     break;
                 default:
