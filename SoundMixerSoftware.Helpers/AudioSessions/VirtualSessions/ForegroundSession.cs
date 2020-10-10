@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using NAudio.CoreAudioApi;
+using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.Observables;
+using AudioSwitcher.AudioApi.Session;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Threading.Com;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Interop.Method;
@@ -38,9 +38,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
         private WindowWatcher _windowWatcher = new WindowWatcher();
-        
-        private float lastVolume;                                               //for detecting volume/mute change
-        private bool lastMute;
+
+        private List<IAudioSession> _sessions = new List<IAudioSession>(25); 
+        private Dictionary<IAudioSession, IDisposable> _volumeEvents = new Dictionary<IAudioSession, IDisposable>();
+        private Dictionary<IAudioSession, IDisposable> _muteEvents = new Dictionary<IAudioSession, IDisposable>();
 
         #endregion
         
@@ -54,36 +55,34 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         public ImageSource Image { get; set; }
         public SessionState State
         {
-            get => HasActiveSession ? SessionState.ACTIVE : SessionState.EXITED; 
+            get => _sessions.Count > 0 && WindowHandle != IntPtr.Zero ? SessionState.ACTIVE : SessionState.EXITED; 
             set { }
         }
 
         public float Volume
         {
-            set => SetVolume(value);
-            get => 0;
+            set => _sessions.ForEach(x => x.SetVolumeAsync(value));
+            get => State == SessionState.ACTIVE ? (float)_sessions.First().Volume : 0;
         }
 
         public bool IsMute
         {
-            set => SetMute(value);
-            get => false;
+            set => _sessions.ForEach(x => x.SetMuteAsync(value));
+            get => State == SessionState.ACTIVE ? _sessions.First().IsMuted : false;
         }
         
-        #endregion
-        
-        #region Public Properties
-
-        public List<AudioSessionControl> Sessions { get; private set; } = new List<AudioSessionControl>();
-        public IntPtr WindowHandle { get; private set; }
-        public bool HasActiveSession => Sessions.Count > 0;
-
         #endregion
 
         #region Implemented Events
         
         public event EventHandler<VolumeChangedArgs> VolumeChange;
         public event EventHandler<MuteChangedArgs> MuteChanged;
+        
+        #endregion
+        
+        #region Public Properties
+
+        public IntPtr WindowHandle { get; protected set; }
         
         #endregion
         
@@ -94,19 +93,14 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             UUID = uuid;
             Index = sliderIndex;
 
-            var window = User32.GetForegroundWindow();
-            var threadId = User32.GetWindowThreadProcessId(window, out var processId);
-            WindowWatcherOnForegroundWindowChanged(_windowWatcher, new WindowChangedArgs(window, processId, (int)threadId));
-
-            foreach (var sessionEnum in SessionHandler.SessionEnumerators.Values)
-            {
-                sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
-                sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
-            }
-
-            SessionHandler.DeviceEnumerator.DeviceAdded += DeviceEnumeratorOnDeviceAdded;
+            var windowHwnd = User32.GetForegroundWindow();
+            var threadId = (int)User32.GetWindowThreadProcessId(windowHwnd, out var processId);
+            WindowWatcherOnForegroundWindowChanged(_windowWatcher, new WindowChangedArgs(windowHwnd, processId, threadId));
+            
             _windowWatcher.ForegroundWindowChanged += WindowWatcherOnForegroundWindowChanged;
             _windowWatcher.WindowNameChanged += WindowWatcherOnWindowNameChanged;
+            SessionHandler.SessionExited += SessionHandlerOnSessionExited;
+            SessionHandler.SessionCreated += SessionHandlerOnSessionCreatedCallback;
         }
 
         #endregion
@@ -122,124 +116,117 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Private Methods
 
-        #endregion
-        
-        #region Private Events
-
-        private void WindowWatcherOnForegroundWindowChanged(object sender, WindowChangedArgs e)
+        private bool IsShellWindow(IntPtr hwnd)
         {
-            var processId = (uint) e.ProcessId;
-            var childProcesses = ProcessWrapper.GetChildProcesses(processId).ToList();
+            return hwnd == User32.GetShellWindow() || hwnd == User32.GetDesktopWindow();
+        }
 
-            Sessions.Clear();
-            foreach (var session in SessionHandler.GetAllSessions())
+        private void RegisterEvents(IAudioSession session)
+        {
+            var volumeEvent = session.VolumeChanged.Subscribe(x =>
+            {
+                VolumeChange?.Invoke(this, new VolumeChangedArgs((float)x.Volume, false, Index));
+            });
+            
+            var muteEvent = session.MuteChanged.Subscribe(x =>
+            {
+                MuteChanged?.Invoke(this, new MuteChangedArgs(x.IsMuted, false, Index));
+            });
+
+            _volumeEvents.Add(session, volumeEvent);
+            _muteEvents.Add(session, muteEvent);
+        }
+
+        private void UnregisterEvents()
+        {
+            foreach(var volumeEvent in _volumeEvents.Values)
+                volumeEvent.Dispose();
+            _volumeEvents.Clear();
+            
+            foreach(var muteEvent in _muteEvents.Values)
+                muteEvent.Dispose();
+            _muteEvents.Clear();
+        }
+
+        private void UpdateView()
+        {
+            _dispatcher.Invoke(() =>
             {
                 try
                 {
-                    var sessionProcessId = session.GetProcessID;
-                    if (childProcesses.Contains(sessionProcessId))
-                        Sessions.Add(session);
+                    if (State == SessionState.EXITED)
+                    {
+                        Image = ExtractedIcons.FailedIcon.ToImageSource();
+                        DisplayName = "Focused window has not audio session.";
+                    }
+                    else
+                    {
+                        Image = (WindowWrapper.GetWindowIcon(WindowHandle) ?? ExtractedIcons.FailedIcon).ToImageSource();
+                        DisplayName = $"Window: {WindowWrapper.GetWindowTitle(WindowHandle)}";
+                    }
                 }
-                catch(COMException){}//Usually it does not matter...
+                finally
+                {
+                    OnPropertyChanged(nameof(DisplayName));
+                    OnPropertyChanged(nameof(Image));
+                }
+            });
+        }
+
+        #endregion
+        
+        #region Private Events
+        
+        private void WindowWatcherOnForegroundWindowChanged(object sender, WindowChangedArgs e)
+        {
+            if(IsShellWindow(e.Handle)) return;
+            var processId = e.ProcessId;
+            var childProcesses = ProcessWrapper.GetChildProcesses((uint)processId).ToList();
+            
+            _sessions.Clear();
+            UnregisterEvents();
+            foreach (var session in SessionHandler.GetAllSessions())
+            {
+                var sessionProcessId = session.ProcessId;
+                if (ProcessUtils.IsAlive(sessionProcessId) && childProcesses.Contains((uint) sessionProcessId))
+                {
+                    RegisterEvents(session);
+                    _sessions.Add(session);
+                }
             }
 
             WindowHandle = e.Handle;
-
-            UpdateDescription();
-        }
-
-        private void SessionEnumOnSessionCreated(object sender, AudioSessionControl e)
-        {
-            var window = User32.GetForegroundWindow();
-            var processId = e.GetProcessID;
-            User32.GetWindowThreadProcessId(window, out var windowProcessId);
-
-            if (ProcessWrapper.GetParentProcess(processId) == windowProcessId || windowProcessId == processId)
-            {
-                WindowHandle = window;
-                Sessions.Add(e);
-                UpdateDescription();
-            }
-        }
-        
-        private void DeviceEnumeratorOnDeviceAdded(object sender, EventArgs e)
-        {
-            var sessionEnum = SessionHandler.SessionEnumerators[sender as string];
-            sessionEnum.SessionCreated += SessionEnumOnSessionCreated;
-            sessionEnum.VolumeChanged += SessionEnumOnVolumeChanged;
-        }
-
-        private void SessionEnumOnVolumeChanged(object sender, Common.AudioLib.VolumeChangedArgs e)
-        {
-            var session = sender as AudioSessionControl;
-            var sessionId = session.GetSessionIdentifier;
-            if(Sessions.All(x => x.GetSessionIdentifier != sessionId))
-                return;
-            
-            var volume = e.Volume;
-            var mute = e.Mute;
-            
-            if (Math.Abs(volume - lastVolume) > 0.005)
-            {
-                VolumeChange?.Invoke(this, new VolumeChangedArgs(volume, false, Index));
-                lastVolume = volume;
-            }
-
-            if (mute != lastMute)
-            {
-                MuteChanged?.Invoke(this, new MuteChangedArgs(e.Mute, false, Index));
-                lastMute = mute;
-            }
+            UpdateView();
         }
         
         private void WindowWatcherOnWindowNameChanged(object sender, WindowNameChangedArgs e)
         {
-            var window = e.Handle;
-            if (window == WindowHandle)
+            if(e.Handle != WindowHandle)
+                return;
+            UpdateView();
+        }
+        
+        private void SessionHandlerOnSessionExited(IAudioSession session)
+        {
+            if(_sessions.Remove(session) && State == SessionState.EXITED)
+                UpdateView();
+        }
+        
+        private void SessionHandlerOnSessionCreatedCallback(IAudioSession session)
+        {
+            var window = User32.GetForegroundWindow();
+            var processId = session.ProcessId;
+            User32.GetWindowThreadProcessId(window, out var windowProcessId);
+            
+            if(ProcessWrapper.GetParentProcess((uint)processId) == windowProcessId || windowProcessId == processId)
             {
-                UpdateDescription();
+                WindowHandle = window;
+                RegisterEvents(session);
+                _sessions.Add(session);
+                UpdateView();
             }
         }
-
-        #endregion
         
-        #region Private Methods
-
-        private void UpdateDescription()
-        {
-            _dispatcher.Invoke(() =>
-            {
-                if (HasActiveSession && WindowHandle != IntPtr.Zero)
-                {
-                    Image = (WindowWrapper.GetWindowIcon(WindowHandle) ?? ExtractedIcons.FailedIcon).ToImageSource();
-                    DisplayName = $"Window: {WindowWrapper.GetWindowTitle(WindowHandle)}";
-                }
-                else
-                {
-                    DisplayName = "Focused window has not audio session.";
-                    Image = ExtractedIcons.FailedIcon.ToImageSource();
-                }
-                OnPropertyChanged(nameof(Image));
-                OnPropertyChanged(nameof(DisplayName));
-            });
-        }
-
-        internal void SetVolume(float volume)
-        {
-            try
-            {
-                Sessions.ForEach(x => x.SimpleAudioVolume.Volume = volume);
-            }catch(Exception ex) when (ex is COMException) {}
-        }
-        
-        internal void SetMute(bool mute)
-        {
-            try
-            {
-                Sessions.ForEach(x => x.SimpleAudioVolume.Mute = mute);
-            }catch(Exception ex) when (ex is COMException) {}
-        }
-
         #endregion
         
         #region Property Changed
