@@ -113,7 +113,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                         if(index != SliderIndex)
                             return;
                         _lastSliderMute = args.Mute;
-                        DeviceNotifier.LightButton(unchecked( (byte)index ), _lastSliderMute); 
+                        DeviceNotifier.LightButton(unchecked( (byte)Index ), _lastSliderMute); 
                     };
                     break;
             }
@@ -183,7 +183,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
                 _defaultVolumeCallback?.Dispose();
                 _defaultVolumeCallback = _device.MuteChanged.Subscribe(y =>
                 {
-                    DeviceNotifier.LightButton(unchecked((byte) SliderIndex), y.IsMuted);
+                    DeviceNotifier.LightButton(unchecked((byte) Index), y.IsMuted);
                 });
             }
         }

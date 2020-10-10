@@ -19,7 +19,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
     {
         #region Constant
 
-        public const string KEY = "default-device";
+        public const string KEY = "default_device";
         public const string DEVICETYPE_KEY = "DevType";
         public const string ROLE_KEY = "Role";
 
@@ -27,7 +27,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Private Fields
 
-        private IAudioController _controller = SessionHandler.AudioController;
+        private IAudioController _controller => SessionHandler.AudioController;
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
         
         private IDevice _device;

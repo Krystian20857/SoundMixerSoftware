@@ -33,7 +33,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #region Private Fields
 
         private Dispatcher _dispatcher = Application.Current.Dispatcher;        //for property update
-        private IAudioController _controller = SessionHandler.AudioController;
+        private IAudioController _controller => SessionHandler.AudioController;
 
         private List<IAudioSession> _sessions = new List<IAudioSession>();
         private IDisposable _sessionCreatedcallback;
@@ -216,19 +216,18 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         private void SessionCreated(IAudioSession session)
         {
+            if(session.Id != ID)
+                return;
             _sessions.Add(session);
             session.VolumeChanged.Subscribe(VolumeChangedCallback);
             session.MuteChanged.Subscribe(MuteChangedCallback);
             UpdateDescription();
         }
         
-        private void SessionHandlerOnSessionExited(object sender, SessionDisconnectedArgs e)
+        private void SessionHandlerOnSessionExited(IAudioSession session)
         {
-            var indexToRemove = _sessions.IndexOf(e.Session);
-            if(indexToRemove < 0)
-                return;
-            _sessions.RemoveAt(indexToRemove);
-            UpdateDescription();
+            if(_sessions.Remove(session))
+                UpdateDescription();
         }
 
         private void VolumeChangedCallback(SessionVolumeChangedArgs args)

@@ -32,9 +32,13 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         
         #region Events
 
-        public static event EventHandler<SessionArgs> SessionCreated;
-        public static event EventHandler<SessionArgs> SessionRemoved;
-        public static event EventHandler<SessionDisconnectedArgs> SessionExited;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static event EventHandler<SessionArgs> VirtualSessionCreated;
+        public static event EventHandler<SessionArgs> VirtualSessionRemoved;
+        public static event Action<IAudioSession> SessionExited;
+        public static event Action<IAudioSession> SessionCreated;
         public static event EventHandler<VolumeChangedArgs> SessionVolumeChanged;
         public static event EventHandler<MuteChangedArgs> SessionMuteChanged;
         public static event Action<IDevice> DeviceAddedCallback;
@@ -113,7 +117,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static Session AddSession(int index, IVirtualSession session)
         {
             Sessions[index].Add(session);
-            SessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
+            VirtualSessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
             return new Session
             {
                 Container = session.Save(),
@@ -128,7 +132,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             var creator = Creators[session.Key];
             var virtualSession = creator.CreateSession(index, session.Container, session.UUID);
             Sessions[index].Add(virtualSession);
-            SessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(virtualSession), virtualSession));
+            VirtualSessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(virtualSession), virtualSession));
             return virtualSession;
         }
         
@@ -136,7 +140,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         {
             var session = Sessions[index][internalIndex];
             session.Dispose();
-            SessionRemoved?.Invoke(null, new SessionArgs(index, internalIndex, session));
+            VirtualSessionRemoved?.Invoke(null, new SessionArgs(index, internalIndex, session));
             Sessions[index].RemoveAt(internalIndex);
             
         }
@@ -144,7 +148,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         public static void RemoveSession(int index, IVirtualSession session)
         {
             session.Dispose();
-            SessionRemoved?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
+            VirtualSessionRemoved?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
             Sessions[index].Remove(session);
         }
         
@@ -227,9 +231,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
         /// <returns></returns>
         public static IEnumerable<IAudioSession> GetAllSessions()
         {
-            foreach (var sessionController in SessionController.Values)
-                return sessionController.All();
-            return Enumerable.Empty<IAudioSession>();
+            return SessionController.Values.SelectMany(sessionController => sessionController.All());
         }
         
         /// <summary>
@@ -262,6 +264,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 foreach (var session in controller.All())
                     AttachProcessExit(session);
                 controller.SessionCreated.Subscribe(AttachProcessExit);
+                controller.SessionCreated.Subscribe(x => SessionCreated?.Invoke(x));
                 SessionController.Add(deviceId, controller);
             }
             finally
@@ -290,7 +293,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
 
         private static void AttachProcessExit(IAudioSession audioSession)
         {
-            _processWatcher.AttachProcessWait(audioSession.ProcessId, id => SessionExited?.Invoke(null, new SessionDisconnectedArgs(audioSession)));
+            if(audioSession.IsSystemSession) return;
+            _processWatcher.AttachProcessWait(audioSession.ProcessId, id => SessionExited?.Invoke(audioSession));
         }
 
         #endregion

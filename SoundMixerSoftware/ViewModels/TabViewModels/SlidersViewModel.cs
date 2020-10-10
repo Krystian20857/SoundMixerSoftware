@@ -75,8 +75,8 @@ namespace SoundMixerSoftware.ViewModels
 
         private void UpdateProfile()
         {
-            SessionHandler.SessionCreated -= SessionHandlerOnSessionCreated;
-            SessionHandler.SessionRemoved -= SessionHandlerOnSessionRemoved;
+            SessionHandler.VirtualSessionCreated -= SessionHandlerOnSessionCreated;
+            SessionHandler.VirtualSessionRemoved -= SessionHandlerOnSessionRemoved;
             SessionHandler.ReloadAll();
 
             ConverterHandler.CreateConverters();
@@ -115,8 +115,8 @@ namespace SoundMixerSoftware.ViewModels
             if(modified)
                 ProfileHandler.SaveSelectedProfile();
             
-            SessionHandler.SessionCreated += SessionHandlerOnSessionCreated;
-            SessionHandler.SessionRemoved += SessionHandlerOnSessionRemoved;
+            SessionHandler.VirtualSessionCreated += SessionHandlerOnSessionCreated;
+            SessionHandler.VirtualSessionRemoved += SessionHandlerOnSessionRemoved;
             SessionHandler.CreateSessions();
         }
 

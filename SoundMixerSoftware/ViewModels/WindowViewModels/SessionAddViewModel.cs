@@ -115,7 +115,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.DeviceAddedCallback += AddDevice;
             SessionHandler.DeviceRemovedCallback += RemoveDevice;
 
-            SessionHandler.SessionExited += (sender, args) => RemoveSession(args.Session.Id);
+            SessionHandler.SessionExited += (session) => RemoveSession(session.Id);
 
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Playback, Role.Multimedia));
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Capture, Role.Multimedia));

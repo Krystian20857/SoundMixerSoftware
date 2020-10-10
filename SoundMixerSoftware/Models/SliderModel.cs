@@ -201,7 +201,7 @@ namespace SoundMixerSoftware.Models
                 session.MuteChanged += SessionOnMuteChanged;
             }
 
-            SessionHandler.SessionCreated += (sender, args) =>
+            SessionHandler.VirtualSessionCreated += (sender, args) =>
             {
                 if(args.Index != Index)
                     return;
@@ -210,7 +210,7 @@ namespace SoundMixerSoftware.Models
                 session.MuteChanged += SessionOnMuteChanged;
             };
             
-            SessionHandler.SessionRemoved += (sender, args) =>
+            SessionHandler.VirtualSessionRemoved += (sender, args) =>
             {
                 if (args.Index != Index)
                     return;
