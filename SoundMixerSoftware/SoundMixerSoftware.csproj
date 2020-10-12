@@ -298,9 +298,9 @@
       <Project>{0e0adfa9-7dff-405a-8ecb-34a22809ba28}</Project>
       <Name>SoundMixerSoftware.Extensibility</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SoundMixerSoftware.Helpers\SoundMixerSoftware.Helpers.csproj">
+    <ProjectReference Include="..\SoundMixerSoftware.Framework\SoundMixerSoftware.Framework.csproj">
       <Project>{3ef28ff9-c3a7-4abf-b2d0-84b9e6d187b1}</Project>
-      <Name>SoundMixerSoftware.Helpers</Name>
+      <Name>SoundMixerSoftware.Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Overlay\SoundMixerSoftware.Overlay.csproj">
       <Project>{38345ef4-a142-4dd5-bdf4-4e0bf74600df}</Project>

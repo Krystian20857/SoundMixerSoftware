@@ -41,7 +41,7 @@ namespace SoundMixerSoftware.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SoundMixerSoftware.Helpers.UI.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SoundMixerSoftware.Framework.UI.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
 

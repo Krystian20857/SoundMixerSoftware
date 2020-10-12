@@ -9,10 +9,12 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
+using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
 
@@ -22,8 +24,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
     {
         #region Constant
         
-        private const string UUIDRegex = @"([a-fA-F0-9]{8}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{12})";
-
         public const string KEY = "session";
         public const string SESSION_ID_KEY = "ID";
         public const string SESSION_NAME_KEY = "name";
@@ -89,8 +89,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         }
 
         #endregion
-        
-        
+
         #region Public Properties
 
         public Guid DeviceId { get; }
@@ -101,7 +100,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Private Properties
 
-        private IAudioSession FirstSession => State == SessionState.ACTIVE ? _sessions.FirstOrDefault(x => ProcessUtils.IsAlive(x.ProcessId)) : default;
+        private IAudioSession FirstSession => State == SessionState.ACTIVE ? _sessions.FirstOrDefault(x => ProcessUtil.IsAlive(x.ProcessId)) : default;
         
         #endregion
         
@@ -121,7 +120,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             UUID = uuid;
             RawName = rawName;
 
-            DeviceId = GetDeviceUUID(sessionId);
+            DeviceId = AudioSessionUtil.ParseDeviceId(sessionId);
             var device = _controller.GetDevice(DeviceId, DeviceState.Active);
             if (device != default)
             {
@@ -161,8 +160,10 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
                     if (State == SessionState.ACTIVE && session != default)
                     {
                         using (var process = Process.GetProcessById(session.ProcessId))
+                        {
                             Image = process.GetMainWindowIcon().ToImageSource();
-                        DisplayName = $"{RawName} - {DeviceName}";
+                            DisplayName = $"{process.GetPreciseName()} - {DeviceName}";
+                        }
                     }
                     else
                     {
@@ -247,15 +248,6 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         private IEnumerable<IAudioSession> GetSessions(IDevice device, string id)
         {
             return SessionHandler.GetController(device).Where(x => x.Id == id);
-        }
-
-        private Guid GetDeviceUUID(string sessionId)
-        {
-            var regex = new Regex(UUIDRegex);
-            var uuids = regex.Matches(sessionId);
-            if (uuids.Count == 0)
-                return Guid.Empty;
-            return Guid.TryParse(uuids[0].ToString(), out var uuid) ? uuid : Guid.Empty;
         }
 
         #endregion

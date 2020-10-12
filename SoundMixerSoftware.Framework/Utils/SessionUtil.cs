@@ -7,7 +7,7 @@ using SoundMixerSoftware.Helpers.Profile;
 
 namespace SoundMixerSoftware.Helpers.Utils
 {
-    public static class SessionUtils
+    public static class SessionUtil
     {
         #region Logger
 

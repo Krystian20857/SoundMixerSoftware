@@ -108,7 +108,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             if(!container.ContainsKey(MediaFunction.MEDIA_TASK_KEY))
                 throw new NotImplementedException($"Container does not contains: {MediaFunction.MEDIA_TASK_KEY} key");
             var mediaTask = container[MediaFunction.MEDIA_TASK_KEY].ToString();
-            var mediaTaskEnum = EnumUtils.Parse<MediaTask>(mediaTask);
+            var mediaTaskEnum = EnumUtil.Parse<MediaTask>(mediaTask);
             return new MediaFunction(index, mediaTaskEnum, uuid);
         }
     }

@@ -75,8 +75,8 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         {
             Index = index;
             KeystrokeMode = KeystrokeMode.KeyPress;
-            Keystroke = KeyUtils.ConvertKey(keystroke);
-            ModifierKeys = KeyUtils.ConvertKeys(modifiers);
+            Keystroke = KeyUtil.ConvertKey(keystroke);
+            ModifierKeys = KeyUtil.ConvertKeys(modifiers);
             UUID = uuid;
         }
 
@@ -149,7 +149,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
             switch (KeystrokeMode)
             {
                 case KeystrokeMode.KeyPress:
-                    return $"Key: {KeyUtils.FormatKeys(KeyUtils.ConvertKey(Keystroke), KeyUtils.ConvertKeys(ModifierKeys))}";
+                    return $"Key: {KeyUtil.FormatKeys(KeyUtil.ConvertKey(Keystroke), KeyUtil.ConvertKeys(ModifierKeys))}";
                 case KeystrokeMode.TextMode:
                     return $"Text: {Text}";
                 default:
@@ -163,14 +163,14 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
     public class KeystrokeFunctionCreator : IButtonCreator {
         public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
-            if(!container.ContainsKey(KeystrokeFunction.KEYSTROKE_MODE_KEY))
-                throw new NotImplementedException($"Container does not contains: {KeystrokeFunction.KEYSTROKE_MODE_KEY} key");
-            var mode = EnumUtils.Parse<KeystrokeMode>(container[KeystrokeFunction.KEYSTROKE_MODE_KEY]);
+            if (!container.ContainsKey(KeystrokeFunction.KEYSTROKE_MODE_KEY))
+                return null;
+            var mode = EnumUtil.Parse<KeystrokeMode>(container[KeystrokeFunction.KEYSTROKE_MODE_KEY]);
             switch (mode)
             {
                 case KeystrokeMode.KeyPress:
-                    var keystroke = EnumUtils.Parse<VirtualKeyCode>(container[KeystrokeFunction.KEYSTROKE_KEY]);
-                    var modifiers = EnumUtils.Parse<VirtualKeyCode>((List<object>)container[KeystrokeFunction.MODIFIERS_KEY]);
+                    var keystroke = EnumUtil.Parse<VirtualKeyCode>(container[KeystrokeFunction.KEYSTROKE_KEY]);
+                    var modifiers = EnumUtil.Parse<VirtualKeyCode>((List<object>)container[KeystrokeFunction.MODIFIERS_KEY]);
                     return new KeystrokeFunction(index, keystroke, modifiers.ToArray(), uuid);
                 case KeystrokeMode.TextMode:
                     var text = container[KeystrokeFunction.TEXT_KEY];

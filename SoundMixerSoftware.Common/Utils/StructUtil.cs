@@ -5,7 +5,7 @@ namespace SoundMixerSoftware.Common.Utils
     /// <summary>
     /// Contains useful methods while working with structures.
     /// </summary>
-    public static class StructUtils
+    public static class StructUtil
     {
         /// <summary>
         /// Converts byte array to struct.

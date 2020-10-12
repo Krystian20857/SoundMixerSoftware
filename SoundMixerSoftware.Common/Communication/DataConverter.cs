@@ -32,7 +32,7 @@ namespace SoundMixerSoftware.Common.Communication
         /// <summary>
         /// "StructFromBytes" method is use for converting bytes to specified type structure.
         /// </summary>
-        private readonly MethodInfo _convertMethod = typeof(StructUtils).GetMethod("StructFromBytes");
+        private readonly MethodInfo _convertMethod = typeof(StructUtil).GetMethod("StructFromBytes");
         /// <summary>
         /// Stores Type assigned to specified byte command.
         /// </summary>

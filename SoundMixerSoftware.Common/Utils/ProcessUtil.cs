@@ -5,7 +5,7 @@ using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Common.Utils
 {
-    public static class ProcessUtils
+    public static class ProcessUtil
     {
         /// <summary>
         /// Get Process file name by standard WIN32 method

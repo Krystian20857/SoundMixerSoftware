@@ -7,7 +7,7 @@ namespace SoundMixerSoftware.Common.Utils
     /// <summary>
     /// Contains useful methods while working with objects and classes.
     /// </summary>
-    public static class ObjectUtils
+    public static class ObjectUtil
     {
         /// <summary>
         /// 
@@ -40,7 +40,7 @@ namespace SoundMixerSoftware.Common.Utils
 
                 if (!property.PropertyType.IsValueType && Attribute.IsDefined(property, typeof(RecursionAttribute)))
                     if (InvokeGenericMethod<bool>(
-                        typeof(ObjectUtils),
+                        typeof(ObjectUtil),
                         null,
                         nameof(MergeObjects),
                         property.PropertyType,

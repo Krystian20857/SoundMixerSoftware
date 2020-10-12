@@ -175,7 +175,7 @@ namespace SoundMixerSoftware.ViewModels
                 return;
 
             var processId = session.ProcessId;
-            if(!ProcessUtils.IsAlive(processId))
+            if(!ProcessUtil.IsAlive(processId))
                 return;
 
             using (var process = Process.GetProcessById(processId))
@@ -228,7 +228,7 @@ namespace SoundMixerSoftware.ViewModels
         {
             if (SelectedSession == null)
                 return;
-            SessionUtils.AddSession(SliderIndex, SelectedSession.CreateSession(SliderIndex));
+            SessionUtil.AddSession(SliderIndex, SelectedSession.CreateSession(SliderIndex));
             TryCloseAsync();
         }
 

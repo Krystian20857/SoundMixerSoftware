@@ -55,7 +55,7 @@ namespace SoundMixerSoftware.Models
         /// <summary>
         /// Get system theme.
         /// </summary>
-        public static Color ImmersiveTheme => ColorUtils.FromArgb(ThemeWrapper.GetThemeColor());
+        public static Color ImmersiveTheme => ColorUtil.FromArgb(ThemeWrapper.GetThemeColor());
 
         #endregion
         
@@ -66,7 +66,7 @@ namespace SoundMixerSoftware.Models
             ThemeWrapper.ThemeChanged += (sender, args) =>
             {
                 if(UseImmersiveTheme)
-                    SetTheme(ColorUtils.FromArgb(args.Color));
+                    SetTheme(ColorUtil.FromArgb(args.Color));
             };
         }
 

@@ -2,7 +2,7 @@
 
 namespace SoundMixerSoftware.Common.Utils
 {
-    public static class ColorUtils
+    public static class ColorUtil
     {
         /// <summary>
         /// Convert ARGB int ot color.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoundMixerSoftware.Common.Utils.EnumUtils
 {
-    public static class EnumUtils
+    public static class EnumUtil
     {
         /// <summary>
         /// Parse enum value from string.

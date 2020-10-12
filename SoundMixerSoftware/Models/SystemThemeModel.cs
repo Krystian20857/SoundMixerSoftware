@@ -29,7 +29,7 @@ namespace SoundMixerSoftware.Models
         
         #region Private Methods
         
-        private SolidColorBrush CreateBrush(int argb) => new SolidColorBrush(ColorUtils.FromArgb(argb));
+        private SolidColorBrush CreateBrush(int argb) => new SolidColorBrush(ColorUtil.FromArgb(argb));
         
         #endregion
         

@@ -1,8 +1,8 @@
 ﻿﻿using AudioSwitcher.AudioApi;
 
-namespace SoundMixerSoftware.Common.Utils
+namespace SoundMixerSoftware.Common.Utils.Audio
 {
-    public static class RoleUtil
+    public static class ERoleUtil
     {
         
         public static void GetFromRole(Role role, out bool isDefault, out bool isDefaultCommunications)

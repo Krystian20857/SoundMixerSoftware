@@ -146,7 +146,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
         /// <typeparam name="T">Type of struct.</typeparam>
         public void SendData<T>(string comport, T structure) where T : struct
         {
-            var data = StructUtils.StructToBytes<T>(structure);
+            var data = StructUtil.StructToBytes<T>(structure);
             SendBytes(comport, data);
         }
 

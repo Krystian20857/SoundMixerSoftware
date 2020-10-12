@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Helpers", "SoundMixerSoftware.Helpers\SoundMixerSoftware.Helpers.csproj", "{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Framework", "SoundMixerSoftware.Framework\SoundMixerSoftware.Framework.csproj", "{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Common", "SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj", "{2040554A-678B-4E8E-A915-DD4710FB7105}"
 EndProject

@@ -148,9 +148,9 @@ namespace SoundMixerSoftware.Helpers.Device
             return result;
         }
 
-        public string ToString(string format, IFormatProvider formatProvider) => ArrayUtils.ConvertToHexString(_idArray);
+        public string ToString(string format, IFormatProvider formatProvider) => ArrayUtil.ConvertToHexString(_idArray);
 
-        public override string ToString() => ArrayUtils.ConvertToHexString(_idArray);
+        public override string ToString() => ArrayUtil.ConvertToHexString(_idArray);
 
         #endregion
         

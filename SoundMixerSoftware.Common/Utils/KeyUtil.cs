@@ -9,7 +9,7 @@ using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Common.Utils
 {
-    public static class KeyUtils
+    public static class KeyUtil
     {
         /// <summary>
         /// Convert wpf keyboard key implementation to win32 key implementation.

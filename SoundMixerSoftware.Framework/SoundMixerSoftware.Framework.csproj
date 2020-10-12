@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>SoundMixerSoftware.Helpers</RootNamespace>
-    <AssemblyName>SoundMixerSoftware.Helpers</AssemblyName>
+    <RootNamespace>SoundMixerSoftware.Framework</RootNamespace>
+    <AssemblyName>SoundMixerSoftware.Framework</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -86,7 +86,7 @@
     <Compile Include="Threading\ProcessWatcherHandler.cs" />
     <Compile Include="Utils\ExceptionHandler.cs" />
     <Compile Include="Utils\ExtractedIcons.cs" />
-    <Compile Include="Utils\SessionUtils.cs" />
+    <Compile Include="Utils\SessionUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AudioSwitcher.AudioApi, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">

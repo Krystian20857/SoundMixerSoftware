@@ -25,7 +25,7 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns></returns>
         public static string GetFileName(this Process process, int buffer = 260) //260 -> max windows path length
         {
-            return ProcessUtils.GetFileName(process.Id, buffer);
+            return ProcessUtil.GetFileName(process.Id, buffer);
         }
 
         /// <summary>
@@ -70,8 +70,15 @@ namespace SoundMixerSoftware.Common.Extension
             var displayName = AppWrapper.GetAppName((uint) process.Id);
             if (!string.IsNullOrEmpty(displayName)) return displayName;
 
-            var handle = process.MainWindowHandle;
-            if (handle != IntPtr.Zero) return WindowWrapper.GetWindowTitle(handle);
+            try
+            {
+                var handle = process.MainWindowHandle;
+                if (handle != IntPtr.Zero) return WindowWrapper.GetWindowTitle(handle);
+            }
+            catch (Exception ex)
+            {
+                
+            }
 
             try
             {

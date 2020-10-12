@@ -9,6 +9,7 @@ using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
@@ -86,7 +87,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             DeviceType = deviceType;
             Role = role;
 
-            RoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuninication);
+            ERoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuninication);
             _device = _controller.GetDefaultDevice(DeviceType, role);
 
             _controller.AudioDeviceChanged.Subscribe(x =>
@@ -226,7 +227,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             var roleString = (container.ContainsKey(DefaultDeviceSession.ROLE_KEY) ? container[DefaultDeviceSession.ROLE_KEY] : "")?.ToString();
             var typeString = (container.ContainsKey(DefaultDeviceSession.DEVICETYPE_KEY) ? container[DefaultDeviceSession.DEVICETYPE_KEY] : "")?.ToString();
-            return new DefaultDeviceSession(index, EnumUtils.Parse(roleString, Role.Multimedia), EnumUtils.Parse(typeString, DeviceType.Playback), uuid);
+            return new DefaultDeviceSession(index, EnumUtil.Parse(roleString, Role.Multimedia), EnumUtil.Parse(typeString, DeviceType.Playback), uuid);
         }
 
         public static Guid CreateUUID(Role role, DeviceType deviceType)

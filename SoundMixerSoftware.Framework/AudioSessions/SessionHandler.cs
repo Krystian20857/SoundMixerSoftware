@@ -234,6 +234,11 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             return SessionController.Values.SelectMany(sessionController => sessionController.All());
         }
         
+        public static IEnumerable<IAudioSession> GetSessions(string id)
+        {
+            return GetAllSessions().Where(x => x.Id == id);
+        }
+        
         /// <summary>
         /// Gets cached controller whatever possible.
         /// </summary>

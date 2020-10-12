@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
 using SoundMixerSoftware.Helpers.Utils;
@@ -75,7 +76,7 @@ namespace SoundMixerSoftware.Models
             Type = type;
             Role = role;
             UpdateView(_controller.GetDefaultDevice(type, role));
-            RoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuncations);
+            ERoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuncations);
             
             _controller.AudioDeviceChanged.Subscribe(x =>
             {

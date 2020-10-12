@@ -8,7 +8,7 @@ namespace SoundMixerSoftware.Common.Utils
     /// <summary>
     /// Contains methods that helps with array handling
     /// </summary>
-    public static class ArrayUtils
+    public static class ArrayUtil
     {
         /// <summary>
         /// Convert valueType array to hex string terminated with separator

@@ -86,7 +86,7 @@ namespace SoundMixerSoftware.ViewModels
             var selectedSession = SelectedSession;
             if (selectedSession == null)
                 return;
-            SessionUtils.AddSession(SliderIndex, selectedSession.CreateSession(SliderIndex));
+            SessionUtil.AddSession(SliderIndex, selectedSession.CreateSession(SliderIndex));
             TryCloseAsync();
         }
         

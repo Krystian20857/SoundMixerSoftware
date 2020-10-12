@@ -188,7 +188,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             foreach (var session in SessionHandler.GetAllSessions())
             {
                 var sessionProcessId = session.ProcessId;
-                if (ProcessUtils.IsAlive(sessionProcessId) && childProcesses.Contains((uint) sessionProcessId))
+                if (ProcessUtil.IsAlive(sessionProcessId) && childProcesses.Contains((uint) sessionProcessId))
                 {
                     RegisterEvents(session);
                     _sessions.Add(session);

@@ -143,7 +143,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void DisplayKeystroke()
         {
-            KeystrokeText = KeyUtils.FormatKeys(Key, Modifiers.ToArray());
+            KeystrokeText = KeyUtil.FormatKeys(Key, Modifiers.ToArray());
         }
 
         #endregion
@@ -155,7 +155,7 @@ namespace SoundMixerSoftware.ViewModels
             var pressedKey = eventArgs.Key == Key.System ? eventArgs.SystemKey : eventArgs.Key;
             if (pressedKey == Key.LWin || pressedKey == Key.RWin)
                 eventArgs.Handled = false;
-            if (KeyUtils.IsModifierKey(pressedKey))
+            if (KeyUtil.IsModifierKey(pressedKey))
             {
                 if (!Modifiers.Contains(pressedKey))
                     Modifiers.Add(pressedKey);

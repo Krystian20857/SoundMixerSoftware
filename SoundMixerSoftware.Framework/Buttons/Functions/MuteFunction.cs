@@ -206,7 +206,7 @@ namespace SoundMixerSoftware.Helpers.Buttons.Functions
         
         public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
-            var muteTask = container.ContainsKey(MuteFunction.MUTE_TASK_KEY) ? EnumUtils.Parse<MuteTask>(container[MuteFunction.MUTE_TASK_KEY].ToString()) : MuteTask.MuteDefaultSpeaker;
+            var muteTask = container.ContainsKey(MuteFunction.MUTE_TASK_KEY) ? EnumUtil.Parse<MuteTask>(container[MuteFunction.MUTE_TASK_KEY].ToString()) : MuteTask.MuteDefaultSpeaker;
             switch (muteTask)
             {
                 case MuteTask.MuteSlider:
