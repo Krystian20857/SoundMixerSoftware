@@ -75,6 +75,7 @@ namespace SoundMixerSoftware.ViewModels
             {
                 model.Guid = CreatedProfile.Guid;
                 var profileToEdit = ProfileHandler.ProfileManager.Profiles[model.Guid];
+                profileToEdit.Name = profile.Name;
                 profileToEdit.ButtonCount = profile.ButtonCount;
                 profileToEdit.SliderCount = profile.SliderCount;
                 ProfileHandler.ProfileManager.Save(model.Guid);
