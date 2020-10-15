@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
@@ -12,7 +14,6 @@ using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
 using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
@@ -115,7 +116,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.DeviceAddedCallback += AddDevice;
             SessionHandler.DeviceRemovedCallback += RemoveDevice;
 
-            SessionHandler.SessionExited += (session) => RemoveSession(session.Id);
+            SessionHandler.SessionExited += RemoveSession;
 
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Playback, Role.Multimedia));
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Capture, Role.Multimedia));
@@ -168,10 +169,10 @@ namespace SoundMixerSoftware.ViewModels
                 Execute.OnUIThread(() => DeviceSessions.Add(model));
         }
 
-        private void AddSession(IAudioSession session)
+        private void AddSession(ICollection<AudioSessionModel> collection, IAudioSession session)
         {
             var id = session.Id;
-            if(Sessions.Any(x => x.ID == id))
+            if(collection.Any(x => x.ID == id))
                 return;
 
             var processId = session.ProcessId;
@@ -188,11 +189,13 @@ namespace SoundMixerSoftware.ViewModels
                 Execute.OnUIThread(() =>
                 {
                     sessionModel.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
-                    Sessions.Add(sessionModel);
+                    collection.Add(sessionModel);
                 });
             }
         }
-        
+
+        private void AddSession(IAudioSession session) => AddSession(Sessions, session);
+
         private void RemoveDevice(IDevice device)
         {
             var deviceId = device.Id;
@@ -209,9 +212,9 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
-        private void RemoveSession(string sessionId)
+        private void RemoveSession(IAudioSession session)
         {
-            var sessionModel = Sessions.FirstOrDefault(x => x.ID == sessionId);
+            var sessionModel = Sessions.FirstOrDefault(x => x.ID == session.Id);
             if(sessionModel == default)
                 return;
             Sessions.Remove(sessionModel);

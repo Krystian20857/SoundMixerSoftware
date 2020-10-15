@@ -37,6 +37,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 
         private List<IAudioSession> _sessions = new List<IAudioSession>();
         private IDisposable _sessionCreatedcallback;
+        private IDevice _device;
 
         #endregion
         
@@ -93,8 +94,8 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #region Public Properties
 
         public Guid DeviceId { get; }
-        public string RawName { get; set; }
-        public string DeviceName { get; set; }
+        public string RawName { get;}
+        public string DeviceName => _device?.FullName ?? "(Device Removed)";
 
         #endregion
         
@@ -121,7 +122,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             RawName = rawName;
 
             DeviceId = AudioSessionUtil.ParseDeviceId(sessionId);
-            var device = _controller.GetDevice(DeviceId, DeviceState.Active);
+            var device = _controller.GetDevice(DeviceId);
             if (device != default)
             {
                 DeviceAdded(device);
@@ -198,12 +199,14 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         {
             if(device.Id != DeviceId)
                 return;
+            _device = device;
+            if(_device.State != DeviceState.Active)
+                return;
             var sessionController = SessionHandler.GetController(device);
             
             _sessionCreatedcallback?.Dispose();
             _sessionCreatedcallback = sessionController.SessionCreated.Subscribe(SessionCreated);
-
-            DeviceName = device.FullName;
+            
             var sessions = GetSessions(device, ID);
             foreach (var session in sessions)
             {
