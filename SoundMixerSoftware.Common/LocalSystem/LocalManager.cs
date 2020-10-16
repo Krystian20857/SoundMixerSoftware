@@ -132,14 +132,14 @@ namespace SoundMixerSoftware.Common.LocalSystem
             return true;
         }
 
-        public object[] GetValues()
+        public IEnumerable<object> GetValues()
         {
-            return _registry.Values.ToArray();
+            return (IEnumerable<object>) _registry.Values;
         }
 
-        public object[] GetKeys()
+        public IEnumerable<object> GetKeys()
         {
-            return _registry.Keys.ToArray();
+            return (IEnumerable<object>) _registry.Keys;
         }
         
         #endregion

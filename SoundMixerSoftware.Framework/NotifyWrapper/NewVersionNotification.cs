@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Notifications.Wpf;
 using SoundMixerSoftware.Updater;
 
@@ -59,12 +60,12 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
             }
         }
 
-        public NewVersionEventArgs[] GetValues()
+        public IEnumerable<NewVersionEventArgs> GetValues()
         {
             return new[] { NewVersion };
         }
 
-        public string[] GetKeys()
+        public IEnumerable<string> GetKeys()
         {
             return new[] { VERSION_KEY };
         }

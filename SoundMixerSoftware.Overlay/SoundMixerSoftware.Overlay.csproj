@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="OverlayWindow\AbstractOverlayWindow.cs" />
     <Compile Include="OverlayWindow\CenterTextWindow.cs" />
+    <Compile Include="OverlayWindow\IOverlay.cs" />
     <Compile Include="OverlayWindow\MuteWindow.cs" />
     <Compile Include="OverlayWindow\VolumeOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
