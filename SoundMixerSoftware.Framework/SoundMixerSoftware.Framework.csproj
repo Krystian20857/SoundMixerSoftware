@@ -71,6 +71,7 @@
     <Compile Include="NotifyWrapper\INotification.cs" />
     <Compile Include="NotifyWrapper\NewVersionNotification.cs" />
     <Compile Include="Overlay\OverlayHandler.cs" />
+    <Compile Include="Overlay\OverlaySwitcher.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />
     <Compile Include="Profile\ProfileStruct.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

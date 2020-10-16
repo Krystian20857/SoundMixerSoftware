@@ -7,7 +7,7 @@ using Timer = System.Timers.Timer;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
-    public abstract class AbstractOverlayWindow : IDisposable
+    public abstract class AbstractOverlayWindow : IOverlay, IDisposable
     {
         #region Private Fields
 
@@ -167,10 +167,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Show window for specified period of time defined by <see cref="FadeTime"/>.
-        /// </summary>
+        
         public void ShowWindow()
         {
             _opacity = 255;

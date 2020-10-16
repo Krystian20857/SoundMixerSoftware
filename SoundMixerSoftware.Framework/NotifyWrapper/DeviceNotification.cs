@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Notifications.Wpf;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Device;
@@ -58,17 +61,19 @@ namespace SoundMixerSoftware.Helpers.NotifyWrapper
 
         public bool RemoveValue(string key)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return true;
         }
 
-        public object[] GetValues()
+        public IEnumerable<object> GetValues()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return Enumerable.Empty<object>();
         }
 
-        public string[] GetKeys()
+        public IEnumerable<string> GetKeys()
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<string>();
         }
         
         public void Show()

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using SoundMixerSoftware.Helpers.Config;
+﻿using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 
 namespace SoundMixerSoftware.Helpers.Overlay
@@ -9,18 +7,18 @@ namespace SoundMixerSoftware.Helpers.Overlay
     {
         #region Static Properties
 
-        private static List<AbstractOverlayWindow> _overlays = new List<AbstractOverlayWindow>();
-        
+        public static OverlaySwitcher Switcher { get; set; } = new OverlaySwitcher(() => ConfigHandler.ConfigStruct.Overlay.EnableOverlay);
+        public static int FadeTime => ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
+
         #endregion
         
         #region Static Constructor
         
         static OverlayHandler()
         {
-            var fadeTime = ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
-            _overlays.Add(new MuteWindow(fadeTime));
-            _overlays.Add(new VolumeOverlay(fadeTime));
-            _overlays.Add(new CenterTextWindow(fadeTime));
+            Switcher.SetValue("mute-overlay", new MuteWindow(FadeTime));
+            Switcher.SetValue("volume-overlay", new VolumeOverlay(FadeTime));
+            Switcher.SetValue("center-text-overlay", new CenterTextWindow(FadeTime));
         }
         
         #endregion
@@ -29,17 +27,17 @@ namespace SoundMixerSoftware.Helpers.Overlay
 
         public static void ShowVolume(float volume)
         {
-            HandleOverlay<VolumeOverlay>((window, n) => window.Volume = volume);
+            Switcher.HandleOverlay<VolumeOverlay>((key, window) => window.Volume = volume);
         }
 
         public static void ShowMute(bool mute)
         {
-            HandleOverlay<MuteWindow>((window, n) => window.IsMuted = mute);
+            Switcher.HandleOverlay<MuteWindow>((key, window) => window.IsMuted = mute);
         }
 
         public static void ShowText(string text, int showTime = -1, float fontSize = -1.0F)
         {
-            HandleOverlay<CenterTextWindow>((window, n) =>
+            Switcher.HandleOverlay<CenterTextWindow>((key, window) =>
             {
                 window.Text = text;
                 if(showTime != -1)
@@ -51,26 +49,10 @@ namespace SoundMixerSoftware.Helpers.Overlay
 
         public static void SetFadeTime(int fadeTime)
         {
-            foreach (var overlay in _overlays)
+            foreach (var overlay in Switcher.GetValues())
                 overlay.FadeTime = fadeTime;
         }
-
-        private static void HandleOverlay<T>(Action<T, int> valueChange)
-        {
-            if (!ConfigHandler.ConfigStruct.Overlay.EnableOverlay)
-                return;
-            for (var n = 0;n < _overlays.Count; n++)
-            {
-                var overlay = _overlays[n];
-                if (overlay is T genericOverlay)
-                {
-                    valueChange(genericOverlay, n);
-                    overlay.ShowWindow();
-                }
-                else
-                    overlay.HideWindow();
-            }
-        }
+        
         
         #endregion
     }

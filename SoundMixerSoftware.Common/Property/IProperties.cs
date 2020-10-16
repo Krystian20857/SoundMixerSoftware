@@ -1,4 +1,6 @@
-﻿namespace SoundMixerSoftware.Common.Property
+﻿using System.Collections.Generic;
+
+namespace SoundMixerSoftware.Common.Property
 {
     /// <summary>
     /// Allows type to store properties~.
@@ -27,11 +29,11 @@
         /// Get all values.
         /// </summary>
         /// <returns></returns>
-        U[] GetValues();
+        IEnumerable<U> GetValues();
         /// <summary>
         /// Get all keys.
         /// </summary>
         /// <returns></returns>
-        T[] GetKeys();
+        IEnumerable<T> GetKeys();
     }
 }

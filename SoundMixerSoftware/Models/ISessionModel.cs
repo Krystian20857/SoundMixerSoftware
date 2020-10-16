@@ -204,6 +204,12 @@ namespace SoundMixerSoftware.Models
         
         #endregion
         
+        #region Public Properties
+
+        public int ProcessId { get; set; }
+
+        #endregion
+        
         #region Implemented Methods
         
         public IVirtualSession CreateSession(int sliderIndex)
