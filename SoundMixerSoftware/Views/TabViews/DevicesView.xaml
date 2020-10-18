@@ -52,7 +52,7 @@
                                                 Width="50"
                                                 Content="{materialDesign:PackIcon Cog}"/>
                                     </StackPanel>
-                                    <TextBlock Margin="5,0" Foreground="DarkGray" Text="{Binding Path=UUID}"></TextBlock>
+                                    <TextBlock Margin="5,0" Foreground="DarkGray" Text="{Binding Path=UUID}" />
                                 </StackPanel>
                             </DockPanel>
                         </Border>

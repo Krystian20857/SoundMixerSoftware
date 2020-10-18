@@ -31,7 +31,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsFocused" Value="False">
-                <Setter Property="SelectedItem" Value="null"></Setter>
+                <Setter Property="SelectedItem" Value="null" />
             </Trigger>
         </Style.Triggers>
     </Style>

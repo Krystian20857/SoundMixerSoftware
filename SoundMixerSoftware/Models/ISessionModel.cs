@@ -2,15 +2,12 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
-using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;

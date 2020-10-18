@@ -13,25 +13,25 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" LastChildFill="False">
             <Border DockPanel.Dock="Left" Margin="5" BorderBrush="Black" BorderThickness="3">
-                <ProgressBar Width="250" Height="30" Value="{Binding Path=DownloadPercent}" DockPanel.Dock="Left"></ProgressBar>
+                <ProgressBar Width="250" Height="30" Value="{Binding Path=DownloadPercent}" DockPanel.Dock="Left" />
             </Border>
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5" Width="55" FontSize="16">
-                <Run Text="{Binding Path=DownloadPercent}"></Run>
-                <Run Text="%"></Run>
+                <Run Text="{Binding Path=DownloadPercent}" />
+                <Run Text="%" />
             </TextBlock>
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5" FontSize="16">
-                <Run Text="{Binding Path=DownloadSpeed, Converter={StaticResource SpeedConverter}}"></Run>
+                <Run Text="{Binding Path=DownloadSpeed, Converter={StaticResource SpeedConverter}}" />
             </TextBlock>
             <Button Margin="5" DockPanel.Dock="Right" Width="125" cm:Message.Attach="[Click] = [CancelClick]">Cancel</Button>
             <Button Margin="5" DockPanel.Dock="Right" Width="125" cm:Message.Attach="[Click] = [InstallClick]">Install</Button>
         </DockPanel>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1">
-            <TextBlock VerticalAlignment="Center" FontSize="16" Margin="2" Foreground="{Binding Path=StatusColor}" Text="{Binding Path=Status}"></TextBlock>
+            <TextBlock VerticalAlignment="Center" FontSize="16" Margin="2" Foreground="{Binding Path=StatusColor}" Text="{Binding Path=Status}" />
         </StackPanel>
     </Grid>
 </Window>

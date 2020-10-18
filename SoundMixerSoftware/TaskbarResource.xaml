@@ -23,16 +23,14 @@
                         <Image Width="16" Height="16" Source="{StaticResource ProfileImage}" />
                     </MenuItem.Icon>
                     <MenuItem.ContextMenu>
-                        <ContextMenu Style="{x:Null}" ItemsSource="{Binding Path=Profiles}">
-                        </ContextMenu>
+                        <ContextMenu Style="{x:Null}" ItemsSource="{Binding Path=Profiles}" />
                     </MenuItem.ContextMenu>
                     
                     <MenuItem.ItemTemplate>
                         <DataTemplate>
                             <MenuItem IsCheckable="true" Style="{x:Null}"
                                     Header="{Binding Path=ProfileName, UpdateSourceTrigger=PropertyChanged}"
-                                    IsChecked="{Binding Path=Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            </MenuItem>
+                                    IsChecked="{Binding Path=Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </MenuItem.ItemTemplate>
                 </MenuItem>

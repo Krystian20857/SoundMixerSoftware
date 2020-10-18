@@ -13,7 +13,7 @@ namespace SoundMixerSoftware.Common.Utils.EnumUtils
         /// <returns></returns>
         public static IEnumerable<string> GetNames(Type enumType)
         {
-            var names = System.Enum.GetNames(enumType);
+            var names = Enum.GetNames(enumType);
             for (var n = 0; n < names.Length; n++)
             {
                 yield return GetName(enumType, names[n]);
@@ -23,8 +23,8 @@ namespace SoundMixerSoftware.Common.Utils.EnumUtils
         public static T GetValue<T>(string name)
         {
             var valuesNames = GetNames(typeof(T)).ToList();
-            var names = System.Enum.GetNames(typeof(T));
-            return (T)System.Enum.Parse(typeof(T),names[valuesNames.IndexOf(name)]);
+            var names = Enum.GetNames(typeof(T));
+            return (T)Enum.Parse(typeof(T),names[valuesNames.IndexOf(name)]);
         }
 
         /// <summary>

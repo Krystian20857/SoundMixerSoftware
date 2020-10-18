@@ -1,9 +1,7 @@
 ﻿﻿using System;
- using System.Diagnostics;
- using System.Runtime.CompilerServices;
  using NLog;
  using SoundMixerSoftware.Win32.Interop.Constant;
-using SoundMixerSoftware.Win32.Interop.Method;
+ using SoundMixerSoftware.Win32.Interop.Method;
  using SoundMixerSoftware.Win32.Wrapper;
 
  namespace SoundMixerSoftware.Win32.Threading

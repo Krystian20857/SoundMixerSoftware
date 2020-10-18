@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Media;
 using SoundMixerSoftware.Helpers.Device;
 
 namespace SoundMixerSoftware.Helpers.SliderConverter

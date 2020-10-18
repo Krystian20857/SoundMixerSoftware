@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using NLog;
-using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.Interop.Enum;
 using SoundMixerSoftware.Win32.Interop.Method;

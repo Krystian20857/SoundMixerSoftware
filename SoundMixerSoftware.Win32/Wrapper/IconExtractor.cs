@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Method;
 
 namespace SoundMixerSoftware.Win32.Wrapper

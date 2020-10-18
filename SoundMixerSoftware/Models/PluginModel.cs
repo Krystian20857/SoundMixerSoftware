@@ -2,7 +2,6 @@
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Extensibility;
-using SoundMixerSoftware.Helpers.Utils;
 
 namespace SoundMixerSoftware.Models
 {

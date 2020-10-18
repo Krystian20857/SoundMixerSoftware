@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using SoundMixerSoftware.Common.Property;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 

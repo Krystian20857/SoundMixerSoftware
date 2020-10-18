@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
-using AudioSwitcher.AudioApi.Observables; 
+using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;

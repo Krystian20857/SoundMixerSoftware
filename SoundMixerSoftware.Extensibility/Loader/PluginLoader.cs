@@ -1,14 +1,11 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Media;
 using NLog;
-using NLog.Fluent;
 using SoundMixerSoftware.Extensibility.Storage;
 using SoundMixerSoftware.Extensibility.Storage.Yaml;
 

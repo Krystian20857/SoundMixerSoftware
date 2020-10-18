@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Caliburn.Micro;
-using SoundMixerSoftware.Models;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
+using Caliburn.Micro;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 

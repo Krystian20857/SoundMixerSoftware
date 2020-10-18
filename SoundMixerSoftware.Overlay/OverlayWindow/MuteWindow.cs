@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using GameOverlay.Drawing;
+﻿using GameOverlay.Drawing;
 using GameOverlay.Windows;
 using SoundMixerSoftware.Overlay.Resource;
 

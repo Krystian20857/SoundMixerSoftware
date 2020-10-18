@@ -1,6 +1,4 @@
-﻿using System.Windows.Media;
-
-namespace SoundMixerSoftware.Models
+﻿namespace SoundMixerSoftware.Models
 {
     public interface IButtonAddModel
     {

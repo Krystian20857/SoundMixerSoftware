@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GameOverlay.Drawing;
-using SharpDX.Direct2D1;
 
 namespace SoundMixerSoftware.Overlay.Resource
 {

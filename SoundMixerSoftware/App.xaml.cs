@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using Hardcodet.Wpf.TaskbarNotification;
-
-namespace SoundMixerSoftware
+﻿namespace SoundMixerSoftware
 {
     /// <summary>
     /// Interaction logic for App.xaml

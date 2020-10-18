@@ -1,5 +1,4 @@
 ﻿using System.IO.Ports;
-using System.Text;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Common.Communication.Serial

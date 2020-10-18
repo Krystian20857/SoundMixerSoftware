@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Media;
 using Caliburn.Micro;
 using MaterialDesignColors;
@@ -21,7 +22,6 @@ using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
-using Timer = System.Threading.Timer;
 
 namespace SoundMixerSoftware.ViewModels
 {

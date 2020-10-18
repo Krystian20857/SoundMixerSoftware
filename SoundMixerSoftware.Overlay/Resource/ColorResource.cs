@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GameOverlay.Drawing;
-using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Overlay.Resource
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Caliburn.Micro;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Input;

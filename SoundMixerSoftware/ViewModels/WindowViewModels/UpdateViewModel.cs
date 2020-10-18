@@ -1,14 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
-using MessageBox = System.Windows.MessageBox;
-using Screen = Caliburn.Micro.Screen;
 
 namespace SoundMixerSoftware.ViewModels
 {

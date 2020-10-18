@@ -8,7 +8,6 @@ using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Helpers.Annotations;

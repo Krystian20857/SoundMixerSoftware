@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading;
-using System.Windows;
+using System.Windows.Forms;
 using SoundMixerSoftware.Common.Extension;
-using Message = System.Windows.Forms.Message;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
+using Application = System.Windows.Application;
 
 namespace SoundMixerSoftware
 {

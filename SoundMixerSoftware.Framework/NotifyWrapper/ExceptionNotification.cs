@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Notifications.Wpf;
 using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.LocalSystem;
 
 namespace SoundMixerSoftware.Helpers.NotifyWrapper

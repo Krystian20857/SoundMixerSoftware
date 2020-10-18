@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
-using SoundMixerSoftware.Helpers.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Helpers.Buttons.Functions

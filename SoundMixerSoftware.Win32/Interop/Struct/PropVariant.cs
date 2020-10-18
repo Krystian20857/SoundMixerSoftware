@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 namespace SoundMixerSoftware.Win32.Interop.Struct
 {
@@ -33,6 +34,6 @@ namespace SoundMixerSoftware.Win32.Interop.Struct
         [FieldOffset(8)] public IntPtr pwszVal;
         [FieldOffset(8)] public IntPtr punkVal;
         [FieldOffset(8)] public PropArray ca;
-        [FieldOffset(8)] public System.Runtime.InteropServices.ComTypes.FILETIME filetime;
+        [FieldOffset(8)] public FILETIME filetime;
     }
 }

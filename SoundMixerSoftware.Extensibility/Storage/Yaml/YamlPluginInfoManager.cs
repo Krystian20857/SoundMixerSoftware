@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using NLog;
-using SoundMixerSoftware.Helpers.LocalSystem;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Extensibility.Storage.Yaml

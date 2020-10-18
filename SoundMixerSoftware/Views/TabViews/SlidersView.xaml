@@ -126,7 +126,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-        <StackPanel Grid.Row="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-        </StackPanel>
+        <StackPanel Grid.Row="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right" />
     </Grid>
 </UserControl>

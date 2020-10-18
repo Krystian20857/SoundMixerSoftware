@@ -1,7 +1,5 @@
 ﻿using System;
-using Notifications.Wpf;
 using SoundMixerSoftware.Common.Property;
-using SoundMixerSoftware.Helpers.Device;
 
 namespace SoundMixerSoftware.Helpers.NotifyWrapper
 {

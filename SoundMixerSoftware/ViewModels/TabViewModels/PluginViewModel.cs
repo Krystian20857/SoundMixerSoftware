@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Utils.Application;

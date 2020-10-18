@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Windows.Controls;
-using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 
 namespace SoundMixerSoftware.Models

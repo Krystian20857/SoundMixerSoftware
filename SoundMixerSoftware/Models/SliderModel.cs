@@ -5,8 +5,6 @@ using Caliburn.Micro;
 using NLog;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Buttons.Functions;
-using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.SliderConverter;
 using SoundMixerSoftware.Helpers.SliderConverter.Converters;
@@ -225,7 +223,7 @@ namespace SoundMixerSoftware.Models
             MuteIn = e.Mute;
         }
 
-        private void SessionOnVolumeChange(object sender, Helpers.AudioSessions.VolumeChangedArgs e)
+        private void SessionOnVolumeChange(object sender, VolumeChangedArgs e)
         {
             VolumeIn = (int)Math.Round(e.Volume);
         }

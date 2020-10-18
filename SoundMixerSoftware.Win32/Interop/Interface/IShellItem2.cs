@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using SoundMixerSoftware.Win32.Interop.Enum;
 using SoundMixerSoftware.Win32.Interop.Struct;
+using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 namespace SoundMixerSoftware.Win32.Interop.Interface
 {
@@ -24,7 +25,7 @@ namespace SoundMixerSoftware.Win32.Interop.Interface
         void Update(IBindCtx pbc);
         void GetProperty(ref PROPERTYKEY key, [In, Out] PropVariant pv);
         Guid GetCLSID(ref PROPERTYKEY key);
-        System.Runtime.InteropServices.ComTypes.FILETIME GetFileTime(ref PROPERTYKEY key);
+        FILETIME GetFileTime(ref PROPERTYKEY key);
         int GetInt32(ref PROPERTYKEY key);
         [return: MarshalAs(UnmanagedType.LPWStr)]
         string GetString(ref PROPERTYKEY key);

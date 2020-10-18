@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NLog;
@@ -8,11 +7,9 @@ using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Helpers.Config;
 using SoundMixerSoftware.Helpers.Utils;
-using SoundMixerSoftware.Win32.Interop;
 using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.USBLib;
 using SoundMixerSoftware.Win32.Wrapper;
-using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
 
 namespace SoundMixerSoftware.Helpers.Device
 {

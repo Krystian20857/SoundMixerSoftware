@@ -1,6 +1,6 @@
 ﻿﻿using AudioSwitcher.AudioApi;
 
-namespace SoundMixerSoftware.Common.Utils.Audio
+ namespace SoundMixerSoftware.Common.Utils.Audio
 {
     public static class ERoleUtil
     {

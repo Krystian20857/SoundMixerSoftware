@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using NLog;
+using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Helpers.AudioSessions;
 using SoundMixerSoftware.Helpers.Buttons;
 using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.NotifyWrapper;
 using SoundMixerSoftware.Helpers.Overlay;
-using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.SliderConverter;
 using SoundMixerSoftware.Win32.USBLib;
-using DataReceivedEventArgs = SoundMixerSoftware.Common.Communication.DataReceivedEventArgs;
 
 namespace SoundMixerSoftware.Helpers.Device
 {

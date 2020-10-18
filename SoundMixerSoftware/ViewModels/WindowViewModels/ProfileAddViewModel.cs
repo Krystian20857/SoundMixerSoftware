@@ -1,10 +1,7 @@
-﻿using System.ComponentModel;
-using System.Windows.Forms;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Models;
-using Screen = Caliburn.Micro.Screen;
 
 namespace SoundMixerSoftware.ViewModels
 {

@@ -30,8 +30,8 @@
                     <StackPanel Orientation="Vertical">
                         <DockPanel VerticalAlignment="Center" LastChildFill="False">
                             <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" Margin="5" FontSize="16">
-                                <Run Text="Status: "></Run>
-                                <Run Foreground="{Binding Path=UpdateStatusColor}" Text="{Binding Path=UpdateStatus, UpdateSourceTrigger=PropertyChanged}"></Run>
+                                <Run Text="Status: " />
+                                <Run Foreground="{Binding Path=UpdateStatusColor}" Text="{Binding Path=UpdateStatus, UpdateSourceTrigger=PropertyChanged}" />
                             </TextBlock>
                             <DockPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Stretch" LastChildFill="False">
                                 <Button DockPanel.Dock="Left"

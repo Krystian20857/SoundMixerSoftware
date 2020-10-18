@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using System.Windows;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Helpers.Config;
@@ -10,7 +8,6 @@ using SoundMixerSoftware.Helpers.Device;
 using SoundMixerSoftware.Helpers.NotifyWrapper;
 using SoundMixerSoftware.Helpers.Overlay;
 using SoundMixerSoftware.Models;
-using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.ViewModels
 {

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
-using SoundMixerSoftware.Extensibility.Storage.Yaml;
 
 namespace SoundMixerSoftware.Extensibility.Storage
 {

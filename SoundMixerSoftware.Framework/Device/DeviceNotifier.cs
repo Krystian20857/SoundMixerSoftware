@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 using NLog;
 
 namespace SoundMixerSoftware.Helpers.Device

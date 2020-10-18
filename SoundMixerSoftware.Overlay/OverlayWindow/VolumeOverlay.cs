@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
-using SharpDX.Direct2D1;
 using SoundMixerSoftware.Overlay.Resource;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow

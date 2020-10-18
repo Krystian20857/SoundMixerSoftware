@@ -1,8 +1,4 @@
-﻿﻿using System.Diagnostics;
- using SoundMixerSoftware.Common.Utils;
- using SoundMixerSoftware.Helpers;
- using SoundMixerSoftware.Helpers.Config;
- using SoundMixerSoftware.Helpers.Device;
+﻿﻿using SoundMixerSoftware.Helpers.Device;
  using SoundMixerSoftware.Win32.USBLib;
 
  namespace SoundMixerSoftware.Models

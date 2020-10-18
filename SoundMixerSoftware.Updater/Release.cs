@@ -1,5 +1,4 @@
 ﻿using System;
-using SoundMixerSoftware.Updater.Github;
 
 namespace SoundMixerSoftware.Updater
 {

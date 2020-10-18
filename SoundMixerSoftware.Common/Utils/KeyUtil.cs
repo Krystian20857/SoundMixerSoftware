@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
+﻿using System.Text;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using GregsStack.InputSimulatorStandard.Native;
-using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Common.Utils

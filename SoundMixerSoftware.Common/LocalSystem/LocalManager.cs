@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using NLog;
-using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Property;
 
 namespace SoundMixerSoftware.Common.LocalSystem

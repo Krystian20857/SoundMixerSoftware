@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using NLog;
 using SoundMixerSoftware.Common.Utils;
 

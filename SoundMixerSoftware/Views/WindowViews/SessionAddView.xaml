@@ -20,23 +20,17 @@
         <GroupBox Grid.Row="0" Grid.Column="0" Style="{StaticResource GroupBoxCategory}" Header="Default Devices">
             <ListView x:Name="DefaultDevices"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
-                        
-            </ListView>
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}" />
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="0" Style="{StaticResource GroupBoxCategory}" Header="Devices">
             <ListView x:Name="Devices"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
-                
-            </ListView>
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}" />
         </GroupBox>
         <GroupBox Grid.Row="0" Grid.Column="1" Style="{StaticResource GroupBoxCategory}" Header="Process Sessions">
             <ListView x:Name="ProcessSessions"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
-                
-            </ListView>
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}" />
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="1" Style="{StaticResource GroupBoxCategory}">
             <GroupBox.Header>
@@ -53,9 +47,7 @@
             </GroupBox.Header>
             <ListView x:Name="Sessions"
                       Style="{StaticResource ListViewItems}"
-                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}">
-                
-            </ListView>
+                      SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}" />
         </GroupBox>
         <StackPanel Grid.Row="3" Grid.Column="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
             <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" cal:Message.Attach="[Click] = [AddClick()]" Width="150" Content="Add Session" ToolTip="Add Session" />

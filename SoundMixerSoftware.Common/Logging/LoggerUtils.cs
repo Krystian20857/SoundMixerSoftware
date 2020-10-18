@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 using NLog;
+using NLog.Config;
 using NLog.Targets;
 
 namespace SoundMixerSoftware.Common.Logging
@@ -18,7 +19,7 @@ namespace SoundMixerSoftware.Common.Logging
         /// <param name="logsFolder">Folder path where logs will be stored</param>
         public static void SetupLogger(string logsFolder)
         {
-            var config = new NLog.Config.LoggingConfiguration();
+            var config = new LoggingConfiguration();
             var logFile = new FileTarget("logfile")                                                 //logs will be saved at %AppData%/{AppName}/logs/
             {                                                                                             //logs are archived event day to %AppData%/{AppName}/logs/
                 FileName = Path.Combine(logsFolder, "latest.log"),                                        //max archived logs files = 30
