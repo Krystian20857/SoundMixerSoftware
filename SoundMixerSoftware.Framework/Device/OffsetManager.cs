@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public class OffsetManager: IDisposable
     {

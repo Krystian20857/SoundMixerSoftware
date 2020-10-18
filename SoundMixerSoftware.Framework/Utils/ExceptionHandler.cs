@@ -1,9 +1,9 @@
 ﻿using System;
 using NLog;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.NotifyWrapper;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.NotifyWrapper;
 
-namespace SoundMixerSoftware.Helpers.Utils
+namespace SoundMixerSoftware.Framework.Utils
 {
     /// <summary>
     /// Contains useful exception commands.

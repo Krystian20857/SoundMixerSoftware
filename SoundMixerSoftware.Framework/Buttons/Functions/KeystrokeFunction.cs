@@ -9,7 +9,7 @@ using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 
-namespace SoundMixerSoftware.Helpers.Buttons.Functions
+namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
     public class KeystrokeFunction : IButton
     {

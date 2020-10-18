@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundMixerSoftware.Helpers.Profile
+namespace SoundMixerSoftware.Framework.Profile
 {
     public class ProfileStruct
     {

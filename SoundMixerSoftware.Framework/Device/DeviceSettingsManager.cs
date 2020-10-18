@@ -1,6 +1,6 @@
-﻿using SoundMixerSoftware.Helpers.Config;
+﻿using SoundMixerSoftware.Framework.Config;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public static class DeviceSettingsManager
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundMixerSoftware.Helpers.SliderConverter
+namespace SoundMixerSoftware.Framework.SliderConverter
 {
     public interface IConverterCreator
     {

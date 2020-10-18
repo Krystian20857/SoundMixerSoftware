@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SoundMixerSoftware.Common.Property;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 
-namespace SoundMixerSoftware.Helpers.Overlay
+namespace SoundMixerSoftware.Framework.Overlay
 {
     public class OverlaySwitcher : IProperties<string, IOverlay>
     {

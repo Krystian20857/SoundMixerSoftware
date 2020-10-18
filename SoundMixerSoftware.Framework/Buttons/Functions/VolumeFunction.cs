@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Profile;
 
-namespace SoundMixerSoftware.Helpers.Buttons.Functions
+namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
     public class VolumeFunction : IButton
     {

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels

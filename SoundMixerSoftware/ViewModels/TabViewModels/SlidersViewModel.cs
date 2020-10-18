@@ -1,11 +1,11 @@
 ﻿using System;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
-using SoundMixerSoftware.Helpers.Profile;
-using SoundMixerSoftware.Helpers.SliderConverter;
-using SoundMixerSoftware.Helpers.SliderConverter.Converters;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.AudioSessions.VirtualSessions;
+using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.SliderConverter;
+using SoundMixerSoftware.Framework.SliderConverter.Converters;
 using SoundMixerSoftware.Models;
 using ThemeManager = SoundMixerSoftware.Overlay.Resource.ThemeManager;
 

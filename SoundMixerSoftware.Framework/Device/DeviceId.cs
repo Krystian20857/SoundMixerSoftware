@@ -2,7 +2,7 @@
 using System.Linq;
 using SoundMixerSoftware.Common.Utils;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public class DeviceId : IEquatable<DeviceId>, IFormattable
     {

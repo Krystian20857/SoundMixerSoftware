@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace SoundMixerSoftware.Helpers.Buttons
+namespace SoundMixerSoftware.Framework.Buttons
 {
     public interface IButton
     {

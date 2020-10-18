@@ -9,9 +9,9 @@ using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.Audio;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.AudioSessions.VirtualSessions;
+using SoundMixerSoftware.Framework.Utils;
 
 namespace SoundMixerSoftware.Models
 {

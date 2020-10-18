@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Notifications.Wpf;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Device;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Device;
 
-namespace SoundMixerSoftware.Helpers.NotifyWrapper
+namespace SoundMixerSoftware.Framework.NotifyWrapper
 {
     public class DeviceNotification : INotification<object>
     {

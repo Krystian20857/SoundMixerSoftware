@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Helpers.Utils
+namespace SoundMixerSoftware.Framework.Utils
 {
     public class ExtractedIcons
     {

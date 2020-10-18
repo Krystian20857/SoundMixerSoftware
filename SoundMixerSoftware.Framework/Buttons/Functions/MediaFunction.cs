@@ -5,7 +5,7 @@ using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Helpers.Buttons.Functions
+namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
     public class MediaFunction : IButton
     {

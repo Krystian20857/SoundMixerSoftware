@@ -6,9 +6,9 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils;
-using SoundMixerSoftware.Helpers.Buttons;
-using SoundMixerSoftware.Helpers.Buttons.Functions;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Buttons;
+using SoundMixerSoftware.Framework.Buttons.Functions;
+using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Utils;
 

@@ -1,4 +1,4 @@
-﻿namespace SoundMixerSoftware.Helpers.NotifyWrapper
+﻿namespace SoundMixerSoftware.Framework.NotifyWrapper
 {
     public enum DeviceNotificationState
     {

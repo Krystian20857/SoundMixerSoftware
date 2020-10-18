@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Notifications.Wpf;
 using SoundMixerSoftware.Common.Utils.Application;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.LocalSystem;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.LocalSystem;
 
-namespace SoundMixerSoftware.Helpers.NotifyWrapper
+namespace SoundMixerSoftware.Framework.NotifyWrapper
 {
     public class ExceptionNotification : INotification<string>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using SoundMixerSoftware.Common.Property;
 
-namespace SoundMixerSoftware.Helpers.NotifyWrapper
+namespace SoundMixerSoftware.Framework.NotifyWrapper
 {
     public interface INotification<T> : IProperties<string, T>
     {

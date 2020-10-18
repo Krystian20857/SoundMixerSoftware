@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace SoundMixerSoftware.Helpers.AudioSessions
+namespace SoundMixerSoftware.Framework.AudioSessions
 {
     public interface IVirtualSession : IDisposable
     {

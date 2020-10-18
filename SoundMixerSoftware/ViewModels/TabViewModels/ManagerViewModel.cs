@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using NLog;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
 using LogManager = NLog.LogManager;
 

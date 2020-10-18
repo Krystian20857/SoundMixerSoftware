@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundMixerSoftware.Helpers.AudioSessions
+namespace SoundMixerSoftware.Framework.AudioSessions
 {
     public interface IVirtualSessionCreator
     {

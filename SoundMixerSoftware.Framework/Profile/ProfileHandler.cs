@@ -1,10 +1,10 @@
 ﻿using System;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Config.Yaml;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.LocalSystem;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.LocalSystem;
 
-namespace SoundMixerSoftware.Helpers.Profile
+namespace SoundMixerSoftware.Framework.Profile
 {
     public static class ProfileHandler
     {

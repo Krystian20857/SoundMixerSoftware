@@ -1,7 +1,7 @@
 ﻿using System;
 using SoundMixerSoftware.Win32.USBLib;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public class DeviceConnectedEventArgs : EventArgs
     {

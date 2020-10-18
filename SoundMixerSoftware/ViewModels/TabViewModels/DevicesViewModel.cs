@@ -3,10 +3,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Device;
-using SoundMixerSoftware.Helpers.NotifyWrapper;
-using SoundMixerSoftware.Helpers.Overlay;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Device;
+using SoundMixerSoftware.Framework.NotifyWrapper;
+using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels

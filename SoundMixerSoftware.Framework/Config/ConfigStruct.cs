@@ -8,7 +8,7 @@ using SoundMixerSoftware.Updater;
 using SoundMixerSoftware.Win32.USBLib;
 using YamlDotNet.Serialization;
 
-namespace SoundMixerSoftware.Helpers.Config
+namespace SoundMixerSoftware.Framework.Config
 {
     [Recursion]
     public class ConfigStruct : IConfigStruct<ConfigStruct>

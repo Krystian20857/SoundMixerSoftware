@@ -12,11 +12,10 @@ using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.Audio;
-using SoundMixerSoftware.Helpers.Annotations;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
 {
     public class VirtualSession : IVirtualSession, INotifyPropertyChanged
     {

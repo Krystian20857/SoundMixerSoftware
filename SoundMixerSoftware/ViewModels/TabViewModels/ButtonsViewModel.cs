@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Helpers.Buttons;
-using SoundMixerSoftware.Helpers.Buttons.Functions;
-using SoundMixerSoftware.Helpers.Device;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Buttons;
+using SoundMixerSoftware.Framework.Buttons.Functions;
+using SoundMixerSoftware.Framework.Device;
+using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
-using ButtonStruct = SoundMixerSoftware.Helpers.Profile.ButtonStruct;
+using ButtonStruct = SoundMixerSoftware.Framework.Profile.ButtonStruct;
 
 namespace SoundMixerSoftware.ViewModels
 {

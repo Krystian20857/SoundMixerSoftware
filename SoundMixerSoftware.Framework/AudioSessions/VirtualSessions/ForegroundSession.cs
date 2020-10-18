@@ -10,13 +10,12 @@ using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Helpers.Annotations;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Threading;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
 {
     public class ForegroundSession : IVirtualSession, INotifyPropertyChanged
     {

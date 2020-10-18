@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Profile;
 
-namespace SoundMixerSoftware.Helpers.Buttons
+namespace SoundMixerSoftware.Framework.Buttons
 {
     public static class ButtonHandler
     {

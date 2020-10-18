@@ -4,10 +4,10 @@ using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NLog;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Profile;
-using SoundMixerSoftware.Helpers.SliderConverter;
-using SoundMixerSoftware.Helpers.SliderConverter.Converters;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.SliderConverter;
+using SoundMixerSoftware.Framework.SliderConverter.Converters;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.Models

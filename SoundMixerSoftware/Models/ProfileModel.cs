@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Profile;
 
 namespace SoundMixerSoftware.Models
 {

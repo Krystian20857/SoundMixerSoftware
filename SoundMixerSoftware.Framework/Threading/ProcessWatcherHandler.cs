@@ -1,8 +1,8 @@
 ﻿using System;
 using SoundMixerSoftware.Common.Threading;
-using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Framework.Config;
 
-namespace SoundMixerSoftware.Helpers.Threading
+namespace SoundMixerSoftware.Framework.Threading
 {
     public class ProcessWatcher
     {

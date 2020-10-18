@@ -1,8 +1,8 @@
 ﻿using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Config.Yaml;
-using SoundMixerSoftware.Helpers.LocalSystem;
+using SoundMixerSoftware.Framework.LocalSystem;
 
-namespace SoundMixerSoftware.Helpers.Config
+namespace SoundMixerSoftware.Framework.Config
 {
     /// <summary>
     /// Handles Global Config

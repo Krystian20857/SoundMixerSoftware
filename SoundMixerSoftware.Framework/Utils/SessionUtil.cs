@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Profile;
 
-namespace SoundMixerSoftware.Helpers.Utils
+namespace SoundMixerSoftware.Framework.Utils
 {
     public static class SessionUtil
     {

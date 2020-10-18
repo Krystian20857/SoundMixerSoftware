@@ -10,10 +10,9 @@ using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
-using SoundMixerSoftware.Helpers.Annotations;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.Utils;
 
-namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
 {
     public class DefaultDeviceSession : IVirtualSession, INotifyPropertyChanged
     {

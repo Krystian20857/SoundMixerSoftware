@@ -5,12 +5,12 @@ using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Device;
-using SoundMixerSoftware.Helpers.Overlay;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Device;
+using SoundMixerSoftware.Framework.Overlay;
+using SoundMixerSoftware.Framework.Profile;
 
-namespace SoundMixerSoftware.Helpers.Buttons.Functions
+namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
     public class MuteFunction : IButton
     {

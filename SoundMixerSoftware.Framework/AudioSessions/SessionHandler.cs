@@ -8,11 +8,11 @@ using AudioSwitcher.AudioApi.Session;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Threading;
-using SoundMixerSoftware.Helpers.Profile;
-using SoundMixerSoftware.Helpers.Threading;
+using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.Threading;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Helpers.AudioSessions
+namespace SoundMixerSoftware.Framework.AudioSessions
 {
     public static class SessionHandler
     {

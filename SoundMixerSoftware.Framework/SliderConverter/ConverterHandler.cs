@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using SoundMixerSoftware.Helpers.Device;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Device;
+using SoundMixerSoftware.Framework.Profile;
 
-namespace SoundMixerSoftware.Helpers.SliderConverter
+namespace SoundMixerSoftware.Framework.SliderConverter
 {
     public static class ConverterHandler
     {

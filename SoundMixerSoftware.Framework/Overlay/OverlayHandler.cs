@@ -1,7 +1,7 @@
-﻿using SoundMixerSoftware.Helpers.Config;
+﻿using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 
-namespace SoundMixerSoftware.Helpers.Overlay
+namespace SoundMixerSoftware.Framework.Overlay
 {
     public static class OverlayHandler
     {

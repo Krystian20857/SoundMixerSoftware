@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Device;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Device;
+using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels

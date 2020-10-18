@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using NLog;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public static class DeviceNotifier
     {

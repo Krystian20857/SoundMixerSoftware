@@ -1,5 +1,5 @@
 ﻿using Caliburn.Micro;
-using SoundMixerSoftware.Helpers.Config;
+using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Win32.USBLib;
 
 namespace SoundMixerSoftware.ViewModels

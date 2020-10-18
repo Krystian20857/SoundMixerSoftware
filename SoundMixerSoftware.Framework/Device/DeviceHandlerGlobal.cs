@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using NLog;
 using SoundMixerSoftware.Common.Communication;
-using SoundMixerSoftware.Helpers.AudioSessions;
-using SoundMixerSoftware.Helpers.Buttons;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Overlay;
-using SoundMixerSoftware.Helpers.SliderConverter;
+using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Buttons;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Overlay;
+using SoundMixerSoftware.Framework.SliderConverter;
 using SoundMixerSoftware.Win32.USBLib;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public static class DeviceHandlerGlobal
     {

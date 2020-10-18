@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using Caliburn.Micro;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels

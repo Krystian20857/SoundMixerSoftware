@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SoundMixerSoftware.Helpers.Buttons
+namespace SoundMixerSoftware.Framework.Buttons
 {
     public interface IButtonCreator
     {

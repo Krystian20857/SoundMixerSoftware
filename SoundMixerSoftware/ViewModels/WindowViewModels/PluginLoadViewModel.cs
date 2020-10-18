@@ -5,7 +5,7 @@ using Microsoft.Win32;
 using NLog;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Extensibility.Loader;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.Utils;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels

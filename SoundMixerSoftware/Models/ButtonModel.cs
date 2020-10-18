@@ -2,8 +2,8 @@
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Helpers.Buttons;
-using SoundMixerSoftware.Helpers.Profile;
+using SoundMixerSoftware.Framework.Buttons;
+using SoundMixerSoftware.Framework.Profile;
 
 namespace SoundMixerSoftware.Models
 {

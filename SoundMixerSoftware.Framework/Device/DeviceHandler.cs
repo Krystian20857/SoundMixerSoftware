@@ -5,13 +5,13 @@ using System.Windows.Forms;
 using NLog;
 using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.USBLib;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Helpers.Device
+namespace SoundMixerSoftware.Framework.Device
 {
     public class DeviceHandler : IDisposable
     {

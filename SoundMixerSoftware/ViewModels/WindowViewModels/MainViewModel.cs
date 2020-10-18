@@ -4,8 +4,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using SoundMixerSoftware.Helpers.Config;
-using SoundMixerSoftware.Helpers.Overlay;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels

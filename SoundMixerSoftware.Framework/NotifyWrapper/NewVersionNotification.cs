@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Notifications.Wpf;
 using SoundMixerSoftware.Updater;
 
-namespace SoundMixerSoftware.Helpers.NotifyWrapper
+namespace SoundMixerSoftware.Framework.NotifyWrapper
 {
     public class NewVersionNotification : INotification<NewVersionEventArgs>
     {
