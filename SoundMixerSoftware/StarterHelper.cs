@@ -17,8 +17,8 @@ namespace SoundMixerSoftware
         
         #region Constant
         
-        public const int WM_SETFOREGROUND = 0xDD64;
         public static readonly Guid APP_UUID = new Guid("F3F46984-70BC-428B-AAC2-F8CFB4499407");            //lower case: f3f46984-70bc-428b-aac2-f8cfb4499407 <-- mutex name
+        public static readonly int WM_SETFOREGROUND = User32.RegisterWindowMessage(APP_UUID.ToString());
 
         #endregion
         
@@ -72,7 +72,7 @@ namespace SoundMixerSoftware
             }
             else
             {
-                User32.PostMessage((IntPtr)0xFFFF, WM_SETFOREGROUND, IntPtr.Zero, IntPtr.Zero);
+                User32.PostMessage((IntPtr)0xFFFF, (uint)WM_SETFOREGROUND, IntPtr.Zero, IntPtr.Zero);
                 ExitApplication?.Invoke(this, EventArgs.Empty);
             }
 

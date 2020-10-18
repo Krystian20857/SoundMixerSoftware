@@ -128,5 +128,7 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         public static extern IntPtr GetShellWindow();
         [DllImport("user32.dll", SetLastError = false)]
         public static extern IntPtr GetDesktopWindow();
+        [DllImport("user32.dll")]
+        public static extern int RegisterWindowMessage(string message);
     }
 }
