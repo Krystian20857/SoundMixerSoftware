@@ -31,7 +31,7 @@ Currently software has some annoying bug which will be fixed in future. About kn
 ### SoundMixerSoftware.Win32
   This Project/Assembly contains all interop components as: native methods, native structures, flags. Also Win32 project provides interop wrappers to make interop services easier to use. Most importand wrapper is USBLib which handles device-change and device-properties.
 ### SoundMixerSoftware.Common
-  This Project/Assembly is responsible for higher-level things than Win32 project like: configuration files, profile system, threading and most important simple audio handling system. Also this Namespace contains a lot of utility methods.
+  This Project/Assembly is responsible for higher-level things than Win32 project like: configuration files, profile system and threading. Also this Namespace contains a lot of utility methods.
 ### SoundMixerSoftware.Extensibility
   All plugin related things: loading, provides plugin interface, and many more.
 ### SoundMixerSoftware.Overlay
@@ -43,14 +43,12 @@ Currently software has some annoying bug which will be fixed in future. About kn
   
 **More detailed information about each project can be found inside corresponding foler.**
 
-## Known Issues
-* ~~Adding/removing device will not refresh sessions(Not implemented/issues with implementation)~~ - fixed
-
 ## Screenshots
 ![Sound Mixer Software Profiles](./github/images/software_profiles.png)
 ![Sound Mixer Software Sliders](./github/images/software_sliders.png)
 ![Sound Mixer Software Buttons](./github/images/software_buttons.png)
 ![Sound Mixer Software Devices](./github/images/software_devices.png)
+![Sound Mixer Software Devices](./github/images/software_settings.png)
 ![Sound Mixer Software Devices](./github/images/software_addsession.png)
 
 ## Icons
