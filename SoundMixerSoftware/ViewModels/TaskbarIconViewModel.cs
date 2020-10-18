@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Caliburn.Micro;
@@ -45,11 +46,17 @@ namespace SoundMixerSoftware.ViewModels
                 ProfileName = ProfileHandler.SelectedProfile.Name;
             };
             
+            Bootstrapper.Instance.ViewInitialized += InstanceOnViewInitialized;
         }
 
         #endregion
         
         #region Private Events
+        
+        private void InstanceOnViewInitialized(object _, EventArgs e)
+        {
+            Bootstrapper.Instance.TaskbarIcon.TrayLeftMouseUp += (sender, args) => ShowWindow();
+        }
 
         public void ShowWindow()
         {

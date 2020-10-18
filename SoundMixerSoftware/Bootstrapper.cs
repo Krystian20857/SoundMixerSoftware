@@ -46,6 +46,14 @@ namespace SoundMixerSoftware
 
         #endregion
         
+        #region Private Fields
+        
+        private readonly ExtendedContainer _container = new ExtendedContainer();
+        private StarterHelper _starter = new StarterHelper();
+        private IWindowManager _windowManager = new WindowManager();
+
+        #endregion
+        
         #region Public Properties
 
         public IntPtr MainWindowHandle
@@ -77,14 +85,12 @@ namespace SoundMixerSoftware
 
         #endregion
         
-        #region Private Fields
-        
-        private readonly ExtendedContainer _container = new ExtendedContainer();
-        private StarterHelper _starter = new StarterHelper();
-        private IWindowManager _windowManager = new WindowManager();
+        #region Events
 
-        #endregion
+        public event EventHandler ViewInitialized;
         
+        #endregion
+
         #region Constructor
 
         public Bootstrapper()
@@ -100,15 +106,18 @@ namespace SoundMixerSoftware
                     _starter.Dispose();
                     Application.Current.Shutdown();
                 });
+                
                 PluginLoader.ViewLoadingEvent();
-                IoC.Get<TaskbarIconViewModel>();
                 TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
+
                 if (ConfigHandler.ConfigStruct.Application.HideOnStartup)
                     IoC.Get<MainViewModel>();
                 else
                     DisplayRootViewFor<MainViewModel>();
+                
                 Logger.Info("Main view started.");
                 PluginLoader.ViewLoadedEvent();
+                ViewInitialized?.Invoke(this, EventArgs.Empty);
             };
 
             _starter.BringWindowToFront += (sender, args) => BringToFront();
