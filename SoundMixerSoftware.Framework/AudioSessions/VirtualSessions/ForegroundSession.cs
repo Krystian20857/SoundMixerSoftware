@@ -25,6 +25,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         #region Const
 
         public const string KEY = "foreground-session";
+        private const int SESSION_CAPACITY = 25;
         
         #endregion
         
@@ -39,7 +40,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
         private WindowWatcher _windowWatcher = new WindowWatcher();
 
-        private List<IAudioSession> _sessions = new List<IAudioSession>(25); 
+        private List<IAudioSession> _sessions = new List<IAudioSession>(SESSION_CAPACITY); 
         private Dictionary<IAudioSession, IDisposable> _volumeEvents = new Dictionary<IAudioSession, IDisposable>();
         private Dictionary<IAudioSession, IDisposable> _muteEvents = new Dictionary<IAudioSession, IDisposable>();
 
@@ -188,7 +189,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             foreach (var session in SessionHandler.GetAllSessions())
             {
                 var sessionProcessId = session.ProcessId;
-                if (ProcessUtil.IsAlive(sessionProcessId) && childProcesses.Contains((uint) sessionProcessId))
+                if (ProcessWrapper.IsAlive(sessionProcessId) && childProcesses.Contains((uint) sessionProcessId))
                 {
                     RegisterEvents(session);
                     _sessions.Add(session);

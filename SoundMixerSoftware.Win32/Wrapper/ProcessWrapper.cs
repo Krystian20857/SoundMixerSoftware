@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using SoundMixerSoftware.Win32.Interop.Enum;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Interop.Struct;
@@ -10,6 +11,43 @@ namespace SoundMixerSoftware.Win32.Wrapper
     public static class ProcessWrapper
     {
 
+        /// <summary>
+        /// Get Process file name by standard WIN32 method
+        /// </summary>
+        /// <param name="process"></param>
+        /// <param name="buffer">buffer size default: 260</param>
+        /// <returns></returns>
+        public static string GetFileName(int pid, int buffer = 260) //260 -> max windows path length
+        {
+            var handle = Kernel32.OpenProcess(ProcessAccessFlags.QueryLimitedInformation, false, pid);
+            if (handle == IntPtr.Zero)
+                return string.Empty;
+            var nameBuilder = new StringBuilder(buffer);
+            var bufferLength = nameBuilder.Capacity + 1;
+            return Kernel32.QueryFullProcessImageName(handle, 0, nameBuilder, ref bufferLength) ? nameBuilder.ToString() : string.Empty;
+        }
+        
+        /// <summary>
+        /// Check if process id exists. Useful with zombie audio sessions war :).
+        /// </summary>
+        /// <param name="pid">Process ID</param>
+        /// <returns></returns>
+        public static bool IsAlive(int pid)
+        {
+            var phandle = IntPtr.Zero;
+            try
+            {
+                phandle = Kernel32.OpenProcess(ProcessAccessFlags.Synchronize, false, pid);
+                if (phandle == IntPtr.Zero)
+                    return false;
+                return Kernel32.WaitForSingleObject(phandle, 0) != 0;
+            }
+            finally
+            {
+                Kernel32.CloseHandle(phandle);
+            }
+        }
+        
         /// <summary>
         /// Get running processes using win32 api.
         /// </summary>
@@ -61,6 +99,11 @@ namespace SoundMixerSoftware.Win32.Wrapper
             }
         }
 
+        /// <summary>
+        /// Gets parent of specified process via interop.
+        /// </summary>
+        /// <param name="pid"></param>
+        /// <returns></returns>
         public static uint GetParentProcess(uint pid)
         {
             var processHandle = IntPtr.Zero;

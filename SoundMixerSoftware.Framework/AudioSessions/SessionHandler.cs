@@ -1,22 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
+using NLog;
+using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Helpers.Profile;
 using SoundMixerSoftware.Helpers.Threading;
+using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions
 {
     public static class SessionHandler
     {
+        #region Logger
+        
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Private Fields
 
         private static IDisposable _changeCallback;
         private static IProcessWatcher _processWatcher => ProcessWatcher.DefaultProcessWatcher;
+        private static Dictionary<int, string> _execPaths = new Dictionary<int, string>();
 
         #endregion
         
@@ -251,6 +262,14 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 return controller;
             return device.GetCapability<IAudioSessionController>();
         }
+
+        public static string GetSessionExec(IAudioSession session)
+        {
+            var processId = session.ProcessId;
+            if (!_execPaths.ContainsKey(processId))
+                return string.Empty;
+            return _execPaths[processId];
+        }
         
         #endregion
         
@@ -272,6 +291,11 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                 controller.SessionCreated.Subscribe(x => SessionCreated?.Invoke(x));
                 SessionController.Add(deviceId, controller);
             }
+            catch (Exception exception)
+            {
+                //critical for debugging
+                Logger.Warn(exception);
+            }
             finally
             {
                 DeviceAddedCallback?.Invoke(device);
@@ -287,8 +311,12 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
                     return;
                 var controller = SessionController[deviceId];
                 foreach (var session in controller.All())
-                    _processWatcher.DetachProcessWait(session.ProcessId);
+                    DetachProcessExit(session);
                 SessionController.Remove(deviceId);
+            }
+            catch (Exception exception)
+            {
+                Logger.Warn(exception);
             }
             finally
             {
@@ -296,10 +324,23 @@ namespace SoundMixerSoftware.Helpers.AudioSessions
             }
         }
 
-        private static void AttachProcessExit(IAudioSession audioSession)
+        private static void AttachProcessExit(IAudioSession session)
         {
-            if(audioSession.IsSystemSession) return;
-            _processWatcher.AttachProcessWait(audioSession.ProcessId, id => SessionExited?.Invoke(audioSession));
+            if(session.IsSystemSession) return;
+            
+            var processId = session.ProcessId;
+            var execPath = ProcessWrapper.GetFileName(session.ProcessId);
+            _execPaths.Set(processId, execPath);
+            
+            SessionCreated?.Invoke(session);
+            _processWatcher.AttachProcessWait(session.ProcessId, id => SessionExited?.Invoke(session));
+        }
+        
+        private static void DetachProcessExit(IAudioSession session){
+            if(session.IsSystemSession) return;
+            SessionExited?.Invoke(session);
+            _execPaths.Remove(session.ProcessId);
+            _processWatcher.DetachProcessWait(session.ProcessId);
         }
 
         #endregion

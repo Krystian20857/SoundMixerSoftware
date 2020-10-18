@@ -203,18 +203,40 @@ namespace SoundMixerSoftware.Models
         public ImageSource Image { get; set; }
         
         #endregion
+
+        #region Implemented Methods
+        
+        public virtual IVirtualSession CreateSession(int sliderIndex)
+        {
+            return new VirtualSession(sliderIndex, ID, Name, Guid.NewGuid());
+        }
+        
+        #endregion
+    }
+
+    public class ProcessSessionModel : ISessionModel
+    {
+        #region Implemented Properties
+        
+        public string ID { get; set; }
+        public Guid Guid { get; set; }
+        public string Name { get; set; }
+        public ImageSource Image { get; set; }
+        
+        #endregion
         
         #region Public Properties
 
-        public int ProcessId { get; set; }
+        public string ExecutablePath { get; set; }
+        public string RawName { get; set; }
 
         #endregion
-        
+
         #region Implemented Methods
         
-        public IVirtualSession CreateSession(int sliderIndex)
+        public virtual IVirtualSession CreateSession(int sliderIndex)
         {
-            return new VirtualSession(sliderIndex, ID, Name, Guid.NewGuid());
+            return new ProcessSession(sliderIndex, ExecutablePath, RawName, Guid.NewGuid());
         }
         
         #endregion

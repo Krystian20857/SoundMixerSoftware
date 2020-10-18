@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Style x:Key="ListViewItems" TargetType="{x:Type ListView}">
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="Margin" Value="3"/>
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -33,5 +34,9 @@
                 <Setter Property="SelectedItem" Value="null"></Setter>
             </Trigger>
         </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="GroupBoxCategory" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource MaterialDesignGroupBox}">
+        <Setter Property="Margin" Value="5"/>
     </Style>
 </ResourceDictionary>

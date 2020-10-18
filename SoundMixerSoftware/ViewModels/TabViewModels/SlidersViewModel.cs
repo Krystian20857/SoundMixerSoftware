@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Helpers.AudioSessions;
@@ -60,6 +61,7 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.RegisterCreator(DeviceSession.KEY, new DeviceSessionCreator());
             SessionHandler.RegisterCreator(DefaultDeviceSession.KEY, new DefaultDeviceSessionCreator());
             SessionHandler.RegisterCreator(ForegroundSession.KEY, new ForegroundSessionCreator());
+            SessionHandler.RegisterCreator(ProcessSession.KEY, new ProcessSessionCreator());
             
             ConverterHandler.RegisterCreator("log_converter", new LogConverterCreator());
 
@@ -137,7 +139,6 @@ namespace SoundMixerSoftware.ViewModels
             var slider = Sliders[index];
             slider.Applications.Add(e.Session);
         }
-
 
         private void ProfileHandlerOnProfileChanged(object sender, ProfileChangedEventArgs e)
         {

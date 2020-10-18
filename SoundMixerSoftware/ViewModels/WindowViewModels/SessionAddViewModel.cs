@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Windows.Media;
 using Caliburn.Micro;
 using SoundMixerSoftware.Models;
 using AudioSwitcher.AudioApi;
@@ -25,6 +24,12 @@ namespace SoundMixerSoftware.ViewModels
     /// </summary>z
     public class SessionAddViewModel : Screen
     {
+        //#region Const
+
+        //public static readonly Guid PROCESS_SESSIONS_UUID = new Guid("2BB69845-6FD9-4E26-A9CC-4EE031CC870A");
+        
+        //#endregion 
+        
         #region Logger
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
@@ -91,6 +96,8 @@ namespace SoundMixerSoftware.ViewModels
             set => _deviceSessions = value;
         }
 
+        public BindableCollection<ProcessSessionModel> ProcessSessions { get; set; } = new BindableCollection<ProcessSessionModel>();
+
         public ISessionModel SelectedDevice
         {
             get => _selectedDevice;
@@ -100,6 +107,10 @@ namespace SoundMixerSoftware.ViewModels
                 SetSessions(_selectedDevice.Guid);
             }
         }
+
+        #endregion
+        
+        #region Private Properties
 
         #endregion
 
@@ -117,6 +128,9 @@ namespace SoundMixerSoftware.ViewModels
             SessionHandler.DeviceRemovedCallback += RemoveDevice;
 
             SessionHandler.SessionExited += RemoveSession;
+            SessionHandler.SessionExited += RemoveProcessSession;
+            
+            SessionHandler.SessionCreated += AddProcessSession;
 
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Playback, Role.Multimedia));
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Capture, Role.Multimedia));
@@ -124,8 +138,11 @@ namespace SoundMixerSoftware.ViewModels
             DefaultDevices.Add(new DefaultDeviceModel(DeviceType.Capture, Role.Communications));
 
             SelectedDevice = DeviceSessions.FirstOrDefault(x => x.Guid == _controller.DefaultPlaybackDevice.Id) ?? DeviceSessions.FirstOrDefault();
+            
+            foreach(var session in SessionHandler.GetAllSessions())
+                AddProcessSession(session);
         }
-
+        
         #endregion
 
         #region Private Methods
@@ -169,14 +186,13 @@ namespace SoundMixerSoftware.ViewModels
                 Execute.OnUIThread(() => DeviceSessions.Add(model));
         }
 
-        private void AddSession(ICollection<AudioSessionModel> collection, IAudioSession session)
+        private void AddSession(IAudioSession session)
         {
-            var id = session.Id;
-            if(collection.Any(x => x.ID == id))
+            if (Sessions.Any(x => x.ID == session.Id))
                 return;
-
+            
             var processId = session.ProcessId;
-            if(!ProcessUtil.IsAlive(processId))
+            if(!ProcessWrapper.IsAlive(processId))
                 return;
 
             using (var process = Process.GetProcessById(processId))
@@ -189,12 +205,38 @@ namespace SoundMixerSoftware.ViewModels
                 Execute.OnUIThread(() =>
                 {
                     sessionModel.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
-                    collection.Add(sessionModel);
+                    Sessions.Add(sessionModel);
                 });
             }
         }
 
-        private void AddSession(IAudioSession session) => AddSession(Sessions, session);
+        private void AddProcessSession(IAudioSession session)
+        {
+            var executablePath = SessionHandler.GetSessionExec(session);
+            var processId = session.ProcessId;
+            if(ProcessSessions.Any(x => x.ExecutablePath == executablePath))
+                return;
+            
+            if(!ProcessWrapper.IsAlive(processId))
+                return;
+            
+            using (var process = Process.GetProcessById(processId))
+            {
+                var rawName = process.GetPreciseName();
+                var sessionModel = new ProcessSessionModel()
+                {
+                    ID = session.Id,
+                    ExecutablePath = executablePath,
+                    Name = $"{rawName} - {Path.GetFileName(executablePath)}",
+                    RawName = rawName,
+                };
+                Execute.OnUIThread(() =>
+                {
+                    sessionModel.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
+                    ProcessSessions.Add(sessionModel);
+                });
+            }
+        }
 
         private void RemoveDevice(IDevice device)
         {
@@ -202,11 +244,11 @@ namespace SoundMixerSoftware.ViewModels
             var deviceToRemove = Devices.FirstOrDefault(x => x.Guid == deviceId);
             if (deviceToRemove != null)
                 Devices.Remove(deviceToRemove);
-            
+
             deviceToRemove = DeviceSessions.FirstOrDefault(x => x.Guid == deviceId);
             if (deviceToRemove != null)
             {
-                if(SelectedSession.Guid == deviceToRemove.Guid)
+                if (SelectedDevice?.Guid == deviceToRemove.Guid)
                     SetSessions(_controller.DefaultPlaybackDevice.Id);
                 DeviceSessions.Remove(deviceToRemove);
             }
@@ -218,6 +260,15 @@ namespace SoundMixerSoftware.ViewModels
             if(sessionModel == default)
                 return;
             Sessions.Remove(sessionModel);
+        }
+
+        private void RemoveProcessSession(IAudioSession session)
+        {
+            var executablePath = SessionHandler.GetSessionExec(session);
+            var sessionModel = ProcessSessions.FirstOrDefault(x => x.ExecutablePath == executablePath);
+            if(sessionModel == default)
+                return;
+            ProcessSessions.Remove(sessionModel);
         }
 
         #endregion

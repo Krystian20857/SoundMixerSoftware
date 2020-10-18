@@ -25,7 +25,7 @@ namespace SoundMixerSoftware.Common.Extension
         /// <returns></returns>
         public static string GetFileName(this Process process, int buffer = 260) //260 -> max windows path length
         {
-            return ProcessUtil.GetFileName(process.Id, buffer);
+            return ProcessWrapper.GetFileName(process.Id, buffer);
         }
 
         /// <summary>

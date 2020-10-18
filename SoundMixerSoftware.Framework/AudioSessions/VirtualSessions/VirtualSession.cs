@@ -4,19 +4,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
-using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Helpers.Annotations;
 using SoundMixerSoftware.Helpers.Utils;
+using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
 {
@@ -68,8 +66,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             {
                 if(State == SessionState.EXITED)
                     return;
-                foreach (var session in _sessions)
-                    session.SetVolumeAsync(value);
+                _sessions.ForEach(x => x.SetVolumeAsync(value));
             }
         }
 
@@ -84,8 +81,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
             {
                 if(State == SessionState.EXITED)
                     return;
-                foreach (var session in _sessions)
-                    session.SetMuteAsync(value);
+                _sessions.ForEach(x => x.SetMuteAsync(value));
             }
         }
 
@@ -101,7 +97,7 @@ namespace SoundMixerSoftware.Helpers.AudioSessions.VirtualSessions
         
         #region Private Properties
 
-        private IAudioSession FirstSession => State == SessionState.ACTIVE ? _sessions.FirstOrDefault(x => ProcessUtil.IsAlive(x.ProcessId)) : default;
+        private IAudioSession FirstSession => State == SessionState.ACTIVE ? _sessions.FirstOrDefault(x => ProcessWrapper.IsAlive(x.ProcessId)) : default;
         
         #endregion
         
