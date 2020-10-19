@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NLog;
@@ -225,6 +226,7 @@ namespace SoundMixerSoftware.Models
 
         private void SessionOnVolumeChange(object sender, VolumeChangedArgs e)
         {
+            if(e.Index != Index) return;
             VolumeIn = (int)Math.Round(e.Volume);
         }
         

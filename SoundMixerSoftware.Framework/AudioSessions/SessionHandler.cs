@@ -287,7 +287,6 @@ namespace SoundMixerSoftware.Framework.AudioSessions
                 foreach (var session in controller.All())
                     AttachProcessExit(session);
                 controller.SessionCreated.Subscribe(AttachProcessExit);
-                controller.SessionCreated.Subscribe(x => SessionCreated?.Invoke(x));
                 SessionController.Add(deviceId, controller);
             }
             catch (Exception exception)

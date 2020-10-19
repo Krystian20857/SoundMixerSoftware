@@ -155,11 +155,15 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
                     var session = FirstSession;
                     if (State == SessionState.ACTIVE && session != default)
                     {
-                        using (var process = Process.GetProcessById(session.ProcessId))
+                        try
                         {
-                            Image = process.GetMainWindowIcon().ToImageSource();
-                            DisplayName = $"{process.GetPreciseName()} - {DeviceName}";
+                            using (var process = Process.GetProcessById(session.ProcessId))
+                            {
+                                Image = process.GetMainWindowIcon().ToImageSource();
+                                DisplayName = $"{process.GetPreciseName()} - {DeviceName}";
+                            }
                         }
+                        catch (Exception) { } //process exited.
                     }
                     else
                     {
