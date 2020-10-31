@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using NLog;
+using NLog.Fluent;
 using SoundMixerSoftware.Framework.Profile;
 
 namespace SoundMixerSoftware.Framework.Buttons
@@ -7,8 +9,8 @@ namespace SoundMixerSoftware.Framework.Buttons
     public static class ButtonHandler
     {
         #region Private Fields
-        
-        
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
         #endregion
         
@@ -70,10 +72,18 @@ namespace SoundMixerSoftware.Framework.Buttons
         /// <param name="button"></param>
         public static IButtonFunction AddFunction(int Index, ButtonFunction button)
         {
-            if (!ButtonRegistry.ContainsKey(button.Key) || string.IsNullOrEmpty(button.Key))
+            if (string.IsNullOrEmpty(button.Key) || !ButtonRegistry.ContainsKey(button.Key))
                 return null;
             var creator = ButtonRegistry[button.Key];
-            var iButton = creator.CreateButton(Index, button.Container, button.UUID);
+            var iButton = (IButtonFunction)null;
+            try
+            {
+                iButton = creator.CreateButton(Index, button.Container, button.UUID);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn();
+            }
             iButton.Index = Index;
             Buttons[Index].Add(iButton);
             FunctionCreated?.Invoke(null, new FunctionArgs(Index, Buttons[Index].IndexOf(iButton), iButton));

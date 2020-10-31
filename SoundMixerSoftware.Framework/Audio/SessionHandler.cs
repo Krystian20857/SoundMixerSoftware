@@ -138,17 +138,27 @@ namespace SoundMixerSoftware.Framework.Audio
             };
         }
 
-        public static IVirtualSession AddSession(int index, Session session){
-            if (!Creators.ContainsKey(session.Key) || string.IsNullOrEmpty(session.Key))
+        public static IVirtualSession AddSession(int index, Session session)
+        {
+            if (string.IsNullOrEmpty(session.Key) || !Creators.ContainsKey(session.Key))
                 return null;
             var creator = Creators[session.Key];
-            var virtualSession = creator.CreateSession(index, session.Container, session.UUID);
+            var virtualSession = (IVirtualSession) null;
+            try
+            {
+                virtualSession = creator.CreateSession(index, session.Container, session.UUID);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
+
             virtualSession.Index = index;
             Sessions[index].Add(virtualSession);
             VirtualSessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(virtualSession), virtualSession));
             return virtualSession;
         }
-        
+
         public static void RemoveSession(int index, int internalIndex)
         {
             var session = Sessions[index][internalIndex];

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NLog;
 using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Framework.SliderConverter.Converters;
@@ -8,6 +9,12 @@ namespace SoundMixerSoftware.Framework.SliderConverter
 {
     public static class ConverterHandler
     {
+        #region Private fields
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        #endregion
+        
         #region Public Properties
         
         public static Dictionary<string, IConverterCreator> ConverterRegistry { get; } = new Dictionary<string, IConverterCreator>();
@@ -72,10 +79,19 @@ namespace SoundMixerSoftware.Framework.SliderConverter
         public static IConverter AddConverter(int index, ConverterStruct converterStruct)
         {
             var key = converterStruct.Key;
-            if (!ConverterRegistry.ContainsKey(key) || string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key) || !ConverterRegistry.ContainsKey(key))
                 return null;
             var creator = ConverterRegistry[key];
-            var converter = creator.CreateConverter(index, converterStruct.Container, converterStruct.UUID);
+            var converter = (IConverter) null;
+            try
+            {
+                converter = creator.CreateConverter(index, converterStruct.Container, converterStruct.UUID);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
+
             Converters[index].Add(converter);
             ConverterAdded?.Invoke(null, new ConverterArgs(index, Converters[index].IndexOf(converter), converter));
             return converter;
