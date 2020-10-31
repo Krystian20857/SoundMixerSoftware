@@ -100,7 +100,7 @@ namespace SoundMixerSoftware.ViewModels
         
         public bool AddClicked(int index)
         {
-            var function = (IButton)null;
+            var function = (IButtonFunction)null;
             switch (SelectedFunction.EnumValue)
             {
                 case KeystrokeMode.KeyPress:

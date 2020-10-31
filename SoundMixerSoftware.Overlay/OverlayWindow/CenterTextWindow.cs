@@ -12,7 +12,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         public const float FONT_SIZE = 72.0F;
         public const float TEXT_X_MARGIN = 40;
         public const float TEXT_Y_MARGIN = 20;
-        public const float BACKGROUND_ROUND = 15;
+        public const float BACKGROUND_ROUND = 5;
         
         #endregion
         

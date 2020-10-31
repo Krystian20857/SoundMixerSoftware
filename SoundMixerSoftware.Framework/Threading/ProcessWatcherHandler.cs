@@ -1,6 +1,6 @@
 ﻿using System;
-using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Win32.Threading;
 
 namespace SoundMixerSoftware.Framework.Threading
 {

@@ -11,7 +11,7 @@ using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {
     public class DeviceSession : IVirtualSession, INotifyPropertyChanged
     {
@@ -25,9 +25,12 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Private Fields
 
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Dispatcher _dispatcher = Application.Current.Dispatcher;
+        // ReSharper disable once MemberCanBeMadeStatic.Local
         private IAudioController _controller => SessionHandler.AudioController;
         
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private string _rawName;
         private IDevice _device;
 
@@ -41,7 +44,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public string Key { get; } = KEY;
         public string DisplayName { get; set; }
         public string ID { get; }
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
         public SessionState State
@@ -76,15 +79,16 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Public Properties
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public Guid DeviceID { get; }
 
         #endregion
         
         #region Constructor
 
-        public DeviceSession(int index, Guid deviceId, string rawName, Guid uuid)
+        // ReSharper disable once MemberCanBePrivate.Global
+        public DeviceSession(Guid deviceId, string rawName, Guid uuid)
         {
-            Index = index;
             DeviceID = deviceId;
             ID = deviceId.ToString();
             UUID = uuid;
@@ -101,6 +105,11 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             SessionHandler.DeviceRemovedCallback += DeviceRemoved;
 
             UpdateDescription();
+        }
+
+        public DeviceSession(int index, Guid deviceId, string rawName, Guid uuid) : this(deviceId, rawName, uuid)
+        {
+            Index = index;
         }
 
         #endregion

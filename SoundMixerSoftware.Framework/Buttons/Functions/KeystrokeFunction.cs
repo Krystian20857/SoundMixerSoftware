@@ -11,7 +11,7 @@ using SoundMixerSoftware.Common.Utils.EnumUtils;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
-    public class KeystrokeFunction : IButton
+    public class KeystrokeFunction : IButtonFunction
     {
         #region Constatn
 
@@ -52,7 +52,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             set => _name = value;
         }
         public string Key { get; } = "keystroke_func";
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.KeyboardIcon.ToImageSource();
         
@@ -60,30 +60,42 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         
         #region Constructor
 
-        public KeystrokeFunction(int index, VirtualKeyCode keystroke, VirtualKeyCode[] modifiers, Guid uuid)
+        public KeystrokeFunction(VirtualKeyCode keystroke, VirtualKeyCode[] modifiers, Guid uuid)
         {
-            Index = index;
             KeystrokeMode = KeystrokeMode.KeyPress;
             Keystroke = keystroke;
             ModifierKeys = modifiers;
             UUID = uuid;
         }
         
-        public KeystrokeFunction(int index, Key keystroke, Key[] modifiers, Guid uuid)
+        public KeystrokeFunction(Key keystroke, Key[] modifiers, Guid uuid)
         {
-            Index = index;
             KeystrokeMode = KeystrokeMode.KeyPress;
             Keystroke = KeyUtil.ConvertKey(keystroke);
             ModifierKeys = KeyUtil.ConvertKeys(modifiers);
             UUID = uuid;
         }
 
-        public KeystrokeFunction(int index, string text, Guid uuid)
+        public KeystrokeFunction(string text, Guid uuid)
         {
-            Index = index;
             KeystrokeMode = KeystrokeMode.TextMode;
             Text = text;
             UUID = uuid;
+        }
+        
+        public KeystrokeFunction(int index, VirtualKeyCode keystroke, VirtualKeyCode[] modifiers, Guid uuid) : this(keystroke, modifiers, uuid)
+        {
+            Index = index;
+        }
+        
+        public KeystrokeFunction(int index, Key keystroke, Key[] modifiers, Guid uuid) : this(keystroke, modifiers, uuid)
+        {
+            Index = index;
+        }
+
+        public KeystrokeFunction(int index, string text, Guid uuid) : this(text, uuid)
+        {
+            Index = index;
         }
         
         #endregion
@@ -159,7 +171,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     }
     
     public class KeystrokeFunctionCreator : IButtonCreator {
-        public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
+        public IButtonFunction CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
             if (!container.ContainsKey(KeystrokeFunction.KEYSTROKE_MODE_KEY))
                 return null;

@@ -5,7 +5,8 @@ using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NLog;
 using SoundMixerSoftware.Annotations;
-using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Audio;
+using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Framework.SliderConverter;
 using SoundMixerSoftware.Framework.SliderConverter.Converters;
@@ -166,7 +167,7 @@ namespace SoundMixerSoftware.Models
                         if (converter is LogarithmicConverter)
                         {
                             ConverterHandler.RemoveConverter(Index, converter);
-                            ProfileHandler.SelectedProfile.Sliders[Index].Converters.RemoveAt(n);
+                            ProfileHandler.SelectedProfile.Sliders[Index].Converters.RemoveAll(x => x.UUID == converter.UUID);
                         }
                     }
                 }
@@ -226,8 +227,9 @@ namespace SoundMixerSoftware.Models
 
         private void SessionOnVolumeChange(object sender, VolumeChangedArgs e)
         {
-            if(e.Index != Index) return;
-            VolumeIn = (int)Math.Round(e.Volume);
+            var volumeInt = (int) Math.Round(e.Volume);
+            if(VolumeIn == volumeInt) return;
+            VolumeIn = volumeInt;
         }
         
         #endregion

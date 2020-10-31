@@ -123,7 +123,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
         /// <returns>Returns true when device disconnects.</returns>
         public bool Disconnect(string comport)
         {
-            if (!_connectedDevices.ContainsKey(comport))
+            if (string.IsNullOrEmpty(comport) || !_connectedDevices.ContainsKey(comport))
                 return false;
             var device = _connectedDevices[comport];
             if (device.IsOpen)
@@ -171,7 +171,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
 
         #endregion
         
-        #region Private Methods+
+        #region Private Methods
         
         private void DeviceOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {

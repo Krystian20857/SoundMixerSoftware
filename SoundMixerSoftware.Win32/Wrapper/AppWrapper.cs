@@ -17,6 +17,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         {
             try
             {
+                // ReSharper disable once SuspiciousTypeConversion.Global
                 var appResolver = (IApplicationResolver) new ApplicationResolver();
                 appResolver.GetAppIDForProcess(pid, out var appId, out var _, out var __, out var ___);
                 Marshal.ReleaseComObject(appResolver);

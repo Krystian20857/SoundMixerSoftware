@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoundMixerSoftware.Common.Threading
+namespace SoundMixerSoftware.Win32.Threading
 {
     public interface IProcessWatcher : IDisposable
     {

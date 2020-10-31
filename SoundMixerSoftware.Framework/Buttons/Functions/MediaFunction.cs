@@ -7,7 +7,7 @@ using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
-    public class MediaFunction : IButton
+    public class MediaFunction : IButtonFunction
     {
         #region Constant
 
@@ -41,17 +41,21 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         public string Key { get; } = "media_func";
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.MediaIcon.ToImageSource();
-        public int Index { get; }
+        public int Index { get; set; }
 
         #endregion
         
         #region Constructor
 
-        public MediaFunction(int index, MediaTask mediaTask, Guid uuid)
+        public MediaFunction(MediaTask mediaTask, Guid uuid)
         {
-            Index = index;
             MediaTask = mediaTask;
             UUID = uuid;
+        }
+
+        public MediaFunction(int index, MediaTask mediaTask, Guid uuid) : this(mediaTask, uuid)
+        {
+            Index = index;
         }
         
         #endregion
@@ -100,7 +104,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     
     public class MediaFunctionCreator : IButtonCreator
     {
-        public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
+        public IButtonFunction CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
             if(!container.ContainsKey(MediaFunction.MEDIA_TASK_KEY))
                 throw new NotImplementedException($"Container does not contains: {MediaFunction.MEDIA_TASK_KEY} key");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,6 +11,8 @@ using SoundMixerSoftware.Win32.Interop.Struct;
 
 namespace SoundMixerSoftware.Win32.USBLib
 {
+    // ReSharper disable once InconsistentNaming
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class USBDescriptor
     {
         #region Logger
@@ -35,9 +38,9 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <summary>
         /// Get USB devices descriptors. 
         /// </summary>
-        /// <param name="vid"></param>
-        /// <param name="pid"></param>
+        /// <param name="vidpid"></param>
         /// <returns></returns>
+        // ReSharper disable once IdentifierTypo
         public static IEnumerable<DeviceProperties> GetDescriptors(IEnumerable<USBID> vidpid)
         {
             return vidpid.SelectMany(entry => GetDescriptors(entry.Vid, entry.Pid));
@@ -49,6 +52,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <param name="vid">vendor id</param>
         /// <param name="pid">product id</param>
         /// <returns></returns>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public static IEnumerable<DeviceProperties> GetDescriptors(uint vid, uint pid)
         {
             var deviceHandle = Setupapi.SetupDiGetClassDevs(IntPtr.Zero, "USB", IntPtr.Zero,
@@ -68,6 +72,7 @@ namespace SoundMixerSoftware.Win32.USBLib
                     if (success)
                     {
                         Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle, ref devinfo,
+                            // ReSharper disable once NotAccessedVariable
                             (uint) SPDRP.SPDRP_HARDWAREID, out var regType, IntPtr.Zero, 0,
                             out var reqSize);
                         lastError = Marshal.GetLastWin32Error();
@@ -165,7 +170,7 @@ namespace SoundMixerSoftware.Win32.USBLib
                                         var data = new StringBuilder(BUFFER_SIZE);
                                         var size = (uint) data.Capacity;
                                         var result = Advapi.RegQueryValueEx(deviceRegKey, "PortName", 0,
-                                            out var type, data, ref size);
+                                            out _, data, ref size);
                                         if ((WinErrors) result == WinErrors.ERROR_SUCCESS)
                                         {
                                             devproperties.COMPort = data.ToString();
@@ -198,6 +203,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// <param name="vid"></param>
         /// <param name="pid"></param>
         /// <returns></returns>
+        // ReSharper disable once InconsistentNaming
         public static string FormatHardwareID(uint vid, uint pid)
         {
             var vidString = vid.ToString("X4");
@@ -243,8 +249,9 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// </summary>
         public string DevicePhysicalObjectName { get; set; }
         /// <summary>
-        /// When device class in serial when <<see cref="COMPort"> is not null.
+        /// When device class in serial when <see cref="COMPort"/> is not null.
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         public string COMPort { get; set; }
         /// <summary>
         /// Vendor id of device.

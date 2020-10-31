@@ -10,11 +10,10 @@ namespace SoundMixerSoftware.Win32.Wrapper
 {
     public static class ProcessWrapper
     {
-
         /// <summary>
         /// Get Process file name by standard WIN32 method
         /// </summary>
-        /// <param name="process"></param>
+        /// <param name="pid">process id</param>
         /// <param name="buffer">buffer size default: 260</param>
         /// <returns></returns>
         public static string GetFileName(int pid, int buffer = 260) //260 -> max windows path length
@@ -70,6 +69,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// Get child process ids of process.
         /// </summary>
         /// <param name="pid">parent process id.</param>
+        /// <param name="includeParent">include self process</param>
         /// <returns></returns>
         public static IEnumerable<uint> GetChildProcesses(uint pid, bool includeParent = true)
         {
@@ -85,7 +85,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
                     processHandle = Kernel32.OpenProcess(ProcessAccessFlags.QueryInformation, false, (int) process);
                     if(processHandle == IntPtr.Zero)
                         continue;
-                    Ntdll.NtQueryInformationProcess(processHandle, PROCESSINFOCLASS.ProcessBasicInformation, out var information, (uint)Marshal.SizeOf<PROCESS_EXTENDED_BASIC_INFORMATION>(), out var returnLength);
+                    Ntdll.NtQueryInformationProcess(processHandle, PROCESSINFOCLASS.ProcessBasicInformation, out var information, (uint)Marshal.SizeOf<PROCESS_EXTENDED_BASIC_INFORMATION>(), out var _);
                     var parentId = information.BasicInfo.InheritedFromUniqueProcessId;
                     if (parentId.ToUInt32() == pid)
                     {
@@ -110,7 +110,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
             try
             {
                 processHandle = Kernel32.OpenProcess(ProcessAccessFlags.QueryInformation, false, (int) pid);
-                Ntdll.NtQueryInformationProcess(processHandle, PROCESSINFOCLASS.ProcessBasicInformation, out var information, (uint)Marshal.SizeOf<PROCESS_EXTENDED_BASIC_INFORMATION>(), out var returnLength);
+                Ntdll.NtQueryInformationProcess(processHandle, PROCESSINFOCLASS.ProcessBasicInformation, out var information, (uint)Marshal.SizeOf<PROCESS_EXTENDED_BASIC_INFORMATION>(), out var _);
                 if (processHandle == IntPtr.Zero)
                     return 0;
                 return information.BasicInfo.InheritedFromUniqueProcessId.ToUInt32();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
@@ -12,7 +13,7 @@ using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Framework.Utils;
 
-namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {
     public class DefaultDeviceSession : IVirtualSession, INotifyPropertyChanged
     {
@@ -43,7 +44,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public string Key { get; } = KEY;
         public string DisplayName { get; set; }
         public string ID { get; }
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
         public SessionState State { get; set; } = SessionState.ACTIVE;            //always active
@@ -78,9 +79,8 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Constructor
 
-        public DefaultDeviceSession(int index, Role role, DeviceType deviceType, Guid uuid)
+        public DefaultDeviceSession(Role role, DeviceType deviceType, Guid uuid)
         {
-            Index = index;
             UUID = uuid;
             DeviceType = deviceType;
             Role = role;
@@ -93,6 +93,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
                 if (x.ChangedType != DeviceChangedType.DefaultChanged || x.Device.DeviceType != DeviceType)
                     return;
                 var args = x as DefaultDeviceChangedArgs;
+                // ReSharper disable once InvertIf
                 if (args.IsDefault && isDefault || args.IsDefaultCommunications && isDefaultCommuninication)
                 {
                     _device = x.Device;
@@ -103,6 +104,11 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
 
             RegisterCallbacks();
             UpdateDescription();
+        }
+
+        public DefaultDeviceSession(int index, Role role, DeviceType deviceType, Guid uuid) : this(role, deviceType, uuid)
+        {
+            Index = index;
         }
 
         #endregion
@@ -227,12 +233,6 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             var typeString = (container.ContainsKey(DefaultDeviceSession.DEVICETYPE_KEY) ? container[DefaultDeviceSession.DEVICETYPE_KEY] : "")?.ToString();
             return new DefaultDeviceSession(index, EnumUtil.Parse(roleString, Role.Multimedia), EnumUtil.Parse(typeString, DeviceType.Playback), uuid);
         }
-
-        public static Guid CreateUUID(Role role, DeviceType deviceType)
-        {
-            var a = (short)((short)role ^ short.MaxValue);
-            var b = (short)((short)deviceType ^ short.MaxValue);
-            return new Guid(0x45, a, b, new byte[]{0x66, 0x75, 0x6b, 0x75, 0x66, 0x61, 0x67, 0x67});    
-        }
+        
     }
 }

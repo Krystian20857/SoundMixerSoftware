@@ -7,12 +7,13 @@ using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Common.Threading;
+using SoundMixerSoftware.Framework.Audio.Threading;
 using SoundMixerSoftware.Framework.Profile;
-using SoundMixerSoftware.Framework.Threading;
+using SoundMixerSoftware.Win32.Threading;
 using SoundMixerSoftware.Win32.Wrapper;
+using ProcessWatcher = SoundMixerSoftware.Framework.Threading.ProcessWatcher;
 
-namespace SoundMixerSoftware.Framework.AudioSessions
+namespace SoundMixerSoftware.Framework.Audio
 {
     public static class SessionHandler
     {
@@ -126,6 +127,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions
 
         public static Session AddSession(int index, IVirtualSession session)
         {
+            session.Index = index;
             Sessions[index].Add(session);
             VirtualSessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(session), session));
             return new Session
@@ -141,6 +143,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions
                 return null;
             var creator = Creators[session.Key];
             var virtualSession = creator.CreateSession(index, session.Container, session.UUID);
+            virtualSession.Index = index;
             Sessions[index].Add(virtualSession);
             VirtualSessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(virtualSession), virtualSession));
             return virtualSession;
@@ -189,7 +192,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions
                     return;
                 foreach (var slider in Sessions[index])
                 {
-                    slider.Volume = volume;
+                    VolumeThread.BeginInvoke(() => { slider.Volume = volume; });
                 }
             }
             finally
@@ -212,7 +215,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions
                     return;
                 foreach (var slider in Sessions[index])
                 {
-                    slider.IsMute = mute;
+                    VolumeThread.BeginInvoke(() => { slider.IsMute = mute; });
                 }
             }
             finally

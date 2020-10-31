@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace SoundMixerSoftware.Framework.Buttons
 {
-    public interface IButton
+    public interface IButtonFunction
     {
         /// <summary>
         /// Defines name of button
@@ -17,7 +17,8 @@ namespace SoundMixerSoftware.Framework.Buttons
         /// <summary>
         /// Index of assigned button.
         /// </summary>
-        int Index { get; }
+        int Index { get; set; }
+
         /// <summary>
         /// UUID of function.
         /// </summary>

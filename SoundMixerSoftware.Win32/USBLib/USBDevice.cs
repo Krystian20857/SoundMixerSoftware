@@ -12,6 +12,7 @@ namespace SoundMixerSoftware.Win32.USBLib
     /// <summary>
     /// Handles USB events.
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public class USBDevice
     {
         #region Logger
@@ -75,8 +76,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// Create instance with specified device type interface guid, vendor id and product id.
         /// </summary>
         /// <param name="deviceGuid">device class</param>
-        /// <param name="vid">vendor id</param>
-        /// <param name="pid">product id</param>
+        /// <param name="ids"></param>
         public USBDevice(Guid deviceGuid, IEnumerable<USBID> ids)
         {
             _deviceGuid = deviceGuid;

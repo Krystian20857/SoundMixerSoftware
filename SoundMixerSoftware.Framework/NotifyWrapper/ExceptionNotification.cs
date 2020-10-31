@@ -34,7 +34,7 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
 
         public ExceptionNotification()
         {
-            Clicked += () => AppUtils.OpenExplorer(LocalContainer.LogsFolder);
+            Clicked += () => AppUtil.OpenExplorer(LocalContainer.LogsFolder);
         }
         
         #endregion

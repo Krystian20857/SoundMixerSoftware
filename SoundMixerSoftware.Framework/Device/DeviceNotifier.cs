@@ -109,7 +109,7 @@ namespace SoundMixerSoftware.Framework.Device
             {
                 command = Command.LED_COMMAND,
                 led = button,
-                state = (byte) (state ? 0x01 : 0x00)
+                state = state ? LedState.HIGH : LedState.LOW
             };
             DeviceHandlerGlobal.Instance.SendData(comport, structure);
         }

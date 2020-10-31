@@ -76,6 +76,7 @@ namespace SoundMixerSoftware.ViewModels
                 profileToEdit.ButtonCount = profile.ButtonCount;
                 profileToEdit.SliderCount = profile.SliderCount;
                 ProfileHandler.ProfileManager.Save(model.Guid);
+                ProfileHandler.OnProfileCreated(model.Guid);
                 if (model.Guid == ProfileHandler.SelectedGuid)
                 {
                     ProfileHandler.OnProfileChanged(model.Guid);

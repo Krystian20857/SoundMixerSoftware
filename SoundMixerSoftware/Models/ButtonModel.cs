@@ -48,11 +48,11 @@ namespace SoundMixerSoftware.Models
         /// <summary>
         /// Buttons base functions.
         /// </summary>
-        public BindableCollection<IButton> Functions { get; set; } = new BindableCollection<IButton>();
+        public BindableCollection<IButtonFunction> Functions { get; set; } = new BindableCollection<IButtonFunction>();
         /// <summary>
         /// Button Function.
         /// </summary>
-        public IButton SelectedFunction { get; set; }
+        public IButtonFunction SelectedFunction { get; set; }
         /// <summary>
         /// Index of current button.
         /// </summary>

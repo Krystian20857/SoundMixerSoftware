@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
-using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Profile;
 
 namespace SoundMixerSoftware.Framework.Utils

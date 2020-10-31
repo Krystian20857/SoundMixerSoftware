@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoundMixerSoftware.Framework.AudioSessions
+namespace SoundMixerSoftware.Framework.Audio
 {
     [Flags]
     public enum SessionState

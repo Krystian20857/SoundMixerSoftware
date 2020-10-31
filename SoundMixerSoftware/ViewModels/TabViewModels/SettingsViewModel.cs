@@ -295,7 +295,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void LogsFolderOpenClick()
         {
-            AppUtils.OpenExplorer(LocalContainer.LogsFolder);
+            AppUtil.OpenExplorer(LocalContainer.LogsFolder);
         }
 
         private void LoadThemes()

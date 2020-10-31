@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using NLog;
-using SoundMixerSoftware.Common.Threading;
 using SoundMixerSoftware.Win32.Interop.Constant;
 using SoundMixerSoftware.Win32.Interop.Enum;
 using SoundMixerSoftware.Win32.Interop.Method;
@@ -35,7 +34,14 @@ namespace SoundMixerSoftware.Win32.Threading
         /// <summary>
         /// Get attached watchers.
         /// </summary>
-        public IReadOnlyDictionary<int, ProcessWatcherModel> Watchers => _watchers;
+        public IReadOnlyDictionary<int, ProcessWatcherModel> Watchers
+        {
+            get
+            {
+                lock (_lockObject)
+                    return _watchers;
+            }
+        }
         
         /// <summary>
         /// Check whatever watcher thread is running.

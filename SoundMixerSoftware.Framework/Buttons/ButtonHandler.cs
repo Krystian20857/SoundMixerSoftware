@@ -15,7 +15,7 @@ namespace SoundMixerSoftware.Framework.Buttons
         #region Public Properties
 
         public static Dictionary<string, IButtonCreator> ButtonRegistry { get; } = new Dictionary<string, IButtonCreator>();
-        public static List<List<IButton>> Buttons { get; } = new List<List<IButton>>();
+        public static List<List<IButtonFunction>> Buttons { get; } = new List<List<IButtonFunction>>();
 
         #endregion
         
@@ -46,7 +46,7 @@ namespace SoundMixerSoftware.Framework.Buttons
             var buttonCount = ProfileHandler.SelectedProfile.ButtonCount;
             Buttons.Capacity = buttonCount;
             for (var n = 0; n < buttonCount; n++)
-                Buttons.Add(new List<IButton>());
+                Buttons.Add(new List<IButtonFunction>());
             var buttons = ProfileHandler.SelectedProfile.Buttons;
             for (var n = 0; n < buttons.Count; n++)
             {
@@ -68,12 +68,13 @@ namespace SoundMixerSoftware.Framework.Buttons
         /// </summary>
         /// <param name="Index"></param>
         /// <param name="button"></param>
-        public static IButton AddFunction(int Index, ButtonFunction button)
+        public static IButtonFunction AddFunction(int Index, ButtonFunction button)
         {
             if (!ButtonRegistry.ContainsKey(button.Key) || string.IsNullOrEmpty(button.Key))
                 return null;
             var creator = ButtonRegistry[button.Key];
             var iButton = creator.CreateButton(Index, button.Container, button.UUID);
+            iButton.Index = Index;
             Buttons[Index].Add(iButton);
             FunctionCreated?.Invoke(null, new FunctionArgs(Index, Buttons[Index].IndexOf(iButton), iButton));
             return iButton;
@@ -84,8 +85,9 @@ namespace SoundMixerSoftware.Framework.Buttons
         /// </summary>
         /// <param name="Index"></param>
         /// <param name="button"></param>
-        public static ButtonFunction AddFunction(int Index, IButton iButton)
+        public static ButtonFunction AddFunction(int Index, IButtonFunction iButton)
         {
+            iButton.Index = Index;
             Buttons[Index].Add(iButton);
             FunctionCreated?.Invoke(null, new FunctionArgs(Index, Buttons[Index].IndexOf(iButton), iButton));
             return new ButtonFunction
@@ -113,7 +115,7 @@ namespace SoundMixerSoftware.Framework.Buttons
         /// </summary>
         /// <param name="index"></param>
         /// <param name="functionIndex"></param>
-        public static void RemoveFunction(int index, IButton iButton)
+        public static void RemoveFunction(int index, IButtonFunction iButton)
         {
             FunctionRemoved?.Invoke(null, new FunctionArgs(index, Buttons[index].IndexOf(iButton), iButton));
             Buttons[index].Remove(iButton);
@@ -183,9 +185,9 @@ namespace SoundMixerSoftware.Framework.Buttons
         /// <summary>
         /// Button instance.
         /// </summary>
-        public IButton Button { get; set; }
+        public IButtonFunction Button { get; set; }
 
-        public FunctionArgs(int index, int functionIndex, IButton button)
+        public FunctionArgs(int index, int functionIndex, IButtonFunction button)
         {
             Index = index;
             FunctionIndex = functionIndex;

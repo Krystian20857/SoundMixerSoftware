@@ -47,7 +47,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             float ycenter = WINDOW_HEIGHT / 2;
             
             graphics.ClearScene(Color.Transparent);
-            graphics.FillRoundedRectangle(_brushResource["DarkGray"], 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 5);
+            graphics.FillRoundedRectangle(_brushResource["DarkGray"], 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 2);
             var image = IsMuted ? _imageResource["SpeakerMute"] : _imageResource["SpeakerUnMute"];
             graphics.DrawImage(image, xcenter - (IMAGE_WIDTH / 2), ycenter - (IMAGE_HEIGHT / 2), xcenter + (IMAGE_WIDTH / 2), ycenter + (IMAGE_HEIGHT / 2));
         }

@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
+using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class ProcessSession : IVirtualSession, INotifyPropertyChanged
     {
         #region Constant
@@ -24,13 +25,14 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public const string EXECUTABLE_KEY = "ExecPath";
         public const string NAME_KEY = "Name";
         
-        private const int SESSION_CAPACITY = 50;
+        private const int SESSION_CAPACITY = 15;
         
         #endregion
         
         #region Private Fields
         
-        private List<IAudioSession> _sessions = new List<IAudioSession>(SESSION_CAPACITY);
+        private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>(SESSION_CAPACITY);
+        // ReSharper disable once MemberCanBeMadeStatic.Local
         private Dispatcher _dispatcher => Application.Current.Dispatcher;
         
         #endregion
@@ -40,7 +42,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public string Key { get; } = KEY;
         public string DisplayName { get; set; }
         public string ID => ExecutablePath;
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
 
@@ -59,6 +61,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public bool IsMute
         {
             set => _sessions.ForEach(x => x.SetMuteAsync(value));
+            // ReSharper disable once SimplifyConditionalTernaryExpression
             get => State == SessionState.ACTIVE ? _sessions[0].IsMuted : false;
         }
         
@@ -67,7 +70,9 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         #region Properties
 
         private IAudioSession FirstSession => _sessions.FirstOrDefault(x => ProcessWrapper.IsAlive(x.ProcessId));
+        // ReSharper disable once MemberCanBePrivate.Global
         public string ExecutablePath { get; set; }
+        // ReSharper disable once MemberCanBePrivate.Global
         public string RawName { get; set; }
 
         #endregion
@@ -81,9 +86,9 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Constructor
 
-        public ProcessSession(int index, string execPath, string rawName, Guid uuid)
+        // ReSharper disable once MemberCanBePrivate.Global
+        public ProcessSession(string execPath, string rawName, Guid uuid)
         {
-            Index = index;
             UUID = uuid;
             ExecutablePath = execPath;
             RawName = rawName;
@@ -96,6 +101,11 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
                 AddSession(session);
             }
             UpdateView();
+        }
+
+        public ProcessSession(int index, string execPath, string rawName, Guid uuid) : this(execPath, rawName, uuid)
+        {
+            Index = index;
         }
         
         #endregion
@@ -152,6 +162,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             if(session.IsSystemSession) return;
             
             var executablePath = SessionHandler.GetSessionExec(session);
+            // ReSharper disable once InvertIf
             if (executablePath == ExecutablePath)
             {
                 _sessions.Add(session);
@@ -181,7 +192,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             MuteChanged?.Invoke(this, new MuteChangedArgs(args.IsMuted, false, Index));
         }
 
-        private IEnumerable<IAudioSession> GetSessionByExecPath(string execPath)
+        private static IEnumerable<IAudioSession> GetSessionByExecPath(string execPath)
         {
             return SessionHandler.GetAllSessions().Where(x => SessionHandler.GetSessionExec(x) == execPath);
         }

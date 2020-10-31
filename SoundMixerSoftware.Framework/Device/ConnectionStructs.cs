@@ -34,7 +34,7 @@ namespace SoundMixerSoftware.Framework.Device
     {
         [FieldOffset(0), MarshalAs(UnmanagedType.I1)] public Command command;
         [FieldOffset(1)] public byte button;
-        [FieldOffset(2)] public byte state;
+        [FieldOffset(2)] public ButtonState state;
     }
     
     [StructLayout(LayoutKind.Explicit)]
@@ -42,7 +42,7 @@ namespace SoundMixerSoftware.Framework.Device
     {
         [FieldOffset(0), MarshalAs(UnmanagedType.I1)] public Command command;
         [FieldOffset(1)] public byte led;
-        [FieldOffset(2)] public byte state;
+        [FieldOffset(2)] public LedState state;
     }
 
     [Flags]
@@ -69,5 +69,18 @@ namespace SoundMixerSoftware.Framework.Device
         /// In command.
         /// </summary>
         LED_COMMAND = 0x01
+    }
+
+    [Flags]
+    public enum ButtonState : byte
+    {
+        DOWN = 0x00,
+        UP = 0x01,
+    }
+
+    public enum LedState : byte
+    {
+        LOW = 0x00,
+        HIGH = 0x01,
     }
 }

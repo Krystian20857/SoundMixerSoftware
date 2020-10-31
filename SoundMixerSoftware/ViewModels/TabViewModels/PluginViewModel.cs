@@ -62,7 +62,7 @@ namespace SoundMixerSoftware.ViewModels
         {
             var pluginModel = sender as PluginModel;
             var pluginStruct = PluginLoader.LoadedPlugins[pluginModel.PluginId];
-            AppUtils.OpenExplorer(pluginStruct.FolderPath);
+            AppUtil.OpenExplorer(pluginStruct.FolderPath);
         }
 
         public void LoadZipClick()
@@ -72,7 +72,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void OpenFolderClick()
         {
-            AppUtils.OpenExplorer(PluginLoader.PluginPath);
+            AppUtil.OpenExplorer(PluginLoader.PluginPath);
         }
 
         public void ReloadAppClick()

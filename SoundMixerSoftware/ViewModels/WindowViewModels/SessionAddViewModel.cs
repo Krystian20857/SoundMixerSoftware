@@ -9,7 +9,7 @@ using AudioSwitcher.AudioApi.Session;
 using Caliburn.Micro;
 using NLog;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Win32.Wrapper;

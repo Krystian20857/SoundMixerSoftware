@@ -16,7 +16,9 @@
         
         #region Private Fields
         
+        // ReSharper disable once InconsistentNaming
         private readonly IntPtr hookPtr;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly User32.WinEventDelegate _winEventDelegate;
         
         #endregion
@@ -38,6 +40,7 @@
 
         public WindowWatcher()
         {
+            // ReSharper disable once RedundantDelegateCreation
             _winEventDelegate = new User32.WinEventDelegate(WinEvent);   
             //fixes null exception in application message loop. turning off code optimization will work either.
             GC.KeepAlive(_winEventDelegate);                                

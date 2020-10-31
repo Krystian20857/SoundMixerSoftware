@@ -208,6 +208,7 @@ namespace SoundMixerSoftware
                 _windowManager.ShowWindowAsync(mainWindow);
             
             User32.BringWindowToTop(MainWindowHandle);
+            User32.SetForegroundWindow(MainWindowHandle);
         }
         
 

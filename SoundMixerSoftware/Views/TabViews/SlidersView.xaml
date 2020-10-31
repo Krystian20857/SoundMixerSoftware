@@ -88,7 +88,7 @@
                                                 IsEnabled="{Binding Path=MuteLabel, Converter={StaticResource BoolInvertConverter}}">
                                             <Slider.Value>
                                                 <MultiBinding Converter="{StaticResource SymmetricConverter}" ConverterParameter="{StaticResource TypeArray}">
-                                                    <Binding Path="VolumeOut" Mode="OneWayToSource"/>
+                                                    <Binding Path="VolumeOut" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged"/>
                                                     <Binding Path="VolumeIn" Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/> 
                                                 </MultiBinding>
                                             </Slider.Value>

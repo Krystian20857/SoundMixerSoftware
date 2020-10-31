@@ -18,6 +18,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         /// Create event args instance.
         /// </summary>
         /// <param name="deviceType"></param>
+        /// <param name="deviceProperties"></param>
         public DeviceStateArgs(uint deviceType, DeviceProperties deviceProperties)
         {
             DeviceType = deviceType;

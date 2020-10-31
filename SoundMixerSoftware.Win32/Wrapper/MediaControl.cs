@@ -7,6 +7,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
     {
         #region Private Static Fields
 
+        // ReSharper disable once InconsistentNaming
         private static readonly KeyboardSimulator _keyboardSimulator = new KeyboardSimulator();
 
         #endregion

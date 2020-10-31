@@ -8,15 +8,16 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
-using NLog;
+using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Threading;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class ForegroundSession : IVirtualSession, INotifyPropertyChanged
     {
         #region Const
@@ -25,21 +26,15 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         private const int SESSION_CAPACITY = 25;
         
         #endregion
-        
-        #region Logger
 
-        public static Logger Logger = LogManager.GetCurrentClassLogger();
-        
-        #endregion
-        
         #region Private Fields
 
-        private Dispatcher _dispatcher = Application.Current.Dispatcher;
-        private WindowWatcher _windowWatcher = new WindowWatcher();
+        private readonly Dispatcher _dispatcher = Application.Current.Dispatcher;
+        private readonly WindowWatcher _windowWatcher = new WindowWatcher();
 
-        private List<IAudioSession> _sessions = new List<IAudioSession>(SESSION_CAPACITY); 
-        private Dictionary<IAudioSession, IDisposable> _volumeEvents = new Dictionary<IAudioSession, IDisposable>();
-        private Dictionary<IAudioSession, IDisposable> _muteEvents = new Dictionary<IAudioSession, IDisposable>();
+        private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>(SESSION_CAPACITY); 
+        private readonly Dictionary<IAudioSession, IDisposable> _volumeEvents = new Dictionary<IAudioSession, IDisposable>();
+        private readonly Dictionary<IAudioSession, IDisposable> _muteEvents = new Dictionary<IAudioSession, IDisposable>();
 
         #endregion
         
@@ -48,7 +43,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public string Key { get; } = KEY;
         public string DisplayName { get; set; }
         public string ID { get; } = "B0BA17A8-0CC4-458E-90F4-385794DE41FC";
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
         public SessionState State
@@ -66,6 +61,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public bool IsMute
         {
             set => _sessions.ForEach(x => x.SetMuteAsync(value));
+            // ReSharper disable once SimplifyConditionalTernaryExpression
             get => State == SessionState.ACTIVE ? _sessions.First().IsMuted : false;
         }
         
@@ -80,17 +76,18 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Public Properties
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public IntPtr WindowHandle { get; protected set; }
         
         #endregion
         
         #region Constructor
 
-        public ForegroundSession(int sliderIndex, Guid uuid)
+        // ReSharper disable once MemberCanBePrivate.Global
+        public ForegroundSession(Guid uuid)
         {
             UUID = uuid;
-            Index = sliderIndex;
-
+            
             var windowHwnd = User32.GetForegroundWindow();
             var threadId = (int)User32.GetWindowThreadProcessId(windowHwnd, out var processId);
             WindowWatcherOnForegroundWindowChanged(_windowWatcher, new WindowChangedArgs(windowHwnd, processId, threadId));
@@ -99,6 +96,11 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             _windowWatcher.WindowNameChanged += WindowWatcherOnWindowNameChanged;
             SessionHandler.SessionExited += SessionHandlerOnSessionExited;
             SessionHandler.SessionCreated += SessionHandlerOnSessionCreatedCallback;
+        }
+
+        public ForegroundSession(int index, Guid uuid) : this(uuid)
+        {
+            Index = index;
         }
 
         #endregion
@@ -114,7 +116,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Private Methods
 
-        private bool IsShellWindow(IntPtr hwnd)
+        private static bool IsShellWindow(IntPtr hwnd)
         {
             return hwnd == User32.GetShellWindow() || hwnd == User32.GetDesktopWindow();
         }
@@ -186,6 +188,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             foreach (var session in SessionHandler.GetAllSessions())
             {
                 var sessionProcessId = session.ProcessId;
+                // ReSharper disable once InvertIf
                 if (ProcessWrapper.IsAlive(sessionProcessId) && childProcesses.Contains((uint) sessionProcessId))
                 {
                     RegisterEvents(session);
@@ -216,6 +219,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             var processId = session.ProcessId;
             User32.GetWindowThreadProcessId(window, out var windowProcessId);
             
+            // ReSharper disable once InvertIf
             if(ProcessWrapper.GetParentProcess((uint)processId) == windowProcessId || windowProcessId == processId)
             {
                 WindowHandle = window;

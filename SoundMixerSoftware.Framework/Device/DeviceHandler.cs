@@ -59,6 +59,7 @@ namespace SoundMixerSoftware.Framework.Device
         /// Indicates if serial data event has subscribed.
         /// </summary>
         private bool _serialEventRegistered = false;
+        private readonly object _lockObject = new object();
 
         #endregion
         
@@ -203,14 +204,11 @@ namespace SoundMixerSoftware.Framework.Device
                 if (!_serialEventRegistered)
                     _serialConnection.DataReceived += (sender, args) =>
                     {
-                        Task.Factory.StartNew(() =>
+                        if (_dataConverters.ContainsKey(args.COMPort))
                         {
-                            if (_dataConverters.ContainsKey(args.COMPort))
-                            {
-                                var deviceId = ConnectedDevices.ContainsKey(args.COMPort) ? ConnectedDevices[args.COMPort] : new DeviceId();
-                                _dataConverters[args.COMPort].ProcessData(args.Data, deviceId);
-                            }
-                        });
+                            var deviceId = ConnectedDevices.ContainsKey(args.COMPort) ? ConnectedDevices[args.COMPort] : new DeviceId();
+                            _dataConverters[args.COMPort].ProcessData(args.Data, deviceId);
+                        }
                     };
                 _serialEventRegistered = true;
             }
@@ -288,7 +286,7 @@ namespace SoundMixerSoftware.Framework.Device
         {
             if (e.Command == 0x03)
             {
-                Task.Factory.StartNew(() =>
+                lock (_lockObject)
                 {
                     DeviceIdResponse response = e.Data;
                     var flag = response.flag;
@@ -308,7 +306,7 @@ namespace SoundMixerSoftware.Framework.Device
                         _requestFlags.Clear();
                         DeviceIdRequestError?.Invoke(this, new EventArgs());
                     }
-                });
+                }
             }
             DataReceived?.Invoke(sender, e);
         }
@@ -324,16 +322,18 @@ namespace SoundMixerSoftware.Framework.Device
         /// <param name="e"></param>
         private void UsbDeviceOnDeviceRemove(object sender, DeviceStateArgs e)
         {
-            Task.Factory.StartNew(() =>
+            lock (_lockObject)
             {
                 var comPort = e.DeviceProperties.COMPort;
+                if(string.IsNullOrEmpty(comPort))
+                    return;
                 _serialConnection.Disconnect(comPort);
                 DeviceDisconnected?.Invoke(this, e);
                 if (_dataConverters.ContainsKey(comPort))
                     _dataConverters.Remove(comPort);
                 if (ConnectedDevices.ContainsKey(comPort))
                     ConnectedDevices.Remove(comPort);
-            });
+            }
         }
 
         /// <summary>
@@ -343,7 +343,7 @@ namespace SoundMixerSoftware.Framework.Device
         /// <param name="e"></param>
         private void UsbDeviceOnDeviceArrive(object sender, DeviceStateArgs e)
         {
-            Task.Factory.StartNew(() =>
+            lock (_lockObject)
             {
                 if (e.DeviceProperties.Equals(default))
                     return;
@@ -351,7 +351,7 @@ namespace SoundMixerSoftware.Framework.Device
                     return;
                 _requestProperties.Add(e.DeviceProperties.COMPort, e.DeviceProperties);
                 _serialConnection.Connect(e.DeviceProperties.COMPort);
-            });
+            }
         }
 
         #endregion

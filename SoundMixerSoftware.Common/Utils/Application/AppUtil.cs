@@ -6,7 +6,7 @@ namespace SoundMixerSoftware.Common.Utils.Application
     /// <summary>
     /// Contains useful methods.
     /// </summary>
-    public static class AppUtils
+    public static class AppUtil
     {
         /// <summary>
         /// Open windows explorer in specified directory.

@@ -5,14 +5,14 @@ using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
-using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Framework.Profile;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
-    public class MuteFunction : IButton
+    public class MuteFunction : IButtonFunction
     {
         #region Constant
 
@@ -60,7 +60,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         }
 
         public string Key { get; } = "mute_func"; 
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.MuteIcon.ToImageSource();
         
@@ -73,7 +73,6 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         public DeviceType DeviceType { get; set; }
 
         #endregion
-       
 
         #region Constructor
 
@@ -119,17 +118,25 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             }
         }
 
-        public MuteFunction(int index, int sliderIndex, Guid uuid) : this(MuteTask.MuteSlider)
+        public MuteFunction(int sliderIndex, Guid uuid) : this(MuteTask.MuteSlider)
         {
-            Index = index;
             SliderIndex = sliderIndex;
             UUID = uuid;
         }
         
-        public MuteFunction(int index, MuteTask muteTask, Guid uuid): this(muteTask)
+        public MuteFunction(MuteTask muteTask, Guid uuid): this(muteTask)
+        {
+            UUID = uuid;
+        }
+
+        public MuteFunction(int index, int sliderIndex, Guid uuid) : this(sliderIndex, uuid)
         {
             Index = index;
-            UUID = uuid;
+        }
+        
+        public MuteFunction(int index, MuteTask muteTask, Guid uuid) : this(muteTask, uuid)
+        {
+            Index = index;
         }
 
         #endregion
@@ -204,7 +211,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     {
         #region Implemented Methods
         
-        public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
+        public IButtonFunction CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
             var muteTask = container.ContainsKey(MuteFunction.MUTE_TASK_KEY) ? EnumUtil.Parse<MuteTask>(container[MuteFunction.MUTE_TASK_KEY].ToString()) : MuteTask.MuteDefaultSpeaker;
             switch (muteTask)

@@ -36,18 +36,22 @@ namespace SoundMixerSoftware.Framework.SliderConverter.Converters
         
         #region Constructor
 
-        public LogarithmicConverter(int index, Guid uuid, float x1, float y1, float x2, float y2, float logBase)
+        public LogarithmicConverter(Guid uuid, float x1, float y1, float x2, float y2, float logBase)
         {
-            Index = index;
             UUID = uuid;
             LogBase = logBase;
             b = (float)Math.Log(y1 / y2, logBase) / (x1 - x2);
             a = (float)(y1 / Math.Pow(logBase, b * x1));
         }
 
-        public LogarithmicConverter(int index, Guid uuid, float logBase) : this(index, uuid, 1, 1, 100, 100, logBase)
+        public LogarithmicConverter(Guid uuid, float logBase) : this(uuid, 1, 1, 100, 100, logBase)
         {
             
+        }
+
+        public LogarithmicConverter(int index, Guid uuid, float logBase) : this(uuid, logBase)
+        {
+            Index = index;
         }
         
         #endregion

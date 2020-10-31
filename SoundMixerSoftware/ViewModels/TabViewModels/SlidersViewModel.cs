@@ -1,8 +1,8 @@
 ﻿using System;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Framework.AudioSessions;
-using SoundMixerSoftware.Framework.AudioSessions.VirtualSessions;
+using SoundMixerSoftware.Framework.Audio;
+using SoundMixerSoftware.Framework.Audio.VirtualSessions;
 using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Framework.SliderConverter;
 using SoundMixerSoftware.Framework.SliderConverter.Converters;
@@ -179,9 +179,7 @@ namespace SoundMixerSoftware.ViewModels
             if (session == null)
                 return;
             var sliders = ProfileHandler.SelectedProfile.Sliders[session.Index].Sessions;
-            var sessions = SessionHandler.Sessions[session.Index];
-            var sessionToRemove = sessions.IndexOf(session);
-            sliders.RemoveAt(sessionToRemove);
+            sliders.RemoveAll(x => x.UUID == session.UUID);
             ProfileHandler.SaveSelectedProfile();
             SessionHandler.RemoveSession(session.Index, session);
         }

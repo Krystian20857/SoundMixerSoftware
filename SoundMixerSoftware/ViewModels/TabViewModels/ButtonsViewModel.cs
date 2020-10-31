@@ -93,12 +93,11 @@ namespace SoundMixerSoftware.ViewModels
             var buttonModel = sender as ButtonModel;
             if(buttonModel.SelectedFunction == null)
                 return;
+            var function = buttonModel.SelectedFunction;
             var functions = ProfileHandler.SelectedProfile.Buttons[buttonModel.Index].Functions;
-            var functionsObjects = ButtonHandler.Buttons[buttonModel.Index];
-            var functionToRemove = functionsObjects.IndexOf(buttonModel.SelectedFunction);
-            functions.RemoveAt(functionToRemove);
+            functions.RemoveAll(x => x.UUID == function.UUID);
             ProfileHandler.SaveSelectedProfile();
-            ButtonHandler.RemoveFunction(buttonModel.Index, buttonModel.SelectedFunction);
+            ButtonHandler.RemoveFunction(buttonModel.Index, function);
         }
         
         

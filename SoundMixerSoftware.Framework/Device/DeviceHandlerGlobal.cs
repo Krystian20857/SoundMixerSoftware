@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NLog;
 using SoundMixerSoftware.Common.Communication;
-using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Overlay;
@@ -52,6 +52,9 @@ namespace SoundMixerSoftware.Framework.Device
         /// Occurs when device has disconnected.
         /// </summary>
         public static event EventHandler<DeviceConnectedEventArgs> DeviceDisconnected;
+
+        public static event EventHandler<SliderValueChanged> SliderValueChanged;
+        public static event EventHandler<ButtonStateChanged> ButtonStateChanged;
         
         #endregion
         
@@ -77,6 +80,27 @@ namespace SoundMixerSoftware.Framework.Device
             }
 
             RegisterTypes();
+
+            SliderValueChanged += (sender, args) =>
+            {
+                var value = (int) args.Value;
+                var index = args.Index;
+                
+                SessionHandler.SetVolume(index, value, false);
+                if(SessionHandler.HasActiveSession(index))
+                    OverlayHandler.ShowVolume(value);
+            };
+
+            ButtonStateChanged += (sender, args) =>
+            {
+                var state = args.State;
+                var index = args.Index;
+                
+                if (state == ButtonState.DOWN)
+                    ButtonHandler.HandleKeyDown(index);
+                else if (state == ButtonState.UP)
+                    ButtonHandler.HandleKeyUp(index);
+            };
         }
 
         #endregion
@@ -112,6 +136,8 @@ namespace SoundMixerSoftware.Framework.Device
         private static void DeviceHandlerOnDeviceDisconnected(object sender, DeviceStateArgs e)
         {
             var comPort = e.DeviceProperties.COMPort;
+            if(string.IsNullOrEmpty(comPort))
+                return;
             if (_connectedDevices.TryGetValue(comPort, out var device))
             {
                 DeviceDisconnected?.Invoke(null, device);
@@ -129,34 +155,27 @@ namespace SoundMixerSoftware.Framework.Device
                 return;
             switch (e.Command)
             {
-                case (byte)Command.SLIDER_COMMAND:
+                case (byte) Command.SLIDER_COMMAND:
                     SliderStruct sliderStruct = e.Data;
-                    
+
                     var sliderIndex = GetSliderIndex(sliderStruct.slider, deviceId);
-                    
                     var valueFloat = ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
-                    if(float.IsNaN(valueFloat))
+                    if (float.IsNaN(valueFloat))
                         return;
-                    var value = (int) valueFloat;
-                    SessionHandler.SetVolume(sliderIndex, value, false);
-                    if(SessionHandler.HasActiveSession(sliderIndex))
-                        OverlayHandler.ShowVolume(value);
-                    
+                    SliderValueChanged?.Invoke(null, new SliderValueChanged(deviceId, sliderIndex, valueFloat));
+
                     break;
-                case (byte)Command.BUTTON_COMMAND:
+
+                case (byte) Command.BUTTON_COMMAND:
                     ButtonStruct buttonStruct = e.Data;
 
                     var buttonIndex = GetButtonIndex(buttonStruct.button, deviceId);
-                    
-                    if (buttonStruct.state == 0x00) 
-                        ButtonHandler.HandleKeyDown(buttonIndex);
-                    else if(buttonStruct.state == 0x01)
-                        ButtonHandler.HandleKeyUp(buttonIndex);
-                    
+                    ButtonStateChanged?.Invoke(null, new ButtonStateChanged(deviceId, buttonIndex, buttonStruct.state));
+
                     break;
             }
         }
-        
+
         #endregion
         
         #region Static methods

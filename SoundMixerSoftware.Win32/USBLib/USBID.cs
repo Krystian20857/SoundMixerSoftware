@@ -2,6 +2,7 @@
 
 namespace SoundMixerSoftware.Win32.USBLib
 {
+    // ReSharper disable once InconsistentNaming
     public class USBID : IEquatable<USBID>, ICloneable
     {
         #region Public Properties
@@ -14,10 +15,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         #region Overriden Methods
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return ((int) Vid * 397) ^ (int) Pid;
-            }
+            return 435134142;
         }
 
         public object Clone()
@@ -29,6 +27,7 @@ namespace SoundMixerSoftware.Win32.USBLib
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
+            // ReSharper disable once ConvertIfStatementToReturnStatement
             if (obj.GetType() != GetType()) return false;
             return Equals((USBID) obj);
         }

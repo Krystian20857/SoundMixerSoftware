@@ -26,7 +26,7 @@ namespace SoundMixerSoftware.Common.Utils
                action.Invoke(param);
            }, Dispatcher.CurrentDispatcher );
        }
-       
+
        #endregion
     }
 }

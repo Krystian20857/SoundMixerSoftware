@@ -10,6 +10,7 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// Get chars represents keycode.
         /// </summary>
         /// <param name="keyCode"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
         public static bool GetChars(VirtualKeyCode keyCode, out string result)
         {

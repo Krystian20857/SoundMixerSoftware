@@ -11,7 +11,6 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         /// <param name="file">Absolute file path.</param>
         /// <param name="index">Index of icon.</param>
-        /// <param name="largeIcon">true: Extract large icon. false: Extract small icon.</param>
         /// <returns>Int pointer.</returns>
         public static IntPtr ExtractPtr(string file, int index)
         {
@@ -31,7 +30,6 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         /// <param name="file">Absolute file path.</param>
         /// <param name="index">Index of icon.</param>
-        /// <param name="largeIcon">true: Extract large icon. false: Extract small icon.</param>
         /// <returns>Icon.</returns>
         public static Icon ExtractIcon(string file, int index)
         {
@@ -46,7 +44,6 @@ namespace SoundMixerSoftware.Win32.Wrapper
         /// </summary>
         /// <param name="file">Absolute input file path.</param>
         /// <param name="index">Index of icon.</param>
-        /// <param name="largeIcon">true: Extract large icon. false: Extract small icon.</param>
         /// <param name="fileToExtract">Absolute output file path</param>
         public static void ExtractToFile(string file, int index, string fileToExtract)
         {

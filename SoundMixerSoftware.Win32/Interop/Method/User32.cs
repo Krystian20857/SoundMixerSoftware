@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using SoundMixerSoftware.Win32.Interop.Enum;
+// ReSharper disable ConvertIfStatementToReturnStatement
 
 namespace SoundMixerSoftware.Win32.Interop.Method
 {
@@ -11,10 +12,10 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
         
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, uint Flags);
+        public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr notificationFilter, uint flags);
         
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool UnregisterDeviceNotification(IntPtr Handle);
+        public static extern bool UnregisterDeviceNotification(IntPtr handle);
         
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -22,7 +23,7 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
         
         [DllImport("user32.dll", SetLastError=true, CharSet=CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
@@ -78,13 +79,7 @@ namespace SoundMixerSoftware.Win32.Interop.Method
 
         [DllImport("user32.dll", EntryPoint="GetWindowLongPtr")]
         private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
-
-        /// <summary>
-        /// GetWindowLong for x86 & x64 os.
-        /// </summary>
-        /// <param name="hWnd"></param>
-        /// <param name="nIndex"></param>
-        /// <returns></returns>
+        
         public static IntPtr GetWindowLongPtr(IntPtr windowHandle, int nIndex)
         {
             if (IntPtr.Size > 4)
@@ -98,12 +93,6 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         [DllImport("user32.dll", EntryPoint="SetWindowLongPtr")]
         public static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, int dwNewLong);
         
-        /// <summary>
-        /// SetWindowLong for x86 & x64 os.
-        /// </summary>
-        /// <param name="hWnd"></param>
-        /// <param name="nIndex"></param>
-        /// <returns></returns>
         public static IntPtr SetWindowLongPtr(IntPtr windowHandle, int nIndex, int dwFlags)
         {
             if (IntPtr.Size > 4)
@@ -115,7 +104,7 @@ namespace SoundMixerSoftware.Win32.Interop.Method
         public static extern int GetSystemMetrics(SystemMetric smIndex);
 
         [DllImport("user32.dll")]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint flags);
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint flags);
         
         [DllImport("user32.dll")]
         public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
