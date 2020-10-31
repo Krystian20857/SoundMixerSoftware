@@ -10,6 +10,7 @@ using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Threading;
@@ -29,7 +30,6 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         #region Private Fields
 
-        private readonly Dispatcher _dispatcher = Application.Current.Dispatcher;
         private readonly WindowWatcher _windowWatcher = new WindowWatcher();
 
         private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>(SESSION_CAPACITY); 
@@ -150,7 +150,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         private void UpdateView()
         {
-            _dispatcher.Invoke(() =>
+            TaskUtil.BeginInvokeDispatcher(() =>
             {
                 try
                 {

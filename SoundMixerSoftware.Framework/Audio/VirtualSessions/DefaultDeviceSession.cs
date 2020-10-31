@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Framework.Utils;
@@ -28,8 +29,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         #region Private Fields
 
         private IAudioController _controller => SessionHandler.AudioController;
-        private Dispatcher _dispatcher = Application.Current.Dispatcher;
-        
+
         private IDevice _device;
         private IDisposable _volumeCallback;
         private IDisposable _muteCallback;
@@ -144,7 +144,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         private void UpdateDescription()
         {
-            _dispatcher.Invoke(() => 
+            TaskUtil.BeginInvokeDispatcher(() => 
             {
                 switch (Role)
                 {

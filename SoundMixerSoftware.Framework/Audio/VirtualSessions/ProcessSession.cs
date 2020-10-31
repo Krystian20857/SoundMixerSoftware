@@ -11,6 +11,7 @@ using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
@@ -32,9 +33,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         #region Private Fields
         
         private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>(SESSION_CAPACITY);
-        // ReSharper disable once MemberCanBeMadeStatic.Local
-        private Dispatcher _dispatcher => Application.Current.Dispatcher;
-        
+
         #endregion
         
         #region Implemented Methods
@@ -126,7 +125,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         private void UpdateView()
         {
-            _dispatcher.Invoke(() =>
+            TaskUtil.BeginInvokeDispatcher(() =>
             {
                 try
                 {

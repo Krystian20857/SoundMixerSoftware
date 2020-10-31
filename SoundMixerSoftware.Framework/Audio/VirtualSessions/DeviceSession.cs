@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using SoundMixerSoftware.Common.Extension;
+using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
@@ -24,9 +25,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         #endregion
         
         #region Private Fields
-
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private Dispatcher _dispatcher = Application.Current.Dispatcher;
+        
         // ReSharper disable once MemberCanBeMadeStatic.Local
         private IAudioController _controller => SessionHandler.AudioController;
         
@@ -130,7 +129,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         private void UpdateDescription()
         {
-            _dispatcher.Invoke(() =>
+            TaskUtil.BeginInvokeDispatcher(() =>
             {
                 if (State == SessionState.ACTIVE)
                 {
