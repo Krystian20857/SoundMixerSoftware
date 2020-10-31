@@ -68,7 +68,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             float xcenter = WINDOW_WIDTH / 2;
             
             graphics.ClearScene(Color.Transparent);
-            graphics.FillRoundedRectangle(_brushResource.GetResource("DarkGray"), 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 5);
+            graphics.FillRoundedRectangle(_brushResource.GetResource("DarkGray"), 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 2);
             graphics.DrawHorizontalProgressBar(_brushResource["BlackNoAlpha"], _brushResource["Theme"],
                 xcenter - VOLUME_WIDTH / 2,
                 ycenter - VOLUME_HEIGHT / 2 - VOLUME_OFFSET,

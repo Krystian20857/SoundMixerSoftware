@@ -1,5 +1,6 @@
 ﻿using System;
 using SoundMixerSoftware.Win32.Interop.Struct;
+// ReSharper disable InconsistentNaming
 
 namespace SoundMixerSoftware.Win32.Interop.Constant
 {

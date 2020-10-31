@@ -1,4 +1,5 @@
 ﻿using System;
+// ReSharper disable InconsistentNaming
 
 namespace SoundMixerSoftware.Win32.Interop.Enum
 {

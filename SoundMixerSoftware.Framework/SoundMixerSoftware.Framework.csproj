@@ -39,22 +39,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotations.cs" />
-    <Compile Include="AudioSessions\IVirtualSession.cs" />
-    <Compile Include="AudioSessions\IVirtualSessionCreator.cs" />
-    <Compile Include="AudioSessions\SessionHandler.cs" />
-    <Compile Include="AudioSessions\SessionState.cs" />
-    <Compile Include="AudioSessions\VirtualSessions\DefaultDeviceSession.cs" />
-    <Compile Include="AudioSessions\VirtualSessions\DeviceSession.cs" />
-    <Compile Include="AudioSessions\VirtualSessions\ForegroundSession.cs" />
-    <Compile Include="AudioSessions\VirtualSessions\ProcessSession.cs" />
-    <Compile Include="AudioSessions\VirtualSessions\VirtualSession.cs" />
+    <Compile Include="Audio\IVirtualSession.cs" />
+    <Compile Include="Audio\IVirtualSessionCreator.cs" />
+    <Compile Include="Audio\SessionHandler.cs" />
+    <Compile Include="Audio\SessionState.cs" />
+    <Compile Include="Audio\Threading\VolumeScheduler.cs" />
+    <Compile Include="Audio\Threading\VolumeThread.cs" />
+    <Compile Include="Audio\VirtualSessions\DefaultDeviceSession.cs" />
+    <Compile Include="Audio\VirtualSessions\DeviceSession.cs" />
+    <Compile Include="Audio\VirtualSessions\ForegroundSession.cs" />
+    <Compile Include="Audio\VirtualSessions\ProcessSession.cs" />
+    <Compile Include="Audio\VirtualSessions\VirtualSession.cs" />
     <Compile Include="Buttons\ButtonHandler.cs" />
     <Compile Include="Buttons\Functions\KeystrokeFunction.cs" />
     <Compile Include="Buttons\Functions\MediaFunction.cs" />
     <Compile Include="Buttons\Functions\MuteFunction.cs" />
     <Compile Include="Buttons\Functions\VolumeFunction.cs" />
-    <Compile Include="Buttons\IButton.cs" />
     <Compile Include="Buttons\IButtonCreator.cs" />
+    <Compile Include="Buttons\IButtonFunction.cs" />
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\ConfigStruct.cs" />
     <Compile Include="Device\ConnectionStructs.cs" />
@@ -73,6 +75,8 @@
     <Compile Include="NotifyWrapper\NewVersionNotification.cs" />
     <Compile Include="Overlay\OverlayHandler.cs" />
     <Compile Include="Overlay\OverlaySwitcher.cs" />
+    <Compile Include="Profile\Cycler\DefaultProfileCycler.cs" />
+    <Compile Include="Profile\Cycler\IProfileCycler.cs" />
     <Compile Include="Profile\ProfileHandler.cs" />
     <Compile Include="Profile\ProfileStruct.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -112,6 +116,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="mscorlib" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
@@ -128,9 +133,18 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -165,6 +179,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="NLog.xsd" />
     <Content Include="Resources\KeyboardIcon.png" />
     <Content Include="Resources\MediaIcon.png" />
     <Content Include="Resources\MuteIcon.png" />

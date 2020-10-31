@@ -1,5 +1,7 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Enum
+﻿// ReSharper disable UnusedMember.Global
+namespace SoundMixerSoftware.Win32.Interop.Enum
 {
+    // ReSharper disable once InconsistentNaming
     public enum SIGDN : uint {
         NORMALDISPLAY = 0,
         PARENTRELATIVEPARSING = 0x80018001,

@@ -1,4 +1,7 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Constant
+﻿// ReSharper disable UnusedMember.Global
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InconsistentNaming
+namespace SoundMixerSoftware.Win32.Interop.Constant
 {
     public class DEVICE_FLAGS
     {

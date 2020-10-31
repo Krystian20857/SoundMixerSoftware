@@ -24,6 +24,7 @@ namespace SoundMixerSoftware.Win32.Interop.Interface
         object GetPropertyDescriptionList(IntPtr keyType, [In] ref Guid riid);
         void Update(IBindCtx pbc);
         void GetProperty(ref PROPERTYKEY key, [In, Out] PropVariant pv);
+        // ReSharper disable once InconsistentNaming
         Guid GetCLSID(ref PROPERTYKEY key);
         FILETIME GetFileTime(ref PROPERTYKEY key);
         int GetInt32(ref PROPERTYKEY key);

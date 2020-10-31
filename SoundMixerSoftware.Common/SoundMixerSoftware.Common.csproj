@@ -37,6 +37,7 @@
       <Compile Include="Cache\ICache.cs" />
       <Compile Include="Cache\IconCache.cs" />
       <Compile Include="Cache\NativeCache.cs" />
+      <Compile Include="Collection\ConcurrentList.cs" />
       <Compile Include="Communication\DataConverter.cs" />
       <Compile Include="Communication\DataReceivedEventArgs.cs" />
       <Compile Include="Communication\Serial\SerialDataReceivedArgs.cs" />
@@ -63,7 +64,7 @@
       <Compile Include="Logging\LoggerUtils.cs" />
       <Compile Include="Properties\AssemblyInfo.cs" />
       <Compile Include="Property\IProperties.cs" />
-      <Compile Include="Utils\Application\AppUtils.cs" />
+      <Compile Include="Utils\Application\AppUtil.cs" />
       <Compile Include="Utils\Application\AutoRunHandle.cs" />
       <Compile Include="Utils\ArrayUtil.cs" />
       <Compile Include="Utils\Audio\AudioSessionUtil.cs" />
@@ -77,6 +78,7 @@
       <Compile Include="Utils\PascalNamingConverter.cs" />
       <Compile Include="Utils\RecursionAttribute.cs" />
       <Compile Include="Utils\StructUtil.cs" />
+      <Compile Include="Utils\TaskUtil.cs" />
       <Compile Include="Web\EventArgs.cs" />
       <Compile Include="Web\FileDownloader.cs" />
       <Compile Include="Web\SpeedConverter.cs" />

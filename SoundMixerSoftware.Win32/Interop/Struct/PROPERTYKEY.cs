@@ -1,5 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable IdentifierTypo
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace SoundMixerSoftware.Win32.Interop.Struct
 {
@@ -16,7 +21,7 @@ namespace SoundMixerSoftware.Win32.Interop.Struct
             var key = (PROPERTYKEY) obj;
             return this.fmtid == key.fmtid && this.pid == key.pid;
         }
-
+        
         public override int GetHashCode()
         {
             return fmtid.GetHashCode() + pid.GetHashCode();

@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable IdentifierTypo
 
 namespace SoundMixerSoftware.Win32.Interop.Struct
 {

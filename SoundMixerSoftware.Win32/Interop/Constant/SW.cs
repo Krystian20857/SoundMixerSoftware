@@ -1,5 +1,8 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Constant
+﻿// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedType.Global
+namespace SoundMixerSoftware.Win32.Interop.Constant
 {
+    // ReSharper disable once InconsistentNaming
     public static class SW
     {
         public const int SW_FORCEMINIMALIZE = 11;

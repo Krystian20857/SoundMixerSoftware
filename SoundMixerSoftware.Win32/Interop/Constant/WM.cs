@@ -1,5 +1,7 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Constant
+﻿// ReSharper disable UnusedMember.Global
+namespace SoundMixerSoftware.Win32.Interop.Constant
 {
+    // ReSharper disable once InconsistentNaming
     public class WM
     {
         public const uint WM_ACTIVATE = 0x0006;

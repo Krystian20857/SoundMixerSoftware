@@ -1,5 +1,7 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Constant
+﻿// ReSharper disable UnusedMember.Global
+namespace SoundMixerSoftware.Win32.Interop.Constant
 {
+    // ReSharper disable once InconsistentNaming
     public static class GCL
     {
         public const int GCL_CBCLSEXTRA = -20;

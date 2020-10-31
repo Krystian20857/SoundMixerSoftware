@@ -3,6 +3,7 @@
 namespace SoundMixerSoftware.Win32.Interop.Enum
 {
     [Flags]
+    // ReSharper disable once InconsistentNaming
     public enum SICHINT : uint
     {
         /// <summary>iOrder based on display in a folder view</summary>

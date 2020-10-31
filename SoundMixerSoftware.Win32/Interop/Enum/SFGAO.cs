@@ -3,6 +3,7 @@
 namespace SoundMixerSoftware.Win32.Interop.Enum
 {
     [Flags]
+    // ReSharper disable once InconsistentNaming
     public enum SFGAO : uint
     {
         /// <summary>Objects can be copied</summary>

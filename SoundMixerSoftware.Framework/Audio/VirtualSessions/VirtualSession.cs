@@ -10,13 +10,15 @@ using System.Windows.Threading;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
+using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
-namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
+namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class VirtualSession : IVirtualSession, INotifyPropertyChanged
     {
         #region Constant
@@ -29,11 +31,13 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Private Fields
 
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Dispatcher _dispatcher = Application.Current.Dispatcher;        //for property update
+        // ReSharper disable once MemberCanBeMadeStatic.Local
         private IAudioController _controller => SessionHandler.AudioController;
 
-        private List<IAudioSession> _sessions = new List<IAudioSession>();
-        private IDisposable _sessionCreatedcallback;
+        private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>();
+        private IDisposable _sessionCreatedCallback;
         private IDevice _device;
 
         #endregion
@@ -43,7 +47,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         public string Key { get; } = KEY;
         public string DisplayName { get; set; }
         public string ID { get; }
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
 
@@ -88,8 +92,11 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
 
         #region Public Properties
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public Guid DeviceId { get; }
+        // ReSharper disable once MemberCanBePrivate.Global
         public string RawName { get;}
+        // ReSharper disable once MemberCanBePrivate.Global
         public string DeviceName => _device?.FullName ?? "(Device Removed)";
 
         #endregion
@@ -109,9 +116,9 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
         
         #region Constructor
         
-        public VirtualSession(int index, string sessionId, string rawName, Guid uuid)
+        // ReSharper disable once MemberCanBePrivate.Global
+        public VirtualSession(string sessionId, string rawName, Guid uuid)
         {
-            Index = index;
             ID = sessionId;
             UUID = uuid;
             RawName = rawName;
@@ -128,6 +135,11 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             SessionHandler.SessionExited += SessionHandlerOnSessionExited;
             
             UpdateDescription();
+        }
+
+        public VirtualSession(int index, string sessionId, string rawName, Guid uuid) : this(sessionId, rawName, uuid)
+        {
+            Index = index;
         }
 
         #endregion
@@ -163,7 +175,10 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
                                 DisplayName = $"{process.GetPreciseName()} - {DeviceName}";
                             }
                         }
-                        catch (Exception) { } //process exited.
+                        catch (Exception)
+                        {
+                            // ignored
+                        } //process exited.
                     }
                     else
                     {
@@ -189,7 +204,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
             if(device.Id != DeviceId)
                 return;
             
-            _sessionCreatedcallback?.Dispose();
+            _sessionCreatedCallback?.Dispose();
             _sessions.Clear();
             UpdateDescription();
         }
@@ -203,8 +218,8 @@ namespace SoundMixerSoftware.Framework.AudioSessions.VirtualSessions
                 return;
             var sessionController = SessionHandler.GetController(device);
             
-            _sessionCreatedcallback?.Dispose();
-            _sessionCreatedcallback = sessionController.SessionCreated.Subscribe(SessionCreated);
+            _sessionCreatedCallback?.Dispose();
+            _sessionCreatedCallback = sessionController.SessionCreated.Subscribe(SessionCreated);
             
             var sessions = GetSessions(device, ID);
             foreach (var session in sessions)

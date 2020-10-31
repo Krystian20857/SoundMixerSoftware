@@ -1,4 +1,6 @@
 ﻿using System;
+// ReSharper disable UnassignedField.Global
+// ReSharper disable InconsistentNaming
 
 namespace SoundMixerSoftware.Win32.Interop.Struct
 {

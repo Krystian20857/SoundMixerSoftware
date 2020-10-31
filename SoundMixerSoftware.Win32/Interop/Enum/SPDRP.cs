@@ -1,8 +1,10 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Enum
+﻿// ReSharper disable IdentifierTypo
+namespace SoundMixerSoftware.Win32.Interop.Enum
 {
     /// <summary>
     /// Flags for SetupDiGetDeviceRegistryProperty().
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public enum SPDRP
     {
         SPDRP_DEVICEDESC = 0x00000000, // DeviceDesc (R/W)

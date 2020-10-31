@@ -1,4 +1,5 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Constant
+﻿// ReSharper disable InconsistentNaming
+namespace SoundMixerSoftware.Win32.Interop.Constant
 {
     public static class ICON
     {

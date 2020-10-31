@@ -84,6 +84,10 @@
       <HintPath>..\packages\MaterialDesignColors.2.0.0-ci2156\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MaterialDesignExtensions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c5ebccebe084d64f">
+      <HintPath>..\packages\MaterialDesignExtensions.3.3.0-a01\lib\net45\MaterialDesignExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=4.0.0.2156, Culture=neutral, PublicKeyToken=df2a72020bd7962a">
       <HintPath>..\packages\MaterialDesignThemes.4.0.0-ci2156\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
       <Private>True</Private>

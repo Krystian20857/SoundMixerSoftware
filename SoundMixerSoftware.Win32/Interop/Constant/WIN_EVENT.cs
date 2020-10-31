@@ -1,4 +1,6 @@
-﻿namespace SoundMixerSoftware.Win32.Interop.Constant
+﻿// ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
+namespace SoundMixerSoftware.Win32.Interop.Constant
 {
     public class WIN_EVENT
     {
@@ -33,7 +35,7 @@
         public const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
         public const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
         public const uint EVENT_SYSTEM_END = 0x00FF;
-        private const uint EVENT_OEM_DEFINED_START = 0x0101;
+        public const uint EVENT_OEM_DEFINED_START = 0x0101;
         public const uint EVENT_OEM_DEFINED_END = 0x01FF;
         public const uint EVENT_UIA_EVENTID_START = 0x4E00;
         public const uint EVENT_UIA_EVENTID_END = 0x4EFF;

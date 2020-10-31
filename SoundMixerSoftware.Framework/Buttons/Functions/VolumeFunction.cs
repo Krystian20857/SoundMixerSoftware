@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Framework.AudioSessions;
+using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Profile;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
-    public class VolumeFunction : IButton
+    public class VolumeFunction : IButtonFunction
     {
         #region Constant
 
@@ -45,7 +45,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         }
 
         public string Key { get; } = "vol_func";
-        public int Index { get; }
+        public int Index { get; set; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.VolumeIcon.ToImageSource();
         
@@ -53,12 +53,16 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         
         #region Constrcutor
 
-        public VolumeFunction(int index, Guid uuid, int sliderIndex, float volume)
+        public VolumeFunction(Guid uuid, int sliderIndex, float volume)
         {
-            Index = index;
             UUID = uuid;
             SliderIndex = sliderIndex; 
             Volume = volume;
+        }
+
+        public VolumeFunction(int index, Guid uuid, int sliderIndex, float volume) : this(uuid, sliderIndex, volume)
+        {
+            Index = index;
         }
         
         #endregion
@@ -88,7 +92,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
 
     public class VolumeFunctionCreator : IButtonCreator
     {
-        public IButton CreateButton(int index, Dictionary<object, object> container, Guid uuid)
+        public IButtonFunction CreateButton(int index, Dictionary<object, object> container, Guid uuid)
         {
             var sliderIndexObject = container.ContainsKey(VolumeFunction.SLIDER_INDEX_KEY) ? container[VolumeFunction.SLIDER_INDEX_KEY] : 0;
             var sliderIndex = int.TryParse(sliderIndexObject.ToString(), out var result) ? result : 0;

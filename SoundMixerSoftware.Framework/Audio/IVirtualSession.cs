@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace SoundMixerSoftware.Framework.AudioSessions
+namespace SoundMixerSoftware.Framework.Audio
 {
     public interface IVirtualSession : IDisposable
     {
@@ -21,7 +21,7 @@ namespace SoundMixerSoftware.Framework.AudioSessions
         /// <summary>
         /// Index of current session.
         /// </summary>
-        int Index { get; }
+        int Index { get; set; }
         /// <summary>
         /// Unique identifier od virtual session.
         /// </summary>
