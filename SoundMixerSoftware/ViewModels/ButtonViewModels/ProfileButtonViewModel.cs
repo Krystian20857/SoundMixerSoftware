@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
+using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
@@ -22,7 +23,9 @@ namespace SoundMixerSoftware.ViewModels
         #region Implemented Properties
 
         public string Name { get; set; } = "Profile Control";
-        
+        public PackIconKind Icon { get; set; } = PackIconKind.Account;
+        public Guid UUID { get; set; } = new Guid("16724419-47BC-4C09-BB80-623F61DB5326");
+
         #endregion
         
         #region Public Properties

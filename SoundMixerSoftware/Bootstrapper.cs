@@ -151,6 +151,7 @@ namespace SoundMixerSoftware
             _container.Singleton<PluginViewModel>();
             _container.Singleton<ButtonsViewModel>();
             _container.Singleton<HomeViewModel>();
+            _container.Singleton<HomeButtonViewModel>();
             
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ExtensionAddViewModel>();

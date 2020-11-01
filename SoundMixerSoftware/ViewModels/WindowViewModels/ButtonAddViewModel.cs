@@ -8,45 +8,56 @@ namespace SoundMixerSoftware.ViewModels
     public class ButtonAddViewModel : Screen
     {
 
+        #region Private Fields
+
+        private object _content;
+        
+        #endregion
+        
         #region Public Properties
 
         public static ButtonAddViewModel Instance => IoC.Get<ButtonAddViewModel>();
 
         public int Index { get; set; }
-        public IButtonAddModel SelectedTab { get; set; }
-        public BindableCollection<IButtonAddModel> Tabs { get; set; } = new BindableCollection<IButtonAddModel>();
+
+        public object Content
+        {
+            get => _content;
+            set
+            {
+                _content = value;
+                AddButtonVisible = !(value is HomeButtonViewModel);
+                NotifyOfPropertyChange(nameof(Content));
+                NotifyOfPropertyChange(nameof(AddButtonVisible));
+            }
+        }
+
+        public bool AddButtonVisible { get; set; }
 
         #endregion
         
         #region Constructor
 
-        public ButtonAddViewModel() { }
-        
-        #endregion
-        
-        #region Public Methods
-
-        public void AddView(IButtonAddModel viewModel)
+        public ButtonAddViewModel()
         {
-            Tabs.Add(viewModel);
+            
+        }
+
+        protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+        {
+            Content = HomeButtonViewModel.Instance;
+            return base.OnInitializeAsync(cancellationToken);
         }
 
         #endregion
         
-        #region Private Events
+        #region Events
 
-        protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+        public void BackClicked()
         {
-            AddView(new MediaButtonViewModel());
-            AddView(new MuteButtonViewModel());
-            AddView(new VolumeButtonViewModel());
-            AddView(new KeystrokeFunctionViewModel());
-            AddView(new ProfileButtonViewModel());
-            
-            if (Tabs.Count > 0)
-                SelectedTab = Tabs[0];
-            
-            return base.OnInitializeAsync(cancellationToken);
+            if(Content is HomeButtonViewModel)
+                return;
+            Content = HomeButtonViewModel.Instance;
         }
 
         /// <summary>
@@ -54,7 +65,10 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void AddClicked()
         {
-            if(SelectedTab.AddClicked(Index))
+            var selectedModel = HomeButtonViewModel.Instance.SelectedView;
+            if(!(selectedModel is IButtonAddModel model))
+                return;
+            if(model.AddClicked(Index))
                 TryCloseAsync();
         }
         

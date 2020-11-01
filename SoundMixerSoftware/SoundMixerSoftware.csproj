@@ -167,6 +167,7 @@
     <Compile Include="Utils\ParserHelper.cs" />
     <Compile Include="Validation\IntegerValidation.cs" />
     <Compile Include="Validation\OffsetValidation.cs" />
+    <Compile Include="ViewModels\ButtonViewModels\HomeButtonViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\KeystrokeFunctionViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MediaButtonViewModel.cs" />
     <Compile Include="ViewModels\ButtonViewModels\MuteButtonViewModel.cs" />
@@ -189,6 +190,9 @@
     <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\UpdateViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\UsbManagerViewModel.cs" />
+    <Compile Include="Views\ButtonViews\HomeButtonView.xaml.cs">
+      <DependentUpon>HomeButtonView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ButtonViews\KeystrokeFunctionView.xaml.cs">
       <DependentUpon>KeystrokeFunctionView.xaml</DependentUpon>
     </Compile>
@@ -281,6 +285,7 @@
     <Page Include="Style\CategoryStyle.xaml" />
     <Page Include="Style\DefaultStyle.xaml" />
     <Page Include="TaskbarResource.xaml" />
+    <Page Include="Views\ButtonViews\HomeButtonView.xaml" />
     <Page Include="Views\ButtonViews\KeystrokeFunctionView.xaml" />
     <Page Include="Views\ButtonViews\MediaButtonView.xaml" />
     <Page Include="Views\ButtonViews\MuteButtonView.xaml" />

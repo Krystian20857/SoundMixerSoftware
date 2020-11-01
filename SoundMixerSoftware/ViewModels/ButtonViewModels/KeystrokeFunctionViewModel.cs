@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Caliburn.Micro;
+using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Buttons;
@@ -82,7 +83,9 @@ namespace SoundMixerSoftware.ViewModels
         #region Implemented Proeprties
         
         public string Name { get; set; } = "Keystroke";
-        
+        public PackIconKind Icon { get; set; } = PackIconKind.KeyboardOutline;
+        public Guid UUID { get; set; } = new Guid("E6BF1F32-D749-4DF6-AE38-235C1B021AE9");
+
         #endregion
         
         #region Constructor

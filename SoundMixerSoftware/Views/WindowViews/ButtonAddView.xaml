@@ -5,36 +5,29 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:SoundMixerSoftware.Views"
         xmlns:cal="http://caliburnmicro.com"
+        xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
+        xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
         mc:Ignorable="d"
-        Title="Add Button" Height="350" Width="600"
+        Title="Add Button" Height="350" Width="650"
         cal:Message.Attach="[Shortcut Enter] = [AddClicked()]">
+    <Window.Resources>
+        <converter:VisibilityConverter x:Key="VisibilityConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <TabControl x:Name="Tabs"
-                    SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding Path=Tabs, Mode=OneWay}"
-                    TabStripPlacement="Left"
-                    HorizontalContentAlignment="Left">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="2, 5" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Path=Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <ContentControl cal:View.Model="{Binding}" />
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
-        <DockPanel Grid.Row="1" LastChildFill="False">
+        
+        <mde:AppBar Type="Dense" Title="Add Button Function" ShowBackButton="True" cal:Message.Attach="[Back] = [BackClicked]">
+        </mde:AppBar>
+        
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <ContentControl cal:View.Model="{Binding Path=Content, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </ScrollViewer>
+        
+        <DockPanel Grid.Row="2" LastChildFill="False" Visibility="{Binding Path=AddButtonVisible, Converter={StaticResource VisibilityConverter}}">
             <Button DockPanel.Dock="Right" cal:Message.Attach="[Click] = [AddClicked()]"
                     Margin="5, 5"
                     Style="{StaticResource MaterialDesignRaisedButton}"

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
+using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
@@ -51,7 +52,9 @@ namespace SoundMixerSoftware.ViewModels
         #region Implemented Properties
 
         public string Name { get; set; } = "Mute Control";
-        
+        public PackIconKind Icon { get; set; } = PackIconKind.VolumeOff;
+        public Guid UUID { get; set; } = new Guid("8941E120-F5DA-4877-B589-8834E6313391");
+
         #endregion
         
         #region Constructor

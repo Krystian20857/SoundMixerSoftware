@@ -1,39 +1,38 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Caliburn.Micro;
-using MaterialDesignThemes.Wpf;
-using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Annotations;
 
 namespace SoundMixerSoftware.ViewModels
 {
-    public class HomeViewModel : ITabModel
+    public class HomeViewModel : INotifyPropertyChanged
     {
         
         #region Private Fields
 
-        private ITabModel _selectedView;
+        private object _selectedView;
         
         #endregion
         
         #region Implemented Properties
-
-        public string Name { get; set; } = "Home";
-        public PackIconKind Icon { get; set; } = PackIconKind.Home;
-        public Guid Uuid { get; set; } = new Guid("640E7BCD-282A-4679-9026-56EA45DF41BE");
+        
         
         #endregion
         
         #region Public Properties
 
         public static HomeViewModel Instance => IoC.Get<HomeViewModel>();
-        public BindableCollection<ITabModel> Tabs { get; set; } = new BindableCollection<ITabModel>();
+        public BindableCollection<object> Tabs { get; set; } = new BindableCollection<object>();
 
-        public ITabModel SelectedView
+        public object SelectedView
         {
             get => _selectedView;
             set
             {
                 _selectedView = value;
                 MainViewModel.Instance.Content = value;
+                _selectedView = null;
+                OnPropertyChanged(nameof(SelectedView));
             }
         } 
 
@@ -53,9 +52,15 @@ namespace SoundMixerSoftware.ViewModels
         
         #endregion
         
-        #region Events
-        
-        
+        #region Property Changed
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         
         #endregion
     }

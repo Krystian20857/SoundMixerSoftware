@@ -1,5 +1,6 @@
 ﻿using System;
 using Caliburn.Micro;
+using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
 using SoundMixerSoftware.Framework.Profile;
@@ -32,7 +33,9 @@ namespace SoundMixerSoftware.ViewModels
         #region Implemented Properties
         
         public string Name { get; set; } = "Volume Control";
-        
+        public PackIconKind Icon { get; set; } = PackIconKind.VolumeMedium;
+        public Guid UUID { get; set; } = new Guid("04ABC847-FBE5-45AD-B2DF-53752A1EDA1A");
+
         #endregion
         
         #region Constructor

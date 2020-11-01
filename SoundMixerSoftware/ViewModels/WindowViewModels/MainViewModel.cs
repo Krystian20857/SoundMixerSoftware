@@ -6,9 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using MaterialDesignExtensions.Model;
-using SoundMixerSoftware.Common.Utils.Application;
-using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Models;
 
@@ -21,7 +18,7 @@ namespace SoundMixerSoftware.ViewModels
     {
         #region Private Fields
 
-        private ITabModel content;
+        private object content;
 
         #endregion
         
@@ -29,7 +26,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public static MainViewModel Instance { get; private set; }
 
-        public ITabModel Content
+        public object Content
         {
             get => content;
             set
@@ -79,11 +76,11 @@ namespace SoundMixerSoftware.ViewModels
 
         public void BackClicked()
         {
-            var homePage = HomeViewModel.Instance;
-            if(Content?.Uuid != homePage.Uuid)
-                Content = homePage;
+            if (Content is HomeViewModel)
+                return;
+            Content = HomeViewModel.Instance;
         }
-        
+
         public void GithubClicked()
         {
             Process.Start("https://github.com/Krystian20857/SoundMixerSoftware/");
