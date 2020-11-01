@@ -30,8 +30,8 @@ namespace SoundMixerSoftware.ViewModels
             set
             {
                 _selectedView = value;
-                MainViewModel.Instance.Content = value;
-                _selectedView = null;
+                if(value != null)
+                    MainViewModel.Instance.Content = value;
                 OnPropertyChanged(nameof(SelectedView));
             }
         } 

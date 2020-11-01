@@ -79,6 +79,7 @@ namespace SoundMixerSoftware.ViewModels
             if (Content is HomeViewModel)
                 return;
             Content = HomeViewModel.Instance;
+            HomeViewModel.Instance.SelectedView = null;
         }
 
         public void GithubClicked()

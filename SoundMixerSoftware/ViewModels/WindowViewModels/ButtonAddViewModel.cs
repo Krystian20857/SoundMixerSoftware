@@ -58,6 +58,7 @@ namespace SoundMixerSoftware.ViewModels
             if(Content is HomeButtonViewModel)
                 return;
             Content = HomeButtonViewModel.Instance;
+            HomeButtonViewModel.Instance.SelectedView = null;
         }
 
         /// <summary>
