@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +38,8 @@ namespace SoundMixerSoftware.ViewModels
                 NotifyOfPropertyChange(nameof(Content));
             }
         }
+
+        public string AppVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         #endregion
         

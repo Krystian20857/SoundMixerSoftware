@@ -21,6 +21,16 @@
                     cal:Message.Attach="[Click] = [GithubClicked]">
                 <materialDesign:PackIcon Kind="Github" Height="24" Width="24" />
             </Button>
+            <Button Style="{StaticResource MaterialDesignToolForegroundButton}"
+                    Margin="8,0">
+                <Button.ToolTip>
+                    <TextBlock>
+                        <Run Text="App Version: "/>
+                        <Run Text="{Binding Path=AppVersion, Mode=OneTime}"/>
+                    </TextBlock>
+                </Button.ToolTip>
+                <materialDesign:PackIcon Kind="InformationOutline" Height="24" Width="24" />
+            </Button>
         </mde:AppBar>
         
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
