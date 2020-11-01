@@ -90,23 +90,6 @@
                         </Border>
                         <Border Style="{StaticResource SettingBorder}">
                             <DockPanel LastChildFill="False">
-                                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Starting Tab</TextBlock>
-                                <ComboBox DockPanel.Dock="Right"
-                                          SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                          ItemsSource="{Binding Path=Tabs, UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <materialDesign:PackIcon Margin="3,0" Kind="{Binding Path=Icon}" />
-                                                <TextBlock Text="{Binding Path=Name}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                            </DockPanel>
-                        </Border>
-                        <Border Style="{StaticResource SettingBorder}">
-                            <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Theme</TextBlock>
                                 <ComboBox DockPanel.Dock="Right"
                                           SelectedItem="{Binding Path=SelectedTheme, Mode=TwoWay, 

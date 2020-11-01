@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MaterialDesignExtensions.Model;
+using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Models;
@@ -16,10 +19,8 @@ namespace SoundMixerSoftware.ViewModels
     public class MainViewModel : Screen
     {
         #region Private Fields
-        
-        
-        private BindableCollection<ITabModel> _tabs = new BindableCollection<ITabModel>();
-        private ITabModel _selectedTab;
+
+        private ITabModel content;
 
         #endregion
         
@@ -27,29 +28,13 @@ namespace SoundMixerSoftware.ViewModels
 
         public static MainViewModel Instance { get; private set; }
 
-        /// <summary>
-        /// Collection of tabs.
-        /// </summary>
-        public BindableCollection<ITabModel> Tabs
+        public ITabModel Content
         {
-            get => _tabs;
+            get => content;
             set
             {
-                _tabs = value;
-                NotifyOfPropertyChange(() => Tabs);
-            }
-        }
-
-        /// <summary>
-        /// Currently selected tab.
-        /// </summary>
-        public ITabModel SelectedTab
-        {
-            get => _selectedTab;
-            set
-            {
-                _selectedTab = value;
-                NotifyOfPropertyChange(() => _selectedTab);
+                content = value;
+                NotifyOfPropertyChange(nameof(Content));
             }
         }
 
@@ -70,13 +55,6 @@ namespace SoundMixerSoftware.ViewModels
         {
             Instance = this;
             
-            Tabs.Add(IoC.Get<ManagerViewModel>());
-            Tabs.Add(IoC.Get<SlidersViewModel>());
-            Tabs.Add(IoC.Get<ButtonsViewModel>());
-            Tabs.Add(IoC.Get<DevicesViewModel>());
-            Tabs.Add(IoC.Get<PluginViewModel>());
-            Tabs.Add(IoC.Get<SettingsViewModel>());
-            
             RuntimeHelpers.RunClassConstructor(typeof(ThemeManager).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(OverlayHandler).TypeHandle);
         }
@@ -87,16 +65,27 @@ namespace SoundMixerSoftware.ViewModels
 
         protected override Task OnInitializeAsync(CancellationToken cancellationToken)
         {
-            var configTab = ConfigHandler.ConfigStruct.Application.SelectedTab;
-            SelectedTab = Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? Tabs[0];
-
-            var settingsTab = SettingsViewModel.Instance;
-            settingsTab.SelectedTab = settingsTab.Tabs.FirstOrDefault(x => x.Uuid == configTab) ?? settingsTab.Tabs[0];
-
+            Content = HomeViewModel.Instance;
             Initialized?.Invoke(this, EventArgs.Empty);
             return base.OnInitializeAsync(cancellationToken);
         }
 
+        #endregion
+        
+        #region Events
+
+        public void BackClicked()
+        {
+            var homePage = HomeViewModel.Instance;
+            if(Content?.Uuid != homePage.Uuid)
+                Content = homePage;
+        }
+        
+        public void GithubClicked()
+        {
+            Process.Start("https://github.com/Krystian20857/SoundMixerSoftware/");
+        }
+        
         #endregion
     }
 }

@@ -50,7 +50,6 @@ namespace SoundMixerSoftware
         
         private readonly ExtendedContainer _container = new ExtendedContainer();
         private StarterHelper _starter = new StarterHelper();
-        private IWindowManager _windowManager = new WindowManager();
 
         #endregion
         
@@ -110,11 +109,10 @@ namespace SoundMixerSoftware
                 PluginLoader.ViewLoadingEvent();
                 TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
 
-                if (ConfigHandler.ConfigStruct.Application.HideOnStartup)
-                    IoC.Get<MainViewModel>();
-                else
-                    DisplayRootViewFor<MainViewModel>();
-                
+                var settings = new Dictionary<string, object>();
+                settings.Add("showWindow", !ConfigHandler.ConfigStruct.Application.HideOnStartup);
+                DisplayRootViewFor<MainViewModel>(settings);
+
                 Logger.Info("Main view started.");
                 PluginLoader.ViewLoadedEvent();
                 ViewInitialized?.Invoke(this, EventArgs.Empty);
@@ -143,7 +141,7 @@ namespace SoundMixerSoftware
         {
             ParserHelper.ConfigureShortCuts();
             
-            _container.Singleton<IWindowManager, WindowManager>();
+            _container.Singleton<IWindowManager, ExtendedWindowManager>();
             _container.Singleton<IEventAggregator, EventAggregator>();
             
             _container.Singleton<ManagerViewModel>();
@@ -152,6 +150,7 @@ namespace SoundMixerSoftware
             _container.Singleton<SlidersViewModel>();
             _container.Singleton<PluginViewModel>();
             _container.Singleton<ButtonsViewModel>();
+            _container.Singleton<HomeViewModel>();
             
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ExtensionAddViewModel>();
@@ -202,15 +201,20 @@ namespace SoundMixerSoftware
             var mainWindow = MainViewModel.Instance;
             if (mainWindow == null)
                 return;
-            if (mainWindow.IsActive)
-                (mainWindow.GetView() as MainView).WindowState = WindowState.Normal;
-            else
-                _windowManager.ShowWindowAsync(mainWindow);
+            var windowObject = mainWindow.GetView() as MainView;
+            var hwnd = IntPtr.Zero;
+            if(windowObject != null)
+                hwnd = new WindowInteropHelper(windowObject).Handle;
+            if (mainWindow.IsActive && hwnd != IntPtr.Zero)
+            {
+                windowObject.WindowState = WindowState.Normal;
+            }
+            if(hwnd == IntPtr.Zero)
+                IoC.Get<IWindowManager>().ShowWindowAsync(mainWindow);
             
             User32.BringWindowToTop(MainWindowHandle);
             User32.SetForegroundWindow(MainWindowHandle);
         }
-        
 
         #endregion
         

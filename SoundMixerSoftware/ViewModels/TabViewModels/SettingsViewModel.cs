@@ -52,9 +52,7 @@ namespace SoundMixerSoftware.ViewModels
 
         private ThemeModel _selectedTheme;
         private BindableCollection<ThemeModel> _themes = new BindableCollection<ThemeModel>();
-
-        private TabModel _selectedTab;
-        private BindableCollection<TabModel> _tabs = new BindableCollection<TabModel>();
+        
         
         private AutoRunHandle _autoRunHandle = new AutoRunHandle(Assembly.GetExecutingAssembly().Location);
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
@@ -234,25 +232,7 @@ namespace SoundMixerSoftware.ViewModels
                 _themes = value;
             }
         }
-
-        public TabModel SelectedTab
-        {
-            get => _selectedTab;
-            set
-            {
-                ConfigHandler.ConfigStruct.Application.SelectedTab = value.Uuid; 
-                if(!LockConfig)
-                    ConfigHandler.SaveConfig();
-                _selectedTab = value;
-            }
-        }
-
-        public BindableCollection<TabModel> Tabs
-        {
-            get => _tabs;
-            set => _tabs = value;
-        }
-
+        
         public bool LockConfig { get; set; }
 
         #endregion
@@ -283,7 +263,6 @@ namespace SoundMixerSoftware.ViewModels
             AutoUpdate = ConfigHandler.ConfigStruct.Updater.AutoUpdate;
 
             LoadThemes();
-            LoadTabs();
             LoadUpdater();
             
             LockConfig = false;
@@ -308,25 +287,6 @@ namespace SoundMixerSoftware.ViewModels
 
             var themeConfig = ConfigHandler.ConfigStruct.Application.ThemeName;
             SelectedTheme = Themes.FirstOrDefault(x => x.ThemeName.Equals(themeConfig)) ?? Themes[0];
-        }
-
-        private void LoadTabs()
-        {
-            var mainView = MainViewModel.Instance;
-
-            Tabs.Clear();
-            foreach (var tab in mainView.Tabs)
-                Tabs.Add(TabModel.CreateModel(tab));
-
-            mainView.Tabs.CollectionChanged += (sender, args) =>
-            {
-                if(args.NewStartingIndex != -1)
-                    foreach (var tab in args.NewItems.Cast<ITabModel>())
-                        Tabs.Add(TabModel.CreateModel(tab));
-                if(args.OldStartingIndex != -1)
-                    foreach (var tab in args.NewItems.Cast<ITabModel>())
-                        Tabs.Remove(TabModel.CreateModel(tab));
-            };
         }
 
         private void LoadUpdater()

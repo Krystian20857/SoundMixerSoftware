@@ -151,7 +151,6 @@
     <Compile Include="Models\SectionModel.cs" />
     <Compile Include="Models\SliderModel.cs" />
     <Compile Include="Models\SystemThemeModel.cs" />
-    <Compile Include="Models\TabModel.cs" />
     <Compile Include="Models\ThemeManager.cs" />
     <Compile Include="Models\ThemeModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -164,6 +163,7 @@
     <Compile Include="Utils\BindingProxy.cs" />
     <Compile Include="Utils\EnumDisplayHelper.cs" />
     <Compile Include="Utils\ExtendedContainer.cs" />
+    <Compile Include="Utils\ExtendedWindowManager.cs" />
     <Compile Include="Utils\ParserHelper.cs" />
     <Compile Include="Validation\IntegerValidation.cs" />
     <Compile Include="Validation\OffsetValidation.cs" />
@@ -174,6 +174,7 @@
     <Compile Include="ViewModels\ButtonViewModels\VolumeButtonViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\ButtonsViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\DevicesViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\ManagerViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\PluginViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\SettingsViewModel.cs" />
@@ -208,6 +209,9 @@
     </Compile>
     <Compile Include="Views\TabViews\DevicesView.xaml.cs">
       <DependentUpon>DevicesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TabViews\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabViews\ManagerView.xaml.cs">
       <DependentUpon>ManagerView.xaml</DependentUpon>
@@ -284,6 +288,7 @@
     <Page Include="Views\ButtonViews\VolumeButtonView.xaml" />
     <Page Include="Views\TabViews\ButtonsView.xaml" />
     <Page Include="Views\TabViews\DevicesView.xaml" />
+    <Page Include="Views\TabViews\HomeView.xaml" />
     <Page Include="Views\TabViews\ManagerView.xaml" />
     <Page Include="Views\TabViews\PluginView.xaml" />
     <Page Include="Views\TabViews\SettingsView.xaml" />

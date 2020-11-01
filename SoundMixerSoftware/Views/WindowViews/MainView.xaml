@@ -12,31 +12,19 @@
                      Icon="{StaticResource SpeakerIcon}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
-        <TabControl x:Name="Tabs"
-                    SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding Path=Tabs, Mode=OneWay}"
-                    TabStripPlacement="Left"
-                    HorizontalContentAlignment="Left">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4, 10" VerticalAlignment="Center">
-                            <materialDesign:PackIcon Margin="5, 0" Kind="{Binding Path=Icon}"/>
-                            <TextBlock Text="{Binding Path=Name}"/>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                <ContentControl cal:View.Model="{Binding}" />
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+        <mde:AppBar Type="Dense" Title="Sound Mixer Software" ShowBackButton="True" cal:Message.Attach="[Back] = [BackClicked]">
+            <Button Style="{StaticResource MaterialDesignToolForegroundButton}"
+                    Margin="8,0" ToolTip="Sound Mixer Software on GitHub"
+                    cal:Message.Attach="[Click] = [GithubClicked]">
+                <materialDesign:PackIcon Kind="Github" Height="24" Width="24" />
+            </Button>
+        </mde:AppBar>
+        
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <ContentControl cal:View.Model="{Binding Path=Content, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </ScrollViewer>
     </Grid>
 </Window>
