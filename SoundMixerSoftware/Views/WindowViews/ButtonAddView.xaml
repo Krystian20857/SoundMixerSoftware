@@ -23,9 +23,7 @@
         <mde:AppBar Type="Dense" Title="Add Button Function" ShowBackButton="True" cal:Message.Attach="[Back] = [BackClicked]">
         </mde:AppBar>
         
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-            <ContentControl cal:View.Model="{Binding Path=Content, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </ScrollViewer>
+        <ContentControl Grid.Row="1" cal:View.Model="{Binding Path=Content, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         
         <DockPanel Grid.Row="2" LastChildFill="False" Visibility="{Binding Path=AddButtonVisible, Converter={StaticResource VisibilityConverter}}">
             <Button DockPanel.Dock="Right" cal:Message.Attach="[Click] = [AddClicked()]"

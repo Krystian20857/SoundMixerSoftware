@@ -33,8 +33,6 @@
             </Button>
         </mde:AppBar>
         
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-            <ContentControl cal:View.Model="{Binding Path=Content, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </ScrollViewer>
+        <ContentControl Grid.Row="1" cal:View.Model="{Binding Path=Content, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>
