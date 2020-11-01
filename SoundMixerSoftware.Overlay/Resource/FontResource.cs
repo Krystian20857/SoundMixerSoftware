@@ -7,27 +7,9 @@ namespace SoundMixerSoftware.Overlay.Resource
     public class FontResource : IResourceProvider<Font>
     {
 
-        #region Static Fields
+        #region Fields
         
-        public static readonly IDictionary<string, Font> Fonts = new Dictionary<string, Font>();
-
-        #endregion
-        
-        #region Static Properties
-
-        public static bool IsInitialized { get; private set; }
-
-        #endregion
-        
-        #region Static Methods
-
-        public static void CreateFonts(Graphics graphics)
-        {
-            if(IsInitialized)
-                return;
-            Fonts.Add("Default", graphics.CreateFont("Segoe UI font", 14, bold: true));
-            IsInitialized = true;
-        }
+        public readonly IDictionary<string, Font> Fonts = new Dictionary<string, Font>();
 
         #endregion
 

@@ -1,6 +1,8 @@
 ﻿using GameOverlay.Drawing;
 using GameOverlay.Windows;
+using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Overlay.Resource;
+using SoundMixerSoftware.Overlay.Utils;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
@@ -47,7 +49,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             float ycenter = WINDOW_HEIGHT / 2;
             
             graphics.ClearScene(Color.Transparent);
-            graphics.FillRoundedRectangle(_brushResource["DarkGray"], 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 2);
+            graphics.FillRoundedRectangle(_brushResource["DarkGray"], 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
             var image = IsMuted ? _imageResource["SpeakerMute"] : _imageResource["SpeakerUnMute"];
             graphics.DrawImage(image, xcenter - (IMAGE_WIDTH / 2), ycenter - (IMAGE_HEIGHT / 2), xcenter + (IMAGE_WIDTH / 2), ycenter + (IMAGE_HEIGHT / 2));
         }
@@ -56,10 +58,9 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         {
             var graphics = args.Graphics;
 
-            foreach (var color in _colorResource.GetResources())
-                _brushResource.SetResource(color.Key, graphics.CreateSolidBrush(color.Value));
-            FontResource.CreateFonts(graphics);
-            ImageResource.CreateImages(graphics);
+            Util.CreateBrushes(graphics, _colorResource, _brushResource);
+            _imageResource.SetResource("SpeakerMute", new Image(graphics, Resources.SpeakerMute.ToByteArray()));
+            _imageResource.SetResource("SpeakerUnMute", new Image(graphics, Resources.SpeakerUnMute.ToByteArray()));
         }
     }
 }

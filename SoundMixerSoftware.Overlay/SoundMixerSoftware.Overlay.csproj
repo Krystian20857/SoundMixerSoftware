@@ -64,6 +64,7 @@
     <Compile Include="OverlayWindow\CenterTextWindow.cs" />
     <Compile Include="OverlayWindow\IOverlay.cs" />
     <Compile Include="OverlayWindow\MuteWindow.cs" />
+    <Compile Include="OverlayWindow\ProfileOverlay.cs" />
     <Compile Include="OverlayWindow\VolumeOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -77,6 +78,7 @@
     <Compile Include="Resource\ImageResource.cs" />
     <Compile Include="Resource\IResourceProvider.cs" />
     <Compile Include="Resource\ThemeManager.cs" />
+    <Compile Include="Utils\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -105,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SpeakerUnMute.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ProfileImage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

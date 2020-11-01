@@ -15,6 +15,8 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     {
         #region Constatn
 
+        public const string KEY = "keystroke_func";
+
         public const string KEYSTROKE_MODE_KEY = "mode";
         public const string TEXT_KEY = "text";
         public const string KEYSTROKE_KEY = "keystroke";
@@ -51,7 +53,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             }
             set => _name = value;
         }
-        public string Key { get; } = "keystroke_func";
+        public string Key { get; } = KEY;
         public int Index { get; set; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.KeyboardIcon.ToImageSource();

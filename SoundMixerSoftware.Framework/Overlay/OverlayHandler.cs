@@ -1,4 +1,6 @@
-﻿using SoundMixerSoftware.Framework.Config;
+﻿using System;
+using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Overlay.OverlayWindow;
 
 namespace SoundMixerSoftware.Framework.Overlay
@@ -19,6 +21,7 @@ namespace SoundMixerSoftware.Framework.Overlay
             Switcher.SetValue("mute-overlay", new MuteWindow(FadeTime));
             Switcher.SetValue("volume-overlay", new VolumeOverlay(FadeTime));
             Switcher.SetValue("center-text-overlay", new CenterTextWindow(FadeTime));
+            Switcher.SetValue("profile-overlay", new ProfileOverlay(FadeTime));
         }
         
         #endregion
@@ -46,13 +49,20 @@ namespace SoundMixerSoftware.Framework.Overlay
                     window.FontSize = fontSize;
             });
         }
+        
+        public static void ShowProfile(Guid profileUUID){
+            Switcher.HandleOverlay<ProfileOverlay>((key, window) =>
+            {
+                if(ProfileHandler.ProfileManager.Profiles.TryGetValue(profileUUID, out var profile))
+                    window.DisplayName = profile.Name;
+            });
+        }
 
         public static void SetFadeTime(int fadeTime)
         {
             foreach (var overlay in Switcher.GetValues())
                 overlay.FadeTime = fadeTime;
         }
-        
         
         #endregion
     }

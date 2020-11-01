@@ -54,6 +54,7 @@
     <Compile Include="Buttons\Functions\KeystrokeFunction.cs" />
     <Compile Include="Buttons\Functions\MediaFunction.cs" />
     <Compile Include="Buttons\Functions\MuteFunction.cs" />
+    <Compile Include="Buttons\Functions\ProfileFunction.cs" />
     <Compile Include="Buttons\Functions\VolumeFunction.cs" />
     <Compile Include="Buttons\IButtonCreator.cs" />
     <Compile Include="Buttons\IButtonFunction.cs" />
@@ -183,6 +184,7 @@
     <Content Include="Resources\KeyboardIcon.png" />
     <Content Include="Resources\MediaIcon.png" />
     <Content Include="Resources\MuteIcon.png" />
+    <Content Include="Resources\ProfileImage.png" />
     <Content Include="Resources\VolumeIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -50,10 +50,11 @@ namespace SoundMixerSoftware.ViewModels
             ButtonHandler.FunctionCreated += ButtonHandlerOnFunctionCreated;
             ButtonHandler.FunctionRemoved += ButtonHandlerOnFunctionRemoved;
             
-            ButtonHandler.RegisterCreator("media_func", new MediaFunctionCreator());
-            ButtonHandler.RegisterCreator("mute_func", new MuteFunctionCreator());
-            ButtonHandler.RegisterCreator("keystroke_func", new KeystrokeFunctionCreator());
-            ButtonHandler.RegisterCreator("vol_func", new VolumeFunctionCreator());
+            ButtonHandler.RegisterCreator(MediaFunction.KEY, new MediaFunctionCreator());
+            ButtonHandler.RegisterCreator(MuteFunction.KEY, new MuteFunctionCreator());
+            ButtonHandler.RegisterCreator(KeystrokeFunction.KEY, new KeystrokeFunctionCreator());
+            ButtonHandler.RegisterCreator(VolumeFunction.KEY, new VolumeFunctionCreator());
+            ButtonHandler.RegisterCreator(ProfileFunction.KEY, new ProfileFunctionCreator());
             
             CreateButtons();
             

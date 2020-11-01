@@ -1,6 +1,7 @@
 ﻿using GameOverlay.Drawing;
 using GameOverlay.Windows;
 using SoundMixerSoftware.Overlay.Resource;
+using SoundMixerSoftware.Overlay.Utils;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
@@ -12,7 +13,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         public const float FONT_SIZE = 72.0F;
         public const float TEXT_X_MARGIN = 40;
         public const float TEXT_Y_MARGIN = 20;
-        public const float BACKGROUND_ROUND = 5;
+        public const float BACKGROUND_ROUND = 0;
         
         #endregion
         
@@ -58,10 +59,9 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         {
             var graphics = args.Graphics;
             
-            foreach(var color in _colorResource.GetResources())
-                _brushResource.SetResource(color.Key, graphics.CreateSolidBrush(color.Value));
+            Util.CreateBrushes(graphics, _colorResource, _brushResource);
             
-            FontResource.CreateFonts(graphics);
+            _fontResource.SetResource("Default", graphics.CreateFont("Segoe UI font", 14, bold: true));
         }
     }
 }

@@ -119,7 +119,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         {
             var result = new Dictionary<object, object>();
             result.Add(DEVICE_ID_KEY, ID);
-            result.Add(DEVICE_NAME_KEY, DisplayName);
+            result.Add(DEVICE_NAME_KEY, Name);
             return result;
         }
         

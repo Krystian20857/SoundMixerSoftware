@@ -7,31 +7,12 @@ namespace SoundMixerSoftware.Overlay.Resource
 {
     public class ImageResource : IResourceProvider<Image>
     {
-        #region Static Fields
+        #region Fields
         
         public static readonly Dictionary<string, Image> Images = new Dictionary<string, Image>();
         
         #endregion
-        
-        #region Static Properties
 
-        public static bool IsInitialized { get; private set; }
-
-        #endregion
-        
-        #region Static Methods
-
-        public static void CreateImages(Graphics graphics)
-        {
-            if (IsInitialized)
-                return;
-            Images.Add("SpeakerMute", new Image(graphics, Resources.SpeakerMute.ToByteArray()));
-            Images.Add("SpeakerUnMute", new Image(graphics, Resources.SpeakerUnMute.ToByteArray()));
-            IsInitialized = true;
-        }
-        
-        #endregion
-        
         #region Implemented Methods
         
         public Image GetResource(string resourceKey)

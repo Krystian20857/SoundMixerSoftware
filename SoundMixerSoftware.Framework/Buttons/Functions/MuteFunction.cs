@@ -16,6 +16,8 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     {
         #region Constant
 
+        public const string KEY = "mute_func";
+        
         public const string MUTE_TASK_KEY = "mute";
         public const string SLIDER_INDEX = "slider_index";
         
@@ -59,7 +61,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             set => _name = value;
         }
 
-        public string Key { get; } = "mute_func"; 
+        public string Key { get; } = KEY; 
         public int Index { get; set; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.MuteIcon.ToImageSource();

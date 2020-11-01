@@ -11,6 +11,8 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     {
         #region Constant
 
+        public const string KEY = "vol_func";
+        
         public const string VOLUME_KEY = "volume";
         public const string SLIDER_INDEX_KEY = "slider_index";
         
@@ -44,7 +46,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             set => _name = value;
         }
 
-        public string Key { get; } = "vol_func";
+        public string Key { get; } = KEY;
         public int Index { get; set; }
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.VolumeIcon.ToImageSource();

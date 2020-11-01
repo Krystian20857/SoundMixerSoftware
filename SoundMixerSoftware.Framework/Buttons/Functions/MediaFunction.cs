@@ -11,6 +11,8 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
     {
         #region Constant
 
+        public const string KEY = "media_func";
+        
         public const string MEDIA_TASK_KEY = "media";
         
         #endregion
@@ -38,7 +40,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             }
             set => _name = value;
         }
-        public string Key { get; } = "media_func";
+        public string Key { get; } = KEY;
         public Guid UUID { get; set; }
         public ImageSource Image { get; set; } = Resource.MediaIcon.ToImageSource();
         public int Index { get; set; }

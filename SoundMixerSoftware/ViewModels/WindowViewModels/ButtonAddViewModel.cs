@@ -41,6 +41,7 @@ namespace SoundMixerSoftware.ViewModels
             AddView(new MuteButtonViewModel());
             AddView(new VolumeButtonViewModel());
             AddView(new KeystrokeFunctionViewModel());
+            AddView(new ProfileButtonViewModel());
             
             if (Tabs.Count > 0)
                 SelectedTab = Tabs[0];

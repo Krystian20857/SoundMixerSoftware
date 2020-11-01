@@ -2,6 +2,7 @@
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
 using SoundMixerSoftware.Overlay.Resource;
+using SoundMixerSoftware.Overlay.Utils;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
@@ -68,7 +69,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             float xcenter = WINDOW_WIDTH / 2;
             
             graphics.ClearScene(Color.Transparent);
-            graphics.FillRoundedRectangle(_brushResource.GetResource("DarkGray"), 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 2);
+            graphics.FillRoundedRectangle(_brushResource.GetResource("DarkGray"), 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
             graphics.DrawHorizontalProgressBar(_brushResource["BlackNoAlpha"], _brushResource["Theme"],
                 xcenter - VOLUME_WIDTH / 2,
                 ycenter - VOLUME_HEIGHT / 2 - VOLUME_OFFSET,
@@ -85,10 +86,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         {
             var graphics = args.Graphics;
             
-            foreach (var color in _colorResource.GetResources())
-                _brushResource.SetResource(color.Key, graphics.CreateSolidBrush(color.Value));
-            FontResource.CreateFonts(graphics);
-            
+            Util.CreateBrushes(graphics, _colorResource, _brushResource);
+            _fontResource.SetResource("Default", graphics.CreateFont("Segoe UI font", 14, bold: true));
             _brushResource["Theme"] = graphics.CreateSolidBrush(ThemeManager.ThemeColor);
         }
         
