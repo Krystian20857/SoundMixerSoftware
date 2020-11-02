@@ -44,6 +44,7 @@ Currently software has some annoying bug which will be fixed in future. About kn
 **More detailed information about each project can be found inside corresponding foler.**
 
 ## Screenshots
+![Sound Mixer Software Profiles](./github/images/software_home.png)
 ![Sound Mixer Software Profiles](./github/images/software_profiles.png)
 ![Sound Mixer Software Sliders](./github/images/software_sliders.png)
 ![Sound Mixer Software Buttons](./github/images/software_buttons.png)
