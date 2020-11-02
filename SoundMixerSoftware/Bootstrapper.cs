@@ -59,8 +59,7 @@ namespace SoundMixerSoftware
         {
             get
             {
-                var mainWindow = Application.Current.MainWindow;
-                if(mainWindow == null) return IntPtr.Zero;
+                if(!(IoC.Get<MainViewModel>().GetView() is Window mainWindow)) return IntPtr.Zero;
                 return new WindowInteropHelper(mainWindow).Handle;
             }
         } 
@@ -212,9 +211,9 @@ namespace SoundMixerSoftware
             }
             if(hwnd == IntPtr.Zero)
                 IoC.Get<IWindowManager>().ShowWindowAsync(mainWindow);
-            
-            User32.BringWindowToTop(MainWindowHandle);
-            User32.SetForegroundWindow(MainWindowHandle);
+
+            User32.BringWindowToTop(hwnd);
+            User32.SetForegroundWindow(hwnd);
         }
 
         #endregion

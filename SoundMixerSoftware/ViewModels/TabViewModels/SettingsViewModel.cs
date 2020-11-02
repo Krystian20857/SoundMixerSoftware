@@ -120,6 +120,7 @@ namespace SoundMixerSoftware.ViewModels
                     ConfigHandler.SaveConfig();
                 Logger.Trace($"Changed enable-autoupdate setting to: {value}");
                 _autoUpdate = value;
+                
             }
         }
 
@@ -134,6 +135,7 @@ namespace SoundMixerSoftware.ViewModels
                     _autoRunHandle.RemoveStartup();
                 Logger.Trace($"Changed auto-run setting to: {value}");
                 _autoRun = value;
+                OnPropertyChanged(nameof(AutoRun));
             }
         }
 
@@ -147,6 +149,7 @@ namespace SoundMixerSoftware.ViewModels
                     ConfigHandler.SaveConfig();
                 Logger.Trace($"Changed enable-notification setting to: {value}");
                 _enableNotify = value;
+                OnPropertyChanged(nameof(EnableNotify));
             }
         }
 
@@ -160,6 +163,7 @@ namespace SoundMixerSoftware.ViewModels
                     ConfigHandler.SaveConfig();
                 Logger.Trace($"Changed overlay-enable setting to {value}");
                 _enableOverlay = value;
+                OnPropertyChanged(nameof(EnableOverlay));
             }
         }
 
@@ -176,6 +180,7 @@ namespace SoundMixerSoftware.ViewModels
                         OverlayHandler.SetFadeTime(value);
                     });
                 _overlayFadeTime = value;
+                OnPropertyChanged(nameof(OverlayFadeTime));
             }
         }
         
@@ -188,6 +193,7 @@ namespace SoundMixerSoftware.ViewModels
                 if(!LockConfig)
                     _debounceDispatcher.Debounce(300,param => ConfigHandler.SaveConfig());
                 _notificationShowTime = value;
+                OnPropertyChanged(nameof(NotificationShowTime));
             }
         }
 
@@ -200,6 +206,7 @@ namespace SoundMixerSoftware.ViewModels
                 if(!LockConfig)
                     _debounceDispatcher.Debounce(300, param => ConfigHandler.SaveConfig());
                 _hideOnStartup = value;
+                OnPropertyChanged(nameof(HideOnStartup));
             }
         }
 
@@ -221,6 +228,7 @@ namespace SoundMixerSoftware.ViewModels
                     ThemeManager.UseImmersiveTheme = false;
                     ThemeManager.SetTheme(value.ThemeName);
                 }
+                OnPropertyChanged(nameof(SelectedTheme));
             }
         }
 
