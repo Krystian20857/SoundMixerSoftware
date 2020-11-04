@@ -227,8 +227,6 @@ namespace SoundMixerSoftware
         {
             AppDomain.CurrentDomain.UnhandledException += (sender, args) => NotifyUnhandledException(args.ExceptionObject);
 
-            Application.Current.DispatcherUnhandledException += (sender, args) => NotifyUnhandledException(args.Exception);
-
             _container.OnException += (sender, args) => NotifyUnhandledException(args.ExceptionObject);
         }
 
