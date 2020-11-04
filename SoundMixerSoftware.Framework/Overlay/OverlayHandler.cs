@@ -18,9 +18,9 @@ namespace SoundMixerSoftware.Framework.Overlay
         
         static OverlayHandler()
         {
-            Switcher.SetValue("mute-overlay", new MuteWindow(FadeTime));
+            Switcher.SetValue("mute-overlay", new MuteOverlay(FadeTime));
             Switcher.SetValue("volume-overlay", new VolumeOverlay(FadeTime));
-            Switcher.SetValue("center-text-overlay", new CenterTextWindow(FadeTime));
+            Switcher.SetValue("center-text-overlay", new CenterTextOverlay(FadeTime));
             Switcher.SetValue("profile-overlay", new ProfileOverlay(FadeTime));
         }
         
@@ -35,12 +35,12 @@ namespace SoundMixerSoftware.Framework.Overlay
 
         public static void ShowMute(bool mute)
         {
-            Switcher.HandleOverlay<MuteWindow>((key, window) => window.IsMuted = mute);
+            Switcher.HandleOverlay<MuteOverlay>((key, window) => window.IsMuted = mute);
         }
 
         public static void ShowText(string text, int showTime = -1, float fontSize = -1.0F)
         {
-            Switcher.HandleOverlay<CenterTextWindow>((key, window) =>
+            Switcher.HandleOverlay<CenterTextOverlay>((key, window) =>
             {
                 window.Text = text;
                 if(showTime != -1)

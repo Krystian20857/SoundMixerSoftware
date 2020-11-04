@@ -34,6 +34,9 @@
       <OutputPath>bin\BuildInstaller\</OutputPath>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Include="..\SharedAssemblyInfo.cs">
+        <Link>Properties\SharedAssemblyInfo.cs</Link>
+      </Compile>
       <Compile Include="Cache\ICache.cs" />
       <Compile Include="Cache\IconCache.cs" />
       <Compile Include="Cache\NativeCache.cs" />

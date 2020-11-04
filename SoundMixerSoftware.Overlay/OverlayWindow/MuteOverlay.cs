@@ -6,7 +6,7 @@ using SoundMixerSoftware.Overlay.Utils;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
-    public class MuteWindow : AbstractOverlayWindow
+    public class MuteOverlay : AbstractOverlayWindow
     {
         #region Consts
 
@@ -34,7 +34,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         #region Constructor
         
-        public MuteWindow(int fadeTime) : base(WINDOW_WIDTH, WINDOW_HEIGHT, 25, 25, fadeTime)
+        public MuteOverlay(int fadeTime) : base(WINDOW_WIDTH, WINDOW_HEIGHT, 25, 25, fadeTime)
         {
             
         }

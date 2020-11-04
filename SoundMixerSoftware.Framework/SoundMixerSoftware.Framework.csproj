@@ -38,6 +38,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Annotations.cs" />
     <Compile Include="Audio\IVirtualSession.cs" />
     <Compile Include="Audio\IVirtualSessionCreator.cs" />

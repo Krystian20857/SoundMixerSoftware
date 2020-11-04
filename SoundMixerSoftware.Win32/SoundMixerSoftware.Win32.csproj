@@ -35,6 +35,9 @@
       <OutputPath>bin\BuildInstaller\</OutputPath>
     </PropertyGroup>
     <ItemGroup>
+        <Compile Include="..\SharedAssemblyInfo.cs">
+            <Link>Properties\SharedAssemblyInfo.cs</Link>
+        </Compile>
       <Compile Include="Interop\Constant\DBTDEVTYPE.cs" />
       <Compile Include="Interop\Constant\DBTEVENT.cs" />
       <Compile Include="Interop\Constant\DEVICE_FLAGS.cs" />

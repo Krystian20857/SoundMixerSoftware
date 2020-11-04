@@ -6,7 +6,7 @@ using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
-    public class CenterTextWindow : AbstractOverlayWindow
+    public class CenterTextOverlay : AbstractOverlayWindow
     {
         #region Constant
 
@@ -32,7 +32,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
 
         #endregion
         
-        public CenterTextWindow(int showTime) : base(WindowWrapper.GetScreenWidth(), WindowWrapper.GetScreenHeight(), 0, 0, showTime)
+        public CenterTextOverlay(int showTime) : base(WindowWrapper.GetScreenWidth(), WindowWrapper.GetScreenHeight(), 0, 0, showTime)
         {
             
         }

@@ -60,10 +60,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="OverlayWindow\AbstractOverlayWindow.cs" />
-    <Compile Include="OverlayWindow\CenterTextWindow.cs" />
+    <Compile Include="OverlayWindow\CenterTextOverlay.cs" />
     <Compile Include="OverlayWindow\IOverlay.cs" />
-    <Compile Include="OverlayWindow\MuteWindow.cs" />
+    <Compile Include="OverlayWindow\MuteOverlay.cs" />
     <Compile Include="OverlayWindow\ProfileOverlay.cs" />
     <Compile Include="OverlayWindow\VolumeOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

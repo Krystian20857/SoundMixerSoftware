@@ -61,7 +61,7 @@
                             <Binding.ValidationRules>
                                 <validation:MaxIntegerValidation>
                                     <validation:MaxIntegerValidation.MaxValueWrapper>
-                                        <validation:MaxIntegerValidationWrapper MaxValue="{Binding Data.MaxSliderOffset, Source={StaticResource BindingProxy}}" />
+                                        <validation:MaxIntegerValidationWrapper MaxValue="{Binding Data.MaxButtonOffset, Source={StaticResource BindingProxy}}" />
                                     </validation:MaxIntegerValidation.MaxValueWrapper>
                                 </validation:MaxIntegerValidation>
                             </Binding.ValidationRules>
