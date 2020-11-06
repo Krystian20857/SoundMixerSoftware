@@ -27,22 +27,6 @@ Currently software has some annoying bug which will be fixed in future. About kn
 * Application theme can be synchronized with system theme.
 * Auto-Updater with github releases. Github API 🙏
 
-## Namespaces
-### SoundMixerSoftware.Win32
-  This Project/Assembly contains all interop components as: native methods, native structures, flags. Also Win32 project provides interop wrappers to make interop services easier to use. Most importand wrapper is USBLib which handles device-change and device-properties.
-### SoundMixerSoftware.Common
-  This Project/Assembly is responsible for higher-level things than Win32 project like: configuration files, profile system and threading. Also this Namespace contains a lot of utility methods.
-### SoundMixerSoftware.Extensibility
-  All plugin related things: loading, provides plugin interface, and many more.
-### SoundMixerSoftware.Overlay
-  Small Project for overlay managment. Contains AbstractOverlay which extends capabilities of ordinary overlay: fading, hiding.
-### SoundMixerSoftware.Helpers
-  Contains all most logic behind: devices, sliders, buttons, overlays, etc.
-### SoundMixerSoftware
-  Main Project/Assembly. Contains main bootstrapper and all UI related components.
-  
-**More detailed information about each project can be found inside corresponding foler.**
-
 ## Screenshots
 ![Sound Mixer Software Profiles](./github/images/software_home.png)
 ![Sound Mixer Software Profiles](./github/images/software_profiles.png)
