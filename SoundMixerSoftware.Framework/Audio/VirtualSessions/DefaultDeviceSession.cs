@@ -13,6 +13,7 @@ using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {
@@ -153,11 +154,11 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
                         {
                             case DeviceType.Playback:
                                 DisplayName = "Default Speaker";
-                                Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                Image = Images.SpeakerEmbed;
                                 break;
                             case DeviceType.Capture:
                                 DisplayName = "Default Microphone";
-                                Image = ExtractedIcons.MicIcon.ToImageSource();
+                                Image = Images.MicEmbed;
                                 break;
                         }
 
@@ -167,11 +168,11 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
                         {
                             case DeviceType.Playback:
                                 DisplayName = "Default Communication Speaker";
-                                Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                Image = Images.SpeakerEmbed;
                                 break;
                             case DeviceType.Capture:
                                 DisplayName = "Default Communication Microphone";
-                                Image = ExtractedIcons.MicIcon.ToImageSource();
+                                Image = Images.MicEmbed;
                                 break;
                         }
                         break;
@@ -180,11 +181,11 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
                         {
                             case DeviceType.Playback:
                                 DisplayName = "Default Console Speaker";
-                                Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                Image = Images.SpeakerEmbed;
                                 break;
                             case DeviceType.Capture:
                                 DisplayName = "Default Console Microphone";
-                                Image = ExtractedIcons.MicIcon.ToImageSource();
+                                Image = Images.MicEmbed;
                                 break;
                         }
                         break;

@@ -8,6 +8,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
@@ -56,7 +57,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         public string Key { get; } = KEY;
         public int Index { get; set; }
         public Guid UUID { get; set; }
-        public ImageSource Image { get; set; } = Resource.KeyboardIcon.ToImageSource();
+        public ImageSource Image { get; set; } = Images.Keyboard;
         
         #endregion
         

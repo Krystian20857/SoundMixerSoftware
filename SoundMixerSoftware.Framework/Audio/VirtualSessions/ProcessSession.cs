@@ -13,6 +13,7 @@ using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
@@ -145,7 +146,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
                     else
                     {
                         DisplayName = $"{RawName}(Not Active)";
-                        Image = ExtractedIcons.FailedIcon.ToImageSource();
+                        Image = Images.FailedEmbed;
                     }
                 }
                 finally

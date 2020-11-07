@@ -3,6 +3,7 @@ using GameOverlay.Windows;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Overlay.Utils;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
@@ -59,8 +60,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             var graphics = args.Graphics;
 
             Util.CreateBrushes(graphics, _colorResource, _brushResource);
-            _imageResource.SetResource("SpeakerMute", new Image(graphics, Resources.SpeakerMute.ToByteArray()));
-            _imageResource.SetResource("SpeakerUnMute", new Image(graphics, Resources.SpeakerUnMute.ToByteArray()));
+            _imageResource.SetResource("SpeakerMute", new Image(graphics, Images.SpeakerMute.ToByteArray()));
+            _imageResource.SetResource("SpeakerUnMute", new Image(graphics, Images.Speaker.ToByteArray()));
         }
     }
 }

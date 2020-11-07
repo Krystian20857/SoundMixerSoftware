@@ -9,6 +9,7 @@ using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
@@ -64,7 +65,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         public string Key { get; } = KEY; 
         public int Index { get; set; }
         public Guid UUID { get; set; }
-        public ImageSource Image { get; set; } = Resource.MuteIcon.ToImageSource();
+        public ImageSource Image { get; set; } = Images.Mute;
         
         #endregion
         

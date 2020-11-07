@@ -7,6 +7,7 @@ using SoundMixerSoftware.Common.Utils.EnumUtils;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Framework.Profile.Cycler;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
@@ -44,7 +45,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         public string Key { get; } = KEY;
         public int Index { get; set; }
         public Guid UUID { get; set; }
-        public ImageSource Image { get; set; } = Resource.ProfileImage.ToImageSource();
+        public ImageSource Image { get; set; } = Images.Profile;
         
         #endregion
         

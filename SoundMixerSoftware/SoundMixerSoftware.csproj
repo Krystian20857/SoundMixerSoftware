@@ -53,7 +53,7 @@
   </Target>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Resources/SpeakerIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources/Speaker.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AudioSwitcher.AudioApi, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
@@ -157,11 +157,6 @@
     <Compile Include="Models\ThemeManager.cs" />
     <Compile Include="Models\ThemeModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Resource.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
     <Compile Include="StarterHelper.cs" />
     <Compile Include="Utils\BindingProxy.cs" />
     <Compile Include="Utils\EnumDisplayHelper.cs" />
@@ -264,19 +259,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -284,7 +266,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ImageDictionary.xaml" />
+    <Page Include="ImageResource.xaml" />
     <Page Include="Style\CategoryStyle.xaml" />
     <Page Include="Style\DefaultStyle.xaml" />
     <Page Include="TaskbarResource.xaml" />
@@ -328,6 +310,10 @@
       <Project>{38345ef4-a142-4dd5-bdf4-4e0bf74600df}</Project>
       <Name>SoundMixerSoftware.Overlay</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SoundMixerSoftware.Resource\SoundMixerSoftware.Resource.csproj">
+      <Project>{a9b42632-a295-4062-93ce-a98a0c63ef25}</Project>
+      <Name>SoundMixerSoftware.Resource</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj">
       <Project>{22448347-5dde-4901-9e0f-4d9f84038729}</Project>
       <Name>SoundMixerSoftware.Updater</Name>
@@ -338,22 +324,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\SpeakerIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ExitImage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ListImage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\RestartImage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ProfileImage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\CogIcon.png" />
+    <Resource Include="Resources\Speaker.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.0.0-ci2156\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.0.0-ci2156\build\MaterialDesignThemes.targets')" />

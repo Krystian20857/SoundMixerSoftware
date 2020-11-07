@@ -33,8 +33,6 @@ namespace SoundMixerSoftware.Common.Extension
         public static byte[] ToByteArray(this Icon icon)
         {
             var bitmap = icon.ToBitmap();
-            if (bitmap == null)
-                return new byte[0];
             using (var stream = new MemoryStream())
             {
                 bitmap.Save(stream, ImageFormat.Png);

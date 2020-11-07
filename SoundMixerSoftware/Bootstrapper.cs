@@ -15,6 +15,7 @@ using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.LocalSystem;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Views;
@@ -99,6 +100,8 @@ namespace SoundMixerSoftware
             
             _starter.StartApplication += (sender, args) =>
             {
+                Images.Initialize(LocalContainer.ImagesPath);
+                PluginLoader.LoadAllPlugins();
                 Updater = new Updater.Updater(Assembly.GetExecutingAssembly().GetName().Version, RELEASES_URL, LocalContainer.InstallerDownloadCache, starter =>
                 {
                     _starter.Dispose();
@@ -122,7 +125,6 @@ namespace SoundMixerSoftware
             _starter.ExitApplication += (sender, args) => Application.Shutdown(0x04);
 
             LocalManager.ResolveLocal();
-            PluginLoader.LoadAllPlugins();
             Initialize();
         }
         

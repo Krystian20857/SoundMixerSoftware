@@ -17,7 +17,6 @@ namespace SoundMixerSoftware.Win32.Wrapper
             try
             {
                 return Shell32.ExtractIcon(IntPtr.Zero, file, index);
-
             }
             catch
             {

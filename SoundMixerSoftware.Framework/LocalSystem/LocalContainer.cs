@@ -74,5 +74,11 @@ namespace SoundMixerSoftware.Framework.LocalSystem
         /// </summary>
         [Path("installercache", true, FileAttributes.Directory)]
         public static readonly string InstallerDownloadCache = Path.Combine(Cache, "installer");
+        /// <summary>
+        /// Images path.
+        /// key: imagespath.
+        /// </summary>
+        [Path("imagespath", true, FileAttributes.Directory)]
+        public static readonly string ImagesPath = Path.Combine(ExecPath, "Images");
     }
 }

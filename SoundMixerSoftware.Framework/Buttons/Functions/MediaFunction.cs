@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
+using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
@@ -42,7 +43,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         }
         public string Key { get; } = KEY;
         public Guid UUID { get; set; }
-        public ImageSource Image { get; set; } = Resource.MediaIcon.ToImageSource();
+        public ImageSource Image { get; set; } = Images.Media;
         public int Index { get; set; }
 
         #endregion

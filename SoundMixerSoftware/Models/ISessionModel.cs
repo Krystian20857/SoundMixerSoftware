@@ -12,6 +12,7 @@ using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Audio.VirtualSessions;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Models
 {
@@ -109,11 +110,11 @@ namespace SoundMixerSoftware.Models
                             {
                                 case Role.Multimedia:
                                     Name = $"Default Playback Device({device.FullName})";
-                                    Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                    Image = Images.FailedEmbed;
                                     break;
                                 case Role.Communications:
                                     Name = $"Default Communication Playback Device({device.FullName})";
-                                    Image = ExtractedIcons.SpeakerIcon.ToImageSource();
+                                    Image = Images.FailedEmbed;
                                     break;
                             }
 
@@ -123,11 +124,11 @@ namespace SoundMixerSoftware.Models
                             {
                                 case Role.Multimedia:
                                     Name = $"Default Capture Device({device.FullName})";
-                                    Image = ExtractedIcons.MicIcon.ToImageSource();
+                                    Image = Images.FailedEmbed;
                                     break;
                                 case Role.Communications:
                                     Name = $"Default Communication Device({device.FullName})";
-                                    Image = ExtractedIcons.MicIcon.ToImageSource();
+                                    Image = Images.FailedEmbed;
                                     break;
                             }
 
@@ -244,7 +245,7 @@ namespace SoundMixerSoftware.Models
         public string ID { get; set; } = "B0BA17A8-0CC4-458E-90F4-385794DE41FC";
         public Guid Guid { get; set; } = Guid.Parse("B0BA17A8-0CC4-458E-90F4-385794DE41FC");
         public string Name { get; set; } = "Foreground Session";
-        public ImageSource Image { get; set; } = Resource.CogIcon.ToImageSource();
+        public ImageSource Image { get; set; } = Images.Cog;
         public IVirtualSession CreateSession(int sliderIndex)
         {
             return new ForegroundSession(sliderIndex, Guid.NewGuid());

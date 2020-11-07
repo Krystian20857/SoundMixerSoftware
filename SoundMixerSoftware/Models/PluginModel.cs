@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Extensibility;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Models
 {
@@ -27,7 +28,7 @@ namespace SoundMixerSoftware.Models
             return new PluginModel
             {
                 Name = plugin.Name,
-                Image = plugin.Image ?? Resource.RestartImage.ToImageSource(),
+                Image = plugin.Image ?? Images.File,
                 Author = plugin.Author,
                 Version = plugin.Version,
                 PluginId = plugin.PluginId,

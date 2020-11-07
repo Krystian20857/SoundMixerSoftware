@@ -12,6 +12,7 @@ using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 
@@ -202,7 +203,7 @@ namespace SoundMixerSoftware.ViewModels
                 };
                 Execute.OnUIThread(() =>
                 {
-                    sessionModel.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
+                    sessionModel.Image = process.GetMainWindowIcon()?.ToImageSource() ?? Images.FailedEmbed;
                     Sessions.Add(sessionModel);
                 });
             }
@@ -230,7 +231,7 @@ namespace SoundMixerSoftware.ViewModels
                 };
                 Execute.OnUIThread(() =>
                 {
-                    sessionModel.Image = (process.GetMainWindowIcon() ?? ExtractedIcons.FailedIcon).ToImageSource();
+                    sessionModel.Image = process.GetMainWindowIcon()?.ToImageSource() ?? Images.FailedEmbed;
                     ProcessSessions.Add(sessionModel);
                 });
             }

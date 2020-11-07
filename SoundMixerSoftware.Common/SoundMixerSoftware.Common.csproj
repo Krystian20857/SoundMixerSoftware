@@ -57,6 +57,7 @@
       <Compile Include="Extension\CollectionExtension.cs" />
       <Compile Include="Extension\DictionaryExtension.cs" />
       <Compile Include="Extension\IconExtension.cs" />
+      <Compile Include="Extension\ImageSourceExtension.cs" />
       <Compile Include="Extension\ListExtension.cs" />
       <Compile Include="Extension\ProcessExtension.cs" />
       <Compile Include="Extension\StringExtension.cs" />

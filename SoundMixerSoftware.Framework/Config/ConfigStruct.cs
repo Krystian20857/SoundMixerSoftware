@@ -40,7 +40,6 @@ namespace SoundMixerSoftware.Framework.Config
             {
                 ProfilesOrder = new List<Guid>(),
                 SelectedProfile = Guid.Empty,
-                SelectedTab = Guid.Empty,
                 HideOnStartup = true
             },
             Notification = new NotificationSettings()
@@ -198,7 +197,6 @@ namespace SoundMixerSoftware.Framework.Config
         public Guid SelectedProfile { get; set; }
         public List<Guid> ProfilesOrder { get; set; }
         public string ThemeName { get; set; }
-        public Guid SelectedTab { get; set; }
         [YamlMember(Alias = nameof(HideOnStartup))]
         public bool? HideOnStartupNullable { get; set; }
 

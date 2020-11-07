@@ -4,6 +4,7 @@ using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {
@@ -49,7 +50,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
         public string Key { get; } = KEY;
         public int Index { get; set; }
         public Guid UUID { get; set; }
-        public ImageSource Image { get; set; } = Resource.VolumeIcon.ToImageSource();
+        public ImageSource Image { get; set; } = Images.Speaker;
         
         #endregion
         

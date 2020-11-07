@@ -3,6 +3,7 @@ using GameOverlay.Windows;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Overlay.Utils;
+using SoundMixerSoftware.Resource.Image;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {
@@ -91,7 +92,7 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             var graphics = args.Graphics;
             Util.CreateBrushes(graphics, _colorResource, _brushResource);
             _fontResource.SetResource("Default", graphics.CreateFont("Segoe UI font", 14, bold: true));
-            _imageResource.SetResource("ProfileImage", new Image(graphics, Resources.ProfileImage.ToByteArray()));
+            _imageResource.SetResource("ProfileImage", new Image(graphics, Images.Profile.ToByteArray()));
         }
         
         #endregion

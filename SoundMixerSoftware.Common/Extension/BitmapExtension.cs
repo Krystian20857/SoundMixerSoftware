@@ -27,6 +27,16 @@ namespace SoundMixerSoftware.Common.Extension
                 throw new Win32Exception();
             return result;
         }
+
+        /// <summary>
+        /// Convert Bitmap to Icon.
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static Icon ToIcon(this Bitmap bitmap)
+        {
+            return Icon.FromHandle(bitmap.GetHicon());
+        }
         
         /// <summary>
         /// Convert bitmap to byte array.
@@ -41,6 +51,6 @@ namespace SoundMixerSoftware.Common.Extension
                 return stream.ToArray();
             }
         }
-        
+
     }
 }

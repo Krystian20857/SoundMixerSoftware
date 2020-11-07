@@ -12,6 +12,7 @@ using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Win32.Interop.Method;
 using SoundMixerSoftware.Win32.Threading;
 using SoundMixerSoftware.Win32.Wrapper;
@@ -156,12 +157,12 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
                 {
                     if (State == SessionState.EXITED)
                     {
-                        Image = ExtractedIcons.FailedIcon.ToImageSource();
+                        Image = Images.FailedEmbed;
                         DisplayName = "Focused window has not audio session.";
                     }
                     else
                     {
-                        Image = (WindowWrapper.GetWindowIcon(WindowHandle) ?? ExtractedIcons.FailedIcon).ToImageSource();
+                        Image = WindowWrapper.GetWindowIcon(WindowHandle)?.ToImageSource() ?? Images.FailedEmbed;
                         DisplayName = $"Window: {WindowWrapper.GetWindowTitle(WindowHandle)}";
                     }
                 }
