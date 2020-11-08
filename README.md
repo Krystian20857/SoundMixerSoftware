@@ -1,15 +1,10 @@
 # Sound Mixer Software
-Sound Mixer Software is sub-repo of [Sound Mixer](https://github.com/Krystian20857/SoundMixer) project. Purpose of this software is detect connected sound mixer devices and handle incoming data.
-Main premise of this piece of code is translate slider move to specified audio session volume. Over time funcionality of this software has increased. Full list of features can be found below.
-Currently software has some annoying bug which will be fixed in future. About knows issues and bug later.
+**Sound Mixer Software** is sub-repo of [Sound Mixer](https://github.com/Krystian20857/SoundMixer) project. Purpose of this software is detect connected sound mixer devices and handle incoming data.
+Main premise of this piece of code is translate slider move to specified audio session volume.
 
-## Content
-* [Description](#sound-mixer-software)
-* [Features](#features)
-* [Namespaces](#namespaces)
-* [Known Issues](#known-issues)
-* [Screenshots](#screenshots)
-* [Icons](#Icons)
+<p align="center">
+  <img width="600" src="github/images/showcase.gif">
+</p>
 
 ## Features
 * Full volume control of application, devices, and default devices.
@@ -27,14 +22,13 @@ Currently software has some annoying bug which will be fixed in future. About kn
 * Application theme can be synchronized with system theme.
 * Auto-Updater with github releases. Github API 🙏
 
-## Screenshots
-![Sound Mixer Software Profiles](./github/images/software_home.png)
-![Sound Mixer Software Profiles](./github/images/software_profiles.png)
-![Sound Mixer Software Sliders](./github/images/software_sliders.png)
-![Sound Mixer Software Buttons](./github/images/software_buttons.png)
-![Sound Mixer Software Devices](./github/images/software_devices.png)
-![Sound Mixer Software Devices](./github/images/software_settings.png)
-![Sound Mixer Software Devices](./github/images/software_addsession.png)
+## Build
+### Requirements:
+  * .NET Framework 4.7.2
+```cmd
+dotnet cake build/build.cake  <-- build executables
+dotnet cake build/pack.cake   <-- build squirrel installer
+```
 
 ## Icons
 Most of icons included in this project has been downloaded from [icons8.com](https://icons8.com)
