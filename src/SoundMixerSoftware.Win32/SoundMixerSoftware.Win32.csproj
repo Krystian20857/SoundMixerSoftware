@@ -17,7 +17,7 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugType>none</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>../output/release</OutputPath>
+        <OutputPath>../../output/release</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -29,12 +29,12 @@
       <DefineConstants>DEBUG;TRACE</DefineConstants>
       <ErrorReport>prompt</ErrorReport>
       <WarningLevel>4</WarningLevel>
-      <OutputPath>../output/debug</OutputPath>
+      <OutputPath>../../output/debug</OutputPath>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="..\SharedAssemblyInfo.cs">
-            <Link>Properties\SharedAssemblyInfo.cs</Link>
-        </Compile>
+      <Compile Include="..\..\SharedAssemblyInfo.cs">
+        <Link>Properties\SharedAssemblyInfo.cs</Link>
+      </Compile>
       <Compile Include="Interop\Constant\DBTDEVTYPE.cs" />
       <Compile Include="Interop\Constant\DBTEVENT.cs" />
       <Compile Include="Interop\Constant\DEVICE_FLAGS.cs" />

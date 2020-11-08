@@ -3,20 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Framework", "SoundMixerSoftware.Framework\SoundMixerSoftware.Framework.csproj", "{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Common", "SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj", "{2040554A-678B-4E8E-A915-DD4710FB7105}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Win32", "SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj", "{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware", "SoundMixerSoftware\SoundMixerSoftware.csproj", "{CC96B767-3C3B-4F25-B878-59FA9F0B9876}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Overlay", "SoundMixerSoftware.Overlay\SoundMixerSoftware.Overlay.csproj", "{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Extensibility", "SoundMixerSoftware.Extensibility\SoundMixerSoftware.Extensibility.csproj", "{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Updater", "SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj", "{22448347-5DDE-4901-9E0F-4D9F84038729}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80C78C1F-781D-4B7A-8902-DAC564221860}"
 ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
@@ -26,14 +12,30 @@ ProjectSection(SolutionItems) = preProject
 	SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Resource", "SoundMixerSoftware.Resource\SoundMixerSoftware.Resource.csproj", "{A9B42632-A295-4062-93CE-A98A0C63EF25}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{D7C2F393-4A27-4320-A084-3D88EB5F57C0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D7C2F393-4A27-4320-A084-3D88EB5F57C0}"
 ProjectSection(SolutionItems) = preProject
 	build\build.cake = build\build.cake
 	build\pack.cake = build\pack.cake
 	build\SoundMixerSoftware.nuspec = build\SoundMixerSoftware.nuspec
 EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AA4E8589-7ACB-4CBB-9780-D1C921B2796C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Updater", "src\SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj", "{22448347-5DDE-4901-9E0F-4D9F84038729}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Resource", "src\SoundMixerSoftware.Resource\SoundMixerSoftware.Resource.csproj", "{A9B42632-A295-4062-93CE-A98A0C63EF25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Overlay", "src\SoundMixerSoftware.Overlay\SoundMixerSoftware.Overlay.csproj", "{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Framework", "src\SoundMixerSoftware.Framework\SoundMixerSoftware.Framework.csproj", "{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Extensibility", "src\SoundMixerSoftware.Extensibility\SoundMixerSoftware.Extensibility.csproj", "{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Common", "src\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj", "{2040554A-678B-4E8E-A915-DD4710FB7105}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware", "src\SoundMixerSoftware\SoundMixerSoftware.csproj", "{CC96B767-3C3B-4F25-B878-59FA9F0B9876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Win32", "src\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj", "{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,30 +43,6 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2040554A-678B-4E8E-A915-DD4710FB7105}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2040554A-678B-4E8E-A915-DD4710FB7105}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2040554A-678B-4E8E-A915-DD4710FB7105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2040554A-678B-4E8E-A915-DD4710FB7105}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22448347-5DDE-4901-9E0F-4D9F84038729}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22448347-5DDE-4901-9E0F-4D9F84038729}.Release|Any CPU.Build.0 = Release|Any CPU
 		{22448347-5DDE-4901-9E0F-4D9F84038729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -73,11 +51,45 @@ Global
 		{A9B42632-A295-4062-93CE-A98A0C63EF25}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A9B42632-A295-4062-93CE-A98A0C63EF25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A9B42632-A295-4062-93CE-A98A0C63EF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2040554A-678B-4E8E-A915-DD4710FB7105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2040554A-678B-4E8E-A915-DD4710FB7105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2040554A-678B-4E8E-A915-DD4710FB7105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2040554A-678B-4E8E-A915-DD4710FB7105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39AC386E-E4CB-4FA6-BC9D-D6E82C00F420}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{22448347-5DDE-4901-9E0F-4D9F84038729} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{A9B42632-A295-4062-93CE-A98A0C63EF25} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{38345EF4-A142-4DD5-BDF4-4E0BF74600DF} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{3EF28FF9-C3A7-4ABF-B2D0-84B9E6D187B1} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{0E0ADFA9-7DFF-405A-8ECB-34A22809BA28} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{2040554A-678B-4E8E-A915-DD4710FB7105} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{CC96B767-3C3B-4F25-B878-59FA9F0B9876} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
+		{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242} = {AA4E8589-7ACB-4CBB-9780-D1C921B2796C}
 	EndGlobalSection
 EndGlobal
