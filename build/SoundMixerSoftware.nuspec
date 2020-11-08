@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>SoundMixerSoftware</id>
+        <title>SoundMixerSoftware</title>
+        <version>$version$</version>
+        <authors>I Love u too</authors>
+        <projectUrl>https://github.com/Krystian20857/SoundMixerSoftware</projectUrl>
+        <description>SoundMixerSoftware</description>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <dependencies>
+            <group targetFramework=".NETFramework4.7.2" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="**" target="lib\net472" exclude="**\*.pdb;"/>
+    </files>
+</package>

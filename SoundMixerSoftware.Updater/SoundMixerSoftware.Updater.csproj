@@ -17,16 +17,16 @@
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
+        <OutputPath>../output/debug</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
+        <DebugType>none</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
+        <OutputPath>../output/release</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -36,14 +36,6 @@
             <Link>Properties\SharedAssemblyInfo.cs</Link>
         </Compile>
         <Reference Include="Microsoft.CSharp" />
-        <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-          <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
-        <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-          <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
         <Reference Include="PresentationFramework" />
         <Reference Include="System" />
         <Reference Include="System.Configuration" />
@@ -67,13 +59,18 @@
         <Compile Include="Updater.cs" />
     </ItemGroup>
     <ItemGroup>
-      <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
       <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">
         <Project>{2040554a-678b-4e8e-a915-dd4710fb7105}</Project>
         <Name>SoundMixerSoftware.Common</Name>
       </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="DeltaCompressionDotNet" Version="1.1.0" />
+      <PackageReference Include="Mono.Cecil" Version="0.11.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="NLog" Version="4.7.5" />
+      <PackageReference Include="SharpCompress" Version="0.17.1" />
+      <PackageReference Include="squirrel.windows" Version="2.0.1" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

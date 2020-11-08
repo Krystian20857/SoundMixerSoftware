@@ -15,9 +15,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>../output/release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,14 +29,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>../output/debug</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BuildInstaller|AnyCPU' ">
-    <OutputPath>bin\BuildInstaller\</OutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
@@ -93,36 +87,8 @@
     <Compile Include="Utils\SessionUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AudioSwitcher.AudioApi, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
-      <HintPath>..\packages\AudioSwitcher.AudioApi.4.0.0-alpha5\lib\net45\AudioSwitcher.AudioApi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="AudioSwitcher.AudioApi.CoreAudio, Version=4.0.0.308, Culture=neutral, PublicKeyToken=fda5729e2db3a64f">
-      <HintPath>..\packages\AudioSwitcher.AudioApi.CoreAudio.4.0.0-alpha5\lib\net45\AudioSwitcher.AudioApi.CoreAudio.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GregsStack.InputSimulatorStandard, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GregsStack.InputSimulatorStandard.1.2.0-beta0003\lib\netstandard2.0\GregsStack.InputSimulatorStandard.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MaterialDesignColors, Version=1.2.5.1465, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\MaterialDesignColors.1.2.5\lib\net45\MaterialDesignColors.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MaterialDesignThemes.Wpf, Version=3.1.2.1465, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\MaterialDesignThemes.3.1.2\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="mscorlib" />
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Notifications.Wpf, Version=0.1.1.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Notifications.Wpf.Updated.0.1.1\lib\net461\Notifications.Wpf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -131,26 +97,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e">
-      <HintPath>..\packages\YamlDotNet.8.1.1\lib\net45\YamlDotNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SoundMixerSoftware.Common\SoundMixerSoftware.Common.csproj">
@@ -177,12 +131,21 @@
   <ItemGroup>
     <Content Include="NLog.xsd" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AudioSwitcher.AudioApi" Version="4.0.0-alpha5" />
+    <PackageReference Include="AudioSwitcher.AudioApi.CoreAudio" Version="4.0.0-alpha5" />
+    <PackageReference Include="DeltaCompressionDotNet" Version="1.1.0" />
+    <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.2.0-beta0003" />
+    <PackageReference Include="MaterialDesignColors" Version="1.2.5" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.1.2" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.2" />
+    <PackageReference Include="NLog" Version="4.7.5" />
+    <PackageReference Include="Notifications.Wpf.Updated" Version="0.1.1" />
+    <PackageReference Include="SharpCompress" Version="0.17.1" />
+    <PackageReference Include="squirrel.windows" Version="2.0.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.3" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageReference Include="YamlDotNet" Version="8.1.1" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MaterialDesignThemes.3.1.2\build\MaterialDesignThemes.targets'))" />
-  </Target>
 </Project>
