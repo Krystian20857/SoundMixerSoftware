@@ -126,7 +126,7 @@
       <PackageReference Include="Microsoft.Extensions.Primitives" Version="5.0.0-preview.3.20215.2" />
       <PackageReference Include="Mono.Cecil" Version="0.11.2" />
       <PackageReference Include="NLog" Version="4.7.5" />
-      <PackageReference Include="SharpCompress" Version="0.17.1" />
+      <PackageReference Include="SharpCompress" Version="0.21.0" />
       <PackageReference Include="squirrel.windows" Version="2.0.1" />
       <PackageReference Include="System.Buffers" Version="4.4.0" />
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0-preview.3.20214.6" />
