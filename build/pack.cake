@@ -9,7 +9,7 @@ var packageFolder = "../output/package";
 var squirrelFolder = $"{packageFolder}/release";
 var version = GetVersionNumber($"{releaseFolder}/SoundMixerSoftware.exe");
 var packFile = $"{packageFolder}/SoundMixerSoftware.{version}.nupkg";
-var iconPath = $"../SoundMixerSoftware/Resources/App.ico";
+var iconPath = $"../src/SoundMixerSoftware/Resources/App.ico";
 
 var clean = Argument("target", "Clean");
 var nugetTarget = Argument("target", "BuildNuget");
