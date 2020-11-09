@@ -1,6 +1,6 @@
 ﻿using System;
 using GameOverlay.Drawing;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Wrapper;
 
 namespace SoundMixerSoftware.Overlay.Resource
 {

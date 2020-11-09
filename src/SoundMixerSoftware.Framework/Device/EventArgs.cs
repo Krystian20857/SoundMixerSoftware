@@ -1,5 +1,5 @@
 ﻿using System;
-using SoundMixerSoftware.Win32.USBLib;
+using SoundMixerSoftware.Interop.USBLib;
 
 namespace SoundMixerSoftware.Framework.Device
 {

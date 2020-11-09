@@ -1,8 +1,8 @@
 ﻿using GameOverlay.Drawing;
 using GameOverlay.Windows;
+using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Overlay.Resource;
 using SoundMixerSoftware.Overlay.Utils;
-using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow
 {

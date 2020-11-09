@@ -15,8 +15,8 @@ using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Audio;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Resource.Image;
-using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {

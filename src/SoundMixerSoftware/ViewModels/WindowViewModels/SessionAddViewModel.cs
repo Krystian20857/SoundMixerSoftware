@@ -11,9 +11,9 @@ using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Audio;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Resource.Image;
-using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels

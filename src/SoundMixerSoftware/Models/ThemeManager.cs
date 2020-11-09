@@ -3,7 +3,7 @@ using System.Windows.Media;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Utils;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Wrapper;
 
 namespace SoundMixerSoftware.Models
 {

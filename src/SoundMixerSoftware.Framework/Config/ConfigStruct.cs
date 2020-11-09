@@ -4,8 +4,8 @@ using System.IO.Ports;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Interop.USBLib;
 using SoundMixerSoftware.Updater;
-using SoundMixerSoftware.Win32.USBLib;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Framework.Config

@@ -16,11 +16,11 @@ using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.LocalSystem;
 using SoundMixerSoftware.Framework.NotifyWrapper;
 using SoundMixerSoftware.Framework.Overlay;
+using SoundMixerSoftware.Interop.Method;
+using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Updater;
 using SoundMixerSoftware.Utils;
-using SoundMixerSoftware.Win32.Interop.Method;
-using SoundMixerSoftware.Win32.Wrapper;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels

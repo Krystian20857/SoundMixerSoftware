@@ -7,7 +7,7 @@ using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Framework.SliderConverter;
-using SoundMixerSoftware.Win32.USBLib;
+using SoundMixerSoftware.Interop.USBLib;
 
 namespace SoundMixerSoftware.Framework.Device
 {

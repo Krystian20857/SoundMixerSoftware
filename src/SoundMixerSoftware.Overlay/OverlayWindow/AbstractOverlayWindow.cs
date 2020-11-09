@@ -2,7 +2,7 @@
 using System.Threading;
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Wrapper;
 using Timer = System.Timers.Timer;
 
 namespace SoundMixerSoftware.Overlay.OverlayWindow

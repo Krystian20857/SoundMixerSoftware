@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>SoundMixerSoftware.Interop</RootNamespace>
+        <AssemblyName>SoundMixerSoftware.Interop</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>../../output/release</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+      <DebugSymbols>true</DebugSymbols>
+      <DebugType>full</DebugType>
+      <Optimize>false</Optimize>
+      <DefineConstants>DEBUG;TRACE</DefineConstants>
+      <ErrorReport>prompt</ErrorReport>
+      <WarningLevel>4</WarningLevel>
+      <OutputPath>../../output/debug</OutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Include="..\..\SharedAssemblyInfo.cs">
+        <Link>Properties\SharedAssemblyInfo.cs</Link>
+      </Compile>
+      <Compile Include="Interop\Constant\DBTDEVTYPE.cs" />
+      <Compile Include="Interop\Constant\DBTEVENT.cs" />
+      <Compile Include="Interop\Constant\DEVICE_FLAGS.cs" />
+      <Compile Include="Interop\Constant\FolderId.cs" />
+      <Compile Include="Interop\Constant\GCL.cs" />
+      <Compile Include="Interop\Constant\GUID_DEVINTERFACE.cs" />
+      <Compile Include="Interop\Constant\ICON.cs" />
+      <Compile Include="Interop\Constant\Kernel32Const.cs" />
+      <Compile Include="Interop\Constant\KF.cs" />
+      <Compile Include="Interop\Constant\LWA.cs" />
+      <Compile Include="Interop\Constant\PropertyKeys.cs" />
+      <Compile Include="Interop\Constant\SW.cs" />
+      <Compile Include="Interop\Constant\WIN_EVENT.cs" />
+      <Compile Include="Interop\Constant\WM.cs" />
+      <Compile Include="Interop\Enum\DICS_FLAG.cs" />
+      <Compile Include="Interop\Enum\DIGCF.cs" />
+      <Compile Include="Interop\Enum\DIREG.cs" />
+      <Compile Include="Interop\Enum\GPS.cs" />
+      <Compile Include="Interop\Enum\GWL.cs" />
+      <Compile Include="Interop\Enum\NTSTATUS.cs" />
+      <Compile Include="Interop\Enum\ProcessAccessFlags.cs" />
+      <Compile Include="Interop\Enum\PROCESSINFOCLASS.cs" />
+      <Compile Include="Interop\Enum\REGKEYSECURITY.cs" />
+      <Compile Include="Interop\Enum\SFGAO.cs" />
+      <Compile Include="Interop\Enum\SICHINT.cs" />
+      <Compile Include="Interop\Enum\SIGDN.cs" />
+      <Compile Include="Interop\Enum\SPDRP.cs" />
+      <Compile Include="Interop\Enum\SWP.cs" />
+      <Compile Include="Interop\Enum\SystemMetrics.cs" />
+      <Compile Include="Interop\Enum\SYSTEM_INFORMATION_CLASS.cs" />
+      <Compile Include="Interop\Enum\WinErrors.cs" />
+      <Compile Include="Interop\Interface\IApplicationResolver.cs" />
+      <Compile Include="Interop\Interface\IShellItem.cs" />
+      <Compile Include="Interop\Interface\IShellItem2.cs" />
+      <Compile Include="Interop\Method\Advapi.cs" />
+      <Compile Include="Interop\Method\Gdi32.cs" />
+      <Compile Include="Interop\Method\Kernel32.cs" />
+      <Compile Include="Interop\Method\Ntdll.cs" />
+      <Compile Include="Interop\Method\Psapi.cs" />
+      <Compile Include="Interop\Method\Setupapi.cs" />
+      <Compile Include="Interop\Method\Shell32.cs" />
+      <Compile Include="Interop\Method\User32.cs" />
+      <Compile Include="Interop\Method\UxTheme.cs" />
+      <Compile Include="Interop\Struct\DEV_BROADCASR_HDR.cs" />
+      <Compile Include="Interop\Struct\DEV_BROADCAST_DEVICEINTERFACE.cs" />
+      <Compile Include="Interop\Struct\LARGE_INTEGER.cs" />
+      <Compile Include="Interop\Struct\PROCESS_BASIC_INFORMATION.cs" />
+      <Compile Include="Interop\Struct\PROCESS_EXTENDED_BASIC_INFORMATION.cs" />
+      <Compile Include="Interop\Struct\PROPERTYKEY.cs" />
+      <Compile Include="Interop\Struct\PropVariant.cs" />
+      <Compile Include="Interop\Struct\SP_DEVINFO_DATA.cs" />
+      <Compile Include="Interop\Struct\SYSTEM_PROCESS_INFORMATION.cs" />
+      <Compile Include="Interop\Struct\UNICODE_STRING.cs" />
+      <Compile Include="Properties\AssemblyInfo.cs" />
+      <Compile Include="Threading\WindowWatcher.cs" />
+      <Compile Include="Threading\IProcessWatcher.cs" />
+      <Compile Include="Threading\ProcessWatcher.cs" />
+      <Compile Include="USBLib\EventArgs.cs" />
+      <Compile Include="USBLib\USBDescriptor.cs" />
+      <Compile Include="USBLib\USBDevice.cs" />
+      <Compile Include="USBLib\USBID.cs" />
+      <Compile Include="Wrapper\AppWrapper.cs" />
+      <Compile Include="Wrapper\IconExtractor.cs" />
+      <Compile Include="Wrapper\KeyWrapper.cs" />
+      <Compile Include="Wrapper\MediaControl.cs" />
+      <Compile Include="Wrapper\NativeWindowWrapper.cs" />
+      <Compile Include="Wrapper\ProcessWrapper.cs" />
+      <Compile Include="Wrapper\SystemVersion.cs" />
+      <Compile Include="Wrapper\ThemeWrapper.cs" />
+      <Compile Include="Wrapper\WindowWrapper.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="Microsoft.CSharp" />
+      <Reference Include="System" />
+      <Reference Include="System.Configuration" />
+      <Reference Include="System.Core" />
+      <Reference Include="System.Data" />
+      <Reference Include="System.Drawing" />
+      <Reference Include="System.IO.Compression" />
+      <Reference Include="System.Runtime.Serialization" />
+      <Reference Include="System.ServiceModel" />
+      <Reference Include="System.Transactions" />
+      <Reference Include="System.Windows.Forms" />
+      <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="DeltaCompressionDotNet" Version="1.1.0" />
+      <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.2.0-beta0003" />
+      <PackageReference Include="Mono.Cecil" Version="0.11.2" />
+      <PackageReference Include="NLog" Version="4.7.5" />
+      <PackageReference Include="SharpCompress" Version="0.26.0" />
+      <PackageReference Include="squirrel.windows" Version="2.0.1" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>

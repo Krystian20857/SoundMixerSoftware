@@ -1,6 +1,6 @@
 ﻿using System;
 using SoundMixerSoftware.Framework.Config;
-using SoundMixerSoftware.Win32.Threading;
+using SoundMixerSoftware.Interop.Threading;
 
 namespace SoundMixerSoftware.Framework.Threading
 {
@@ -10,6 +10,6 @@ namespace SoundMixerSoftware.Framework.Threading
         /// Default process watcher.
         /// </summary>
         public static IProcessWatcher DefaultProcessWatcher { get; } 
-            = new Win32.Threading.ProcessWatcher(TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.Interop.WatcherWait));
+            = new Interop.Threading.ProcessWatcher(TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.Interop.WatcherWait));
     }
 }

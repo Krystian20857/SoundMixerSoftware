@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils.EnumUtils;
+using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Resource.Image;
-using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Buttons.Functions
 {

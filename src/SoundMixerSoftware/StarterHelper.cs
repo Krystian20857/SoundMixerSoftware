@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using SoundMixerSoftware.Common.Extension;
-using SoundMixerSoftware.Win32.Interop.Method;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Method;
+using SoundMixerSoftware.Interop.Wrapper;
 using Application = System.Windows.Application;
 
 namespace SoundMixerSoftware

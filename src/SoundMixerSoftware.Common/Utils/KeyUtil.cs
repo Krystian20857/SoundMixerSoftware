@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Windows.Input;
 using GregsStack.InputSimulatorStandard.Native;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Wrapper;
 
 namespace SoundMixerSoftware.Common.Utils
 {

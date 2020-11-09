@@ -7,9 +7,9 @@ using SoundMixerSoftware.Common.Communication;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Utils;
-using SoundMixerSoftware.Win32.Interop.Constant;
-using SoundMixerSoftware.Win32.USBLib;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Constant;
+using SoundMixerSoftware.Interop.USBLib;
+using SoundMixerSoftware.Interop.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Device
 {

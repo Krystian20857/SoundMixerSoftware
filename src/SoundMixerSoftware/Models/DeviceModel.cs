@@ -1,7 +1,7 @@
 ﻿using SoundMixerSoftware.Framework.Device;
-using SoundMixerSoftware.Win32.USBLib;
+using SoundMixerSoftware.Interop.USBLib;
 
- namespace SoundMixerSoftware.Models
+namespace SoundMixerSoftware.Models
 {
     /// <summary>
     /// Device model used in view

@@ -8,8 +8,8 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using SoundMixerSoftware.Win32.Interop.Method;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Method;
+using SoundMixerSoftware.Interop.Wrapper;
 
 namespace SoundMixerSoftware.Resource.Image
 {

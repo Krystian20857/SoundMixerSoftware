@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Common",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware", "src\SoundMixerSoftware\SoundMixerSoftware.csproj", "{CC96B767-3C3B-4F25-B878-59FA9F0B9876}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Win32", "src\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj", "{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMixerSoftware.Interop", "src\SoundMixerSoftware.Interop\SoundMixerSoftware.Interop.csproj", "{A5F7DBB3-F7E8-4CDF-93B0-86482AA5A242}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

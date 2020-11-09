@@ -12,10 +12,10 @@ using SoundMixerSoftware.Common.Collection;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Interop.Method;
+using SoundMixerSoftware.Interop.Threading;
+using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Resource.Image;
-using SoundMixerSoftware.Win32.Interop.Method;
-using SoundMixerSoftware.Win32.Threading;
-using SoundMixerSoftware.Win32.Wrapper;
 
 namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 {

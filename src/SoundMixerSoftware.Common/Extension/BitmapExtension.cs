@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using SoundMixerSoftware.Win32.Interop.Method;
+using SoundMixerSoftware.Interop.Method;
 
 namespace SoundMixerSoftware.Common.Extension
 {

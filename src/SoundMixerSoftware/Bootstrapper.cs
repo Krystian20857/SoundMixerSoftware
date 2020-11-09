@@ -15,11 +15,11 @@ using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.LocalSystem;
 using SoundMixerSoftware.Framework.Utils;
+using SoundMixerSoftware.Interop.Method;
 using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Views;
-using SoundMixerSoftware.Win32.Interop.Method;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware

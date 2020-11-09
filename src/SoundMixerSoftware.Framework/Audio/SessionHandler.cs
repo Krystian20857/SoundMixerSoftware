@@ -9,8 +9,8 @@ using NLog;
 using SoundMixerSoftware.Common.Extension;
 using SoundMixerSoftware.Framework.Audio.Threading;
 using SoundMixerSoftware.Framework.Profile;
-using SoundMixerSoftware.Win32.Threading;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Threading;
+using SoundMixerSoftware.Interop.Wrapper;
 using ProcessWatcher = SoundMixerSoftware.Framework.Threading.ProcessWatcher;
 
 namespace SoundMixerSoftware.Framework.Audio

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using SoundMixerSoftware.Win32.Wrapper;
+using SoundMixerSoftware.Interop.Wrapper;
 
 namespace SoundMixerSoftware.Common.Extension
 {

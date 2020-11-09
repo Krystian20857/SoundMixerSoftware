@@ -68,13 +68,13 @@
       <Project>{2040554a-678b-4e8e-a915-dd4710fb7105}</Project>
       <Name>SoundMixerSoftware.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SoundMixerSoftware.Interop\SoundMixerSoftware.Interop.csproj">
+      <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
+      <Name>SoundMixerSoftware.Interop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SoundMixerSoftware.Resource\SoundMixerSoftware.Resource.csproj">
       <Project>{a9b42632-a295-4062-93ce-a98a0c63ef25}</Project>
       <Name>SoundMixerSoftware.Resource</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SoundMixerSoftware.Win32\SoundMixerSoftware.Win32.csproj">
-      <Project>{a5f7dbb3-f7e8-4cdf-93b0-86482aa5a242}</Project>
-      <Name>SoundMixerSoftware.Win32</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
