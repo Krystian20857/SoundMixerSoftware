@@ -137,6 +137,11 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
                     DisplayName = $"{Name}";
                     Image = IconExtractor.ExtractFromIndex(_device?.IconPath).ToImageSource();
                 }
+                else if (_controller.GetDevice(DeviceID) == null)
+                {
+                    DisplayName = $"{Name}(Not Connected)";
+                    Image = Images.FailedEmbed;
+                }
                 else
                 {
                     DisplayName = $"{Name}(Not Active)";

@@ -110,11 +110,11 @@ namespace SoundMixerSoftware.Models
                             {
                                 case Role.Multimedia:
                                     Name = $"Default Playback Device({device.FullName})";
-                                    Image = Images.FailedEmbed;
+                                    Image = Images.SpeakerEmbed;
                                     break;
                                 case Role.Communications:
                                     Name = $"Default Communication Playback Device({device.FullName})";
-                                    Image = Images.FailedEmbed;
+                                    Image = Images.SpeakerEmbed;
                                     break;
                             }
 
@@ -124,11 +124,11 @@ namespace SoundMixerSoftware.Models
                             {
                                 case Role.Multimedia:
                                     Name = $"Default Capture Device({device.FullName})";
-                                    Image = Images.FailedEmbed;
+                                    Image = Images.MicEmbed;
                                     break;
                                 case Role.Communications:
-                                    Name = $"Default Communication Device({device.FullName})";
-                                    Image = Images.FailedEmbed;
+                                    Name = $"Default Communication Capture Device({device.FullName})";
+                                    Image = Images.MicEmbed;
                                     break;
                             }
 
