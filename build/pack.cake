@@ -5,11 +5,12 @@
 #tool "Squirrel.Windows&version=2.0.1"
 
 var releaseFolder = "../output/release";
-var packageFolder = "../output/package";
+var packageFolder = "../output/packages";
 var squirrelFolder = $"{packageFolder}/release";
 var version = GetVersionNumber($"{releaseFolder}/SoundMixerSoftware.exe");
 var packFile = $"{packageFolder}/SoundMixerSoftware.{version}.nupkg";
 var iconPath = $"../src/SoundMixerSoftware/Resources/App.ico";
+var gifPath = $"../src/SoundMixerSoftware/Resources/Loading.gif";
 
 var clean = Argument("target", "Clean");
 var nugetTarget = Argument("target", "BuildNuget");
@@ -46,7 +47,8 @@ Task("BuildSquirrel")
 		    ReleaseDirectory = squirrelFolder,
 		    SetupIcon = iconPath,
 		    Icon = iconPath,
-		    FrameworkVersion = "net472"
+		    FrameworkVersion = "net472",
+		    LoadingGif = gifPath
 		};
 		
 		Squirrel(File(packFile), settings);
