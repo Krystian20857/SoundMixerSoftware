@@ -1,11 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using Caliburn.Micro;
+using CommandLine;
 using Hardcodet.Wpf.TaskbarNotification;
 using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
@@ -20,11 +21,13 @@ using SoundMixerSoftware.Resource.Image;
 using SoundMixerSoftware.Utils;
 using SoundMixerSoftware.ViewModels;
 using SoundMixerSoftware.Views;
+using Squirrel;
 using LogManager = NLog.LogManager;
+using Parser = CommandLine.Parser;
 
 namespace SoundMixerSoftware
 {
-    public class Bootstrapper : BootstrapperBase
+    public class Bootstrapper : BootstrapperBase, ISingleInstanceApp
     {
         #region Logger
 
@@ -38,19 +41,13 @@ namespace SoundMixerSoftware
         #region Public Static Properties
 
         public static Bootstrapper Instance { get; private set; }
-#if DEBUG
-        //running small node server with hosted files and github-like release files.
-        public const string RELEASES_URL = "http://localhost:3000/debug_releases.json";                
-#else
-        public const string RELEASES_URL = "https://api.github.com/repos/Krystian20857/SoundMixerSoftware/releases";
-#endif
 
         #endregion
         
         #region Private Fields
         
         private readonly ExtendedContainer _container = new ExtendedContainer();
-        private StarterHelper _starter = new StarterHelper();
+        private readonly SingleInstanceHelper _instanceHelper;
 
         #endregion
         
@@ -80,7 +77,10 @@ namespace SoundMixerSoftware
         /// </summary>
         public LocalManager LocalManager { get; } = new LocalManager(typeof(LocalContainer));
 
-        public Updater.Updater Updater { get; protected set; }
+        /// <summary>
+        /// Command line options.
+        /// </summary>
+        public CmdOptions CmdOptions { get; private set; } = new CmdOptions();
 
         #endregion
         
@@ -94,35 +94,13 @@ namespace SoundMixerSoftware
 
         public Bootstrapper()
         {
-            Instance = this;
             LoggerUtils.SetupLogger(LocalContainer.LogsFolder);
-            RegisterExceptionHandler();
+            ParseCommandLineOptions();
             
-            _starter.StartApplication += (sender, args) =>
-            {
-                Images.Initialize(LocalContainer.ImagesPath);
-                PluginLoader.LoadAllPlugins();
-                Updater = new Updater.Updater(Assembly.GetExecutingAssembly().GetName().Version, RELEASES_URL, LocalContainer.InstallerDownloadCache, starter =>
-                {
-                    _starter.Dispose();
-                    Application.Current.Shutdown();
-                });
-                
-                PluginLoader.ViewLoadingEvent();
-                TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
-
-                var settings = new Dictionary<string, object>();
-                settings.Add("showWindow", !ConfigHandler.ConfigStruct.Application.HideOnStartup);
-                DisplayRootViewFor<MainViewModel>(settings);
-
-                Logger.Info("Main view started.");
-                PluginLoader.ViewLoadedEvent();
-                ViewInitialized?.Invoke(this, EventArgs.Empty);
-            };
-
-            _starter.BringWindowToFront += (sender, args) => BringToFront();
-
-            _starter.ExitApplication += (sender, args) => Application.Shutdown(0x04);
+            Instance = this;
+            _instanceHelper = new SingleInstanceHelper(this);
+            
+            RegisterExceptionHandler();
 
             LocalManager.ResolveLocal();
             Initialize();
@@ -162,24 +140,20 @@ namespace SoundMixerSoftware
             _container.PerRequest<DeviceSettingsViewModel>();
             _container.PerRequest<PluginLoadViewModel>();
             _container.PerRequest<UsbManagerViewModel>();
-            _container.PerRequest<UpdateViewModel>();
 
             _container.Singleton<MainViewModel>();
             _container.Singleton<TaskbarIconViewModel>();
         }
 
-        protected override void OnStartup(object sender, StartupEventArgs e)
-        {
-            _starter.CheckInstances();
-        }
+        protected override void OnStartup(object sender, StartupEventArgs e) => _instanceHelper.Initialize();
 
         protected override void OnExit(object sender, EventArgs e)
         {
             DeviceHandlerGlobal.Instance?.Dispose();
-            _starter?.Dispose();
+            _instanceHelper?.Dispose();
             TaskbarIcon?.Dispose();
+            
             Logger.Info("App shutdown.");
-            base.OnExit(sender, e);
         }
 
         protected override IEnumerable<Assembly> SelectAssemblies()
@@ -189,16 +163,31 @@ namespace SoundMixerSoftware
 
         #endregion
         
-        #region Public Methods
-
-        public void ReloadAssembliesForView()
+        #region Implemented Methods
+        
+        public void Run()
         {
-            AssemblySource.Instance.Clear();
-            AssemblySource.Instance.AddRange(SelectAssemblies());
-            AssemblySource.Instance.Refresh();
+            Images.Initialize(LocalContainer.ImagesPath);
+            PluginLoader.LoadAllPlugins();
+            
+            PluginLoader.ViewLoadingEvent();
+            TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
+
+            StartMainWindow(!ConfigHandler.ConfigStruct.Application.HideOnStartup || CmdOptions.ForceShow || CmdOptions.SquirrelFirstRun);
+
+            Logger.Info("Main view started.");
+                
+            PluginLoader.ViewLoadedEvent();
+                
+            ViewInitialized?.Invoke(this, EventArgs.Empty);
         }
 
-        public void BringToFront()
+        public void Shutdown()
+        {
+            Application.Shutdown();
+        }
+
+        public void SetForeground()
         {
             var mainWindow = MainViewModel.Instance;
             if (mainWindow == null)
@@ -216,6 +205,22 @@ namespace SoundMixerSoftware
 
             User32.BringWindowToTop(hwnd);
             User32.SetForegroundWindow(hwnd);
+        }
+        
+        #endregion
+        
+        #region Public Methods
+
+        public void ReloadAssembliesForView()
+        {
+            AssemblySource.Instance.Clear();
+            AssemblySource.Instance.AddRange(SelectAssemblies());
+            AssemblySource.Instance.Refresh();
+        }
+
+        public async Task<UpdateManager> GetUpdateManager()
+        {
+            return await UpdateManager.GitHubUpdateManager(Constant.GITHUB_REPO_URL);
         }
 
         #endregion
@@ -237,10 +242,29 @@ namespace SoundMixerSoftware
             if (exceptionObject is Exception exception)
                 ExceptionHandler.HandleException(Logger, "Unexpected exception occurs!" , exception);
             else
-                Logger.Error(exceptionObject);
-            Logger.Error("UNHANDLED EXCEPTIONS WILL CRASH ENTIRE APPLICATION!");
+                Logger.Fatal("Unexpected exception occurs!", exceptionObject);
         }
 
+        private void StartMainWindow(bool show)
+        {
+            var settings = new Dictionary<string, object>();
+            settings.Add("showWindow", show);
+            DisplayRootViewFor<MainViewModel>(settings);
+        }
+
+        private void ParseCommandLineOptions()
+        {
+            var args = Environment.GetCommandLineArgs();
+            Logger.Trace($"Cmd arguments: {string.Join(" ", args)}");
+            Parser.Default.ParseArguments<CmdOptions>(args).WithParsed(o =>
+            {
+                CmdOptions = o;
+            }).WithNotParsed(o =>
+            {
+                Logger.Warn("Error while parsing command line arguments: ", string.Join(",", o));
+            });
+        }
+        
         #endregion
     }
 }

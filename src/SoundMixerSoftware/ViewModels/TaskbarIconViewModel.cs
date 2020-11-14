@@ -6,6 +6,7 @@ using Caliburn.Micro;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
+using Squirrel;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -60,7 +61,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void ShowWindow()
         {
-            Bootstrapper.Instance.BringToFront();
+            Bootstrapper.Instance.SetForeground();
         }
 
         public void ExitApp()
@@ -70,7 +71,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void RestartApp()
         {
-            StarterHelper.RestartApp();
+            UpdateManager.RestartApp();
         }
 
         #endregion
