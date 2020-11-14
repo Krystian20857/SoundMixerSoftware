@@ -123,10 +123,6 @@
       <Project>{a9b42632-a295-4062-93ce-a98a0c63ef25}</Project>
       <Name>SoundMixerSoftware.Resource</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj">
-      <Project>{22448347-5dde-4901-9e0f-4d9f84038729}</Project>
-      <Name>SoundMixerSoftware.Updater</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.xsd" />

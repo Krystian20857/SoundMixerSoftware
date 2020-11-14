@@ -71,6 +71,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CmdOptions.cs" />
+    <Compile Include="Constant.cs" />
     <Compile Include="Controls\WebHyperLink.cs" />
     <Compile Include="Converter\BaseConverter.cs" />
     <Compile Include="Converter\BoolInvertConverter.cs" />
@@ -96,7 +98,7 @@
     <Compile Include="Models\ThemeManager.cs" />
     <Compile Include="Models\ThemeModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="StarterHelper.cs" />
+    <Compile Include="SingleInstanceHelper.cs" />
     <Compile Include="Utils\BindingProxy.cs" />
     <Compile Include="Utils\EnumDisplayHelper.cs" />
     <Compile Include="Utils\ExtendedContainer.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="ViewModels\TabViewModels\PluginViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\TabViewModels\SlidersViewModel.cs" />
+    <Compile Include="ViewModels\TabViewModels\UpdateViewModel.cs" />
     <Compile Include="ViewModels\TaskbarIconViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ButtonAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\DeviceSettingsViewModel.cs" />
@@ -125,7 +128,6 @@
     <Compile Include="ViewModels\WindowViewModels\PluginLoadViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\ProfileAddViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\SessionAddViewModel.cs" />
-    <Compile Include="ViewModels\WindowViewModels\UpdateViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModels\UsbManagerViewModel.cs" />
     <Compile Include="Views\ButtonViews\HomeButtonView.xaml.cs">
       <DependentUpon>HomeButtonView.xaml</DependentUpon>
@@ -166,6 +168,9 @@
     <Compile Include="Views\TabViews\SlidersView.xaml.cs">
       <DependentUpon>SlidersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TabViews\UpdateView.xaml.cs">
+      <DependentUpon>UpdateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WindowViews\ButtonAddView.xaml.cs">
       <DependentUpon>ButtonAddView.xaml</DependentUpon>
     </Compile>
@@ -186,9 +191,6 @@
     </Compile>
     <Compile Include="Views\WindowViews\SessionAddView.xaml.cs">
       <DependentUpon>SessionAddView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WindowViews\UpdateView.xaml.cs">
-      <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowViews\UsbManagerView.xaml.cs">
       <DependentUpon>UsbManagerView.xaml</DependentUpon>
@@ -221,6 +223,7 @@
     <Page Include="Views\TabViews\PluginView.xaml" />
     <Page Include="Views\TabViews\SettingsView.xaml" />
     <Page Include="Views\TabViews\SlidersView.xaml" />
+    <Page Include="Views\TabViews\UpdateView.xaml" />
     <Page Include="Views\WindowViews\ButtonAddView.xaml" />
     <Page Include="Views\WindowViews\DeviceSettingsView.xaml" />
     <Page Include="Views\WindowViews\ExtensionAddView.xaml" />
@@ -228,7 +231,6 @@
     <Page Include="Views\WindowViews\PluginLoadView.xaml" />
     <Page Include="Views\WindowViews\ProfileAddView.xaml" />
     <Page Include="Views\WindowViews\SessionAddView.xaml" />
-    <Page Include="Views\WindowViews\UpdateView.xaml" />
     <Page Include="Views\WindowViews\UsbManagerView.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -256,10 +258,6 @@
       <Project>{a9b42632-a295-4062-93ce-a98a0c63ef25}</Project>
       <Name>SoundMixerSoftware.Resource</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SoundMixerSoftware.Updater\SoundMixerSoftware.Updater.csproj">
-      <Project>{22448347-5dde-4901-9e0f-4d9f84038729}</Project>
-      <Name>SoundMixerSoftware.Updater</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
@@ -267,8 +265,9 @@
   <ItemGroup>
     <PackageReference Include="AudioSwitcher.AudioApi" Version="4.0.0-alpha5" />
     <PackageReference Include="AudioSwitcher.AudioApi.CoreAudio" Version="4.0.0-alpha5" />
-    <PackageReference Include="Caliburn.Micro" Version="4.0.105-alpha" />
+    <PackageReference Include="Caliburn.Micro" Version="4.0.136-rc" />
     <PackageReference Include="Caliburn.Micro.Core" Version="4.0.105-alpha" />
+    <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="DeltaCompressionDotNet" Version="1.1.0" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.2.0-beta0003" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.0.8" />
@@ -279,6 +278,9 @@
     <PackageReference Include="NLog" Version="4.7.5" />
     <PackageReference Include="SharpCompress" Version="0.26.0" />
     <PackageReference Include="squirrel.windows" Version="2.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Loading.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
