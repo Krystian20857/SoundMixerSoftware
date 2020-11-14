@@ -7,7 +7,9 @@
         xmlns:cm="http://caliburnmicro.com"
         mc:Ignorable="d"
         Title="Extension Add" Height="500" Width="700" Icon="{StaticResource SpeakerIcon}"
-        cm:Message.Attach="[Shortcut Enter] = [AddClick()]">
+        cm:Message.Attach="[Shortcut Enter] = [AddClick()]"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

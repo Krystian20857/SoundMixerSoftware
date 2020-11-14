@@ -9,7 +9,9 @@
                      mc:Ignorable="d"
                      Title="Sound Mixer Software"
                      Height="450" Width="800" MinHeight="300" MinWidth="750"
-                     Icon="{StaticResource SpeakerIcon}">
+                     Icon="{StaticResource SpeakerIcon}"
+                     Background="{DynamicResource MaterialDesignPaper}"
+                     TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

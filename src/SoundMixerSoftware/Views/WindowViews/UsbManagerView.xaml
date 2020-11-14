@@ -9,7 +9,9 @@
         xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
         mc:Ignorable="d"
         Title="Usb Manager" Height="250" Width="400" Icon="{StaticResource SpeakerIcon}"
-        cal:Message.Attach="[Shortcut Enter] = [Action Save()]">
+        cal:Message.Attach="[Shortcut Enter] = [Action Save()]"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Window.Resources>
         <Style x:Key="IntBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
                 <Setter Property="Margin" Value="5"/>

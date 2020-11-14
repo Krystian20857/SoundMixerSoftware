@@ -33,16 +33,25 @@ namespace SoundMixerSoftware.Common.Logging
             var consoleLog = new ConsoleTarget()
             {
                 AutoFlush = false,
+                DetectConsoleAvailable = true
             };
 
             var eventLog = new EventLogTarget()
             {
                 Source = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location),
             };
+
+            var coloredConsole = new ColoredConsoleTarget()
+            {
+                DetectConsoleAvailable = true,
+                DetectOutputRedirected = true,
+                AutoFlush = false,
+            };
             
             config.AddRule(LogLevel.Trace, LogLevel.Fatal, logFile);                   //all logs will be displayed to console and saved to file
             config.AddRule(LogLevel.Trace, LogLevel.Fatal, consoleLog);
-            config.AddRule(LogLevel.Error, LogLevel.Fatal, eventLog);                  //only fatals and errors will be appear in eventlog
+            config.AddRule(LogLevel.Fatal, LogLevel.Fatal, eventLog);                  //only fatals and errors will be appear in eventlog
+            config.AddRule(LogLevel.Trace, LogLevel.Fatal, coloredConsole);
 
             LogManager.Configuration = config;
         }

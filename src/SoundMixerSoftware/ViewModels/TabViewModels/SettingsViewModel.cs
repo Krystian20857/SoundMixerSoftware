@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows.Media;
 using Caliburn.Micro;
 using MaterialDesignColors;
@@ -14,13 +14,9 @@ using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.LocalSystem;
-using SoundMixerSoftware.Framework.NotifyWrapper;
 using SoundMixerSoftware.Framework.Overlay;
-using SoundMixerSoftware.Interop.Method;
 using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Models;
-using SoundMixerSoftware.Updater;
-using SoundMixerSoftware.Utils;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
@@ -38,17 +34,14 @@ namespace SoundMixerSoftware.ViewModels
         
         #region Private Fields
 
-        private string _updateStatus;
-        private SolidColorBrush _updateStatusColor;
-
         private bool _autoRun;
         private bool _enableNotify;
         private bool _enableOverlay;
         private bool _hideOnStartup;
         private int _overlayFadeTime;
         private int _notificationShowTime;
-        private EnumDisplayModel<UpdateMode> _updateRunMode;
         private bool _autoUpdate;
+        private bool _isDarkThemeChecked;
 
         private ThemeModel _selectedTheme;
         private BindableCollection<ThemeModel> _themes = new BindableCollection<ThemeModel>();
@@ -57,9 +50,6 @@ namespace SoundMixerSoftware.ViewModels
         private AutoRunHandle _autoRunHandle = new AutoRunHandle(Assembly.GetExecutingAssembly().Location);
         private DebounceDispatcher _debounceDispatcher = new DebounceDispatcher();
 
-        private Timer dotdotdotTimer;
-        private INotification<NewVersionEventArgs> _updateNotification = new NewVersionNotification();
-        
         private IWindowManager _windowManager = new WindowManager();
 
         #endregion
@@ -67,48 +57,7 @@ namespace SoundMixerSoftware.ViewModels
         #region Public Properties
 
         public static SettingsViewModel Instance => IoC.Get<SettingsViewModel>();
-
-        public string AppVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        public Updater.Updater Updater => Bootstrapper.Instance.Updater;
-
-        public bool HasNewVersion => Updater.HasNewVersion;
-
-        public string UpdateStatus
-        {
-            get => _updateStatus;
-            set
-            {
-                _updateStatus = value;
-                OnPropertyChanged(nameof(UpdateStatus));
-            }
-        }
-
-        public SolidColorBrush UpdateStatusColor
-        {
-            get => _updateStatusColor;
-            set
-            {
-                _updateStatusColor = value;
-                OnPropertyChanged(nameof(UpdateStatusColor));
-            }
-        }
         
-        public BindableCollection<EnumDisplayModel<UpdateMode>> UpdateModes { get; set; } = new BindableCollection<EnumDisplayModel<UpdateMode>>();
-
-        public EnumDisplayModel<UpdateMode> UpdateRunModeEnum
-        {
-            get => _updateRunMode;
-            set
-            {
-                _updateRunMode = value;
-                ConfigHandler.ConfigStruct.Updater.Mode = value.EnumValue;
-                Updater.Mode = value.EnumValue;
-                if(!LockConfig)
-                    ConfigHandler.SaveConfig();
-                Logger.Trace($"Changed update mode setting to: {value}");
-                OnPropertyChanged(nameof(UpdateRunModeEnum));
-            }
-        }
 
         public bool AutoUpdate
         {
@@ -116,9 +65,6 @@ namespace SoundMixerSoftware.ViewModels
             set
             {
                 ConfigHandler.ConfigStruct.Updater.AutoUpdate = value;
-                if(!LockConfig)
-                    ConfigHandler.SaveConfig();
-                Logger.Trace($"Changed enable-autoupdate setting to: {value}");
                 _autoUpdate = value;
                 
             }
@@ -133,40 +79,36 @@ namespace SoundMixerSoftware.ViewModels
                     _autoRunHandle.SetStartup();
                 else
                     _autoRunHandle.RemoveStartup();
-                Logger.Trace($"Changed auto-run setting to: {value}");
                 _autoRun = value;
                 OnPropertyChanged(nameof(AutoRun));
             }
         }
 
+        [SettingPropertyAttribute]
         public bool EnableNotify
         {
             get => _enableNotify;
             set
             {
                 ConfigHandler.ConfigStruct.Notification.EnableNotifications = value;
-                if(!LockConfig)
-                    ConfigHandler.SaveConfig();
-                Logger.Trace($"Changed enable-notification setting to: {value}");
                 _enableNotify = value;
                 OnPropertyChanged(nameof(EnableNotify));
             }
         }
 
+        [SettingPropertyAttribute]
         public bool EnableOverlay
         {
             get => _enableOverlay;
             set
             {
                 ConfigHandler.ConfigStruct.Overlay.EnableOverlay = value;
-                if(!LockConfig)
-                    ConfigHandler.SaveConfig();
-                Logger.Trace($"Changed overlay-enable setting to {value}");
                 _enableOverlay = value;
                 OnPropertyChanged(nameof(EnableOverlay));
             }
         }
 
+        [SettingPropertyAttribute(true)]
         public int OverlayFadeTime
         {
             get => _overlayFadeTime;
@@ -184,6 +126,7 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
         
+        [SettingPropertyAttribute(true)]
         public int NotificationShowTime
         {
             get => _notificationShowTime;
@@ -197,19 +140,19 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
+        [SettingPropertyAttribute]
         public bool HideOnStartup
         {
             get => _hideOnStartup;
             set
             {
                 ConfigHandler.ConfigStruct.Application.HideOnStartup = value;
-                if(!LockConfig)
-                    _debounceDispatcher.Debounce(300, param => ConfigHandler.SaveConfig());
                 _hideOnStartup = value;
                 OnPropertyChanged(nameof(HideOnStartup));
             }
         }
 
+        [SettingPropertyAttribute]
         public ThemeModel SelectedTheme
         {
             get => _selectedTheme;
@@ -217,8 +160,6 @@ namespace SoundMixerSoftware.ViewModels
             {
                 _selectedTheme = value;
                 ConfigHandler.ConfigStruct.Application.ThemeName = value.ThemeName;
-                if(!LockConfig)
-                    ConfigHandler.SaveConfig();
                 if (value is SystemThemeModel)
                 {
                     ThemeManager.UseImmersiveTheme = true;
@@ -238,6 +179,19 @@ namespace SoundMixerSoftware.ViewModels
             set
             {
                 _themes = value;
+            }
+        }
+
+        [SettingPropertyAttribute]
+        public bool IsDarkThemeChecked
+        {
+            get => _isDarkThemeChecked;
+            set
+            {
+                _isDarkThemeChecked = value;
+                ThemeManager.UseDarkTheme = value;
+                ConfigHandler.ConfigStruct.Application.UseDarkTheme = value;
+                OnPropertyChanged(nameof(IsDarkThemeChecked));
             }
         }
         
@@ -269,9 +223,9 @@ namespace SoundMixerSoftware.ViewModels
             NotificationShowTime = ConfigHandler.ConfigStruct.Notification.NotificationShowTime;
             HideOnStartup = ConfigHandler.ConfigStruct.Application.HideOnStartup;
             AutoUpdate = ConfigHandler.ConfigStruct.Updater.AutoUpdate;
+            IsDarkThemeChecked = ConfigHandler.ConfigStruct.Application.UseDarkTheme;
 
             LoadThemes();
-            LoadUpdater();
             
             LockConfig = false;
         }
@@ -297,109 +251,6 @@ namespace SoundMixerSoftware.ViewModels
             SelectedTheme = Themes.FirstOrDefault(x => x.ThemeName.Equals(themeConfig)) ?? Themes[0];
         }
 
-        private void LoadUpdater()
-        {
-            EnumDisplayHelper.AddItems(UpdateModes);
-            UpdateRunModeEnum = UpdateModes.FirstOrDefault(x => x.EnumValue == ConfigHandler.ConfigStruct.Updater.Mode);
-
-            Updater.NewVersionAvailable += (sender, args) =>
-            {
-                DisposeDotDotDotTimer();
-                Execute.OnUIThread(() =>
-                {
-                    UpdateStatus = $"New version available: v{args.Release.ReleaseVersion}.";
-                    UpdateStatusColor = new SolidColorBrush(Colors.LimeGreen);
-                    OnPropertyChanged(nameof(HasNewVersion));
-                });
-                var autoUpdate = ConfigHandler.ConfigStruct.Updater.AutoUpdate;
-                if (autoUpdate)
-                {
-                    Updater.DownloadUpdate();
-                }
-                if (ConfigHandler.ConfigStruct.Notification.EnableNotifications && Bootstrapper.Instance.MainWindowHandle != User32.GetForegroundWindow() && !autoUpdate)
-                {
-                    _updateNotification.SetValue(NewVersionNotification.VERSION_KEY, args);
-                    _updateNotification.Show();
-                }
-            };
-
-            Updater.NotNewVersionAvailable += (sender, args) =>
-            {
-                DisposeDotDotDotTimer();
-                Execute.OnUIThread(() =>
-                {
-                    UpdateStatus = $"You are running newest version!";
-                    UpdateStatusColor = new SolidColorBrush(Colors.LimeGreen);
-                    OnPropertyChanged(nameof(HasNewVersion));
-                });
-            };
-
-            Updater.UpdateCheckError += (sender, exception) =>
-            {
-                DisposeDotDotDotTimer();
-                Execute.OnUIThread(() =>
-                {
-                    UpdateStatus = $"Error while checking new version.";
-                    UpdateStatusColor = new SolidColorBrush(Colors.IndianRed);
-                    OnPropertyChanged(nameof(HasNewVersion));
-                });
-            };
-
-            Updater.FileDownloaded += (sender, args) =>
-            {
-                if (ConfigHandler.ConfigStruct.Updater.AutoUpdate)
-                {
-                    Updater.RunInstaller();
-                }
-            };
-
-            _updateNotification.Clicked += InstallUpdateClick;
-            Updater.CheckForUpdate();
-        }
-
-        private void DisposeDotDotDotTimer()
-        {
-            if (dotdotdotTimer == null) return;
-            dotdotdotTimer?.Dispose();
-            dotdotdotTimer = null;
-        }
-
-        public void CheckForUpdateClick()
-        {
-           _debounceDispatcher.Debounce(50, obj =>
-           {
-               Updater.CheckForUpdate();
-               dotdotdotTimer?.Dispose();
-               var counter = 1;
-               dotdotdotTimer = new Timer(obj1 =>
-               {
-                   if (counter > 3)
-                       counter = 0;
-                   var counter1 = counter;
-                   Execute.OnUIThread(() =>
-                   {
-                       UpdateStatus = new string('.', counter1);
-                       UpdateStatusColor = new SolidColorBrush(Colors.Black);
-                   });
-                   ++counter;
-                   dotdotdotTimer?.Change(500, 500);
-               }, null, 0, 500);
-           });
-        }
-
-        public void InstallUpdateClick()
-        {
-            if (!Updater.HasNewVersion)
-            {
-                return;
-            }
-
-            var updateWindow = UpdateViewModel.Instance;
-            updateWindow.StartUpdate();
-
-            _windowManager.ShowDialogAsync(updateWindow);
-        }
-        
         #endregion
         
         #region Property Changed
@@ -410,8 +261,33 @@ namespace SoundMixerSoftware.ViewModels
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            
+            var property = typeof(SettingsViewModel).GetProperty(propertyName ?? string.Empty);
+            if (property != null && !LockConfig)
+            {
+                var attribute = (SettingPropertyAttribute) Attribute.GetCustomAttribute(property, typeof(SettingPropertyAttribute));
+                if (!LockConfig || !attribute.IgnoreConfigLock)
+                {
+                    if (attribute.Debounce)
+                        _debounceDispatcher.Debounce(300, param => ConfigHandler.SaveConfig());
+                    else
+                        ConfigHandler.SaveConfig();
+                }
+            }
         }
         
         #endregion
+    }
+
+    public class SettingPropertyAttribute : Attribute
+    {
+        public bool Debounce { get; set; }
+        public bool IgnoreConfigLock { get; set; }
+
+        public SettingPropertyAttribute(bool debounce = false, bool ignoreConfigLock = false)
+        {
+            Debounce = debounce;
+            IgnoreConfigLock = ignoreConfigLock;
+        }
     }
 }

@@ -5,7 +5,6 @@ using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Interop.USBLib;
-using SoundMixerSoftware.Updater;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Framework.Config
@@ -58,8 +57,7 @@ namespace SoundMixerSoftware.Framework.Config
             },
             Updater = new UpdateConfig
             {
-                Mode = UpdateMode.NORMAL,
-                AutoUpdate = false
+                AutoUpdate = true
             }
 
         };
@@ -200,6 +198,8 @@ namespace SoundMixerSoftware.Framework.Config
         [YamlMember(Alias = nameof(HideOnStartup))]
         public bool? HideOnStartupNullable { get; set; }
 
+        public bool? UseDarkThemeNullable { get; set; }
+
         #endregion
         
         #region Non-null Types
@@ -209,6 +209,13 @@ namespace SoundMixerSoftware.Framework.Config
         {
             get => HideOnStartupNullable ?? false;
             set => HideOnStartupNullable = value;
+        }
+
+        [YamlIgnore]
+        public bool UseDarkTheme
+        {
+            get => UseDarkThemeNullable ?? false;
+            set => UseDarkThemeNullable = value;
         }
 
         #endregion
@@ -245,22 +252,12 @@ namespace SoundMixerSoftware.Framework.Config
     {
         #region BaseTypes
         
-        [YamlMember(Alias = "Mode")]
-        public UpdateMode? ModeNullable { get; set; }
-
         [YamlMember(Alias = "AutoUpdate")]
         public bool? AutoUpdateNullable { get; set; }
 
         #endregion
         
         #region Non-null Types
-
-        [YamlIgnore]
-        public UpdateMode Mode
-        {
-            get => ModeNullable ?? UpdateMode.NORMAL;
-            set => ModeNullable = value;
-        }
 
         [YamlIgnore]
         public bool AutoUpdate

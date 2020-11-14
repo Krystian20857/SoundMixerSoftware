@@ -11,13 +11,6 @@
              d:DesignHeight="300" d:DesignWidth="300"
              cal:Message.Attach="[Initialized] = [ViewInitialized]">
     <UserControl.Resources>
-        <Style x:Key="SettingBorder" TargetType="{x:Type Border}">
-            <Setter Property="Margin" Value="0, 5"/>
-            <Setter Property="BorderBrush" Value="DarkGray"/>
-            <Setter Property="CornerRadius" Value="5"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
         <converter:VisibilityConverter x:Key="VisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
@@ -26,54 +19,6 @@
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
             <StackPanel HorizontalAlignment="Stretch">
-                <GroupBox Margin="5" Header="Update">
-                    <StackPanel Orientation="Vertical">
-                        <DockPanel VerticalAlignment="Center" LastChildFill="False">
-                            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" Margin="5" FontSize="16">
-                                <Run Text="Status: " />
-                                <Run Foreground="{Binding Path=UpdateStatusColor}" Text="{Binding Path=UpdateStatus, UpdateSourceTrigger=PropertyChanged}" />
-                            </TextBlock>
-                            <DockPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Stretch" LastChildFill="False">
-                                <Button DockPanel.Dock="Left"
-                                        Margin="5"
-                                        Width="150"
-                                        cal:Message.Attach="[Click] =[CheckForUpdateClick]">
-                                    Check For Update
-                                </Button>
-                                <Button DockPanel.Dock="Left"
-                                        Margin="5"
-                                        Width="150"
-                                        Visibility="{Binding Path=HasNewVersion, Converter={StaticResource VisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
-                                        cal:Message.Attach="[Click] =[InstallUpdateClick]">
-                                    Install Update
-                                </Button>
-                            </DockPanel>
-                        </DockPanel>
-                        
-                        <Border Style="{StaticResource SettingBorder}">
-                            <DockPanel LastChildFill="False">
-                                <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left">Update Silent</TextBlock>
-                                <ComboBox VerticalAlignment="Center" DockPanel.Dock="Right"
-                                          Margin="5, 0"
-                                          MinWidth="100"
-                                          ItemsSource="{Binding Path=UpdateModes}"
-                                          SelectedItem="{Binding Path=UpdateRunModeEnum, Mode=TwoWay}">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Name}"/>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                            </DockPanel>
-                        </Border>
-                        <Border Style="{StaticResource SettingBorder}">
-                            <DockPanel LastChildFill="False">
-                                <TextBlock DockPanel.Dock="Left">Auto-update</TextBlock>
-                                <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=AutoUpdate, Mode=TwoWay}" />
-                            </DockPanel>
-                        </Border>
-                    </StackPanel>
-                </GroupBox>
                 <GroupBox Margin="5" Header="Application Settings">
                     <StackPanel Orientation="Vertical">
                         <Border Style="{StaticResource SettingBorder}">
@@ -86,6 +31,12 @@
                             <DockPanel LastChildFill="False">
                                 <TextBlock DockPanel.Dock="Left">Hide on startup</TextBlock>
                                 <CheckBox DockPanel.Dock="Right" IsChecked="{Binding Path=HideOnStartup, Mode=TwoWay}" />
+                            </DockPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingBorder}">
+                            <DockPanel LastChildFill="False">
+                                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Use Dark Theme</TextBlock>
+                                <ToggleButton DockPanel.Dock="Right" Style="{StaticResource MaterialDesignSwitchToggleButton}"  ToolTip="Use Dark Theme" IsChecked="{Binding Path=IsDarkThemeChecked, UpdateSourceTrigger=PropertyChanged}"/>
                             </DockPanel>
                         </Border>
                         <Border Style="{StaticResource SettingBorder}">

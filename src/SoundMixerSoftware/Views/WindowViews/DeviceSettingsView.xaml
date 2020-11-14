@@ -12,7 +12,9 @@
         mc:Ignorable="d"
         Height="225" Width="350"
         Title="{Binding Path=Device.Name, StringFormat=Device Settings: {0}}"
-        cal:Message.Attach="[Shortcut Enter] = [AddClick()]">
+        cal:Message.Attach="[Shortcut Enter] = [AddClick()]"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Window.Resources>
         <Style x:Key="OffsetBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
             <Setter Property="Margin" Value="5" />

@@ -66,7 +66,7 @@ namespace SoundMixerSoftware.ViewModels
             DeviceHandlerGlobal.DeviceConnected += DeviceHandlerOnDeviceConnected;
             DeviceHandlerGlobal.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
 
-            _deviceNotification.Clicked += () => Bootstrapper.Instance.BringToFront();
+            _deviceNotification.Clicked += () => Bootstrapper.Instance.SetForeground();
         }
 
         /// <summary>

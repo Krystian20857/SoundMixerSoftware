@@ -9,7 +9,9 @@
         xmlns:converter="clr-namespace:SoundMixerSoftware.Converter"
         mc:Ignorable="d"
         Title="Add Button" Height="350" Width="650"
-        cal:Message.Attach="[Shortcut Enter] = [AddClicked()]">
+        cal:Message.Attach="[Shortcut Enter] = [AddClicked()]"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     <Window.Resources>
         <converter:VisibilityConverter x:Key="VisibilityConverter"/>
     </Window.Resources>

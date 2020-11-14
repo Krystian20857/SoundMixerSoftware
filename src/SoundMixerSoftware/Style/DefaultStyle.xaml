@@ -17,4 +17,11 @@
         <Setter Property="Margin" Value="10, 0"/>
         <Setter Property="Width" Value="150"/>
     </Style>
+    <Style x:Key="SettingBorder" TargetType="{x:Type Border}">
+        <Setter Property="Margin" Value="0, 5"/>
+        <Setter Property="BorderBrush" Value="DarkGray"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="5"/>
+    </Style>
 </ResourceDictionary>

@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using System.Runtime;
 using System.Windows.Media;
 using MaterialDesignColors;
+using MaterialDesignColors.ColorManipulation;
 using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Interop.Wrapper;
@@ -12,12 +14,7 @@ namespace SoundMixerSoftware.Models
     /// </summary>
     public static class ThemeManager
     {
-        #region Constant
 
-        private static readonly Color OFFSET_COLOR = Color.FromArgb(0x00, 0x1C, 0x1C, 0x1C);
-        
-        #endregion
-        
         #region Fields
         
         private static readonly PaletteHelper _paletteHelper = new PaletteHelper();
@@ -57,6 +54,28 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public static Color ImmersiveTheme => ColorUtil.FromArgb(ThemeWrapper.GetThemeColor());
 
+        public static bool UseDarkTheme
+        {
+            set
+            {
+                var theme = _paletteHelper.GetTheme();
+                
+                if(value)
+                    theme.SetBaseTheme(Theme.Dark);
+                else
+                    theme.SetBaseTheme(Theme.Light);
+                
+                _paletteHelper.SetTheme(theme);
+            }
+            get
+            {
+                if (_useImmersiveTheme)
+                    return false;
+
+                return _paletteHelper.GetTheme().GetBaseTheme() == BaseTheme.Dark;
+            }
+        }
+
         #endregion
         
         #region Constructor
@@ -80,12 +99,16 @@ namespace SoundMixerSoftware.Models
         /// <param name="themeName"></param>
         public static void SetTheme(string themeName)
         {
+            var theme = _paletteHelper.GetTheme();
+            
             var swatch = SwatchHelper.Swatches.FirstOrDefault(x => x.Name.Equals(themeName)) ?? SwatchHelper.Swatches.First();
-            var count = swatch.Hues.Count();
             var hues = swatch.Hues.ToList();
-            var primaryColor = hues[count - 1];
-            var secondaryColor = hues[count - 2];
-            _paletteHelper.SetTheme(Theme.Create(Theme.Light, primaryColor, secondaryColor));
+            var count = hues.Count;
+            
+            theme.SetPrimaryColor(hues[count - 1]);
+            theme.SetSecondaryColor(hues[count - 2]);
+            
+            _paletteHelper.SetTheme(theme);
         }
 
         /// <summary>
@@ -94,7 +117,12 @@ namespace SoundMixerSoftware.Models
         /// <param name="color"></param>
         public static void SetTheme(Color color)
         {
-            _paletteHelper.SetTheme(Theme.Create(Theme.Light, color, color - OFFSET_COLOR));   
+            var theme = _paletteHelper.GetTheme();
+            
+            theme.SetPrimaryColor(color);
+            theme.SetSecondaryColor(color.Lighten());
+
+            _paletteHelper.SetTheme(theme);   
         }
         
         #endregion

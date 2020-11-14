@@ -6,7 +6,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <WrapPanel />
+                    <WrapPanel Background="{DynamicResource MaterialDesignPaper}"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
@@ -14,6 +14,7 @@
             <Setter.Value>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="ToolTip" Value="{Binding Path=Name}" />
+                    <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -24,7 +25,7 @@
                         <Border DockPanel.Dock="Top" CornerRadius="3" BorderThickness="2" BorderBrush="DarkGray">
                             <Image Height="30" Width="30" Source="{Binding Path=Image, UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
-                        <TextBlock TextAlignment="Center" DockPanel.Dock="Top" MaxWidth="50" Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Foreground="{DynamicResource MaterialDesignBody}" TextAlignment="Center" DockPanel.Dock="Top" MaxWidth="50" Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </DataTemplate>
             </Setter.Value>

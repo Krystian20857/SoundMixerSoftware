@@ -6,7 +6,15 @@
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
         Title="Session Add" Height="500" Width="1400" Icon="{StaticResource SpeakerIcon}"
-        cal:Message.Attach="[Shortcut Enter] = [AddClick()]">
+        cal:Message.Attach="[Shortcut Enter] = [AddClick()]"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+    <Window.Resources>
+        <Style x:Key="SessionGroupBox" TargetType="{x:Type GroupBox}" BasedOn="{StaticResource MaterialDesignGroupBox}">
+            <!--<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />-->
+            
+        </Style>
+    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -33,23 +41,26 @@
                       SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}" />
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="1" Style="{StaticResource GroupBoxCategory}">
-            <GroupBox.Header>
-                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+            <GroupBox.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type GroupBox}}}" VerticalAlignment="Center" Orientation="Horizontal">
                         <TextBlock Text="Sessions" Margin="5, 0"/>
-                        <ComboBox ItemsSource="{Binding Path=DeviceSessions}" SelectedItem="{Binding Path=SelectedDevice, Mode=TwoWay}" Padding="0" Margin="0">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Name}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
+                            <ComboBox ItemsSource="{Binding Path=DeviceSessions}" SelectedItem="{Binding Path=SelectedDevice, Mode=TwoWay}" Padding="0" Margin="0">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
                         </ComboBox>
                     </StackPanel>
-            </GroupBox.Header>
+                </DataTemplate>
+            </GroupBox.HeaderTemplate>
+            
             <ListView x:Name="Sessions"
                       Style="{StaticResource ListViewItems}"
                       SelectedItem="{Binding Path=SelectedSession, Mode=TwoWay}" />
         </GroupBox>
-        <StackPanel Grid.Row="3" Grid.Column="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="2" Grid.Column="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
             <Button Margin="5" Style="{StaticResource MaterialDesignRaisedButton}" cal:Message.Attach="[Click] = [AddClick()]" Width="150" Content="Add Session" ToolTip="Add Session" />
         </StackPanel>
     </Grid>
