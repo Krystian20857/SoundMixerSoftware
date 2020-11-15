@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Notifications.Wpf;
-using SoundMixerSoftware.Updater;
+using SoundMixerSoftware.Framework.Config;
+using Squirrel;
 
 namespace SoundMixerSoftware.Framework.NotifyWrapper
 {
-    public class NewVersionNotification : INotification<NewVersionEventArgs>
+    public class NewVersionNotification : INotification<ReleaseEntry>
     {
         #region Const
 
@@ -21,7 +22,7 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
         
         #region Public Properties
 
-        public NewVersionEventArgs NewVersion { get; set; }
+        public ReleaseEntry NewVersion { get; set; }
 
         #endregion
         
@@ -34,12 +35,12 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
         
         #region Implemented Methods
         
-        public NewVersionEventArgs GetValue(string key)
+        public ReleaseEntry GetValue(string key)
         {
-            throw new NotImplementedException();
+            return NewVersion;
         }
 
-        public void SetValue(string key, NewVersionEventArgs value)
+        public void SetValue(string key, ReleaseEntry value)
         {
             switch (key)
             {
@@ -60,7 +61,7 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
             }
         }
 
-        public IEnumerable<NewVersionEventArgs> GetValues()
+        public IEnumerable<ReleaseEntry> GetValues()
         {
             return new[] { NewVersion };
         }
@@ -80,9 +81,9 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
             }
             else
             {
-                content.Message = "New version has been released click to update.";
+                content.Message = "New version has downloaded. Click to update.";
             }
-            _manager.Show(content, onClick: Clicked, onClose: Closed);
+            _manager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: ConfigHandler.ConfigStruct.Notification.NotificationShowTime);
         }
 
         #endregion

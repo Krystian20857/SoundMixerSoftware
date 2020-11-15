@@ -96,9 +96,15 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
                     Type = NotificationType.Warning
                 };
             }
-            _notificationManager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.Notification.NotificationShowTime));
+            _notificationManager.Show(content, onClick: Clicked, onClose: Closed, expirationTime: ConfigHandler.ConfigStruct.Notification.NotificationShowTime);
         }
         
         #endregion
+    }
+    
+    public enum DeviceNotificationState
+    {
+        Connected,
+        Disconnected
     }
 }

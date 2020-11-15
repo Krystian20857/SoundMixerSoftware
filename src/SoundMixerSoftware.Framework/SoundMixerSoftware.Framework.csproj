@@ -67,10 +67,10 @@
     <Compile Include="Device\OffsetManager.cs" />
     <Compile Include="LocalSystem\LocalContainer.cs" />
     <Compile Include="NotifyWrapper\DeviceNotification.cs" />
-    <Compile Include="NotifyWrapper\DeviceNotificationState.cs" />
     <Compile Include="NotifyWrapper\ExceptionNotification.cs" />
     <Compile Include="NotifyWrapper\INotification.cs" />
     <Compile Include="NotifyWrapper\NewVersionNotification.cs" />
+    <Compile Include="NotifyWrapper\NotificationHandler.cs" />
     <Compile Include="Overlay\OverlayHandler.cs" />
     <Compile Include="Overlay\OverlaySwitcher.cs" />
     <Compile Include="Profile\Cycler\DefaultProfileCycler.cs" />

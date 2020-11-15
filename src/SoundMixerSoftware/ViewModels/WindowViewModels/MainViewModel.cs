@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +34,7 @@ namespace SoundMixerSoftware.ViewModels
             }
         }
 
-        public string AppVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public string AppVersion => Constant.AppVersion;
 
         #endregion
         
@@ -84,7 +82,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void GithubClicked()
         {
-            Process.Start("https://github.com/Krystian20857/SoundMixerSoftware/");
+            Process.Start(Constant.GITHUB_REPO_URL);
         }
         
         #endregion

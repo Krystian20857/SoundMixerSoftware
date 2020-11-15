@@ -24,7 +24,6 @@ namespace SoundMixerSoftware.ViewModels
         private IWindowManager _windowManager =  new WindowManager();
         
         private BindableCollection<DeviceModel> _devices = new BindableCollection<DeviceModel>();
-        private INotification<object> _deviceNotification = new DeviceNotification(); 
 
         #endregion
         
@@ -65,8 +64,6 @@ namespace SoundMixerSoftware.ViewModels
             
             DeviceHandlerGlobal.DeviceConnected += DeviceHandlerOnDeviceConnected;
             DeviceHandlerGlobal.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
-
-            _deviceNotification.Clicked += () => Bootstrapper.Instance.SetForeground();
         }
 
         /// <summary>
@@ -85,12 +82,7 @@ namespace SoundMixerSoftware.ViewModels
                 if(deviceIndex >= 0)
                     Devices.RemoveAt(deviceIndex);
             });
-            if (ConfigHandler.ConfigStruct.Notification.EnableNotifications)
-            {
-                _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
-                _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Disconnected);
-                _deviceNotification.Show();
-            }
+            NotificationHandler.ShowDeviceDisconnectedNotification(e, () => Bootstrapper.Instance.SetForeground());
         }
 
         /// <summary>
@@ -105,11 +97,9 @@ namespace SoundMixerSoftware.ViewModels
             {
                 Devices.Add(DeviceModel.CreateModel(e));
             });
-            if (!e.DetectedOnStartup && ConfigHandler.ConfigStruct.Notification.EnableNotifications)
+            if (!e.DetectedOnStartup)
             {
-                _deviceNotification.SetValue(DeviceNotification.EVENT_ARGS_KEY, e);
-                _deviceNotification.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);
-                _deviceNotification.Show();
+                NotificationHandler.ShowDeviceConnectedNotification(e, () => Bootstrapper.Instance.SetForeground());
             }
         }
 

@@ -19,7 +19,6 @@ namespace SoundMixerSoftware.Framework.SliderConverter
         
         public static Dictionary<string, IConverterCreator> ConverterRegistry { get; } = new Dictionary<string, IConverterCreator>();
         public static List<List<IConverter>> Converters { get; } = new List<List<IConverter>>();
-        public static List<ConverterStruct> GlobalConverters { get; } = new List<ConverterStruct>();
 
         #endregion
         
@@ -51,11 +50,6 @@ namespace SoundMixerSoftware.Framework.SliderConverter
                     continue;
                 if(sliderStruct.Converters == null)
                     sliderStruct.Converters = new List<ConverterStruct>();
-                for (var x = 0; x < GlobalConverters.Count; x++)
-                {
-                    var converter = GlobalConverters[x];
-                    AddConverter(n, converter);
-                }
                 for (var x = 0; x < sliderStruct.Converters.Count; x++)
                 {
                     var converter = sliderStruct.Converters[x];
@@ -134,8 +128,6 @@ namespace SoundMixerSoftware.Framework.SliderConverter
         public static float ConvertValue(int index, float value, DeviceId deviceId)
         {
             var converters = Converters[index];
-            if (converters.Count == 0 && GlobalConverters.Count == 0)
-                return value;
             for (var n = 0; n < converters.Count; n++)
                 value = converters[n].Convert(value, index, n, deviceId);
             return value;

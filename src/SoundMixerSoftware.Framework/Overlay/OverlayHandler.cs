@@ -9,8 +9,8 @@ namespace SoundMixerSoftware.Framework.Overlay
     {
         #region Static Properties
 
-        public static OverlaySwitcher Switcher { get; set; } = new OverlaySwitcher(() => ConfigHandler.ConfigStruct.Overlay.EnableOverlay);
-        public static int FadeTime => ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
+        public static OverlaySwitcher Switcher { get; } = new OverlaySwitcher(() => ConfigHandler.ConfigStruct.Overlay.EnableOverlay);
+        public static int FadeTime => ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime.Milliseconds;
 
         #endregion
         

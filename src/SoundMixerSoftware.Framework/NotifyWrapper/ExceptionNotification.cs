@@ -79,7 +79,7 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
                 Message = "For more info check logs or click this notification."
             };
             
-            _manager.Show(content, onClose: Closed, onClick: Clicked, expirationTime: TimeSpan.FromMilliseconds(ConfigHandler.ConfigStruct.Notification.NotificationShowTime));
+            _manager.Show(content, onClose: Closed, onClick: Clicked, expirationTime: ConfigHandler.ConfigStruct.Notification.NotificationShowTime);
         }
         
         #endregion

@@ -14,13 +14,13 @@ namespace SoundMixerSoftware.Framework.Config
     {
         #region Static Sample Config
 
-        public static ConfigStruct SampleConfigStruct = new ConfigStruct()
+        public static readonly ConfigStruct SampleConfigStruct = new ConfigStruct()
         {
             Hardware = new HardwareSettings()
             {
                 UsbIDs = new List<USBID>()
                 {
-                    new USBID{ Vid = 0x468F, Pid= 0x895D}
+                    new USBID{ Vid = 0x468F, Pid = 0x895D}
                 },
                 SerialConfig = new SerialConfig()
                 {
@@ -44,12 +44,12 @@ namespace SoundMixerSoftware.Framework.Config
             Notification = new NotificationSettings()
             {
                 EnableNotifications = true,
-                NotificationShowTime = 7000,
+                NotificationShowTime = TimeSpan.FromMilliseconds(7000),
             },
             Overlay = new OverlaySettings()
             {
                 EnableOverlay = true,
-                OverlayFadeTime = 2500
+                OverlayFadeTime = TimeSpan.FromMilliseconds(2500)
             },
             Interop = new InteropSettings
             {
@@ -116,10 +116,10 @@ namespace SoundMixerSoftware.Framework.Config
         #region Non-null Types
         
         [YamlIgnore]
-        public int OverlayFadeTime
+        public TimeSpan OverlayFadeTime
         {
-            get => OverlayFadeTimeNullable ?? 0;
-            set => OverlayFadeTimeNullable = value;
+            get => TimeSpan.FromMilliseconds(OverlayFadeTimeNullable ?? 0);
+            set => OverlayFadeTimeNullable = (int)value.TotalMilliseconds;
         }
         [YamlIgnore]
         public bool EnableOverlay
@@ -146,10 +146,10 @@ namespace SoundMixerSoftware.Framework.Config
         #region Non-null Types
         
         [YamlIgnore]
-        public int NotificationShowTime
+        public TimeSpan NotificationShowTime
         {
-            get => NotificationShowTimeNullable ?? 0;
-            set => NotificationShowTimeNullable = value;
+            get => TimeSpan.FromMilliseconds(NotificationShowTimeNullable ?? 0);
+            set => NotificationShowTimeNullable = (int)value.TotalMilliseconds;
         }
 
         [YamlIgnore]
@@ -197,7 +197,7 @@ namespace SoundMixerSoftware.Framework.Config
         public string ThemeName { get; set; }
         [YamlMember(Alias = nameof(HideOnStartup))]
         public bool? HideOnStartupNullable { get; set; }
-
+        [YamlMember(Alias = nameof(UseDarkTheme))]
         public bool? UseDarkThemeNullable { get; set; }
 
         #endregion

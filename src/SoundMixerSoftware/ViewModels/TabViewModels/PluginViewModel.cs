@@ -4,6 +4,7 @@ using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Common.Utils.Application;
 using SoundMixerSoftware.Extensibility.Loader;
 using SoundMixerSoftware.Models;
+using Squirrel;
 
 namespace SoundMixerSoftware.ViewModels
 {
@@ -77,7 +78,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public void ReloadAppClick()
         {
-            StarterHelper.RestartApp();
+            UpdateManager.RestartApp();
         }
 
         public void OpenPluginSettings(object sender)

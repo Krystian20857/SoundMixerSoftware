@@ -57,22 +57,10 @@ namespace SoundMixerSoftware.ViewModels
         #region Public Properties
 
         public static SettingsViewModel Instance => IoC.Get<SettingsViewModel>();
-        
-
-        public bool AutoUpdate
-        {
-            get => _autoUpdate;
-            set
-            {
-                ConfigHandler.ConfigStruct.Updater.AutoUpdate = value;
-                _autoUpdate = value;
-                
-            }
-        }
 
         public bool AutoRun
         {
-            get => _autoRun;
+            get => _autoRunHandle.CheckInstance(false);
             set
             {
                 if (value)
@@ -114,13 +102,8 @@ namespace SoundMixerSoftware.ViewModels
             get => _overlayFadeTime;
             set
             {
-                ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime = value;
-                if(!LockConfig)
-                    _debounceDispatcher.Debounce(300,param =>
-                    {
-                        ConfigHandler.SaveConfig();
-                        OverlayHandler.SetFadeTime(value);
-                    });
+                ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime = TimeSpan.FromMilliseconds(value);
+                OverlayHandler.SetFadeTime((int)ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime.TotalMilliseconds);
                 _overlayFadeTime = value;
                 OnPropertyChanged(nameof(OverlayFadeTime));
             }
@@ -132,9 +115,7 @@ namespace SoundMixerSoftware.ViewModels
             get => _notificationShowTime;
             set
             {
-                ConfigHandler.ConfigStruct.Notification.NotificationShowTime = value;
-                if(!LockConfig)
-                    _debounceDispatcher.Debounce(300,param => ConfigHandler.SaveConfig());
+                ConfigHandler.ConfigStruct.Notification.NotificationShowTime = TimeSpan.FromMilliseconds(value);
                 _notificationShowTime = value;
                 OnPropertyChanged(nameof(NotificationShowTime));
             }
@@ -219,10 +200,9 @@ namespace SoundMixerSoftware.ViewModels
             AutoRun = _autoRunHandle.CheckInstance();
             EnableNotify = ConfigHandler.ConfigStruct.Notification.EnableNotifications;
             EnableOverlay = ConfigHandler.ConfigStruct.Overlay.EnableOverlay;
-            OverlayFadeTime = ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime;
-            NotificationShowTime = ConfigHandler.ConfigStruct.Notification.NotificationShowTime;
+            OverlayFadeTime = (int)ConfigHandler.ConfigStruct.Overlay.OverlayFadeTime.TotalMilliseconds;
+            NotificationShowTime = (int)ConfigHandler.ConfigStruct.Notification.NotificationShowTime.TotalMilliseconds;
             HideOnStartup = ConfigHandler.ConfigStruct.Application.HideOnStartup;
-            AutoUpdate = ConfigHandler.ConfigStruct.Updater.AutoUpdate;
             IsDarkThemeChecked = ConfigHandler.ConfigStruct.Application.UseDarkTheme;
 
             LoadThemes();

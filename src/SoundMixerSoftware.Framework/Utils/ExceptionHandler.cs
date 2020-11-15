@@ -1,6 +1,7 @@
 ﻿using System;
 using NLog;
-using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Common.Utils.Application;
+using SoundMixerSoftware.Framework.LocalSystem;
 using SoundMixerSoftware.Framework.NotifyWrapper;
 
 namespace SoundMixerSoftware.Framework.Utils
@@ -19,11 +20,7 @@ namespace SoundMixerSoftware.Framework.Utils
         public static void HandleException(Logger logger, string message, Exception exception)
         {
             logger?.Error(exception);
-            if (!ConfigHandler.ConfigStruct.Notification.EnableNotifications)
-                return;
-            var exceptionNotification = new ExceptionNotification();
-            exceptionNotification.SetValue(ExceptionNotification.MESSAGE_KEY, message);
-            exceptionNotification.Show();
+            NotificationHandler.ShowErrorNotification(message);
         }
         
     }
