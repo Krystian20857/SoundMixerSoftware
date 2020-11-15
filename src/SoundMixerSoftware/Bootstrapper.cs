@@ -60,7 +60,9 @@ namespace SoundMixerSoftware
                 if(!(IoC.Get<MainViewModel>().GetView() is Window mainWindow)) return IntPtr.Zero;
                 return new WindowInteropHelper(mainWindow).Handle;
             }
-        } 
+        }
+
+        public bool IsFirstRun { get; private set; }
 
         /// <summary>
         /// Global application Tray.
@@ -173,7 +175,7 @@ namespace SoundMixerSoftware
             PluginLoader.ViewLoadingEvent();
             TaskbarIcon = Application.FindResource("TaskbarIcon") as TaskbarIcon;
 
-            StartMainWindow(!ConfigHandler.ConfigStruct.Application.HideOnStartup || CmdOptions.ForceShow || CmdOptions.SquirrelFirstRun);
+            StartMainWindow(!ConfigHandler.ConfigStruct.Application.HideOnStartup || CmdOptions.ForceShow || IsFirstRun);
 
             Logger.Info("Main view started.");
                 
@@ -254,6 +256,8 @@ namespace SoundMixerSoftware
 
         private void ParseCommandLineOptions()
         {
+            SquirrelAwareApp.HandleEvents(onFirstRun: () => IsFirstRun = true);
+            
             var args = Environment.GetCommandLineArgs();
             Logger.Trace($"Cmd arguments: {string.Join(" ", args)}");
             Parser.Default.ParseArguments<CmdOptions>(args).WithParsed(o =>
