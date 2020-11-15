@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Runtime;
+﻿using System;
+using System.Linq;
 using System.Windows.Media;
 using MaterialDesignColors;
 using MaterialDesignColors.ColorManipulation;
@@ -23,7 +23,7 @@ namespace SoundMixerSoftware.Models
 
         #endregion
         
-        #region Public Properties
+        #region Properties
         
         /// <summary>
         /// Get theme wrapper.
@@ -54,6 +54,9 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public static Color ImmersiveTheme => ColorUtil.FromArgb(ThemeWrapper.GetThemeColor());
 
+        /// <summary>
+        /// Gets and Sets dark theme.
+        /// </summary>
         public static bool UseDarkTheme
         {
             set
@@ -76,6 +79,21 @@ namespace SoundMixerSoftware.Models
             }
         }
 
+        private static IThemeManager _themeManager => _paletteHelper.GetThemeManager();
+
+        #endregion
+        
+        #region Events
+
+        /// <summary>
+        /// Occurs when theme has changed.
+        /// </summary>
+        public static event EventHandler<ThemeChangedEventArgs> ThemeChanged
+        {
+            add => _themeManager.ThemeChanged += value;
+            remove => _themeManager.ThemeChanged -= value;
+        }
+        
         #endregion
         
         #region Constructor

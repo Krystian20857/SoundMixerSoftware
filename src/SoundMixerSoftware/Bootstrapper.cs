@@ -8,6 +8,7 @@ using System.Windows.Interop;
 using Caliburn.Micro;
 using CommandLine;
 using Hardcodet.Wpf.TaskbarNotification;
+using MaterialDesignThemes.Wpf;
 using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;

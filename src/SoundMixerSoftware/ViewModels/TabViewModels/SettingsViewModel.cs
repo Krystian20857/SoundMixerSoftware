@@ -40,7 +40,6 @@ namespace SoundMixerSoftware.ViewModels
         private bool _hideOnStartup;
         private int _overlayFadeTime;
         private int _notificationShowTime;
-        private bool _autoUpdate;
         private bool _isDarkThemeChecked;
 
         private ThemeModel _selectedTheme;

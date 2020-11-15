@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Caliburn.Micro;
+using Hardcodet.Wpf.TaskbarNotification;
 using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Framework.Profile;
 using SoundMixerSoftware.Models;
@@ -18,9 +20,7 @@ namespace SoundMixerSoftware.ViewModels
 
         #endregion
         
-        #region Public Properties
-        
-        //public BindableCollection<ProfileModel> Profiles { get; set; } = new BindableCollection<ProfileModel>();
+        #region Properties
 
         public BindableCollection<ProfileModel> Profiles => ManagerViewModel.Instance.Profiles;
 
@@ -33,6 +33,8 @@ namespace SoundMixerSoftware.ViewModels
                 OnPropertyChanged(nameof(ProfileName));
             }
         }
+
+        private TaskbarIcon Resource => Bootstrapper.Instance.TaskbarIcon;
 
         #endregion
         
@@ -56,7 +58,8 @@ namespace SoundMixerSoftware.ViewModels
         
         private void InstanceOnViewInitialized(object _, EventArgs e)
         {
-            Bootstrapper.Instance.TaskbarIcon.TrayLeftMouseUp += (sender, args) => ShowWindow();
+            Resource.TrayLeftMouseUp += (sender, args) => ShowWindow();
+            ThemeManager.ThemeChanged += (sender, args) => Resource.UpdateDefaultStyle();
         }
 
         public void ShowWindow()
