@@ -1,4 +1,5 @@
-[![AppVeyor Page](https://img.shields.io/appveyor/build/Krystian20857/soundmixersoftware?style=for-the-badge)](https://ci.appveyor.com/project/Krystian20857/soundmixersoftware)
+[![AppVeyor Page](https://img.shields.io/appveyor/build/Krystian20857/soundmixersoftware?style=for-the-badge&logo=appveyor)](https://ci.appveyor.com/project/Krystian20857/soundmixersoftware)
+[![Github Releases](https://img.shields.io/github/v/release/Krystian20857/SoundMixerSoftware?style=for-the-badge)](http://github.com/Krystian20857/SoundMixerSoftware/releases/)
 
 # Sound Mixer Software
 **Sound Mixer Software** is sub-repo of [Sound Mixer](https://github.com/Krystian20857/SoundMixer) project. Purpose of this software is detect connected sound mixer devices and handle incoming data.
