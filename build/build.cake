@@ -24,7 +24,7 @@ Task("Restore-NuGet-Packages")
 
     
 Task("Build")
-    .IsDependentOn("Clean")
+    .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
     {
     Information("Building from sources...");
