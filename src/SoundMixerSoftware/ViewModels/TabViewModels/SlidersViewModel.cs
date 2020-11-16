@@ -37,6 +37,8 @@ namespace SoundMixerSoftware.ViewModels
                 NotifyOfPropertyChange(() => Sliders);
             }
         }
+
+        public static SlidersViewModel Instance => IoC.Get<SlidersViewModel>();
         
         #endregion
         

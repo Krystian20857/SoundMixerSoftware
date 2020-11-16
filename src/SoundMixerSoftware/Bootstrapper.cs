@@ -8,7 +8,6 @@ using System.Windows.Interop;
 using Caliburn.Micro;
 using CommandLine;
 using Hardcodet.Wpf.TaskbarNotification;
-using MaterialDesignThemes.Wpf;
 using NLog;
 using SoundMixerSoftware.Common.LocalSystem;
 using SoundMixerSoftware.Common.Logging;
@@ -134,6 +133,7 @@ namespace SoundMixerSoftware
             _container.Singleton<ButtonsViewModel>();
             _container.Singleton<HomeViewModel>();
             _container.Singleton<HomeButtonViewModel>();
+            _container.Singleton<UpdateViewModel>();
             
             _container.Singleton<SessionAddViewModel>();
             _container.Singleton<ExtensionAddViewModel>();
@@ -181,7 +181,7 @@ namespace SoundMixerSoftware
             Logger.Info("Main view started.");
                 
             PluginLoader.ViewLoadedEvent();
-                
+
             ViewInitialized?.Invoke(this, EventArgs.Empty);
         }
 
@@ -266,7 +266,7 @@ namespace SoundMixerSoftware
                 CmdOptions = o;
             }).WithNotParsed(o =>
             {
-                Logger.Warn("Error while parsing command line arguments: ", string.Join(",", o));
+                Logger.Warn("Error while parsing command line arguments: " + string.Join(",", o));
             });
         }
         

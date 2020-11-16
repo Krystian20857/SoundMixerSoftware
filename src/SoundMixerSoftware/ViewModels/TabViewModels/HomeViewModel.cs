@@ -42,12 +42,13 @@ namespace SoundMixerSoftware.ViewModels
 
         public HomeViewModel()
         {
-            Tabs.Add(IoC.Get<ManagerViewModel>());
-            Tabs.Add(IoC.Get<SlidersViewModel>());
-            Tabs.Add(IoC.Get<ButtonsViewModel>());
-            Tabs.Add(IoC.Get<DevicesViewModel>());
-            Tabs.Add(IoC.Get<PluginViewModel>());
-            Tabs.Add(IoC.Get<SettingsViewModel>());
+            Tabs.Add(ManagerViewModel.Instance);
+            Tabs.Add(SlidersViewModel.Instance);
+            Tabs.Add(ButtonsViewModel.Instance);
+            Tabs.Add(DevicesViewModel.Instance);
+            Tabs.Add(PluginViewModel.Instance);
+            Tabs.Add(UpdateViewModel.Instance);
+            Tabs.Add(SettingsViewModel.Instance);
         }
         
         #endregion

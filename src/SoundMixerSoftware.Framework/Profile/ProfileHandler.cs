@@ -33,10 +33,12 @@ namespace SoundMixerSoftware.Framework.Profile
 
         private static void OnProfileChanged(object sender, ProfileChangedEventArgs e)
         {
+            var saveConfig = !(SelectedGuid == Guid.Empty && e.Uuid != Guid.Empty);
             SelectedGuid = e.Uuid;
             SelectedProfile = ProfileManager.Profiles[e.Uuid];
             ConfigHandler.ConfigStruct.Application.SelectedProfile = e.Uuid;
-            ConfigHandler.SaveConfig();
+            if(saveConfig)
+                ConfigHandler.SaveConfig();
         }
 
         #endregion
@@ -45,7 +47,6 @@ namespace SoundMixerSoftware.Framework.Profile
 
         static ProfileHandler()
         {
-            ProfileManager.LoadAll();
             ProfileChanged += OnProfileChanged;
         }
 

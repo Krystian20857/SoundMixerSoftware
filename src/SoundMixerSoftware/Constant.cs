@@ -8,7 +8,7 @@ namespace SoundMixerSoftware
     {
         
 #if DEBUG
-        public const string GITHUB_REPO_URL = "https://github.com/Krystian20857/SoundMixerSoftware";
+        public const string GITHUB_REPO_URL = "https://github.com/Krystian20857/TestRepo";
 #else
         public const string GITHUB_REPO_URL = "https://github.com/Krystian20857/SoundMixerSoftware";
 #endif

@@ -17,6 +17,7 @@ using SoundMixerSoftware.Framework.LocalSystem;
 using SoundMixerSoftware.Framework.Overlay;
 using SoundMixerSoftware.Interop.Wrapper;
 using SoundMixerSoftware.Models;
+using SoundMixerSoftware.Utils;
 using LogManager = NLog.LogManager;
 
 namespace SoundMixerSoftware.ViewModels
@@ -33,8 +34,7 @@ namespace SoundMixerSoftware.ViewModels
         #endregion
         
         #region Private Fields
-
-        private bool _autoRun;
+        
         private bool _enableNotify;
         private bool _enableOverlay;
         private bool _hideOnStartup;
@@ -66,7 +66,6 @@ namespace SoundMixerSoftware.ViewModels
                     _autoRunHandle.SetStartup();
                 else
                     _autoRunHandle.RemoveStartup();
-                _autoRun = value;
                 OnPropertyChanged(nameof(AutoRun));
             }
         }
@@ -241,32 +240,9 @@ namespace SoundMixerSoftware.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             
-            var property = typeof(SettingsViewModel).GetProperty(propertyName ?? string.Empty);
-            if (property != null && !LockConfig)
-            {
-                var attribute = (SettingPropertyAttribute) Attribute.GetCustomAttribute(property, typeof(SettingPropertyAttribute));
-                if (!LockConfig || !attribute.IgnoreConfigLock)
-                {
-                    if (attribute.Debounce)
-                        _debounceDispatcher.Debounce(300, param => ConfigHandler.SaveConfig());
-                    else
-                        ConfigHandler.SaveConfig();
-                }
-            }
+            SettingsManager.HandleSPropertyChange<SettingsViewModel>(propertyName, LockConfig);
         }
         
         #endregion
-    }
-
-    public class SettingPropertyAttribute : Attribute
-    {
-        public bool Debounce { get; set; }
-        public bool IgnoreConfigLock { get; set; }
-
-        public SettingPropertyAttribute(bool debounce = false, bool ignoreConfigLock = false)
-        {
-            Debounce = debounce;
-            IgnoreConfigLock = ignoreConfigLock;
-        }
     }
 }

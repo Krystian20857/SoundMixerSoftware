@@ -64,8 +64,21 @@ namespace SoundMixerSoftware.ViewModels
         {
             Name = "Profiles";
             Icon = PackIconKind.AccountBoxMultipleOutline;
+            
             var profilesToRemove = new List<Guid>();
-            foreach (var uuid in ConfigHandler.ConfigStruct.Application.ProfilesOrder)
+            var profileOrder = ConfigHandler.ConfigStruct.Application.ProfilesOrder;
+            bool saveConfig = false;
+            
+            foreach (var profile in ProfileHandler.ProfileManager.Profiles)
+            {
+                var uuid = profile.Key;
+                if (profileOrder.Contains(uuid))
+                    continue;
+                profileOrder.Add(uuid);
+                saveConfig = true;
+            }
+            
+            foreach (var uuid in profileOrder)
             {
                 if (!ProfileHandler.ProfileManager.Profiles.ContainsKey(uuid))
                 {
@@ -85,8 +98,9 @@ namespace SoundMixerSoftware.ViewModels
             }
 
             foreach (var profile in profilesToRemove)
-                ConfigHandler.ConfigStruct.Application.ProfilesOrder.Remove(profile);
-            ConfigHandler.SaveConfig();
+                profileOrder.Remove(profile);
+            if(profilesToRemove.Count > 0 || saveConfig)
+                ConfigHandler.SaveConfig();
 
             ProfileHandler.ProfileChanged += ProfileHandlerOnProfileChanged;
         }

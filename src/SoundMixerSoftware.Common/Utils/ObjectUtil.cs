@@ -26,7 +26,7 @@ namespace SoundMixerSoftware.Common.Utils
             var type = typeof(T);
             foreach (var property in type.GetProperties())
             {
-                if(source == null)
+                if (source == null)
                     continue;
                 var valueSource = property.GetValue(source);
                 var valueDest = property.GetValue(dest);
@@ -37,14 +37,13 @@ namespace SoundMixerSoftware.Common.Utils
                 }
 
                 if (!property.PropertyType.IsValueType && Attribute.IsDefined(property, typeof(RecursionAttribute)))
-                    if (InvokeGenericMethod<bool>(
+                    modified |= InvokeGenericMethod<bool>(
                         typeof(ObjectUtil),
                         null,
                         nameof(MergeObjects),
                         property.PropertyType,
-                        new[] {valueSource, valueDest})
-                    )
-                        modified = true;
+                        new[] {valueSource, valueDest});
+
             }
 
             return modified;
