@@ -1,0 +1,26 @@
+﻿image: Visual Studio 2019
+configuration: Release
+
+version: 0.0.1{build}
+
+assembly_info: 
+  patch: false
+
+install:
+  - dotnet tool restore
+
+build_script:
+  - dotnet cake build/build.cake
+  - dotnet cake build/pack.cake
+
+skip_commits: 
+  files:
+  - README.md
+  - LICENSE
+
+artifacts:
+  - path: "output/release/**"
+    name: "raw"
+  - path: "output/packages/**"
+    name: "squirrel"
+
