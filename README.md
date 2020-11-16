@@ -1,3 +1,5 @@
+[![AppVeyor Page](https://img.shields.io/appveyor/build/Krystian20857/soundmixersoftware?style=for-the-badge)](https://ci.appveyor.com/project/Krystian20857/soundmixersoftware)
+
 # Sound Mixer Software
 **Sound Mixer Software** is sub-repo of [Sound Mixer](https://github.com/Krystian20857/SoundMixer) project. Purpose of this software is detect connected sound mixer devices and handle incoming data.
 Main premise of this piece of code is translate slider move to specified audio session volume.
