@@ -58,7 +58,27 @@ namespace SoundMixerSoftware.Framework.Audio
         #endregion
         
         #region Constructor
-        
+
+        static SessionHandler()
+        {
+            // event proxy needed... if event will be subscribed before this(SessionHandler constructor), event will not be called.
+            void VolumeHandler(object sender1, VolumeChangedArgs args1) => SessionVolumeChanged?.Invoke(sender1, args1);
+            void MuteHandler(object sender1, MuteChangedArgs args1) => SessionMuteChanged?.Invoke(sender1, args1);
+            
+            VirtualSessionCreated += (sender, args) =>
+            {
+                var session = args.Session;
+                session.VolumeChange += VolumeHandler;
+                session.MuteChanged += MuteHandler;
+            };
+
+            VirtualSessionRemoved += (sender, args) =>
+            {
+                var session = args.Session;
+                session.VolumeChange += VolumeHandler;
+                session.MuteChanged += MuteHandler;
+            };
+        }
         
         #endregion
         
@@ -196,21 +216,14 @@ namespace SoundMixerSoftware.Framework.Audio
         /// <param name="selfInvoke"></param>
         public static void SetVolume(int index, float volume, bool selfInvoke)
         {
-            try
+            if (index >= Sessions.Count)
+                return;
+            foreach (var slider in Sessions[index])
             {
-                if (index >= Sessions.Count)
-                    return;
-                foreach (var slider in Sessions[index])
-                {
-                    VolumeThread.BeginInvoke(() => { slider.Volume = volume; });
-                }
-            }
-            finally
-            {
-                SessionVolumeChanged?.Invoke(null, new VolumeChangedArgs(volume, selfInvoke, index));
+                VolumeThread.BeginInvoke(() => { slider.Volume = volume; });
             }
         }
-        
+
         /// <summary>
         /// Sets mute of all sliders in specified index.
         /// </summary>
@@ -219,21 +232,14 @@ namespace SoundMixerSoftware.Framework.Audio
         /// <param name="selfInvoke"></param>
         public static void SetMute(int index, bool mute, bool selfInvoke)
         {
-            try
+            if (index >= Sessions.Count)
+                return;
+            foreach (var slider in Sessions[index])
             {
-                if (index >= Sessions.Count)
-                    return;
-                foreach (var slider in Sessions[index])
-                {
-                    VolumeThread.BeginInvoke(() => { slider.IsMute = mute; });
-                }
-            }
-            finally
-            {
-                SessionMuteChanged?.Invoke(null, new MuteChangedArgs(mute, selfInvoke, index));
+                VolumeThread.BeginInvoke(() => { slider.IsMute = mute; });
             }
         }
-        
+
         /// <summary>
         /// Checks whatever is there any active slider in specified index.
         /// </summary>

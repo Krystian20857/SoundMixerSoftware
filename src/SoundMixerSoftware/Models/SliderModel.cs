@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Caliburn.Micro;
 using NLog;
@@ -195,43 +196,21 @@ namespace SoundMixerSoftware.Models
         /// </summary>
         public SliderModel()
         {
-            foreach (var session in Applications)
+            SessionHandler.SessionVolumeChanged += (sender, args) =>
             {
-                session.VolumeChange += SessionOnVolumeChange;
-                session.MuteChanged += SessionOnMuteChanged;
-            }
-
-            SessionHandler.VirtualSessionCreated += (sender, args) =>
-            {
-                if(args.Index != Index)
-                    return;
-                var session = args.Session;
-                session.VolumeChange += SessionOnVolumeChange;
-                session.MuteChanged += SessionOnMuteChanged;
+                var index = args.Index;
+                if(index != Index) return;
+                VolumeIn = (int) Math.Round(args.Volume);
             };
-            
-            SessionHandler.VirtualSessionRemoved += (sender, args) =>
+
+            SessionHandler.SessionMuteChanged += (sender, args) =>
             {
-                if (args.Index != Index)
-                    return;
-                var session = args.Session;
-                session.VolumeChange -= SessionOnVolumeChange;
-                session.MuteChanged -= SessionOnMuteChanged;
+                var index = args.Index;
+                if(index != Index) return;
+                MuteIn = args.Mute;
             };
         }
 
-        private void SessionOnMuteChanged(object sender, MuteChangedArgs e)
-        {
-            MuteIn = e.Mute;
-        }
-
-        private void SessionOnVolumeChange(object sender, VolumeChangedArgs e)
-        {
-            var volumeInt = (int) Math.Round(e.Volume);
-            if(VolumeIn == volumeInt) return;
-            VolumeIn = volumeInt;
-        }
-        
         #endregion
         
         #region Dispose
@@ -240,10 +219,9 @@ namespace SoundMixerSoftware.Models
         {
             foreach (var session in Applications)
             {
-                session.VolumeChange -= SessionOnVolumeChange;
-                session.MuteChanged -= SessionOnMuteChanged;
                 session.Dispose();
             }
+            
             GC.SuppressFinalize(this);
         }
 

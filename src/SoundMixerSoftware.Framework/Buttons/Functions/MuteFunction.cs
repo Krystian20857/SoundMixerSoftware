@@ -165,7 +165,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             {
                 case MuteTask.MuteDefaultSpeaker:
                 case MuteTask.MuteDefaultMic:
-                    _device.ToggleMuteAsync().ContinueWith(x => OverlayHandler.ShowMute(_device.IsMuted));
+                    _device.ToggleMuteAsync().ContinueWith(x => OverlayHandler.ShowMute(x.Result));
                     break;
                 case MuteTask.MuteSlider:
                     var mute = !_lastSliderMute;

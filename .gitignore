@@ -448,5 +448,5 @@ packages
 # Windows
 Thumbs.db
 
-output/package/**
+output/**
 

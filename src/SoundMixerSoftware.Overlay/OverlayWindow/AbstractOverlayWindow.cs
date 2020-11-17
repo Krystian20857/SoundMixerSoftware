@@ -14,6 +14,8 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         private Timer _showTimer;
         private volatile bool _fadeThreadRunning = true;
         private int _backupFadeTime;
+        
+        private readonly object _showLock = new object();
 
         #endregion
 
@@ -170,34 +172,40 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
         
         public void ShowWindow()
         {
-            _opacity = 255;
-            _fadeThreadRunning = false;
-            if (!_window.IsInitialized)
-                _window.Create();
-            if (!IsVisible)
+            lock (_showLock)
             {
+                _opacity = 255;
+                _fadeThreadRunning = false;
+                if (!_window.IsInitialized)
+                    _window.Create();
+                if (!IsVisible)
+                {
+                    _window.Show();
+                    _window.Unpause();
+                }
 
-                _window.Show();
-                _window.Unpause();
+                _showTimer.Start();
+                WindowWrapper.SetWindowPos(_window.Handle, PaddingX, PaddingY);
             }
-            _showTimer.Start();
-            WindowWrapper.SetWindowPos(_window.Handle, PaddingX, PaddingY);
         }
 
         public void HideWindow()
         {
-            if(!IsVisible)
-                return;
-            _window.Pause(); 
-            _window.Hide();
-            _opacity = 0;
-            _fadeThreadRunning = false;
-            _showTimer.Stop();
-            if (IsTempFadeTime)
+            lock (_showLock)
             {
-                IsTempFadeTime = false;
-                FadeTime = _backupFadeTime;
-                _backupFadeTime = 0;
+                if (!IsVisible)
+                    return;
+                _window.Pause();
+                _window.Hide();
+                _opacity = 0;
+                _fadeThreadRunning = false;
+                _showTimer.Stop();
+                if (IsTempFadeTime)
+                {
+                    IsTempFadeTime = false;
+                    FadeTime = _backupFadeTime;
+                    _backupFadeTime = 0;
+                }
             }
         }
         
