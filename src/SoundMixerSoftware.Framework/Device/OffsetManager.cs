@@ -20,16 +20,7 @@ namespace SoundMixerSoftware.Framework.Device
         public event EventHandler<OffsetChangedArgs> OffsetChanged;
         
         #endregion
-        
-        #region Constructor
 
-        public OffsetManager()
-        {
-            
-        }
-        
-        #endregion
-        
         #region Public Methods
 
         public int GetOrCreateOffset(DeviceId deviceId, int defaultValue = 0)

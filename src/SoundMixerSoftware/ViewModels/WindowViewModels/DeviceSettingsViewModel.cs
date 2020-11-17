@@ -61,7 +61,7 @@ namespace SoundMixerSoftware.ViewModels
             DeviceHandlerGlobal.SliderOffsetManager.SetOffset(deviceId, SliderOffset);
             DeviceHandlerGlobal.ButtonOffsetManager.SetOffset(deviceId, ButtonOffset);
             DeviceSettingsManager.SetSettings(deviceId, deviceSettings);
-            ConfigHandler.SaveConfig();
+            DeviceSettingsManager.Save();
             TryCloseAsync();
         }
 

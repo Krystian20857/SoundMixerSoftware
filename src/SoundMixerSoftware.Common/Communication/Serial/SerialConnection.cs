@@ -180,6 +180,7 @@ namespace SoundMixerSoftware.Common.Communication.Serial
             serialPort.Read(data, 0, data.Length);
             var eventArgs = new SerialDataReceivedArgs(data, serialPort.PortName);
             DataReceived?.Invoke(this, eventArgs);
+            serialPort.DiscardInBuffer();
         }
 
         #endregion

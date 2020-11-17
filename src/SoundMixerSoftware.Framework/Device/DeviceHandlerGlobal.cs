@@ -62,19 +62,17 @@ namespace SoundMixerSoftware.Framework.Device
 
         static DeviceHandlerGlobal()
         {
+            DeviceSettingsManager.Initialize();
+            
             Instance = new DeviceHandler();
             Instance.DeviceConnected += DeviceHandlerOnDeviceConnected;
             Instance.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
             Instance.DataReceived += DeviceHandlerOnDataReceived;
-            
-            ButtonOffsetManager.OffsetChanged += ButtonOffsetManagerOnOffsetChanged;
-            SliderOffsetManager.OffsetChanged += SliderOffsetManagerOnOffsetChanged;
 
-            foreach (var deviceSetting in ConfigHandler.ConfigStruct.Hardware.DeviceSettings)
+            foreach (var deviceSetting in DeviceSettingsManager.AllSettings)
             {
-                if (!DeviceId.TryParse(deviceSetting.Key, out var deviceId))
-                    continue;
                 var settings = deviceSetting.Value;
+                var deviceId = deviceSetting.Key;
                 ButtonOffsetManager.SetOffset(deviceId, settings.ButtonOffset, false);
                 SliderOffsetManager.SetOffset(deviceId, settings.SliderOffset, false);
             }
@@ -101,28 +99,22 @@ namespace SoundMixerSoftware.Framework.Device
                 else if (state == ButtonState.UP)
                     ButtonHandler.HandleKeyUp(index);
             };
+
+            ButtonOffsetManager.OffsetChanged += (sender, args) => OffsetChangedEvent(sender, args, (settings, offset) => settings.ButtonOffset = offset);
+            SliderOffsetManager.OffsetChanged += (sender, args) => OffsetChangedEvent(sender, args, (settings, offset) => settings.SliderOffset = offset);
         }
 
         #endregion
         
-        #region Events
-        
-        private static void SliderOffsetManagerOnOffsetChanged(object sender, OffsetChangedArgs e)
-        {
-            var deviceId = e.DeviceId;
-            var settings = DeviceSettingsManager.GetSettings(deviceId);
-            settings.SliderOffset = e.Offset;
-            DeviceSettingsManager.SetSettings(deviceId, settings);
-            ConfigHandler.SaveConfig();
-        }
+        #region Methods
 
-        private static void ButtonOffsetManagerOnOffsetChanged(object sender, OffsetChangedArgs e)
+        private static void OffsetChangedEvent(object sender, OffsetChangedArgs e, Action<DeviceSettings, int> setOffset)
         {
             var deviceId = e.DeviceId;
             var settings = DeviceSettingsManager.GetSettings(deviceId);
-            settings.ButtonOffset = e.Offset;
+            setOffset(settings, e.Offset);
             DeviceSettingsManager.SetSettings(deviceId, settings);
-            ConfigHandler.SaveConfig();
+            DeviceSettingsManager.Save();
         }
 
         private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
@@ -158,7 +150,7 @@ namespace SoundMixerSoftware.Framework.Device
                 case (byte) Command.SLIDER_COMMAND:
                     SliderStruct sliderStruct = e.Data;
 
-                    var sliderIndex = GetSliderIndex(sliderStruct.slider, deviceId);
+                    var sliderIndex = GetIndex(SliderOffsetManager, sliderStruct.slider, deviceId);
                     var valueFloat = ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
                     if (float.IsNaN(valueFloat))
                         return;
@@ -169,16 +161,12 @@ namespace SoundMixerSoftware.Framework.Device
                 case (byte) Command.BUTTON_COMMAND:
                     ButtonStruct buttonStruct = e.Data;
 
-                    var buttonIndex = GetButtonIndex(buttonStruct.button, deviceId);
+                    var buttonIndex = GetIndex(ButtonOffsetManager, buttonStruct.button, deviceId);
                     ButtonStateChanged?.Invoke(null, new ButtonStateChanged(deviceId, buttonIndex, buttonStruct.state));
 
                     break;
             }
         }
-
-        #endregion
-        
-        #region Static methods
 
         private static void RegisterTypes()
         {
@@ -186,28 +174,13 @@ namespace SoundMixerSoftware.Framework.Device
             Instance.RegisterType((byte)Command.BUTTON_COMMAND, typeof(ButtonStruct));
         }
 
-        private static int GetSliderIndex(int index, DeviceId deviceId)
+        private static int GetIndex(OffsetManager offsetManager, int index, DeviceId deviceId)
         {
-            
-            var sliderIndex = index + (byte)SliderOffsetManager.GetOrCreateOffset(deviceId);
-            var sliderCount = SessionHandler.Sessions.Count;
-            if (sliderIndex >= sliderCount)
-            {
-                Logger.Warn("Slider receive index mismatch.");
-                return sliderCount - 1;
-            }
-
-            return sliderIndex;
-        }
-        
-        private static int GetButtonIndex(int index, DeviceId deviceId)
-        {
-            var buttonIndex = index + (byte)ButtonOffsetManager.GetOrCreateOffset(deviceId);
+            var buttonIndex = index + (byte)offsetManager.GetOrCreateOffset(deviceId);
             var buttonCount = ButtonHandler.Buttons.Count;
             if (buttonIndex >= buttonCount)
             {
-                Logger.Warn("Button receive index mismatch.");
-                return buttonCount - 1;
+                return buttonIndex - buttonCount;
             }
 
             return buttonIndex;

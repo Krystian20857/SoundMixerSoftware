@@ -8,7 +8,7 @@ namespace SoundMixerSoftware.Framework.LocalSystem
     [LocalContainer]
     public static class LocalContainer
     {
-        [Path("execpath", false, FileAttributes.Directory)]
+        [Path("exec_path", false, FileAttributes.Directory)]
         public static readonly string ExecPath = Assembly.GetExecutingAssembly().Location;
         
         [Path("basedir", false, FileAttributes.Directory)]
@@ -20,6 +20,9 @@ namespace SoundMixerSoftware.Framework.LocalSystem
         [Path("config", false, FileAttributes.Normal)]
         public static readonly string Config = Path.Combine(AppData, "config.yml");
         
+        [Path("device_config", false, FileAttributes.Normal)]
+        public static readonly string DeviceConfig = Path.Combine(AppData, "device.yml");
+
         [Path("profiles", true, FileAttributes.Directory)]
         public static readonly string Profiles = Path.Combine(AppData, "profiles");
         
@@ -35,10 +38,10 @@ namespace SoundMixerSoftware.Framework.LocalSystem
         [Path("plugin", true, FileAttributes.Directory)]
         public static readonly string PluginFolder = Path.Combine(AppData, "plugins");
         
-        [Path("plugincache", true, FileAttributes.Directory)]
+        [Path("plugin_cache", true, FileAttributes.Directory)]
         public static readonly string PluginCache = Path.Combine(Cache, "plugins");
         
-        [Path("imagespath", true, FileAttributes.Directory)]
+        [Path("images_path", true, FileAttributes.Directory)]
         public static readonly string ImagesPath = Path.Combine(ExecDirectory, "Images");
     }
 }

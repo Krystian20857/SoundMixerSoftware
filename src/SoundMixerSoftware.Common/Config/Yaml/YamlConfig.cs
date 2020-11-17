@@ -60,14 +60,14 @@ namespace SoundMixerSoftware.Common.Config.Yaml
         /// Creates IConfig(YamlConfig) instance.
         /// </summary>
         /// <param name="configPath">Path to configuration file.</param>
-        public YamlConfig(string configPath)
+        public YamlConfig(string configPath, ISerializer serializer = null, IDeserializer deserializer = null)
         {
             _configPath = configPath;
             
             _sampleConfig = Config.GetSampleConfig();
 
-            _serializer = _serializationHelper.Serializer;
-            _deserializer = _serializationHelper.Deserializer;
+            _serializer = serializer ?? _serializationHelper.Serializer;
+            _deserializer = deserializer ?? _serializationHelper.Deserializer;
                 
             LoadConfig();
         }

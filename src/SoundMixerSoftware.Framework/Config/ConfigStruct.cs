@@ -33,7 +33,6 @@ namespace SoundMixerSoftware.Framework.Config
                     RtsEnable = true
                 },
                 Terminator = 0xFF,
-                DeviceSettings = new Dictionary<string, DeviceSettings>()
             },
             Application = new ApplicationSettings()
             {
@@ -171,8 +170,6 @@ namespace SoundMixerSoftware.Framework.Config
         public List<USBID> UsbIDs { get; set; }
         [Recursion]
         public SerialConfig SerialConfig { get; set; }
-
-        public Dictionary<string, DeviceSettings> DeviceSettings { get; set; } = new Dictionary<string, DeviceSettings>();
 
         #endregion
         
