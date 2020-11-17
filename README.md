@@ -3,7 +3,6 @@
 
 # Sound Mixer Software
 **Sound Mixer Software** is sub-repo of [Sound Mixer](https://github.com/Krystian20857/SoundMixer) project. Purpose of this software is detect connected sound mixer devices and handle incoming data.
-Main premise of this piece of code is translate slider move to specified audio session volume.
 
 <p align="center">
   <img width="600" src="github/images/showcase.gif">
@@ -11,15 +10,14 @@ Main premise of this piece of code is translate slider move to specified audio s
 
 ## Features
 * Full volume control of application, devices, and default devices.
-* Fully customizable volume sliders.
+* Fully customizable volume controllers.
 * Volume control of currently focused window with audio session.
 * Profile system.
 * Multiple buttons functions as: muting, media functions, keystroke, textentry.
 * Multiple device support.
-* Device offset(shifting sliders and buttons indexes of specififed device).
+* Device offset(shifting controls indexes of specififed device).
 * Volume and muting overlays.
 * Device connected/disconnected notification.
-* Error notification.
 * Wide application configuration.
 * Plugin system for simple extensibility.
 * Application theme can be synchronized with system theme.
