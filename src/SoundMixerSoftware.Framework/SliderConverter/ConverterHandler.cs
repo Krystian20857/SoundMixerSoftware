@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Diagnostics;
 using NLog;
 using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Framework.Profile;
@@ -83,9 +84,10 @@ namespace SoundMixerSoftware.Framework.SliderConverter
             }
             catch (Exception ex)
             {
-                Logger.Warn(ex);
+                Logger.Warn(ex, "Error while creating converter");
             }
-
+            if (converter == default) return null;
+            converter.Index = index;
             Converters[index].Add(converter);
             ConverterAdded?.Invoke(null, new ConverterArgs(index, Converters[index].IndexOf(converter), converter));
             return converter;

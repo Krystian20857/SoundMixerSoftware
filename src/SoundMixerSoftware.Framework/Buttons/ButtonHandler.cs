@@ -82,8 +82,9 @@ namespace SoundMixerSoftware.Framework.Buttons
             }
             catch (Exception ex)
             {
-                Logger.Warn();
+                Logger.Warn(ex, "Error while creating button");
             }
+            if (iButton == default) return null;
             iButton.Index = Index;
             Buttons[Index].Add(iButton);
             FunctionCreated?.Invoke(null, new FunctionArgs(Index, Buttons[Index].IndexOf(iButton), iButton));

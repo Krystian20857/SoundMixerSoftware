@@ -170,9 +170,9 @@ namespace SoundMixerSoftware.Framework.Audio
             }
             catch (Exception ex)
             {
-                Logger.Warn(ex);
+                Logger.Warn(ex, "Error while creating session");
             }
-
+            if (virtualSession == default) return null;
             virtualSession.Index = index;
             Sessions[index].Add(virtualSession);
             VirtualSessionCreated?.Invoke(null, new SessionArgs(index, Sessions[index].IndexOf(virtualSession), virtualSession));
