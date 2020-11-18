@@ -10,6 +10,7 @@ using SoundMixerSoftware.Common.Utils;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
 using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Utils;
 
@@ -113,9 +114,7 @@ namespace SoundMixerSoftware.ViewModels
                     function = new KeystrokeFunction(index, Text, Guid.NewGuid());
                     break;
             }
-            var buttonStruct = ButtonHandler.AddFunction(index, function);
-            ProfileHandler.SelectedProfile.Buttons[index].Functions.Add(buttonStruct);
-            ProfileHandler.SaveSelectedProfile();
+            ButtonUtil.AddButton(index, function);
             return true;
         }
         

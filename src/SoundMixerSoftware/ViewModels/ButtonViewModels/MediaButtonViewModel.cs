@@ -4,6 +4,7 @@ using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
 using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Utils;
 
@@ -52,9 +53,8 @@ namespace SoundMixerSoftware.ViewModels
         
         public bool AddClicked(int index)
         {
-            var function = ButtonHandler.AddFunction(index, new MediaFunction(index, SelectedFunction.EnumValue, Guid.NewGuid()));
-            ProfileHandler.SelectedProfile.Buttons[index].Functions.Add(function);
-            ProfileHandler.SaveSelectedProfile();
+            var function = new MediaFunction(index, SelectedFunction.EnumValue, Guid.NewGuid());
+            ButtonUtil.AddButton(index, function);
             return true;
         }
         

@@ -7,6 +7,7 @@ using SoundMixerSoftware.Annotations;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
 using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
 using SoundMixerSoftware.Utils;
 
@@ -80,9 +81,7 @@ namespace SoundMixerSoftware.ViewModels
                     return false;
             }
             
-            var buttonStruct = ButtonHandler.AddFunction(index, function);
-            ProfileHandler.SelectedProfile.Buttons[index].Functions.Add(buttonStruct);
-            ProfileHandler.SaveSelectedProfile();
+            ButtonUtil.AddButton(index, function);
 
             return true;
         }

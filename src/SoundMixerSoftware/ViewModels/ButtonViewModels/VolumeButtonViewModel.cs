@@ -4,6 +4,7 @@ using MaterialDesignThemes.Wpf;
 using SoundMixerSoftware.Framework.Buttons;
 using SoundMixerSoftware.Framework.Buttons.Functions;
 using SoundMixerSoftware.Framework.Profile;
+using SoundMixerSoftware.Framework.Utils;
 using SoundMixerSoftware.Models;
 
 namespace SoundMixerSoftware.ViewModels
@@ -74,10 +75,8 @@ namespace SoundMixerSoftware.ViewModels
             var sliderIndex = Sliders.IndexOf(SelectedSlider);
             if (sliderIndex == -1)
                 return false;
-            var button = new VolumeFunction(index, Guid.NewGuid(), sliderIndex, Volume);
-            var buttonStruct = ButtonHandler.AddFunction(index, button);
-            ProfileHandler.SelectedProfile.Buttons[index].Functions.Add(buttonStruct);
-            ProfileHandler.SaveSelectedProfile();
+            var function = new VolumeFunction(index, Guid.NewGuid(), sliderIndex, Volume);
+            ButtonUtil.AddButton(index, function);
             return true;
         }
         

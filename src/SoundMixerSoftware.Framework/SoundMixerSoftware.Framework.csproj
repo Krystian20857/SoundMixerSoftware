@@ -83,6 +83,7 @@
     <Compile Include="SliderConverter\IConverter.cs" />
     <Compile Include="SliderConverter\IConverterCreator.cs" />
     <Compile Include="Threading\ProcessWatcherHandler.cs" />
+    <Compile Include="Utils\ButtonUtil.cs" />
     <Compile Include="Utils\ExceptionHandler.cs" />
     <Compile Include="Utils\SessionUtil.cs" />
   </ItemGroup>
