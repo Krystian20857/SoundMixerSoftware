@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
@@ -234,7 +235,7 @@ namespace SoundMixerSoftware.Models
         
         public virtual IVirtualSession CreateSession(int sliderIndex)
         {
-            return new ProcessSession(sliderIndex, ExecutablePath, RawName, Guid.NewGuid());
+            return new ProcessSession(sliderIndex, Path.GetFileName(ExecutablePath), RawName, Guid.NewGuid());
         }
         
         #endregion

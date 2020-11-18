@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -24,7 +25,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         #region Constant
 
         public const string KEY = "process_session";
-        public const string EXECUTABLE_KEY = "ExecPath";
+        public const string EXECUTABLE_KEY = "ExecName";
         public const string NAME_KEY = "Name";
         
         private const int SESSION_CAPACITY = 15;
@@ -41,7 +42,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         public string Key { get; } = KEY;
         public string DisplayName { get; set; }
-        public string ID => ExecutablePath;
+        public string ID => ExecutableName;
         public int Index { get; set; }
         public Guid UUID { get; }
         public ImageSource Image { get; set; }
@@ -71,7 +72,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         private IAudioSession FirstSession => _sessions.FirstOrDefault(x => ProcessWrapper.IsAlive(x.ProcessId));
         // ReSharper disable once MemberCanBePrivate.Global
-        public string ExecutablePath { get; set; }
+        public string ExecutableName { get; set; }
         // ReSharper disable once MemberCanBePrivate.Global
         public string RawName { get; set; }
 
@@ -87,19 +88,20 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         #region Constructor
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public ProcessSession(string execPath, string rawName, Guid uuid)
+        public ProcessSession(string execName, string rawName, Guid uuid)
         {
             UUID = uuid;
-            ExecutablePath = execPath;
+            ExecutableName = execName;
             RawName = rawName;
 
             SessionHandler.SessionCreated += AddSession;
             SessionHandler.SessionExited += RemoveSession;
 
-            foreach (var session in GetSessionByExecPath(execPath))
+            foreach (var session in GetSessionByExecName(execName))
             {
                 AddSession(session);
             }
+            
             UpdateView();
         }
 
@@ -115,7 +117,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         public Dictionary<object, object> Save()
         {
             var container = new Dictionary<object, object>();
-            container.Add(EXECUTABLE_KEY, ExecutablePath);
+            container.Add(EXECUTABLE_KEY, ExecutableName);
             container.Add(NAME_KEY, RawName);
             return container;
         }
@@ -162,8 +164,9 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             if(session.IsSystemSession) return;
             
             var executablePath = SessionHandler.GetSessionExec(session);
+            var executableName = Path.GetFileName(executablePath);
             // ReSharper disable once InvertIf
-            if (executablePath == ExecutablePath)
+            if (executableName == ExecutableName)
             {
                 _sessions.Add(session);
                 session.VolumeChanged.Subscribe(VolumeChangedCallback);
@@ -177,7 +180,8 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             if(session.IsSystemSession) return;
             
             var executablePath = SessionHandler.GetSessionExec(session);
-            if (executablePath != ExecutablePath) return;
+            var executableName = Path.GetFileName(executablePath);
+            if (executableName != ExecutableName) return;
             if(_sessions.Remove(session))
                 UpdateView();
         }
@@ -192,9 +196,9 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             MuteChanged?.Invoke(this, new MuteChangedArgs(args.IsMuted, false, Index));
         }
 
-        private static IEnumerable<IAudioSession> GetSessionByExecPath(string execPath)
+        private static IEnumerable<IAudioSession> GetSessionByExecName(string execName)
         {
-            return SessionHandler.GetAllSessions().Where(x => SessionHandler.GetSessionExec(x) == execPath);
+            return SessionHandler.GetAllSessions().Where(x => Path.GetFileName(SessionHandler.GetSessionExec(x)) == execName);
         }
 
         #endregion
