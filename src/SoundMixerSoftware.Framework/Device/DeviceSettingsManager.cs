@@ -3,6 +3,7 @@ using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Config.Yaml;
 using SoundMixerSoftware.Framework.Config;
 using SoundMixerSoftware.Framework.LocalSystem;
+using SoundMixerSoftware.Interop.USBLib;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Framework.Device
@@ -34,7 +35,7 @@ namespace SoundMixerSoftware.Framework.Device
         /// </summary>
         public static void Load() => _config.LoadConfig();
 
-        public static Dictionary<string, DeviceSettings> AllSettings => _config.Config.DeviceSettings;
+        public static DeviceConfigStruct AllSettings => _config.Config;
 
         /// <summary>
         /// Get device settings from config.
@@ -66,13 +67,17 @@ namespace SoundMixerSoftware.Framework.Device
         #endregion
     }
 
-    internal class DeviceConfigStruct : IConfigStruct<DeviceConfigStruct>
+    public class DeviceConfigStruct : IConfigStruct<DeviceConfigStruct>
     {
         #region Implemented Things
         
         public static DeviceConfigStruct SampleConfig { get; } = new DeviceConfigStruct
         {
-            DeviceSettings = new Dictionary<string, DeviceSettings>()
+            DeviceSettings = new Dictionary<string, DeviceSettings>(),
+            UsbIDs = new List<USBID>()
+            {
+                new USBID{ Vid = 0x468F, Pid = 0x895D}
+            },
         };
 
         public DeviceConfigStruct GetSampleConfig() => SampleConfig;
@@ -88,6 +93,8 @@ namespace SoundMixerSoftware.Framework.Device
 
         [YamlMember(Alias = "Devices")]
         public Dictionary<string, DeviceSettings> DeviceSettings { get; set; }
+
+        public List<USBID> UsbIDs { get; set; }
 
         #endregion
     }

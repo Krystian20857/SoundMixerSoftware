@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using SoundMixerSoftware.Framework.Config;
+using SoundMixerSoftware.Framework.Device;
 using SoundMixerSoftware.Interop.USBLib;
 
 namespace SoundMixerSoftware.ViewModels
@@ -70,7 +71,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public UsbManagerViewModel()
         {
-            foreach (var usbid in ConfigHandler.ConfigStruct.Hardware.UsbIDs)
+            foreach (var usbid in DeviceSettingsManager.AllSettings.UsbIDs)
                 USBIds.Add(usbid);
         }
         
@@ -83,12 +84,12 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Save()
         {
-            var usbIds = ConfigHandler.ConfigStruct.Hardware.UsbIDs;
+            var usbIds = DeviceSettingsManager.AllSettings.UsbIDs;
             var usbId = new USBID { Pid = Pid, Vid = Vid };
             if (usbIds.Contains(usbId)) return;
             USBIds.Add(usbId);
             usbIds.Add(usbId);
-            ConfigHandler.SaveConfig();
+            DeviceSettingsManager.Save();
         }
 
         /// <summary>
@@ -96,9 +97,9 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Remove()
         {
-            ConfigHandler.ConfigStruct.Hardware.UsbIDs.Remove(SelectedItem);
+            DeviceSettingsManager.AllSettings.UsbIDs.Remove(SelectedItem);
             USBIds.Remove(SelectedItem);
-            ConfigHandler.SaveConfig();
+            DeviceSettingsManager.Save();
         }
 
         /// <summary>

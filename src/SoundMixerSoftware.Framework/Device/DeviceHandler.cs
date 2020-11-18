@@ -102,8 +102,8 @@ namespace SoundMixerSoftware.Framework.Device
         /// </summary>
         public DeviceHandler()
         {
-            _usbDevice = new USBDevice(GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, ConfigHandler.ConfigStruct.Hardware.UsbIDs);
-            _usbDevice.VidPid = ConfigHandler.ConfigStruct.Hardware.UsbIDs;                                                            //Provides configuration synchronization
+            _usbDevice = new USBDevice(GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, DeviceSettingsManager.AllSettings.UsbIDs);
+            _usbDevice.VidPid = DeviceSettingsManager.AllSettings.UsbIDs;                                                            //Provides configuration synchronization
             _usbDevice.RegisterDeviceChange(_windowWrapper.Handle);
             
             RegisterTypes();

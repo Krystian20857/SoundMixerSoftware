@@ -69,7 +69,7 @@ namespace SoundMixerSoftware.Framework.Device
             Instance.DeviceDisconnected += DeviceHandlerOnDeviceDisconnected;
             Instance.DataReceived += DeviceHandlerOnDataReceived;
 
-            foreach (var deviceSetting in DeviceSettingsManager.AllSettings)
+            foreach (var deviceSetting in DeviceSettingsManager.AllSettings.DeviceSettings)
             {
                 var settings = deviceSetting.Value;
                 var deviceId = deviceSetting.Key;

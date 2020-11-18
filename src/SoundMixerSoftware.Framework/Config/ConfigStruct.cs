@@ -18,10 +18,7 @@ namespace SoundMixerSoftware.Framework.Config
         {
             Hardware = new HardwareSettings()
             {
-                UsbIDs = new List<USBID>()
-                {
-                    new USBID{ Vid = 0x468F, Pid = 0x895D}
-                },
+                
                 SerialConfig = new SerialConfig()
                 {
                     BaudRate = 115200,
@@ -167,7 +164,7 @@ namespace SoundMixerSoftware.Framework.Config
         
         [YamlMember(Alias = "Terminator")]
         public byte? TerminatorNullable { get; set; }
-        public List<USBID> UsbIDs { get; set; }
+        
         [Recursion]
         public SerialConfig SerialConfig { get; set; }
 
