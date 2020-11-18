@@ -58,7 +58,7 @@
                     CornerRadius="5">
                 <StackPanel cal:Message.Attach="[PreviewKeyDown] = [KeyDown($eventArgs)]" Orientation="Vertical" HorizontalAlignment="Stretch">
                     <TextBlock Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Text="Text" Margin="2"/>
-                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
                              VerticalAlignment="Top"
                              MinHeight="150"
                              AcceptsReturn="True"
