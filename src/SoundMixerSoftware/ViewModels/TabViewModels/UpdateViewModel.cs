@@ -29,8 +29,7 @@ namespace SoundMixerSoftware.ViewModels
         private bool _progressBarVisibility;
         private SolidColorBrush _updateTextColor;
         private bool _showRestart;
-
-        private SemanticVersion _lastCheckNonNullVersion;
+        
         private Timer _updateTimer = new Timer(TimeSpan.FromHours(24).TotalMilliseconds);
 
         #endregion
@@ -156,17 +155,16 @@ namespace SoundMixerSoftware.ViewModels
             
             try
             {
+
                 using (var updateManager = await Bootstrapper.Instance.GetUpdateManager())
                 {
+                    var update = await updateManager.CheckForUpdate();
                     var updateTask = updateManager.UpdateApp(z => SetStatus(progress: z));
 
                     var currentVersion = Constant.AppVersion.ToSemanticVersion();
                     var release = await updateTask;
-                    var isUpdated = release == default && currentVersion == _lastCheckNonNullVersion;
+                    var isUpdated = release == default && (update == null || update.CurrentlyInstalledVersion.Version == currentVersion);
 
-                    if (release != default)
-                        _lastCheckNonNullVersion = release.Version;
-                    
                     if (isUpdated)
                     {
                         SetStatus("You are running newest version.", false, false);
@@ -196,17 +194,17 @@ namespace SoundMixerSoftware.ViewModels
         }
         
 
-        private void SetStatus(string text = default, bool? showProgress = default, bool? showRestart = default, int? progress = default)
+        private void SetStatus(string text = null, bool? showProgress = null, bool? showRestart = null, int? progress = null)
         {
             Execute.OnUIThread(() =>
             {
-                if (text != default)
+                if (text != null)
                     UpdateText = text;
-                if (showProgress != default)
+                if (showProgress != null)
                     ProgressBarVisibility = showProgress.Value;
-                if (showRestart != default)
+                if (showRestart != null)
                     ShowRestart = showRestart.Value;
-                if (progress != default)
+                if (progress != null)
                     ProgressValue = progress.Value;
             });
         }
