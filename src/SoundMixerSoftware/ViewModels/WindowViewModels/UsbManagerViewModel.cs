@@ -12,8 +12,8 @@ namespace SoundMixerSoftware.ViewModels
     {
         #region Private Fields
         
-        private BindableCollection<USBID> _USBIds = new BindableCollection<USBID>();
-        private USBID _selectedItem;
+        private BindableCollection<HwId> _USBIds = new BindableCollection<HwId>();
+        private HwId _selectedItem;
         
         #endregion
         
@@ -24,7 +24,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Available USB ids(vid, pid)
         /// </summary>
-        public BindableCollection<USBID> USBIds
+        public BindableCollection<HwId> USBIds
         {
             get => _USBIds;
             set
@@ -44,9 +44,9 @@ namespace SoundMixerSoftware.ViewModels
         public uint Pid { get; set; }
 
         /// <summary>
-        /// Currently Selected USBID.
+        /// Currently Selected HwId.
         /// </summary>
-        public USBID SelectedItem
+        public HwId SelectedItem
         {
             get => _selectedItem;
             set
@@ -71,7 +71,7 @@ namespace SoundMixerSoftware.ViewModels
 
         public UsbManagerViewModel()
         {
-            foreach (var usbid in DeviceSettingsManager.AllSettings.UsbIDs)
+            foreach (var usbid in DeviceSettingsManager.AllSettings.HwIds)
                 USBIds.Add(usbid);
         }
         
@@ -84,8 +84,8 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Save()
         {
-            var usbIds = DeviceSettingsManager.AllSettings.UsbIDs;
-            var usbId = new USBID { Pid = Pid, Vid = Vid };
+            var usbIds = DeviceSettingsManager.AllSettings.HwIds;
+            var usbId = new HwId { Pid = Pid, Vid = Vid };
             if (usbIds.Contains(usbId)) return;
             USBIds.Add(usbId);
             usbIds.Add(usbId);
@@ -97,7 +97,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         public void Remove()
         {
-            DeviceSettingsManager.AllSettings.UsbIDs.Remove(SelectedItem);
+            DeviceSettingsManager.AllSettings.HwIds.Remove(SelectedItem);
             USBIds.Remove(SelectedItem);
             DeviceSettingsManager.Save();
         }

@@ -32,6 +32,8 @@ namespace SoundMixerSoftware.ViewModels
                 
                 NotifyOfPropertyChange(nameof(SliderOffset));
                 NotifyOfPropertyChange(nameof(ButtonOffset));
+                NotifyOfPropertyChange(nameof(MaxSliderOffset));
+                NotifyOfPropertyChange(nameof(MaxButtonOffset));
             }
         }
 

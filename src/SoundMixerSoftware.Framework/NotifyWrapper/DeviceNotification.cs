@@ -19,7 +19,7 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
         #region Private Fields
         
         private NotificationManager _notificationManager = new NotificationManager();
-        private DeviceConnectedEventArgs device;
+        private DevicePair device;
         private DeviceNotificationState state;
         #endregion
         
@@ -50,7 +50,7 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
             switch (key)
             {
                 case EVENT_ARGS_KEY:
-                    device = value as DeviceConnectedEventArgs;
+                    device = value as DevicePair;
                     break;
                 case DEVICE_STATE_KEY:
                     state = (DeviceNotificationState)value;

@@ -44,7 +44,7 @@ namespace SoundMixerSoftware.Interop.USBLib
         /// </summary>
         public IReadOnlyList<DeviceProperties> ConnectedDevices => _connectedDevices.AsReadOnly();
 
-        public List<USBID> VidPid { get; set; } = new List<USBID>();
+        public List<HwId> VidPid { get; set; } = new List<HwId>();
 
         #endregion
         
@@ -77,7 +77,7 @@ namespace SoundMixerSoftware.Interop.USBLib
         /// </summary>
         /// <param name="deviceGuid">device class</param>
         /// <param name="ids"></param>
-        public USBDevice(Guid deviceGuid, IEnumerable<USBID> ids)
+        public USBDevice(Guid deviceGuid, IEnumerable<HwId> ids)
         {
             _deviceGuid = deviceGuid;
             VidPid.AddRange(ids);
@@ -87,7 +87,7 @@ namespace SoundMixerSoftware.Interop.USBLib
         /// <summary>
         /// Create instance with specified vendor id and product id.
         /// </summary>
-        public USBDevice(IEnumerable<USBID> ids)
+        public USBDevice(IEnumerable<HwId> ids)
         {
             VidPid.AddRange(ids);
             CheckDevices();

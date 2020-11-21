@@ -4,7 +4,6 @@ using System.IO.Ports;
 using SoundMixerSoftware.Common.Communication.Serial;
 using SoundMixerSoftware.Common.Config;
 using SoundMixerSoftware.Common.Utils;
-using SoundMixerSoftware.Interop.USBLib;
 using YamlDotNet.Serialization;
 
 namespace SoundMixerSoftware.Framework.Config
@@ -14,12 +13,12 @@ namespace SoundMixerSoftware.Framework.Config
     {
         #region Static Sample Config
 
-        public static readonly ConfigStruct SampleConfigStruct = new ConfigStruct()
+        public static readonly ConfigStruct SampleConfigStruct = new ConfigStruct
         {
-            Hardware = new HardwareSettings()
+            Hardware = new HardwareSettings
             {
                 
-                SerialConfig = new SerialConfig()
+                SerialConfig = new SerialConfig
                 {
                     BaudRate = 115200,
                     DataBits = 8,
@@ -31,18 +30,18 @@ namespace SoundMixerSoftware.Framework.Config
                 },
                 Terminator = 0xFF,
             },
-            Application = new ApplicationSettings()
+            Application = new ApplicationSettings
             {
                 ProfilesOrder = new List<Guid>(),
                 SelectedProfile = Guid.Empty,
                 HideOnStartup = true
             },
-            Notification = new NotificationSettings()
+            Notification = new NotificationSettings
             {
                 EnableNotifications = true,
                 NotificationShowTime = TimeSpan.FromMilliseconds(7000),
             },
-            Overlay = new OverlaySettings()
+            Overlay = new OverlaySettings
             {
                 EnableOverlay = true,
                 OverlayFadeTime = TimeSpan.FromMilliseconds(2500)
@@ -53,7 +52,7 @@ namespace SoundMixerSoftware.Framework.Config
             },
             Updater = new UpdateConfig
             {
-                AutoUpdate = true
+                AutoUpdate = false
             }
 
         };

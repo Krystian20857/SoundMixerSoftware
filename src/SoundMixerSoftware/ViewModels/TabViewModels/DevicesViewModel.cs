@@ -23,7 +23,6 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         private IWindowManager _windowManager =  new WindowManager();
         
-        private BindableCollection<DeviceModel> _devices = new BindableCollection<DeviceModel>();
 
         #endregion
         
@@ -34,14 +33,7 @@ namespace SoundMixerSoftware.ViewModels
         /// <summary>
         /// Collection of device models.
         /// </summary>
-        public BindableCollection<DeviceModel> Devices
-        {
-            get => _devices;
-            set
-            {
-                _devices = value;
-            }
-        }
+        public BindableCollection<DeviceModel> Devices { get; } = new BindableCollection<DeviceModel>();
 
         #endregion
         
@@ -71,7 +63,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeviceHandlerOnDeviceDisconnected(object sender, DeviceConnectedEventArgs e)
+        private void DeviceHandlerOnDeviceDisconnected(object sender, DevicePair e)
         {
             //This type of action need to be handled in main thread.
             var comPort = e.Device.COMPort;
@@ -90,7 +82,7 @@ namespace SoundMixerSoftware.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
+        private void DeviceHandlerOnDeviceConnected(object sender, DevicePair e)
         {
             //This type of action need to be handled in main thread.
             Execute.OnUIThread(() =>

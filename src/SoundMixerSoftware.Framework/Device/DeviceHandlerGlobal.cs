@@ -21,7 +21,7 @@ namespace SoundMixerSoftware.Framework.Device
         
         #region Private Static Fields
 
-        private static Dictionary<string, DeviceConnectedEventArgs> _connectedDevices = new Dictionary<string, DeviceConnectedEventArgs>();
+        private static Dictionary<string, DevicePair> _connectedDevices = new Dictionary<string, DevicePair>();
 
         #endregion
         
@@ -35,7 +35,7 @@ namespace SoundMixerSoftware.Framework.Device
         /// <summary>
         /// Currently connected devices.
         /// </summary>
-        public static IReadOnlyDictionary<string, DeviceConnectedEventArgs> ConnectedDevice => _connectedDevices;
+        public static IReadOnlyDictionary<string, DevicePair> ConnectedDevice => _connectedDevices;
         
         public static OffsetManager ButtonOffsetManager { get; } = new OffsetManager();
         public static OffsetManager SliderOffsetManager { get; } = new OffsetManager();
@@ -47,11 +47,11 @@ namespace SoundMixerSoftware.Framework.Device
         /// <summary>
         /// Occurs when new device has connected.
         /// </summary>
-        public static event EventHandler<DeviceConnectedEventArgs> DeviceConnected;
+        public static event EventHandler<DevicePair> DeviceConnected;
         /// <summary>
         /// Occurs when device has disconnected.
         /// </summary>
-        public static event EventHandler<DeviceConnectedEventArgs> DeviceDisconnected;
+        public static event EventHandler<DevicePair> DeviceDisconnected;
 
         public static event EventHandler<SliderValueChanged> SliderValueChanged;
         public static event EventHandler<ButtonStateChanged> ButtonStateChanged;
@@ -117,7 +117,7 @@ namespace SoundMixerSoftware.Framework.Device
             DeviceSettingsManager.Save();
         }
 
-        private static void DeviceHandlerOnDeviceConnected(object sender, DeviceConnectedEventArgs e)
+        private static void DeviceHandlerOnDeviceConnected(object sender, DevicePair e)
         {
             if (string.IsNullOrWhiteSpace(e.Device.COMPort) || _connectedDevices.ContainsKey(e.Device.COMPort))
                 return;
@@ -148,7 +148,7 @@ namespace SoundMixerSoftware.Framework.Device
             switch (e.Command)
             {
                 case (byte) Command.SLIDER_COMMAND:
-                    SliderStruct sliderStruct = e.Data;
+                    var sliderStruct = (SliderStruct)e.Data;
 
                     var sliderIndex = GetIndex(SliderOffsetManager, sliderStruct.slider, deviceId);
                     var valueFloat = ConverterHandler.ConvertValue(sliderIndex, sliderStruct.value, deviceId);
@@ -159,7 +159,7 @@ namespace SoundMixerSoftware.Framework.Device
                     break;
 
                 case (byte) Command.BUTTON_COMMAND:
-                    ButtonStruct buttonStruct = e.Data;
+                    var buttonStruct = (ButtonStruct)e.Data;
 
                     var buttonIndex = GetIndex(ButtonOffsetManager, buttonStruct.button, deviceId);
                     ButtonStateChanged?.Invoke(null, new ButtonStateChanged(deviceId, buttonIndex, buttonStruct.state));

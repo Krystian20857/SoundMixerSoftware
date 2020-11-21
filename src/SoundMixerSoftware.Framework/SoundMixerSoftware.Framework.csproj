@@ -62,6 +62,7 @@
     <Compile Include="Device\DeviceHandlerGlobal.cs" />
     <Compile Include="Device\DeviceId.cs" />
     <Compile Include="Device\DeviceNotifier.cs" />
+    <Compile Include="Device\DevicePair.cs" />
     <Compile Include="Device\DeviceSettingsManager.cs" />
     <Compile Include="Device\EventArgs.cs" />
     <Compile Include="Device\OffsetManager.cs" />

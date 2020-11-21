@@ -16,8 +16,8 @@ namespace SoundMixerSoftware.Framework.Profile
 
         public static IProfileManager<ProfileStruct> ProfileManager { get; } = new YamlProfileManager<ProfileStruct>(LocalContainer.Profiles);
 
-        public static ProfileStruct SelectedProfile { get; set; } = new ProfileStruct();
-        public static Guid SelectedGuid { get; set; }
+        public static ProfileStruct SelectedProfile { get; private set; } = new ProfileStruct();
+        public static Guid SelectedGuid { get; private set; }
 
         #endregion
         
@@ -31,25 +31,6 @@ namespace SoundMixerSoftware.Framework.Profile
         public static event EventHandler<ProfileChangedEventArgs> ProfileCreated;
         public static event EventHandler<ProfileChangedEventArgs> ProfileRemoved;
 
-        private static void OnProfileChanged(object sender, ProfileChangedEventArgs e)
-        {
-            var saveConfig = !(SelectedGuid == Guid.Empty && e.Uuid != Guid.Empty);
-            SelectedGuid = e.Uuid;
-            SelectedProfile = ProfileManager.Profiles[e.Uuid];
-            ConfigHandler.ConfigStruct.Application.SelectedProfile = e.Uuid;
-            if(saveConfig)
-                ConfigHandler.SaveConfig();
-        }
-
-        #endregion
-        
-        #region Constructor
-
-        static ProfileHandler()
-        {
-            ProfileChanged += OnProfileChanged;
-        }
-
         #endregion
 
         #region Public Static Methods
@@ -60,7 +41,12 @@ namespace SoundMixerSoftware.Framework.Profile
         /// <param name="uuid"></param>
         public static void OnProfileChanged(Guid uuid)
         {
+            if(uuid == SelectedGuid || !ProfileManager.Profiles.ContainsKey(uuid))
+                return;
             SelectedGuid = uuid;
+            SelectedProfile = ProfileManager.Profiles[uuid];
+            ConfigHandler.ConfigStruct.Application.SelectedProfile = uuid;
+            ConfigHandler.SaveConfig();
             ProfileChanged?.Invoke(null, new ProfileChangedEventArgs(uuid));
         }
 

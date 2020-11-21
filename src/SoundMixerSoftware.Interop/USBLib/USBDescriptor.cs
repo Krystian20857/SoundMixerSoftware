@@ -41,7 +41,7 @@ namespace SoundMixerSoftware.Interop.USBLib
         /// <param name="vidpid"></param>
         /// <returns></returns>
         // ReSharper disable once IdentifierTypo
-        public static IEnumerable<DeviceProperties> GetDescriptors(IEnumerable<USBID> vidpid)
+        public static IEnumerable<DeviceProperties> GetDescriptors(IEnumerable<HwId> vidpid)
         {
             return vidpid.SelectMany(entry => GetDescriptors(entry.Vid, entry.Pid));
         }
@@ -105,7 +105,7 @@ namespace SoundMixerSoftware.Interop.USBLib
                                             BUFFER_SIZE,
                                             out reqSize))
                                         {
-                                            devproperties.DeviceType = Marshal.PtrToStringAnsi(bufferPtr);
+                                            devproperties.DeviceType = (uint)Marshal.ReadInt32(bufferPtr);
                                         }
 
                                         if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
@@ -154,6 +154,25 @@ namespace SoundMixerSoftware.Interop.USBLib
                                             out reqSize))
                                         {
                                             devproperties.DeviceDescription = Marshal.PtrToStringAnsi(bufferPtr);
+                                        }
+                                        
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                            ref devinfo,
+                                            (int) SPDRP.SPDRP_CLASS, out regType, bufferPtr,
+                                            BUFFER_SIZE,
+                                            out reqSize))
+                                        {
+                                            devproperties.DeviceClass = Marshal.PtrToStringAnsi(bufferPtr);
+                                        }
+                                        
+                                        if (Setupapi.SetupDiGetDeviceRegistryProperty(deviceHandle,
+                                            ref devinfo,
+                                            (int) SPDRP.SPDRP_CLASSGUID, out regType, bufferPtr,
+                                            BUFFER_SIZE,
+                                            out reqSize))
+                                        {
+                                            if(Guid.TryParse(Marshal.PtrToStringAnsi(bufferPtr), out var classUuid))
+                                                devproperties.DeviceClassUUID = classUuid;
                                         }
 
                                         var deviceRegKey = Setupapi.SetupDiOpenDevRegKey(deviceHandle,
@@ -227,7 +246,7 @@ namespace SoundMixerSoftware.Interop.USBLib
         /// <summary>
         /// Device type: scanners, printers, serial, etc.
         /// </summary>
-        public string DeviceType { get; set; }
+        public uint DeviceType { get; set; }
         /// <summary>
         /// Manufacturer of device.
         /// </summary>
@@ -236,6 +255,10 @@ namespace SoundMixerSoftware.Interop.USBLib
         /// Device class.
         /// </summary>
         public string DeviceClass { get; set; }
+        /// <summary>
+        /// Device class uuid.
+        /// </summary>
+        public Guid DeviceClassUUID { get; set; }
         /// <summary>
         /// Device location information.
         /// </summary>

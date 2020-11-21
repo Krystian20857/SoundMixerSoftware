@@ -12,7 +12,7 @@ namespace SoundMixerSoftware.Common.Communication
         /// <summary>
         /// Received converted data.
         /// </summary>
-        public dynamic Data { get; set; }
+        public object Data { get; set; }
         /// <summary>
         /// Additional arguments.
         /// </summary>
@@ -27,7 +27,7 @@ namespace SoundMixerSoftware.Common.Communication
         /// </summary>
         /// <param name="command"></param>
         /// <param name="data"></param>
-        public DataReceivedEventArgs(byte command, dynamic data, object arguments)
+        public DataReceivedEventArgs(byte command, object data, object arguments)
         {
             Command = command;
             Data = data;

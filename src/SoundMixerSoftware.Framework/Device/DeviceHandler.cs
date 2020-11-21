@@ -55,10 +55,6 @@ namespace SoundMixerSoftware.Framework.Device
         /// Use in synchronization between data converters and devicehandler.
         /// </summary>
         private Dictionary<byte, Type> _typesToRegister = new Dictionary<byte, Type>();
-        /// <summary>
-        /// Indicates if serial data event has subscribed.
-        /// </summary>
-        private bool _serialEventRegistered = false;
         private readonly object _lockObject = new object();
 
         #endregion
@@ -79,7 +75,7 @@ namespace SoundMixerSoftware.Framework.Device
         /// <summary>
         /// Fires when device ID has gotten properly.
         /// </summary>
-        public event EventHandler<DeviceConnectedEventArgs> DeviceConnected;
+        public event EventHandler<DevicePair> DeviceConnected;
         /// <summary>
         /// Fires when device has disconnected.
         /// </summary>
@@ -102,8 +98,8 @@ namespace SoundMixerSoftware.Framework.Device
         /// </summary>
         public DeviceHandler()
         {
-            _usbDevice = new USBDevice(GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, DeviceSettingsManager.AllSettings.UsbIDs);
-            _usbDevice.VidPid = DeviceSettingsManager.AllSettings.UsbIDs;                                                            //Provides configuration synchronization
+            _usbDevice = new USBDevice(GUID_DEVINTERFACE.GUID_DEVINTERFACE_PARALLEL, DeviceSettingsManager.AllSettings.HwIds);
+            _usbDevice.VidPid = DeviceSettingsManager.AllSettings.HwIds;                                                            //Provides configuration synchronization
             _usbDevice.RegisterDeviceChange(_windowWrapper.Handle);
             
             RegisterTypes();
@@ -114,7 +110,7 @@ namespace SoundMixerSoftware.Framework.Device
             
             _usbDevice.DeviceArrive += UsbDeviceOnDeviceArrive;
             _usbDevice.DeviceRemove += UsbDeviceOnDeviceRemove;
-            _windowWrapper.MessageReceived += WindowWrapperOnMessageReceived;
+            _windowWrapper.MessageReceived += (sender, message) => _usbDevice.ProcessMessage((uint)message.Msg, message.WParam, message.LParam);;
             
             CheckConnectedDevices();
         }
@@ -182,7 +178,7 @@ namespace SoundMixerSoftware.Framework.Device
         
         private void SerialConnectionOnExceptionOccurs(object sender, Exception e)
         {
-            ExceptionHandler.HandleException(Logger,  "Serial Connection Error" ,e);
+            ExceptionHandler.HandleException(Logger,  "Serial Connection Error", e);
         }
 
         /// <summary>
@@ -194,20 +190,20 @@ namespace SoundMixerSoftware.Framework.Device
             if (!_dataConverters.ContainsKey(comPort))
             {
                 var dataConverter = new DataConverter(ConfigHandler.ConfigStruct.Hardware.Terminator);
-                foreach(var type in _typesToRegister)
+                foreach (var type in _typesToRegister)
                     dataConverter.RegisterType(type.Key, type.Value);
                 dataConverter.DataReceived += DataConverterOnDataReceived;
                 _dataConverters.Add(comPort, dataConverter);
-                if (!_serialEventRegistered)
-                    _serialConnection.DataReceived += (sender, args) =>
+                
+                _serialConnection.DataReceived += (sender, args) =>
+                {
+                    if (_dataConverters.TryGetValue(args.COMPort, out var value))
                     {
-                        if (_dataConverters.ContainsKey(args.COMPort))
-                        {
-                            var deviceId = ConnectedDevices.ContainsKey(args.COMPort) ? ConnectedDevices[args.COMPort] : new DeviceId();
-                            _dataConverters[args.COMPort].ProcessData(args.Data, deviceId);
-                        }
-                    };
-                _serialEventRegistered = true;
+                        var deviceId = ConnectedDevices.ContainsKey(args.COMPort) ? ConnectedDevices[args.COMPort] : new DeviceId();
+                        value.ProcessData(args.Data, deviceId);
+                    }
+                };
+                
             }
         }
 
@@ -281,11 +277,11 @@ namespace SoundMixerSoftware.Framework.Device
         /// <param name="e"></param>
         private void DataConverterOnDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (e.Command == 0x03)
+            if (e.Command == (int) Command.DEVICE_RESPONSE_COMMAND)
             {
                 lock (_lockObject)
                 {
-                    DeviceIdResponse response = e.Data;
+                    var response = (DeviceIdResponse)e.Data;
                     var flag = response.flag;
                     if (_requestFlags.ContainsKey(flag))
                     {
@@ -293,7 +289,7 @@ namespace SoundMixerSoftware.Framework.Device
                         _requestFlags.Remove(response.flag);
                         var startup = _flagsOnStartup.Contains(flag);
                         Logger.Info($"Recived device response: {devproperties.COMPort}");
-                        DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(devproperties, response, startup));
+                        DeviceConnected?.Invoke(this, new DevicePair(devproperties, response, startup));
                         ConnectedDevices.Add(devproperties.COMPort, new DeviceId(response.uuid));
                         if (startup)
                             _flagsOnStartup.Remove(flag);
@@ -326,10 +322,8 @@ namespace SoundMixerSoftware.Framework.Device
                     return;
                 _serialConnection.Disconnect(comPort);
                 DeviceDisconnected?.Invoke(this, e);
-                if (_dataConverters.ContainsKey(comPort))
-                    _dataConverters.Remove(comPort);
-                if (ConnectedDevices.ContainsKey(comPort))
-                    ConnectedDevices.Remove(comPort);
+                _dataConverters.Remove(comPort);
+                ConnectedDevices.Remove(comPort);
             }
         }
 
@@ -352,20 +346,7 @@ namespace SoundMixerSoftware.Framework.Device
         }
 
         #endregion
-        
-        #region MessageLoop
 
-        /// <summary>
-        /// Main message loop.
-        /// </summary>
-        /// <param name="m"></param>
-        private void WindowWrapperOnMessageReceived(object sender, Message e)
-        {
-            _usbDevice.ProcessMessage((uint)e.Msg, e.WParam, e.LParam);
-        }
-
-        #endregion
-        
         #region Dispose
 
         public void Dispose()

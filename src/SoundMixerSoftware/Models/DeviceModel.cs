@@ -69,13 +69,13 @@ namespace SoundMixerSoftware.Models
         }
         
         /// <summary>
-        /// Create DeviceModel from DeviceConnectedEventArgs.
+        /// Create DeviceModel from DevicePair.
         /// </summary>
-        /// <param name="eventArgs">Event args</param>
+        /// <param name="pair">Event args</param>
         /// <returns></returns>
-        public static DeviceModel CreateModel(DeviceConnectedEventArgs eventArgs)
+        public static DeviceModel CreateModel(DevicePair pair)
         {
-            return CreateModel(eventArgs.Device, eventArgs.DeviceResponse);
+            return CreateModel(pair.Device, pair.DeviceResponse);
         }
         
         #endregion

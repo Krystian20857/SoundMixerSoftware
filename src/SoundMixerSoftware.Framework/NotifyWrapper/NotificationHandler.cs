@@ -35,17 +35,17 @@ namespace SoundMixerSoftware.Framework.NotifyWrapper
             ShowNotification(_releaseNotification, onClick, onClose);
         }
 
-        public static void ShowDeviceConnectedNotification(DeviceConnectedEventArgs deviceData, Action onClick = null, Action onClose = null)
+        public static void ShowDeviceConnectedNotification(DevicePair devicePair, Action onClick = null, Action onClose = null)
         {
             _deviceNotitication.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Connected);
-            _deviceNotitication.SetValue(DeviceNotification.EVENT_ARGS_KEY, deviceData);
+            _deviceNotitication.SetValue(DeviceNotification.EVENT_ARGS_KEY, devicePair);
             ShowNotification(_deviceNotitication, onClick, onClose);
         }
         
-        public static void ShowDeviceDisconnectedNotification(DeviceConnectedEventArgs deviceData, Action onClick = null, Action onClose = null)
+        public static void ShowDeviceDisconnectedNotification(DevicePair devicePair, Action onClick = null, Action onClose = null)
         {
             _deviceNotitication.SetValue(DeviceNotification.DEVICE_STATE_KEY, DeviceNotificationState.Disconnected);
-            _deviceNotitication.SetValue(DeviceNotification.EVENT_ARGS_KEY, deviceData);
+            _deviceNotitication.SetValue(DeviceNotification.EVENT_ARGS_KEY, devicePair);
             ShowNotification(_deviceNotitication, onClick, onClose);
         }
 

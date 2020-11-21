@@ -95,7 +95,7 @@
       <Compile Include="USBLib\EventArgs.cs" />
       <Compile Include="USBLib\USBDescriptor.cs" />
       <Compile Include="USBLib\USBDevice.cs" />
-      <Compile Include="USBLib\USBID.cs" />
+      <Compile Include="USBLib\HwId.cs" />
       <Compile Include="Wrapper\AppWrapper.cs" />
       <Compile Include="Wrapper\IconExtractor.cs" />
       <Compile Include="Wrapper\KeyWrapper.cs" />

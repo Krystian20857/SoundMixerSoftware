@@ -3,7 +3,7 @@
 namespace SoundMixerSoftware.Interop.USBLib
 {
     // ReSharper disable once InconsistentNaming
-    public class USBID : IEquatable<USBID>, ICloneable
+    public class HwId : IEquatable<HwId>, ICloneable
     {
         #region Public Properties
         
@@ -15,12 +15,12 @@ namespace SoundMixerSoftware.Interop.USBLib
         #region Overriden Methods
         public override int GetHashCode()
         {
-            return 435134142;
+            return 215134142;
         }
 
         public object Clone()
         {
-            return new USBID { Vid = Vid, Pid = Pid};
+            return new HwId { Vid = Vid, Pid = Pid};
         }
 
         public override bool Equals(object obj)
@@ -29,7 +29,7 @@ namespace SoundMixerSoftware.Interop.USBLib
             if (ReferenceEquals(this, obj)) return true;
             // ReSharper disable once ConvertIfStatementToReturnStatement
             if (obj.GetType() != GetType()) return false;
-            return Equals((USBID) obj);
+            return Equals((HwId) obj);
         }
 
         public override string ToString()
@@ -37,19 +37,19 @@ namespace SoundMixerSoftware.Interop.USBLib
             return $"VID: {Vid}, PID: {Pid}";
         }
 
-        public bool Equals(USBID other)
+        public bool Equals(HwId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Vid == other.Vid && Pid == other.Pid;
         }
 
-        public static bool operator ==(USBID usbid1, USBID usbid2)
+        public static bool operator ==(HwId usbid1, HwId usbid2)
         {
             return Equals(usbid1, usbid2);
         }
 
-        public static bool operator !=(USBID usbid1, USBID usbid2)
+        public static bool operator !=(HwId usbid1, HwId usbid2)
         {
             return !(usbid1 == usbid2);
         }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SoundMixerSoftware.Common.Utils
 {
@@ -22,9 +23,23 @@ namespace SoundMixerSoftware.Common.Utils
             Marshal.FreeHGlobal(ptr);
             return result;
         }
+        
+        /// <summary>
+        /// Converts byte array to struct(unsafe).
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <typeparam name="T">type of struct.</typeparam>
+        /// <returns>STRUCT</returns>
+        public static unsafe T StructFromBytesUnsafe<T>(byte[] buffer) where T : struct
+        {
+            fixed (byte* ptr = &buffer[0])
+            {
+                return Marshal.PtrToStructure<T>((IntPtr)ptr);
+            }
+        }
 
         /// <summary>
-        /// Converts struct to byte array
+        /// Converts struct to byte array.
         /// </summary>
         /// <param name="structure"></param>
         /// <typeparam name="T"></typeparam>
@@ -38,6 +53,6 @@ namespace SoundMixerSoftware.Common.Utils
             Marshal.Copy(ptr, result, 0, size);
             Marshal.FreeHGlobal(ptr);
             return result;
-        } 
+        }
     }
 }

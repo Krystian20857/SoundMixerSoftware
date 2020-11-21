@@ -128,13 +128,7 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
             switch (KeystrokeMode)
             {
                 case KeystrokeMode.KeyPress:
-                    for (var n = 0; n < ModifierKeys.Length; n++)
-                        _simulator.KeyDown(ModifierKeys[n]);
-                    _simulator.KeyDown(Keystroke);
-                    _simulator.Sleep(1);
-                    for (var n = 0; n < ModifierKeys.Length; n++)
-                        _simulator.KeyUp(ModifierKeys[n]);
-                    _simulator.KeyUp(Keystroke);
+                    _simulator.ModifiedKeyStroke(ModifierKeys, Keystroke);
                     break;
                 case KeystrokeMode.TextMode:
                     _simulator.TextEntry(Text);
@@ -144,7 +138,15 @@ namespace SoundMixerSoftware.Framework.Buttons.Functions
 
         public void ButtonKeyUp(int index)
         {
-            
+            switch (KeystrokeMode)
+            {
+                case KeystrokeMode.KeyPress:
+                    _simulator.ModifiedKeyStroke(ModifierKeys, Keystroke);
+                    break;
+                case KeystrokeMode.TextMode:
+                    _simulator.TextEntry(Text);
+                    break;
+            }
         }
         
         #endregion

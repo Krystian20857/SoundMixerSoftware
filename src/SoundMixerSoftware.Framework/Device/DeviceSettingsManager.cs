@@ -74,9 +74,9 @@ namespace SoundMixerSoftware.Framework.Device
         public static DeviceConfigStruct SampleConfig { get; } = new DeviceConfigStruct
         {
             DeviceSettings = new Dictionary<string, DeviceSettings>(),
-            UsbIDs = new List<USBID>()
+            HwIds = new List<HwId>()
             {
-                new USBID{ Vid = 0x468F, Pid = 0x895D}
+                new HwId{ Vid = 0x468F, Pid = 0x895D}
             },
         };
 
@@ -94,7 +94,7 @@ namespace SoundMixerSoftware.Framework.Device
         [YamlMember(Alias = "Devices")]
         public Dictionary<string, DeviceSettings> DeviceSettings { get; set; }
 
-        public List<USBID> UsbIDs { get; set; }
+        public List<HwId> HwIds { get; set; }
 
         #endregion
     }
