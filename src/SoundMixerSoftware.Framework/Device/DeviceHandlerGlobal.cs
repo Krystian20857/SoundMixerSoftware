@@ -176,14 +176,7 @@ namespace SoundMixerSoftware.Framework.Device
 
         private static int GetIndex(OffsetManager offsetManager, int index, DeviceId deviceId)
         {
-            var buttonIndex = index + (byte)offsetManager.GetOrCreateOffset(deviceId);
-            var buttonCount = ButtonHandler.Buttons.Count;
-            if (buttonIndex >= buttonCount)
-            {
-                return buttonIndex - buttonCount;
-            }
-
-            return buttonIndex;
+            return index + (byte)offsetManager.GetOrCreateOffset(deviceId);
         }
         
         #endregion
