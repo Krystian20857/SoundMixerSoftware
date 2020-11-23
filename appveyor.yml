@@ -1,10 +1,14 @@
 ﻿image: Visual Studio 2019
 configuration: Release
 
-version: 0.0.1{build}
+version: {AssemblyMajor}.{AssemblyMinor}.{build}-dev.{build}
 
 assembly_info: 
-  patch: false
+  patch: true
+  file: SharedAssemblyInfo.cs
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
 
 install:
   - dotnet tool restore
@@ -19,8 +23,6 @@ skip_commits:
   - LICENSE
 
 artifacts:
-  - path: "output/release/**"
-    name: "raw"
   - path: "output/packages/**"
     name: "squirrel"
 
