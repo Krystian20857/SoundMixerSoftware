@@ -1,7 +1,7 @@
 ﻿image: Visual Studio 2019
 configuration: Release
 
-version: {AssemblyMajor}.{AssemblyMinor}.{build}-dev.{build}
+version: 0.0.1-dev.{build}
 
 assembly_info: 
   patch: true
