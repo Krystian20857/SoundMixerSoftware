@@ -1,7 +1,10 @@
 ﻿image: Visual Studio 2019
 configuration: Release
 
-version: 0.0.1-dev.{build}
+version: dev-{build}
+
+init:
+  - ps: Update-AppveyorBuild -Version "0.0.1-dev.$($env:appveyor_repo_commit.substring(0,7))"
 
 assembly_info: 
   patch: true
