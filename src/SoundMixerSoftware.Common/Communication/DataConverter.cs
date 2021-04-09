@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using NLog;
 using SoundMixerSoftware.Common.Utils;
+using SoundMixerSoftware.Interop.Struct;
 
 namespace SoundMixerSoftware.Common.Communication
 {
@@ -24,10 +25,6 @@ namespace SoundMixerSoftware.Common.Communication
 
         #region Private Fields
         
-        /// <summary>
-        /// Store collected bytes.
-        /// </summary>
-        private Queue<byte> _buffer = new Queue<byte>();
         /// <summary>
         /// "StructFromBytes" method is use for converting bytes to specified type structure.
         /// </summary>
@@ -111,43 +108,25 @@ namespace SoundMixerSoftware.Common.Communication
         /// <param name="data"></param>
         public void ProcessData(byte[] data, object arguments)
         {
-            for (var n = 0;n < data.Length; n++)
+            if (data.Length == 0)
             {
-                if (data[n] == Terminator)
-                {
-                    if(_buffer.Count == 0)
-                        continue;
-                    var command = _buffer.Peek();
-                    if (!_typeRegistry.ContainsKey(command))
-                    {
-                        _buffer.Clear();
-                        return;
-                    }
-                    var (type, size) = _typeRegistry[command];
-
-                    if (_buffer.Count != size)
-                    {
-                        SizeError?.Invoke(this, new EventArgs());
-                        if (ClearOnError)
-                        {
-                            _buffer.Clear();
-                            break;
-                        }
-                    }
-
-                    var genericType = _convertMethod.MakeGenericMethod(type);
-                    var dataEventArgs = new DataReceivedEventArgs
-                    {
-                        Command = command,
-                        Data = genericType.Invoke(null, new object[] {_buffer.ToArray()}),
-                        Arguments = arguments
-                    };
-                    DataReceived?.Invoke(this, dataEventArgs);
-                    _buffer.Clear();
-                }
-                else
-                    _buffer.Enqueue(data[n]);
+                return;
             }
+
+            var command = data[0];
+            if (!_typeRegistry.ContainsKey(command))
+            {
+                return;
+            }
+            var (type, size) = _typeRegistry[command];
+            var genericType = _convertMethod.MakeGenericMethod(type);
+            var dataEventArgs = new DataReceivedEventArgs
+            {
+                Command = command,
+                Data = genericType.Invoke(null, new object[] {data}),
+                Arguments = arguments
+            };
+            DataReceived?.Invoke(this, dataEventArgs);
         }
         
         #endregion
@@ -163,7 +142,6 @@ namespace SoundMixerSoftware.Common.Communication
         /// </summary>
         public void Dispose()
         {
-            _buffer.Clear();
             GC.SuppressFinalize(this);
         }
         

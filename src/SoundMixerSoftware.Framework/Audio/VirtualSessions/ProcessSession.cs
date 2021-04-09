@@ -35,6 +35,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         #region Private Fields
         
         private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>(SESSION_CAPACITY);
+        private readonly List<IDisposable> toDispose = new List<IDisposable>();
 
         #endregion
         
@@ -169,8 +170,8 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             if (executableName == ExecutableName)
             {
                 _sessions.Add(session);
-                session.VolumeChanged.Subscribe(VolumeChangedCallback);
-                session.MuteChanged.Subscribe(MuteChangedCallback);
+                toDispose.Add(session.VolumeChanged.Subscribe(VolumeChangedCallback));
+                toDispose.Add(session.MuteChanged.Subscribe(MuteChangedCallback));
                 UpdateView();
             }
         }
@@ -208,6 +209,10 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         public void Dispose()
         {
             _sessions.Clear();
+            foreach (var disposable in toDispose)
+            {
+                disposable.Dispose();
+            }
         }
         
         #endregion

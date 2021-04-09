@@ -39,6 +39,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         private readonly ConcurrentList<IAudioSession> _sessions = new ConcurrentList<IAudioSession>();
         private IDisposable _sessionCreatedCallback;
         private IDevice _device;
+        private readonly List<IDisposable> toDispose = new List<IDisposable>();
 
         #endregion
         
@@ -224,9 +225,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             var sessions = GetSessions(device, ID);
             foreach (var session in sessions)
             {
-                session.VolumeChanged.Subscribe(VolumeChangedCallback);
-                session.MuteChanged.Subscribe(MuteChangedCallback);
-                _sessions.Add(session);
+                AddSession(session);
             }
             
             UpdateDescription();
@@ -236,10 +235,15 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         {
             if(session.Id != ID)
                 return;
-            _sessions.Add(session);
-            session.VolumeChanged.Subscribe(VolumeChangedCallback);
-            session.MuteChanged.Subscribe(MuteChangedCallback);
+            AddSession(session);
             UpdateDescription();
+        }
+
+        private void AddSession(IAudioSession session)
+        {
+            toDispose.Add(session.VolumeChanged.Subscribe(VolumeChangedCallback));
+            toDispose.Add(session.MuteChanged.Subscribe(MuteChangedCallback));
+            _sessions.Add(session);
         }
         
         private void SessionHandlerOnSessionExited(IAudioSession session)
@@ -285,7 +289,10 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
 
         public void Dispose()
         {
-            
+            foreach (var disposable in toDispose)
+            {
+                disposable.Dispose();
+            }
         }
         
         #endregion

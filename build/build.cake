@@ -1,3 +1,5 @@
+#tool "nuget:?package=nuget.commandline&version=5.3.0"
+
 var configuration = Argument("Configuration", "Release");
 var target = Argument("Target", "AfterBuildClean");
 
