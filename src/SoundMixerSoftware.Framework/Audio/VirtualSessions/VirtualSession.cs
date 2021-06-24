@@ -293,6 +293,9 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             {
                 disposable.Dispose();
             }
+            SessionHandler.DeviceAddedCallback -= DeviceAdded;
+            SessionHandler.DeviceRemovedCallback -= DeviceRemoved;
+            SessionHandler.SessionExited -= SessionHandlerOnSessionExited;
         }
         
         #endregion

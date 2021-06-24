@@ -208,6 +208,8 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         {
             _muteCallback?.Dispose();
             _volumeCallback?.Dispose();
+            SessionHandler.DeviceAddedCallback -= DeviceAdded;
+            SessionHandler.DeviceRemovedCallback -= DeviceRemoved;
         }
         
         #endregion

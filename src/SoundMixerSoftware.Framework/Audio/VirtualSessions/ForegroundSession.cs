@@ -249,6 +249,10 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         public void Dispose()
         {
             _windowWatcher?.Dispose();
+            UnregisterEvents();
+            
+            SessionHandler.SessionExited -= SessionHandlerOnSessionExited;
+            SessionHandler.SessionCreated -= SessionHandlerOnSessionCreatedCallback;
         }
         
         #endregion

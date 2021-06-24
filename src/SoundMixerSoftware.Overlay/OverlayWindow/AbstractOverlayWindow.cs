@@ -146,23 +146,19 @@ namespace SoundMixerSoftware.Overlay.OverlayWindow
             _showTimer = new Timer { Interval = showTime };
             _showTimer.Elapsed += (sender, args) =>
             {
-                var fadeThread = new Thread(() =>
+                var fadeTickTime = (int) (showTime * 0.1F) / 50;
+                _fadeThreadRunning = true;
+                while (_opacity > 5 && _fadeThreadRunning)
                 {
-                    var fadeTickTime = (int) (showTime * 0.1F) / 50;
-                    _fadeThreadRunning = true;
-                    while (_opacity > 5 && _fadeThreadRunning)
-                    {
-                        WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
-                        _opacity--;
-                        Thread.Sleep(fadeTickTime);
-                    }
-
-                    if (_fadeThreadRunning)
-                        HideWindow();
-                    _opacity = 255;
                     WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
-                }) { IsBackground = true };
-                fadeThread.Start();
+                    _opacity--;
+                    Thread.Sleep(fadeTickTime);
+                }
+
+                if (_fadeThreadRunning)
+                    HideWindow();
+                _opacity = 255;
+                WindowWrapper.SetWindowOpacity(_window.Handle, _opacity);
             };
         }
 

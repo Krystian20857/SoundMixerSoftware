@@ -34,6 +34,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         private IDevice _device;
         private IDisposable _volumeCallback;
         private IDisposable _muteCallback;
+        private IDisposable _changeCallback;
 
         private bool isDefault;
         private bool isDefaultCommuninication;
@@ -89,7 +90,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             ERoleUtil.GetFromRole(role, out isDefault, out isDefaultCommuninication);
             _device = _controller.GetDefaultDevice(DeviceType, role);
 
-            _controller.AudioDeviceChanged.Subscribe(x =>
+            _changeCallback = _controller.AudioDeviceChanged.Subscribe(x =>
             {
                 if (x.ChangedType != DeviceChangedType.DefaultChanged || x.Device.DeviceType != DeviceType)
                     return;
@@ -221,6 +222,7 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
         {
             _muteCallback?.Dispose();
             _volumeCallback?.Dispose();
+            _changeCallback?.Dispose();
         }
         
         #endregion

@@ -119,6 +119,11 @@ namespace SoundMixerSoftware.Common.Communication
                 return;
             }
             var (type, size) = _typeRegistry[command];
+            if (data.Length != size)
+            {
+                SizeError?.Invoke(this, EventArgs.Empty);
+                return;
+            }
             var genericType = _convertMethod.MakeGenericMethod(type);
             var dataEventArgs = new DataReceivedEventArgs
             {

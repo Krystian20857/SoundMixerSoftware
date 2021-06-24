@@ -76,7 +76,7 @@ namespace SoundMixerSoftware.Interop.Wrapper
             {
                 Logger.Error(exception);
                 if (exception is OverflowException)
-                    Logger.Error("Application might be running in 32-bit mode. If you are running 64-bit os there may occurs problems with getting 64-bit pointers.");
+                    Logger.Error("Application might be running in 32-bit mode. If you are running 32-bit os there may occurs problems with getting 64-bit pointers.");
                 return null;
             }
 

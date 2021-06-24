@@ -213,6 +213,8 @@ namespace SoundMixerSoftware.Framework.Audio.VirtualSessions
             {
                 disposable.Dispose();
             }
+            SessionHandler.SessionCreated -= AddSession;
+            SessionHandler.SessionExited -= RemoveSession;
         }
         
         #endregion
